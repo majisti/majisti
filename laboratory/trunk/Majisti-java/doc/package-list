@@ -1,0 +1,6 @@
+com.loaderapp.tools.Browser
+com.loaderapp.tools.Debug
+com.loaderapp.tools.Files
+com.loaderapp.tools.tests.Browser
+com.loaderapp.tools.tests.Debug
+com.loaderapp.tools.tests.Files

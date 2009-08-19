@@ -1,0 +1,74 @@
+
+
+.center {
+	text-align: center;
+}
+
+#demo {
+	position: relative; 
+	
+	height: 600px;
+	width: 920px;
+	
+	padding-left: 40px;
+}
+
+#floorplan {
+	float: left;
+	position: relative;
+	
+	width: 580px;
+	height: 585px;
+
+	border: 1px solid blue;
+	
+	background: url(../img/plan.gif) center center no-repeat;
+}
+
+#status {
+	float: left;
+	
+	margin-left: 20px;
+	
+	width: 300px;
+	height: 585px;
+	
+	border: 1px solid blue;
+}
+
+.api {
+	clear: left;
+	
+	display: block;
+	margin: 30px 20px 50px 20px;
+	padding: 10px;
+	
+	border: 1px solid blue;
+	background-color: #f3f3ff;
+	
+	font-family: arial;
+}
+
+h2 {
+	margin-left: 30px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid grey;
+	width: 60%;
+}
+
+dt {
+	margin-top: 10px;
+	font-weight: bold;
+}
+
+dd {
+	
+}
+
+span.type {
+	margin-left: 20px;
+	font-style: italic;
+	color: grey;
+	font-weight: normal;
+	font-size: 90%;
+}

@@ -1,0 +1,18 @@
+<?php
+
+$root = $this->baseUrl();
+$module = $this->moduleName();
+$controller = $this->controllerName();
+
+$editLink = $root . '/' . $module . '/' . $controller . '/edit/id/' . $this->value;
+$deleteLink  = $root . '/' . $module . '/' . $controller . '/delete/id/' . $this->value;
+
+?><a href="<?=$editLink ?>" style="padding-right: 4px;"><?=$this->_('Edit') ?></a><?
+?>|<?
+?><a href="<?=$deleteLink ?>" style="padding-left: 4px;" onclick="return editOperationDelete();"><?=$this->_('Delete') ?></a><?
+
+?><script type="text/javascript">
+	function editOperationDelete() {
+		return confirm("<?=$this->_('Êtes-vous sûr de bien vouloir supprimer cet élément?'); ?>");
+	}
+</script><?

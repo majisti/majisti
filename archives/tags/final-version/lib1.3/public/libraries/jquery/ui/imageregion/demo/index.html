@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" dir="ltr" lang="fr">
+
+	<head>
+		<title>
+					Demo of JQuery Image Region
+		</title>
+		<!-- //
+
+			Yanick Rochon
+			Version 0.1
+
+		-->
+		
+		<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
+    
+    <link rel="stylesheet" href="css/page.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="css/jquery-ui-1.7.1.custom.css" type="text/css" media="screen" />
+
+		<script type="text/javascript" src="../../../jquery.js"></script>
+		<script type="text/javascript" src="../../ui.core.js"></script>
+		<script type="text/javascript" src="../../ui.selectable.js"></script>
+		<script type="text/javascript" src="../../ui.resizable.js"></script>
+		<script type="text/javascript" src="../../ui.draggable.js"></script>
+
+		<script type="text/javascript" src="../ui.imageregion.js"></script>
+		
+		<script type="text/javascript">
+
+      $(function() {
+      
+        $('#floorplan').imageregion({
+          regions: {
+            'Test 1 (cannot resize)': {top:10, left:30, width:50, height:50, resizable:false},
+            'Test 2 (cannot move)': {top:50, left:30, width:50, height:50, draggable:false},
+            'Test 3 (cannot select)': {top:10, left:100, width:50, height:50, selectable:false},
+            'Test 4': {top:150, left:20, width:80, height:50},
+				'Test 5 (content text)': {content:'Hello world', top:150, left:200, width:80, height:50},
+				'Test 6 (content html)': {content:'<div style="background-color: green; font-size: 300%;">Hello world</div>', top:300, left:20, width:80, height:50},
+				'Test 7 (content element)': {content:$('<div/>').css('background-color', 'blue').text('Hello world'), top:300, left:300, width:80, height:50}
+          }
+        });
+      
+      });
+
+  	</script>
+		
+	</head>
+	<body>				
+
+		<h1>
+			Demo Image Region
+		</h1>
+
+		<div id="demo" class="center">
+			<div id="floorplan" class="imageregion"></div>
+			<div id="status"></div>
+		</div>
+
+		<noscript>
+			<p>Sorry, you need to activate JavaScript in your browser.</p>
+		</noscript>
+
+		<h2>Options :</h2>
+
+		<div class="api">
+			<dl>
+				<dt>regionDefaults<span class="type">object</span></dt>
+				<dd>
+					The default options for a new region
+					<dl>
+						<dt>content<span class="type">string | DOMelement</span></dt>
+						<dd>The content that will appear inside the region as HTML. The text will be hidden if overflow. (default = '')</dd>
+						<dt>left<span class="type">int</span></dt>
+						<dd>The x positionning of the region (default = 0)</dd>
+						<dt>top<span class="type">int</span></dt>
+						<dd>The y positionning of the region (default = 0)</dd>
+						<dt>width<span class="type">int</span></dt>
+						<dd>The width of the region (default = 32)</dd>
+						<dt>height<span class="type">int</span></dt>
+						<dd>The height of the region (default = 32)</dd>
+						<dt>minWidth<span class="type">int</span></dt>
+						<dd>The minimum width of the region when resized (default = 32)</dd>
+						<dt>minHeight<span class="type">int</span></dt>
+						<dd>The minimum height of the region when resized (default = 32)</dd>
+						<dt>resizable<span class="type">boolean</span></dt>
+						<dd>If the region can be resized (default = true)</dd>
+						<dt>draggable<span class="type">boolean</span></dt>
+						<dd>If the region can be moved (dragged)(default = true)</dd>
+						<dt>selectable<span class="type">boolean</span></dt>
+						<dd>If the region can be selected. If false, the region cannot be dragged or resized. (default = true)</dd>
+					</dl>				
+				</dd>
+				<dt>regions<span class="type">object</span></dt>
+				<dd>A list of all region to add initially. The object is composed of the region id as the key and the region options as value (see regionDefaults for the region options) (default = {})</dd>
+			</dl>
+		
+		</div>
+			
+	</body>
+</html>

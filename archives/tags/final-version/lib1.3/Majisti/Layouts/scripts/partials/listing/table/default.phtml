@@ -1,0 +1,36 @@
+<?php
+
+echo '<table class="left listing" border="1">';
+
+	// if an attribute showTableHeader is set, and it's value is NOT FALSE
+	// then show the table header
+if ( false !== $this->table->headerVisible ) {
+	echo '<thead><tr>';
+	
+	// go through all the columns...
+	foreach ($this->table->columns as $col ) {
+		if ( $col instanceof Majisti_Object ) {
+			$columnName = $col->name;
+		} else if ( is_array( $col ) ) {
+			$columnName = $col['name'];
+		} else {
+			$columnName = $col;
+		}
+
+		echo '<th>' . $columnName . '</th>';
+	}
+		
+	echo '</tr></thead>';
+}
+	
+echo '<tbody>';
+
+// save the 'table' to a placeholder
+$this->placeholder('Majisti.Listing.table')->set($this->table);
+$this->partialLoop()->setObjectKey('rowValue');
+echo $this->partialLoop('partials/listing/table/default-row.phtml', $this->objectIterable);
+
+echo '</tbody>';
+		
+echo '</table>';
+

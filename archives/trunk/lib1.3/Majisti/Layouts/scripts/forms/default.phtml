@@ -1,0 +1,42 @@
+<?
+
+/**
+ * @desc Simple layout
+ * 
+ * Pre-condition: style the layout with css.
+ * 
+ * @param placeeholder:title The page's title
+ * @param placeholder:header What will go in the banner
+ * @param placeholder:footer What will go in the footer
+ * 
+ * @author Steven Rosato
+ */
+?>
+
+<?= $this->doctype()?>
+<html>
+<head>
+	<? $this->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=UTF-8') ?>
+	
+	<?= $this->jQuery();?>
+
+	<?= $this->headMeta()?>
+    <?= $this->headLink()?>
+    <?= $this->headStyle()?>
+    <?= $this->headScript()?>
+
+    <?= $this->headTitle($this->placeholder('title'))?>
+</head>
+<body>
+	<div class="container">
+		<div class="banner"><?= $this->placeholder('header')?></div>
+		<div class="content">
+			<?= $this->layout()->content?>
+		</div>
+
+		<div class="footer"><?=$this->placeholder('footer');?></div>
+
+		<?= $this->inlineScript()?>
+	</div>
+</body>
+</html>

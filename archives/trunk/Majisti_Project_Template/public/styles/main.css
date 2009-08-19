@@ -1,0 +1,28 @@
+@CHARSET "ISO-8859-1";
+
+.container {
+	width: 1000px;
+	min-height: 600px;
+	height: auto !important;
+	height: 600px;
+	margin: 0 auto 0 auto;
+	border: 1px solid black;
+}
+
+.container .banner {
+	background: url('../images/banner.jpg') no-repeat black;
+	color: white;
+	min-height: 150px;
+	height: auto !important;
+	height: 150px;
+}
+
+.container .content {
+	min-height: 500px;
+	height: auto !important; /* FF and others */
+	height: 500px; /* IE 6 */
+}
+
+.container .footer {
+	text-align: center;
+}

@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * Default partial for the Listing view helper
+ * 
+ * 
+ * @author Yanick Rochon
+ */
+
+if ( count($this->objectIterable) > 0 ) {
+
+	if ( !empty($this->header) ) {
+		echo '<div class="listingHeader">' . $this->header . '</div>';
+	}
+	
+	echo '<div class="listingBody">' . $this->body . '</div>';
+	
+	if ( !empty($this->footer) ) {
+		echo '<div class="listingFooter">' . $this->footer . '</div>';
+	}
+	
+} else if ( !empty($this->emptyMessage) ) {
+	
+	echo '<div class="listingEmpty">' . $this->emptyMessage . '</div>';
+	
+}

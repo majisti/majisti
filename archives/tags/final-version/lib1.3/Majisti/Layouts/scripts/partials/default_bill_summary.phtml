@@ -1,0 +1,18 @@
+<table>
+	<? if( $this->tps ) { ?>
+	<tr>
+		<td class="td_price"><span class="fontBold">Sous-Total</span></td><td> <?=$this->sTotal ?></td>
+	</tr>
+	<tr>
+		<td class="td_price"><span class="fontBold">TPS (5%)</span></td><td> <?=$this->tps ?></td>
+	</tr>
+	<? } ?>
+	<? if( $this->tps ) { ?>
+	<tr>
+		<td class="td_price"><span class="fontBold">TVQ (7.5%)</span></td><td> <?=$this->tvq ?></td>
+	</tr>
+	<? } ?>
+	<tr>
+		<td class="td_price"><span class="fontBold">Total</span></td><td> <?=$this->total ?></td>
+	</tr>
+</table>

@@ -1,0 +1,69 @@
+@CHARSET "ISO-8859-1";
+
+/************************
+* 	   Majisti_Form
+*************************/
+dt { margin: 10px 0 5px 0; clear: left; }
+dl { clear: left; }
+dd { margin: 0 0 0 14px; }
+dl.hidden, dd.hidden, label.hidden, fieldset.hidden { display: none; }
+dd.same-line, dt.same-line, label.same-line { float: left; clear: none; }
+dt.clear_left { clear: left; }
+dd.same-line { margin: 4px 0 0 12px; }
+dt.same-line { margin: 10px 0 10px 10px; }
+
+/************************
+* 	Majisti_Form Errors
+*************************/
+dd ul.errors {
+	clear: left;
+	list-style-image: url('../../images/icons/exclamations/default/red.gif');
+	margin-top: 5px;
+}
+
+ul.errors, span.required { color: red; }
+
+.ui-datepicker-trigger { margin: 0 0 0 5px; }
+
+.form-errors-count { font-weight: bold; }
+
+/******************************
+ *   Flash Messages
+ *******************************/
+div.flash-messages { width: 100%; padding-bottom: 10px; }
+.flash-messages ul { padding: 0; margin: 0; width: 100%; }
+.flash-messages li { -moz-border-radius: 4px; -webkit-border-radius: 4px; list-style-type: none; width: 60%; }
+.flash-messages .flash-messages-item { color: white; padding: 6px 10px; margin: 10px 0px; }
+.flash-messages .item-state-red { border: 1px solid #400; background: #eb8f8a url('../../images/backgrounds/gradients/horizontal/small/red.gif') repeat-y; }
+.flash-messages .item-state-green { border: 1px solid #040; background: #3bc541 url('../../images/backgrounds/gradients/horizontal/small/green.gif') repeat-y; }
+.flash-messages .item-state-blue { border: 1px solid #004; background: #a2bfff url('../../images/backgrounds/gradients/horizontal/small/blue.gif') repeat-y; }
+
+/*******************************
+* 	Majisti Form Elements
+*******************************/
+
+span.required { color: red; font-weight: bold; font-size: 110%; cursor: help; }
+
+/*********************
+* Statement listing
+**********************/
+.statement_listing { width: 100%; }
+.statement_listing tr.header, .statement_listing td.header_statement, .statement_listing td.header_choice { background-color: #8888CC; text-align: center; font-weight: bold; }
+.statement_listing td.header_statement { width: 30%; }
+.statement_listing td.header_choice { width: 1%; }
+.statement_listing tr.sub_title { background-color: #9999D4; font-weight: bold; }
+.statement_listing tr.query td.choice { text-align: center; }
+.statement_listing tr.query_even { background-color: #AAAADD; }
+.statement_listing tr.query_odd { background-color: #CCCCFF; }
+.statement_listing tr.query td label.query { padding: 0 0 0 10px; }
+.statement_listing tr.query td.subtitle { font-weight: bold; }
+.statement_listing td.element { text-align: center; }
+
+/************************
+ * Horizontal Listing
+ ************************/
+.horizontal_listing td.prefix { width: 1%; text-align: right; }
+.horizontal_listing td.suffix { width: 1%; text-align: left; }
+.horizontal_listing td.query { padding-top: 20px; }
+.horizontal_listing td.choice { text-align: center;	 }
+.horizontal_listing td.choiceLabel { text-align: center; border-bottom: 2px dotted #c0d0e0; }

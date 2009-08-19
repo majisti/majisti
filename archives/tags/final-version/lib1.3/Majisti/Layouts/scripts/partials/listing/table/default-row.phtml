@@ -1,0 +1,98 @@
+<?php
+
+	/**
+	 * table row output partial
+	 *
+	 * $this->model = mixed
+	 *
+	 *   If the columns are set as array (see default.phtml Ex.2. & Ex.3.), then
+	 *   it may have an extra index called 'class' that will specify the CSS class
+	 *   to set to the TD tag for the cell.
+	 *
+	 * @author Yanick Rochon
+	 */
+
+	$rowClass = ($this->partialCounter % 2 === 1 ? 'odd' : 'even');
+
+	// see Majisti_View_Helper_IterableObjectRenderer_Table
+	//$partialFunctions = reset($this->placeHolder('Majisti.Listing.functions'));
+
+?>
+<tr class="<?=$rowClass ?>">
+<?
+
+	// get table from placeHolder
+	$tableOptions = reset($this->placeholder('Majisti.Listing.table'));
+
+	foreach ($tableOptions->columns AS $colIndex => $col) {
+		if ( $col instanceof Majisti_Object ) {
+			$colValue = $col->value;
+			$colClass = $col->class;
+			$colPartial = $col->partial;
+		} else if ( is_array($col) ) {
+			$colValue = @$col['value'] ? $col['value'] : reset($col);
+			$colClass = @$col['class'];
+			$colPartial = @$col['partial'];
+		} else {
+			$colValue = $col;
+			$colClass = null;
+			$colPartial = null;
+		}
+		
+		if ( $colPartial instanceof Majisti_Object ) {
+			$colPartialName = $colPartial->name;
+			$colPartialOptions = $colPartial->options;
+		} else if ( is_array($colPartial) ) {
+			reset($colPartial);
+			$colPartialName = @$colPartial['name'] ? $colPartial['name'] : current($colPartial);
+			$colPartialOptions = @$colPartial['options'] ? $colPartial['options'] : next($colPartial);
+		} else {
+			$colPartialName = $colPartial;
+			$colPartialOptions = null;
+		}
+
+		if (!isset($this->rowValue)) {
+			$ignoreKeys = array('partialCounter');
+			$cellValue = array();
+			foreach ($this as $key => $val) {
+				if ('_' !== $key[0] && !in_array($key, $ignoreKeys)) {
+					$cellValue[$key] = $val;
+				}
+			}
+		} else {
+			$cellValue = $this->rowValue;
+		}
+		if (null !== $colValue) {
+			// a the specified user function to format the cell
+			$cellValue = $this->valueBuilder($colValue, $cellValue /*, array('row' => $this->partialCount, 'col' => $colIndex ) */ );
+		}
+		
+		if ( !empty($colPartialName) ) {
+			if ( $colPartialOptions instanceof Majisti_Object ) {
+				$colPartialOptions->value = $cellValue;
+				$colPartialOptions->row = $this->partialCount;
+				$colPartialOptions->col = $colIndex;
+			} else {
+				if ( empty($colPartialOptions) ) {
+					$colPartialOptions = array();
+				}
+				// if the cell should be formatted
+				$colPartialOptions['value'] = $cellValue;
+				$colPartialOptions['row'] = $this->partialCount;
+				$colPartialOptions['col'] = $colIndex;
+			}
+	
+			$cellValue = $this->partial($colPartialName, $colPartialOptions);
+		}
+		
+?>
+	<td <?=(isset($colClass)? 'class="' . $colClass . '"' : '') ?>>
+		<?=$cellValue ?>
+	</td>
+<?
+
+	}
+
+	unset($colValue, $colClass, $colPartial, $colPartialName, $colPartialOptions);  // cleanup
+?>
+</tr>
