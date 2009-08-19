@@ -50,9 +50,10 @@ final class Loader
 	private function _setIncludePaths()
 	{
 		set_include_path(implode(PATH_SEPARATOR, array( 
-			realpath($this->_getMajistiTopLevelLibraryPath() . '/../Majisti-lab/library'), /* lab */ 
-			$this->_getMajistiTopLevelLibraryPath() . '/library', /* standard */
-			$this->_getMajistiTopLevelLibraryPath() . '/externals',
+			realpath($this->_getMajistiTopLevelLibraryPath() . '/laboratory/library'), /* laboratory */ 
+			$this->_getMajistiTopLevelLibraryPath() . '/incubator/library', /* incubator */
+			$this->_getMajistiTopLevelLibraryPath() . '/standard/library', /* standard */
+			$this->_getMajistiTopLevelLibraryPath() . '/standard/externals',
 			get_include_path(),
 		)));
 	}

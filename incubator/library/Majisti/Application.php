@@ -107,7 +107,7 @@ class Application extends \Zend_Application
         define('MAJISTI_URL', $request->getScheme() 
             . '://' . $request->getHttpHost() 
             . '/' . MAJISTI_FOLDER_NAME 
-            . '/public');
+            . '/incubator/public');
             
         $this->_defineAliases();
     }
