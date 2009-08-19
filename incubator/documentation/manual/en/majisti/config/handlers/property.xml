@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section 
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" 
+    xml:lang="en" xml:id="majisti.config.handlers.property" version="5.0">
+    
+    <title>Property</title>
+
+    <para>
+        The property handler listens on the properties attribute
+        just like apache ant,
+        consider the following application.ini example:
+     
+    </para>
+     <programlisting role="php"><![CDATA[
+[production]
+
+properties.applicationUrl = APPLICATION_URL
+properties.baseUrl = "#{applicationUrl}MyProject/public"
+properties.imagesUrl = #{baseUrl}/images
+properties.scriptsUrl = #{baseUrl}/scripts
+properties.locale = en
+
+images.thumbsUp = #{imagesUrl}/thumbsUp.png 
+]]></programlisting>
+
+    <para>
+        Every occurences will get replaced with their proper properties.
+    </para>
+</section>
