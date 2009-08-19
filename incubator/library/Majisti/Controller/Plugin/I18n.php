@@ -10,7 +10,7 @@ class I18n extends AbstractPlugin
 {
     public function preDispatch(\Zend_Controller_Request_Abstract $request)
     {
-         print 'I18n controller plugin enabled<br>';
+//         print 'I18n controller plugin enabled<br>';
 //         $config = \Zend_Registry::get('Majisti_Config')->controllerPlugin->I18n;
 //         
 //         \Zend_Debug::dump($config->supportedLanguages);
