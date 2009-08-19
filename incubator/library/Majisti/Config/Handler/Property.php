@@ -41,11 +41,11 @@ class Property implements IHandler
     public function handle(\Zend_Config $config)
     {
         $this->clear();
-        if( isset($config->properties) ) {
-            $this->_loadProperties($config->properties);
+        if( isset($config->property) ) {
+            $this->_loadProperties($config->property);
             $config->merge($this->_parseConfigWithProperties($config, 
                 $this->getProperties()));
-            unset($config->properties);
+            unset($config->property);
         }
         
         return $config;

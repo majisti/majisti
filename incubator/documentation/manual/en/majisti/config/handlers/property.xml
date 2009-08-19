@@ -8,19 +8,19 @@
     <title>Property</title>
 
     <para>
-        The property handler listens on the properties attribute
+        The property handler listens on the property attribute
         just like apache ant,
         consider the following application.ini example:
      
     </para>
-     <programlisting role="php"><![CDATA[
+     <programlisting><![CDATA[
 [production]
 
-properties.applicationUrl = APPLICATION_URL
-properties.baseUrl = "#{applicationUrl}MyProject/public"
-properties.imagesUrl = #{baseUrl}/images
-properties.scriptsUrl = #{baseUrl}/scripts
-properties.locale = en
+property.applicationUrl = APPLICATION_URL
+property.baseUrl = "#{applicationUrl}MyProject/public"
+property.imagesUrl = #{baseUrl}/images
+property.scriptsUrl = #{baseUrl}/scripts
+property.locale = en
 
 images.thumbsUp = #{imagesUrl}/thumbsUp.png 
 ]]></programlisting>

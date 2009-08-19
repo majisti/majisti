@@ -58,7 +58,7 @@ class PropertyTest extends Majisti\Test\PHPUnit\TestCase
         $handler = $this->_propertyHandler;
         $config = $handler->handle($this->_validProperties);
         
-        $this->assertNull($config->properties);
+        $this->assertNull($config->property);
         
         /* properties loaded */
         $this->assertEquals(2, count($handler->getProperties()));
