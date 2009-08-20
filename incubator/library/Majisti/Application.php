@@ -27,7 +27,7 @@ class Application extends \Zend_Application
      */
     public function __construct($applicationPath)
     {
-    	Application\Constants::define($applicationPath);
+    	Application\Constants::defineConstants($applicationPath);
     	
         $config = $this->_loadConfiguration()->{APPLICATION_ENVIRONMENT};
         \Zend_Registry::set('Majisti_Config', $config);

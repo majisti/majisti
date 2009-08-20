@@ -1,8 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <buildpath>
+	<!-- Majisti sources -->
+	<buildpathentry kind="src" path="incubator/library/Majisti"/>
+	<buildpathentry kind="src" path="incubator/library/MajistiX"/>
+	
+	<buildpathentry kind="src" path="laboratory/library/Majisti"/>
+	<buildpathentry kind="src" path="laboratory/library/MajistiX"/>
+	
+	<buildpathentry kind="src" path="standard/library/Majisti"/>
+	<buildpathentry kind="src" path="standard/library/MajistiX"/>
+	
+	<!-- Majisti tests -->
+	<buildpathentry kind="src" path="incubator/tests/Majisti"/>
+	<buildpathentry kind="src" path="incubator/tests/MajistiX"/>
+	
+	<buildpathentry kind="src" path="laboratory/tests/Majisti"/>
+	<buildpathentry kind="src" path="laboratory/tests/MajistiX"/>
+	
+	<buildpathentry kind="src" path="standard/tests/Majisti"/>
+	<buildpathentry kind="src" path="standard/tests/MajistiX"/>
+	
+	<!-- Other libraries -->
 	<buildpathentry kind="con" path="com.zend.php.phpunit.CONTAINER"/>
-	<buildpathentry kind="src" path="library"/>
 	<buildpathentry kind="con" path="org.zend.php.framework.CONTAINER"/>
 	<buildpathentry kind="con" path="org.eclipse.php.core.LANGUAGE"/>
-	<buildpathentry kind="src" path="tests/Majisti"/>
 </buildpath>

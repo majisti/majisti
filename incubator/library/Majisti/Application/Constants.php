@@ -31,7 +31,7 @@ class Constants
      * 
      * @param $applicationPath The application path
      */
-    static public function define($applicationPath)
+    static public function defineConstants($applicationPath)
     {
         define('APPLICATION_PATH', $applicationPath);
         define('APPLICATION_LIBRARY', realpath(APPLICATION_PATH . '/../library'));

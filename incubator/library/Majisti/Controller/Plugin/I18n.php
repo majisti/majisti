@@ -3,50 +3,33 @@
 namespace Majisti\Controller\Plugin;
 
 /**
- *
+ * @desc Listens for a specific URL param (that was setup in the
+ * I18n plugin configuration) and switches locale according to that parameter
+ * 
  * @author Steven Rosato
  */
 class I18n extends AbstractPlugin
 {
+	/**
+	 * @desc Switches to a specific locale according to a request parameter
+	 * that was setup under plugins.i18n.requestParam.
+	 * 
+	 * @throws Exception if the plugins.i18n.requestParam was never
+	 * setup in the configuration
+	 */
     public function preDispatch(\Zend_Controller_Request_Abstract $request)
     {
-//         print 'I18n controller plugin enabled<br>';
-//         $config = \Zend_Registry::get('Majisti_Config')->controllerPlugin->I18n;
-//         
-//         \Zend_Debug::dump($config->supportedLanguages);
+         $i18n 		= new \Majisti\I18n\I18n();
+         $config 	= $this->getConfig()->plugins->i18n;
          
-//        if( $lang = $request->getParam('lang', false) ) {
-//            $i18n = Zend_Registry::get('Majisti_I18n');
-//            
-//            if( $i18n->isLocaleSupported($lang) /* && $i18n->getCurrentLocale() !== $lang*/ ) {
-//                $i18n->switchLocale($lang);
-//                
-//                if( $forward = $request->getParam('forward', false) ) {
-//                    header("Location: {$forward}");
-//                } else {
-//                    header('Location: ' . $this->_reconstructUrl($request));
-//                }
-//                exit;
-//            }
-//        }
-    }
-    
-    
-    private function _reconstructUrl(\Zend_Controller_Request_Abstract $request) {
-        // reconstruct query, remove the lang param only
-//        $query = APPLICATION_URL;
-//        if ('default' != strtolower($request->getModuleName())) {
-//            $query .= '/' . $request->getModuleName();   
-//        }
-//        $query .= '/' . $request->getControllerName()
-//                . '/' . $request->getActionName();
-//        $params = $request->getParams();
-//        if (!empty($params)) {
-//            unset($params['lang'], $params['module'], $params['controller'], $params['action']);
-//            foreach ($params as $paramName => $paramValue) {
-//                $query .= '/' . $paramName . '/' . $paramValue;
-//            }
-//        }
-//        return $query;
+         if( !isset($config->requestParam) ) {
+         	throw new Exception("Request parameter is mandatory in the config");
+         }
+         
+         if( $lang = $request->getParam($config->requestParam, false) ) {
+         	if( $i18n->isLocaleSupported($lang) && $lang !== $i18n->getCurrentLocale() ) {
+         		$i18n->switchLocale($lang);
+         	}
+         }
     }
 }
