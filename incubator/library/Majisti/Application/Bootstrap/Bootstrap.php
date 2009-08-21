@@ -22,6 +22,14 @@ class Bootstrap extends \Zend_Application_Bootstrap_Bootstrap
         $this->_postConstruct();
     }
     
+    protected function _initDispatcher()
+    {
+    	$dispatcher = new \Majisti\Controller\Dispatcher\Standard();
+    	\Zend_Controller_Front::getInstance()->setDispatcher($dispatcher);
+    	
+    	return $dispatcher;
+    }
+    
     /**
      * @desc Anything related after the construction of the bootstrap class
      */
