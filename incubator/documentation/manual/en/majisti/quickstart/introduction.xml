@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section 
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" 
+    xml:lang="en" xml:id="majisti.quickstart.introduction" 
+    version="5.0">
+    
+    <title>Introduction</title>
+
+    <para>
+        Best designs come from needs and not from gaps. That is what
+        Majisti is aiming for, completely using the Zend Framework
+        to achieve its goals, Majisti aims to be very modular
+        in the ways of building applications.
+    </para>
+    <para>
+        The need here is simple, Zend Framework is a component library,
+        aiming to deliver enterprise ready components which covers everything
+        a web application, web service and others would need. Building web
+        applications with it is very simple and cohesive but yet there is still
+        some more needs associated to building those rich applications.
+    </para>
+    <para>
+        By building more and more applications, its easy to define some
+        common abstraction that could occur or at least, repetitive core
+        modules needed in a good rich application. A good rich application
+        may include one or more of the following:
+    </para>
+    
+    <itemizedlist>
+        <listitem>
+            <para>User handling with authentification,
+            	profiles and roles.</para>
+        </listitem>
+        <listitem>
+            <para>User comments, feedbacks, rating on application's resources</para>
+        </listitem>
+        <listitem>
+            <para>Customer administration, where he can manage everything
+            related to its website</para>
+        </listitem>
+        <listitem>
+        	<para>Internationalisation</para>
+        </listitem>
+        <listitem>
+        	<para>And much, much more...</para>
+        </listitem>
+    </itemizedlist>
+    
+    <para>
+    	Zend Framework currently offers module handling, where you can add let's say
+    	a blog module, or a forum module, but that must be build in the application.
+    </para>
+    <para>
+    	What Majisti aims for is a design based sololy on the Template Method
+    	design patterns where abstract application modules start with a default behaviour
+    	and concrete ones fill the algorithm's holes. In other words, let's take
+    	an example of an abstract authentification module which depending on the
+    	global configuration, would handle authentification via a simple form
+    	using the user's login table in a database. The entire process could
+    	need no specification and therefore the default behaviour would suit
+    	the need of the application but at anytime that default implementation
+    	could be tweaked a bit to fit specific needs.
+    </para>
+    
+</section>
