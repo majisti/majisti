@@ -44,10 +44,10 @@ if( extension_loaded('xdebug') ) {
 error_reporting( E_ALL | E_STRICT );
 
 /* Determine the root, library, and tests directories of the framework distribution. */
-$majistiRoot   = realpath(dirname(__FILE__) . '/..');
-$majistiCoreLibrary = "$majistiRoot/library";
-$majistiCoreTests   = "$majistiRoot/tests";
-$zfCoreLibrary        = "$majistiRoot/externals";
+$majistiRoot   = realpath(dirname(__FILE__) . '/../../');
+$majistiCoreLibrary = "$majistiRoot/incubator/library";
+$majistiCoreTests   = "$majistiRoot/incubator/tests";
+$externals        = "$majistiRoot/standard/externals";
 //$pearLibrary        = "$libRoot/Libraries/PEAR/PEAR";
 
 //\PHPUnit_Util_Filter::addDirectoryToFilter($zfCoreLibrary);
@@ -57,9 +57,9 @@ $includePaths = array(
     $majistiRoot,
     $majistiCoreLibrary,
     $majistiCoreTests,
-    $zfCoreLibrary,
-//    $pearLibrary,
+    $externals,
     get_include_path()
+//    $pearLibrary,
 );
 
 set_include_path(implode(PATH_SEPARATOR, $includePaths));
