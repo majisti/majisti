@@ -34,6 +34,9 @@ class Markup extends \Majisti\Util\Model\Stack implements IHandler
             } else {
                 foreach ($this as $markup) {
                     if( !($markup instanceof \Zend_Markup) ) {
+                        $markup = is_object($markup)
+                            ? get_class($markup)
+                            : $markup;
                         throw new \Exception("Markup {$markup} must be an instance
                             of Zend_Markup");
                     }

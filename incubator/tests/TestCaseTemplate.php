@@ -6,14 +6,14 @@ require_once 'TestHelper.php';
 
 /**
  * @desc
- * @author Steven Rosato
+ * @author 
  */
 class ClassNameTest extends \Majisti\Test\PHPUnit\TestCase
 {
     static protected $_class = __CLASS__;
     
     /**
-     * Seupts the test case
+     * Setups the test case
      */
     public function setUp()
     {
