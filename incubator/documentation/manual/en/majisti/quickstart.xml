@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter 
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" 
+    xml:lang="en" xml:id="majisti.quickstart" 
+    version="5.0">
+    
+    <title>Quickstart</title>
+    
+    <para>
+        The quickstart section will explain how to easily use modules
+        to lightweight the business modeling and how to achieve the actual business modeling
+        in a fast and reliable way.
+    </para>
+    
+    <xi:include href="quickstart/creatingAProject.xml">Creating a project</xi:include>
+    <xi:include href="quickstart/configuringTheApplication.xml">Configuring the application</xi:include>
+    <xi:include href="quickstart/businessModeling.xml">Model driven development</xi:include>
+    
+</chapter>

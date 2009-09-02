@@ -27,4 +27,8 @@ images.thumbsUp = #{imagesUrl}/thumbsUp.png
     <para>
         Every occurences will get replaced with their proper properties.
     </para>
+    
+    <para>
+        TODO: This documentation is far from complete yet.
+    </para>
 </section>

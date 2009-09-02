@@ -32,6 +32,7 @@
     
     <!-- START: Chapters -->
     <xi:include href="majisti/introduction.xml" />
+    <xi:include href="majisti/quickstart.xml" />
     <xi:include href="majisti/config.xml" />
     <!-- END: Chapters -->
 </book>
