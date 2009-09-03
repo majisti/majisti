@@ -4,6 +4,9 @@
  * This file should be included with every TestCase.
  *
  * @author Steven Rosato, based on ZF's TestHelper.php
+ * 
+ * TODO: this file is far for completed or reviewed yet, it works
+ * but it is not finished
  */
 
 /* Include PHPUnit dependencies */
@@ -70,6 +73,9 @@ $includePaths = array(
 );
 
 set_include_path(implode(PATH_SEPARATOR, $includePaths));
+
+//TODO: define more paths?
+define('STANDARD_TESTS_PATH', $standardTests);
 
 require_once 'Zend/Loader/Autoloader.php';
 $loader = Zend_Loader_Autoloader::getInstance();
