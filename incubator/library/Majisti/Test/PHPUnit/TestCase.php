@@ -10,7 +10,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
 {
     static protected $_class = __CLASS__;
     
-    static private function getClass()
+    static public function getClass()
     {
         if( __CLASS__ === static::$_class ) {
             throw new Exception('You must override with late static binding the protected static 
@@ -18,6 +18,11 @@ class TestCase extends \PHPUnit_Framework_TestCase
         }
         
         return static::$_class;
+    }
+    
+    static public function setClass($class)
+    {
+        static::$_class = $class;
     }
     
     static public function runAlone($force = false, $arguments = array())

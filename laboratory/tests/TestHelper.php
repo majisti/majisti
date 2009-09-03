@@ -44,23 +44,28 @@ if( extension_loaded('xdebug') ) {
 error_reporting( E_ALL | E_STRICT );
 
 /* Determine the root, library, and tests directories of the framework distribution. */
-$majistiRoot   = realpath(dirname(__FILE__) . '/..');
-$majistiLab         = "$majistiRoot/library";
-$majistiCoreLibrary = realpath("$majistiRoot/../Majisti/library");
-$majistiCoreTests   = "$majistiRoot/tests";
-$zfCoreLibrary        = "$majistiRoot/externals";
-//$pearLibrary        = "$libRoot/Libraries/PEAR/PEAR";
+$majistiRoot   = realpath(dirname(__FILE__) . '/../../');
+
+$majistiLaboratoryLibrary = "$majistiRoot/laboratory/library";
+$majistiIncubatorLibrary = "$majistiRoot/incubator/library";
+$majistiStandardLibrary = "$majistiRoot/standard/library";
+
+$laboratoryTests = "$majistiRoot/laboratory/tests";
+$incubatorTests  = "$majistiRoot/incubator/tests";
+$standardTests   = "$majistiRoot/standard/tests";
+
+$laboratoryExternals    = "$majistiRoot/laboratory/externals";
+$incubatorExternals     = "$majistiRoot/incubator/externals";
+$standardExternals      = "$majistiRoot/standard/externals";
 
 //\PHPUnit_Util_Filter::addDirectoryToFilter($zfCoreLibrary);
 //\PHPUnit_Util_Filter::addDirectoryToWhitelist($majistiCoreLibrary);
 
 $includePaths = array(
     $majistiRoot,
-    $majistiLab,
-    $majistiCoreLibrary,
-    $majistiCoreTests,
-    $zfCoreLibrary,
-//    $pearLibrary,
+    $majistiLaboratoryLibrary, $majistiIncubatorLibrary, $majistiStandardLibrary,
+    $laboratoryTests, $incubatorTests, $standardTests,
+    $laboratoryExternals, $incubatorExternals, $standardExternals,
     get_include_path()
 );
 
@@ -69,8 +74,8 @@ set_include_path(implode(PATH_SEPARATOR, $includePaths));
 require_once 'Zend/Loader/Autoloader.php';
 $loader = Zend_Loader_Autoloader::getInstance();
 
-require_once 'Majisti/Autoloader.php';
-$loader->pushAutoloader(new \Majisti\Autoloader());
+require_once 'Majisti/Loader/Autoloader.php';
+$loader->pushAutoloader(new \Majisti\Loader\Autoloader());
 
 unset($majistiRoot, $majistiCoreLibrary, $majistiCoreTests, $pearLibrary, $includePaths);
 

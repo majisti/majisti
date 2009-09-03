@@ -14,8 +14,11 @@ class Standard extends \Zend_Controller_Dispatcher_Standard
 //
 //        $module = (string) $module;
 //        $path   = rtrim((string) $path, '/\\');
-//
-//        $this->_controllerDirectory[$module][] = $path;
+//        
+//        if( !isset($this->_controllerDirectory[$module])
+//            || false === array_search($path, $this->_controllerDirectory[$module]) ) {
+//            $this->_controllerDirectory[$module][] = $path;
+//        }
 //        
 ////        \Zend_Debug::dump($this->_controllerDirectory);
 //        return $this;
