@@ -2,50 +2,134 @@
 
 namespace Majisti\Controller\Dispatcher;
 
+/**
+ * @desc Majisti's Standard Dispatcher supporting namespaces
+ * and multiple fallback controller directories for one module.
+ * 
+ * @package Majisti\Controller\Dispatcher;
+ * @author Steven Rosato
+ */
 class Standard extends \Zend_Controller_Dispatcher_Standard
 {
-//	protected $_controllerDirectory = array(array());
-	
-//	public function addControllerDirectory($path, $module = null)
-//	{
-//		if (null === $module) {
-//            $module = $this->_defaultModule;
-//        }
-//
-//        $module = (string) $module;
-//        $path   = rtrim((string) $path, '/\\');
-//        
-//        if( !isset($this->_controllerDirectory[$module])
-//            || false === array_search($path, $this->_controllerDirectory[$module]) ) {
-//            $this->_controllerDirectory[$module][] = $path;
-//        }
-//        
-////        \Zend_Debug::dump($this->_controllerDirectory);
-//        return $this;
-//	}
-//	
-//	public function isDispatchable(\Zend_Controller_Request_Abstract $request)
-//    {
-//        $className = $this->getControllerClass($request);
-//        
-//        if (!$className) {
-//            return false;
-//        }
-//
-//        if (class_exists($className, false)) {
-//            return true;
-//        }
-//        \Zend_Debug::dump($this->getDispatchDirectory());
-//
-//        $fileSpec    = $this->classToFilename($className);
-//        $dispatchDirectories = $this->getDispatchDirectory();
-//        
-//        foreach ($dispatchDirectories as $dispatchDir) {
-//        	if( \Zend_Loader::isReadable($dispatchDir . DIRECTORY_SEPARATOR . $fileSpec) ) {
-//        		return true;
-//        	}
-//        }
-//        
-//        return false;
-//    }
+    /**
+     * @desc Additional controller directories
+     * that serve as fallbacks when the controller directory
+     * is not found for a module
+     * @var Array 2 dimentional
+     */
+    protected $_controllerFallbackDirectories = array();
+    
+    /**
+     * @desc Provides support for namespaced controllers.
+     * The last namespace added is the first one checked when
+     * loading the controller class (LIFO)
+     * @var Array
+     */
+    protected $_namespaces = array();
+    
+    public function addFallbackControllerDirectory($path, $module = null)
+    {
+        if( null === $module ) {
+            $module = $this->getDefaultModule();
+        }
+        
+        if( array_key_exists($module, $this->_controllerFallbackDirectories) ) {
+            $this->_controllerFallbackDirectories[$module][] = $path;
+        } else {
+            $this->_controllerFallbackDirectories[$module] = array($path);
+        }
+        
+        return $this;
+    }
+    
+    public function getFallbackControllerDirectory($module = null)
+    {
+        throw new \Majisti\Util\Exception\NotImplementedException();
+    }
+    
+    public function hasFallbackControllerDirectory($module = null)
+    {
+        throw new \Majisti\Util\Exception\NotImplementedException();
+    }
+    
+    public function setFallbackControllerDirectory($path, $module = null)
+    {
+        throw new \Majisti\Util\Exception\NotImplementedException();    
+    }
+    
+    public function resetFallbackControllerDirectory($module = null)
+    {
+        $this->_controllerFallbackDirectories = array();
+    }
+    
+    /**
+     * Load a controller class
+     *
+     * Attempts to load the controller class file from
+     * {@link getControllerDirectory()}.  If the controller belongs to a
+     * module, looks for the module prefix to the controller class.
+     *
+     * @param string $className
+     * @return string Class name loaded
+     * @throws \Zend_Controller_Dispatcher_Exception if class not loaded
+     */
+    public function loadClass($className)
+    {
+        try {
+            $finalClass = parent::loadClass($className);
+        } catch( \Zend_Controller_Dispatcher_Exception $e ) {
+            if (($this->_defaultModule !== $this->_curModule)
+                || $this->getParam('prefixDefaultModule'))
+            {
+                $finalClass = $this->formatClassName($this->_curModule, $className);
+            }
+
+            if (!class_exists($finalClass, false)) {
+                foreach (array_reverse($this->getNamespaces($this->_curModule)) as $namespace) {
+                    if( class_exists($namespace . $finalClass, false) ) {
+                        return $namespace . $finalClass;
+                    }
+                }
+                throw $e;
+            }
+        }
+        
+        return $finalClass;
+    }
+    
+    public function addNamespace($namespace, $module = null)
+    {
+        if( null === $module ) {
+            $module = $this->getDefaultModule();
+        }
+        
+        if( array_key_exists($module, $this->_namespaces) ) {
+            $this->_namespaces[$module][] = $namespace;
+        } else {
+            $this->_namespaces[$module] = array($namespace);
+        }
+        
+        return $this;
+    }
+    
+    
+    public function hasNamespace($module = null) 
+    {
+        if( null === $module ) {
+            $module = $this->getDefaultModule();
+        }
+        
+        return array_key_exists($module, $this->_namespaces);
+    }
+    
+    public function getNamespaces($module = null) 
+    {
+        if( null === $module ) {
+            $module = $this->getDefaultModule();
+        }
+        
+        return $this->hasNamespace($module)
+            ? $this->_namespaces[$module]
+            : array();
+    }
 }
