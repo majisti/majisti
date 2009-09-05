@@ -24,6 +24,8 @@ if( extension_loaded('xdebug') ) {
     ini_set('xdebug.show_local_vars', 0);
 }
 
+ini_set('memory_limit', '128M');
+
 //$it = new RecursiveDirectoryIterator(realpath(dirname(__FILE__) . '/../library/Majisti/'));
 //foreach (new RecursiveIteratorIterator($it) as $file) {
 //    if( substr($file->getFileName(), 0, 1) === 'I' ) {
@@ -78,6 +80,10 @@ require_once 'Majisti/Loader/Autoloader.php';
 $loader->pushAutoloader(new \Majisti\Loader\Autoloader());
 
 unset($majistiRoot, $majistiCoreLibrary, $majistiCoreTests, $pearLibrary, $includePaths);
+
+\Zend_Session::$_unitTestEnabled = true;
+
+//ob_start();
 
 //$zfRoot        = dirname(__FILE__) . '/..';
 //$zfCoreLibrary = "$zfRoot/library";

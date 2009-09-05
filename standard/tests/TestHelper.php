@@ -27,6 +27,8 @@ if( extension_loaded('xdebug') ) {
     ini_set('xdebug.show_local_vars', 0);
 }
 
+ini_set('memory_limit', '1024M');
+
 //$it = new RecursiveDirectoryIterator(realpath(dirname(__FILE__) . '/../library/Majisti/'));
 //foreach (new RecursiveIteratorIterator($it) as $file) {
 //    if( substr($file->getFileName(), 0, 1) === 'I' ) {

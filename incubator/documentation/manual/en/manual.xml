@@ -34,5 +34,6 @@
     <xi:include href="majisti/introduction.xml" />
     <xi:include href="majisti/quickstart.xml" />
     <xi:include href="majisti/config.xml" />
+    <xi:include href="majisti/controller.xml" />
     <!-- END: Chapters -->
 </book>

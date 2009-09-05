@@ -12,7 +12,7 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
 {
     static protected $_class = __CLASS__;
     
-    private $_i18n;
+    protected $_i18n;
     
     /**
      * Setups the test case
