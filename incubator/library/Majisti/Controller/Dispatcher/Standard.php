@@ -44,7 +44,15 @@ class Standard extends \Zend_Controller_Dispatcher_Standard
     
     public function getFallbackControllerDirectory($module = null)
     {
-        throw new \Majisti\Util\Exception\NotImplementedException();
+        if( null === $module ) {
+            $module = $this->getDefaultModule();
+        }
+        
+        if( array_key_exists($module, $this->_controllerFallbackDirectories) ) {
+            return $this->_controllerFallbackDirectories[$module];
+        }
+        
+        return null;
     }
     
     public function hasFallbackControllerDirectory($module = null)
@@ -75,7 +83,19 @@ class Standard extends \Zend_Controller_Dispatcher_Standard
      */
     public function loadClass($className)
     {
+        $fileName = $this->classToFilename($className);
+        $loadFile = $this->getDispatchDirectory() . DIRECTORY_SEPARATOR . $fileName;
+        
         try {
+            if( !\Zend_Loader::isReadable($loadFile) ) {
+                foreach( $this->getFallbackControllerDirectory($this->_curModule) as $dir ) {
+                    if( !\Zend_Loader::isReadable($dir . DIRECTORY_SEPARATOR . $fileName) ) {
+                        continue;
+                    } 
+                    $this->_curDirectory = $dir;
+                    return parent::loadClass($className);
+                }
+            }
             $finalClass = parent::loadClass($className);
         } catch( \Zend_Controller_Dispatcher_Exception $e ) {
             if (($this->_defaultModule !== $this->_curModule)
@@ -95,6 +115,35 @@ class Standard extends \Zend_Controller_Dispatcher_Standard
         }
         
         return $finalClass;
+    }
+    
+    public function isDispatchable(\Zend_Controller_Request_Abstract $request)
+    {
+        $dispatchable = parent::isDispatchable($request);
+        
+        if( !$dispatchable ) {
+            $className = $this->getControllerClass($request);
+            
+            if( !$className ) {
+                return false;
+            }
+            
+            $fileSpec = $this->classToFilename($className);
+            $fallbackDirs = $this->getFallbackControllerDirectory($request->getModuleName());
+            
+            if( null === $fallbackDirs ) {
+                return false;
+            }
+            
+            foreach ($fallbackDirs as $fallbackDir) {
+                $filePath = $fallbackDir . DIRECTORY_SEPARATOR . $fileSpec;
+                if( \Zend_Loader::isReadable($filePath) ) {
+                    return true;
+                }
+            }
+        }
+        
+        return $dispatchable;
     }
     
     public function addNamespace($namespace, $module = null)

@@ -42,7 +42,7 @@ class StandardTest extends \Zend_Controller_Dispatcher_StandardTest
             'users'
         );
         
-        $dispatcher->addFallbackControllerDirectory($this->_filesPath . '/aLibraryUsersModule/controllers');
+        $dispatcher->addFallbackControllerDirectory($this->_filesPath . '/aLibraryUsersModule/controllers', 'users');
         $dispatcher->addNamespace('\aLibrary\Controllers\\', 'users');
         $dispatcher->addNamespace('\anApplication\Controllers\\', 'users');
         
@@ -63,8 +63,6 @@ class StandardTest extends \Zend_Controller_Dispatcher_StandardTest
     
     public function testDispatchNonExistantControllerFallbacksToOtherDirectories()
     {
-        $this->markTestSkipped();
-        
         $request = new \Zend_Controller_Request_Http();
         $request->setModuleName('users')
                 ->setControllerName('list');
@@ -75,9 +73,66 @@ class StandardTest extends \Zend_Controller_Dispatcher_StandardTest
         $this->assertContains('aLibrary\Controllers\Users_ListController::index', $response->getBody());
     }
     
+    /**
+     * 
+     * @expectedException \Zend_Controller_Dispatcher_Exception
+     */
+    public function testDispatchNonExistantControllerButExistantInLibraryWithMissingFallbackThrowsException()
+    {
+        $request = new \Zend_Controller_Request_Http();
+        $request->setModuleName('users')
+                ->setControllerName('presentOnlyInLibrary');
+            
+        $response = new \Zend_Controller_Response_Cli();
+        
+        $this->_dispatcher->dispatch($request, $response);
+    }
+    
+    public function testNonExistantControllerNameIsDispatchableBecauseOfFallbacks()
+    {
+        $request = new \Zend_Controller_Request_Http();
+        $request->setModuleName('users')
+                ->setControllerName('list');
+            
+        $response = new \Zend_Controller_Response_Cli();
+        
+        $this->assertTrue($this->_dispatcher->isDispatchable($request));
+    }
+    
+    public function testNonExistantControllerButExistantInLibraryIsNotDispatchableWithMissingFallback()
+    {
+        $request = new \Zend_Controller_Request_Http();
+        $request->setModuleName('users')
+                ->setControllerName('presentOnlyInLibrary');
+            
+        $response = new \Zend_Controller_Response_Cli();
+        
+        $this->assertFalse($this->_dispatcher->isDispatchable($request, $response));
+    }
+    
+    public function testAddFallbackControllerDirectory()
+    {
+        $this->markTestIncomplete();
+    }
+    
+    public function testSetGetFallbackControllerDirectory()
+    {
+        $this->markTestIncomplete();
+    }
+    
+    public function testHasFallbackControllerDirectory()
+    {
+        $this->markTestIncomplete();
+    }
+    
+    public function testResetFallbackControllerDirectory()
+    {
+        $this->markTestIncomplete();
+    }
+    
     public function testSetGetControllerDirectory()
     {
-        $this->markTestSkipped();
+       $this->markTestIncomplete();
     }
 }
 
