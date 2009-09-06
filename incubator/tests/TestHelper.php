@@ -79,6 +79,13 @@ $loader = Zend_Loader_Autoloader::getInstance();
 require_once 'Majisti/Loader/Autoloader.php';
 $loader->pushAutoloader(new \Majisti\Loader\Autoloader());
 
+//if( version_compare(PHPUnit_Runner_Version::id(), '3.1.6', '>=') ) {
+// Segmentation fault thrown by phpunit?
+//    PHPUnit_Util_Filter::addDirectoryToWhitelist($majistiLaboratoryLibrary);
+//    PHPUnit_Util_Filter::addDirectoryToWhitelist($majistiIncubatorLibrary);
+//    PHPUnit_Util_Filter::addDirectoryToWhitelist($majistiStandardLibrary);
+//}
+
 unset($majistiRoot, $majistiCoreLibrary, $majistiCoreTests, $pearLibrary, $includePaths);
 
 \Zend_Session::$_unitTestEnabled = true;
