@@ -16,6 +16,14 @@ namespace Majisti\Config\Handler;
  * can import one or several other files, wich can themselves import and so on.
  * 
  * TODO: Abstract this class one more level so it may support XML configuration files also.
+ * FIXME: Steven's note: I find this class excellent except that no occurence to
+ * ini configuration files should be referenced. This class should interract
+ * only with \Zend_Config and not with its subsequent children. The test class
+ * may tests Ini or XML just like PropertyTest does though. Be carefull of the allowed
+ * print margin which is 80.
+ * 
+ * TODO: Steven's note: When I meant documentation I meant XML documentation that can be generated
+ * by Phing and Docbook :) though class comments are excellent.
  * 
  * @author Jean-Francois Hamelin
  */
@@ -114,6 +122,14 @@ class Import implements IHandler
      * @param $configPath
      * @param $allowModifications true|false
      * @return Zend_Config_ini
+     * 
+     * FIXME: steven's note: if you can't catch the exception it is probably becuase
+     * you are currently trying to catch \Majisti\Config\Handler\Exception
+     * since you are catching Exception. If you catch \Exception it's gonna
+     * be any php exception and if you catch \Zend_Config_Exception well you are
+     * going to catch the right exception I'm guessing ;). N.B. Do not put any
+     * occurences to Zend_Config_Ini here, it should interact with Zend_Config
+     * only. Note also the case sensitive here that won't work on my linux machine :)
      */
     public function buildConfigFile($configPath, $allowModifications = true)
     {

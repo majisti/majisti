@@ -10,6 +10,7 @@ require_once 'TestHelper.php';
  * @author Steven Rosato
  * 
  * TODO: test xml and array configuration as well
+ * FIXME: Steven's note: class members should be protected
  */
 class ImportTest extends Majisti\Test\PHPUnit\TestCase 
 {

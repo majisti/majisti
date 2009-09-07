@@ -39,6 +39,9 @@ class Standard extends \Zend_Controller_Dispatcher_Standard
             $this->_controllerFallbackDirectories[$module] = array($path);
         }
         
+//        $view = \Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer')->view;
+//        $view->addBasePath(realpath($path . '/../views'));
+        
         return $this;
     }
     
