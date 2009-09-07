@@ -49,6 +49,7 @@ class Import implements IHandler
         if( isset( $config->import ) ) {
             $this->_findImports($config->import);
             $this->_mergeAllImports($config);
+            $this->resolveProperties($config, $this->getAllImportUrls());
             unset($config->import);
         }
         return $config;
@@ -87,6 +88,41 @@ class Import implements IHandler
     public function getImports()
     {
         return $this->_importUrls;
+    }
+    
+    /**
+     * Returns a flat array containing all the import URLs based on the associative array $_importUrls.
+     * @return array a flat array containing all the import URLs.
+     */
+    public function getAllImportUrls()
+    {
+        $imports = array();
+        foreach ($this->_importUrls as $urlSet) {
+            foreach( $urlSet as $url) {
+                if( is_array($url) ) {
+                    foreach( $url as $child ) {
+                        $imports[] = $child;
+                    }
+                } else {
+                    $imports[] = $url;
+                }
+            }
+        }
+        
+        return $imports;
+    }
+    
+    /**
+     * Resolves the properties within the imported configuration files.
+     * 
+     * @param Zend_Config $config
+     * @param array $urls
+     * @return void
+     */    
+    public function resolveProperties(\Zend_Config $config, $urls)
+    {
+        $propertyHandler = new Property();
+        $config = $propertyHandler->handle($config);
     }
     
     /**
@@ -139,8 +175,8 @@ class Import implements IHandler
          */
         try {
             $config = new \Zend_Config_ini($configPath, null, $allowModifications);
-        } catch (Exception $e) {
-            print ( "ERROR! Invalid configuration path specified.  Invalid value given: " . $configPath );
+        } catch (\Zend_Config_Exception $e) {
+            throw new Exception ( "Error: Invalid configuration path specified.  Invalid path given: " . $configPath );
         }
         
         return $config;

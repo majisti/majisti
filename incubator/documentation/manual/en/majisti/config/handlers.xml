@@ -17,4 +17,5 @@
  </para>
  
  <xi:include href="handlers/property.xml" />
+ <xi:include href="handlers/import.xml" />
 </section>

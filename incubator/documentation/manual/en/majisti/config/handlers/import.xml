@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section 
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" 
+    xml:lang="en" xml:id="majisti.config.handlers.import" version="5.0">
+    
+    <title>Import</title>
+
+    <para>
+        The import handler listens on the import attribute in order for a configuration file to request, in other
+        words import, another configuration file with the given path.  This will result in a configuration merge 
+        with all the entries found and overriding will take place if duplicates are found.
+    </para>
+    <para>
+        It is important to know that the child configurations (the imported ones) will override the parents'
+        configuration should there be duplicate entries.  For exemple: 
+    </para>
+     <programlisting><![CDATA[
+		[production]
+		property.applicationPath = /var/www
+		property.baseUrl = #{applicationPath}/someProject/public
+		property.configUrl = ../_files/imports
+		
+		app.dir.applicationPath = #{applicationPath}
+		app.dir.images = #{baseUrl}/images
+		app.dir.root = /
+		
+		import.foo = #{configUrl}/twoLevelImport.ini
+		import.bar = #{configUrl}/threeLevelImport.ini
+	]]></programlisting>
+
+    <para>
+        This file is the parent configuration importing two external configurations.
+        Let's look at the  <filename>twoLevelImport</filename> target the file is requesting: 
+    </para>
+    
+    <programlisting><![CDATA[
+	    app.dir.images = #{baseUrl}/images/OVERRIDEN
+	    app.dir.new = #{baseUrl}/newFolder
+    ]]></programlisting>
+    
+    <para>
+        At the moment of merge, it is expected that the images directory will be overriden by the one 
+        found in the 2nd level file.  Also, a new entry in the Zend_Config object will be created with
+        the <emphasis>app.dir.new</emphasis>.
+    </para>
+    
+    <para>
+        Please note that the importation process is a recursive one, meaning any amount of imports can be made.
+        <emphasis>
+	        It is crucial to name the entries of your configuration files with appropriate names so no 
+	        undesirable overriding occurs.
+        </emphasis>
+    </para>
+    
+    <para>
+        TODO: This documentation is far from complete yet.
+    </para>
+</section>

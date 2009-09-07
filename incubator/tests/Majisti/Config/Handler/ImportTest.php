@@ -10,24 +10,23 @@ require_once 'TestHelper.php';
  * @author Steven Rosato
  * 
  * TODO: test xml and array configuration as well
- * FIXME: Steven's note: class members should be protected
  */
 class ImportTest extends Majisti\Test\PHPUnit\TestCase 
 {
     static protected $_class = __CLASS__;
     
-    private $_validImport;
-    private $_invalidImport;
+    protected $_validImport;
+    protected $_invalidImport;
     
     /**
      * @var Import
      */
-    private $_importHandler;
+    protected $_importHandler;
     
     /**
      * @var Property
      */
-    private $_propertyHandler;
+    protected $_propertyHandler;
     
     /**
      * Setups
@@ -38,7 +37,7 @@ class ImportTest extends Majisti\Test\PHPUnit\TestCase
             dirname(__FILE__) . '/../_files/imports/validImports.ini', 
             'production' ,true);
         $this->_invalidImport = new \Zend_Config_Ini(
-            dirname(__FILE__) . '/../_files/invalidProperty.ini', 
+            dirname(__FILE__) . '/../_files/imports/invalidImports.ini', 
             'production', true);
         
         $this->_propertyHandler = new Property();
@@ -52,25 +51,35 @@ class ImportTest extends Majisti\Test\PHPUnit\TestCase
     {
         $handler = $this->_importHandler;
         
+        /*
+         * Parsing first for the properties then importing the external ini files.
+         */
         $config = $this->_propertyHandler->handle($this->_validImport);
         $config = $handler->handle($this->_validImport);
         
-//        /* Imports loaded */
-//        $this->assertEquals(2, count($handler->getAllImportUrl()));
-//        $this->assertSame('/var/www', $handler->getImportUrl('applicationPath'));
-//        $this->assertSame('/var/www/someProject/public', 
-//            $handler->getImportUrl('baseUrl'));
-//        
-//        /* config content should have been replaced */
-//        $this->assertSame('/var/www', $config->app->dir->applicationPath);
-//        $this->assertSame('/var/www/someProject/public/images', 
-//            $config->app->dir->images);
-//        $this->assertSame('/', $config->app->dir->root);
-//        $this->assertSame('/foo/bar/var/www/baz', 
-//            $config->app->dir->inBetween);
-//        $this->assertSame('/var/var/www/someProject/public/foo/var/www/bar', 
-//            $config->app->dir->dualInBetween);
-//        $this->assertNull($config->app->dir->nonExistantNode);
+        /* Imports loaded */
+        $this->assertEquals(3, count($handler->getAllImportUrls()));
+        
+        /* config content should have been replaced if duplicate entries are found, else new entries are appended. */
+        $this->assertSame('/var/www', $config->app->dir->applicationPath);
+        $this->assertSame('/var/www/someProject/public/images/OVERRIDEN', 
+            $config->app->dir->images);
+        $this->assertSame('/', $config->app->dir->root);
+        $this->assertSame('foo/OVERRIDEN', //Appended as new entry then also overriden
+            $config->app->dir->foo);
+        $this->assertNull($config->app->dir->nonExistantNode);
+    }
+    
+     /**
+     * @desc Asserts that the Ini is loaded correctly and that an exception
+     * is thrown when an invalid import path is declared.
+     * 
+     * @expectedException Majisti\Config\Handler\Exception
+     */
+    public function testHandleWithInvalidImportPath()
+    {
+         $this->_propertyHandler->handle($this->_invalidImport);
+        $this->_importHandler->handle($this->_invalidImport);
     }
 }
 ImportTest::runAlone();
