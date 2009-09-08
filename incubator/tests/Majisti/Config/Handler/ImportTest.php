@@ -55,10 +55,11 @@ class ImportTest extends Majisti\Test\PHPUnit\TestCase
          * Parsing first for the properties then importing the external ini files.
          */
         $config = $this->_propertyHandler->handle($this->_validImport);
-        $config = $handler->handle($this->_validImport);
+        $config = $handler->handle($this->_validImport, true);
+        $config = $this->_propertyHandler->handle($config);
         
         /* Imports loaded */
-        $this->assertEquals(3, count($handler->getAllImportUrls()));
+        $this->assertEquals(4, count($handler->getAllImportUrls()));
         
         /* config content should have been replaced if duplicate entries are found, else new entries are appended. */
         $this->assertSame('/var/www', $config->app->dir->applicationPath);
@@ -78,7 +79,7 @@ class ImportTest extends Majisti\Test\PHPUnit\TestCase
      */
     public function testHandleWithInvalidImportPath()
     {
-         $this->_propertyHandler->handle($this->_invalidImport);
+        $config = $this->_propertyHandler->handle($this->_invalidImport);
         $this->_importHandler->handle($this->_invalidImport);
     }
 }

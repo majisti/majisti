@@ -15,16 +15,6 @@ namespace Majisti\Config\Handler;
  * The Import Handler digs recursively into the configuration files, meaning that a configuration file
  * can import one or several other files, wich can themselves import and so on.
  * 
- * TODO: Abstract this class one more level so it may support XML configuration files also.
- * FIXME: Steven's note: I find this class excellent except that no occurence to
- * ini configuration files should be referenced. This class should interract
- * only with \Zend_Config and not with its subsequent children. The test class
- * may tests Ini or XML just like PropertyTest does though. Be carefull of the allowed
- * print margin which is 80.
- * 
- * TODO: Steven's note: When I meant documentation I meant XML documentation that can be generated
- * by Phing and Docbook :) though class comments are excellent.
- * 
  * @author Jean-Francois Hamelin
  */
 class Import implements IHandler
@@ -38,18 +28,22 @@ class Import implements IHandler
      */
     protected $_importUrls = array();
     
+    protected $_configType;
+    
+    protected $_propertyHandler;
+    
     /**
      * @desc Handles the configuration by finding the import URLs and then merging everything.
      * @param Zend_Config $config
      * @return Zend_Config
      */
-    public function handle(\Zend_Config $config)
+    public function handle(\Zend_Config $config, $resolveProperties = false)
     {
         $this->clear();
         if( isset( $config->import ) ) {
+            $this->setCallerType($config);
             $this->_findImports($config->import);
-            $this->_mergeAllImports($config);
-            $this->resolveProperties($config, $this->getAllImportUrls());
+            $this->_mergeAllImports($config, $resolveProperties);
             unset($config->import);
         }
         return $config;
@@ -113,19 +107,6 @@ class Import implements IHandler
     }
     
     /**
-     * Resolves the properties within the imported configuration files.
-     * 
-     * @param Zend_Config $config
-     * @param array $urls
-     * @return void
-     */    
-    public function resolveProperties(\Zend_Config $config, $urls)
-    {
-        $propertyHandler = new Property();
-        $config = $propertyHandler->handle($config);
-    }
-    
-    /**
      * @desc Merging function that iterates through the $_importUrls array and will merge both
      *       the PARENT URLs (1st importations) and the CHILDREN URLs.
      *       
@@ -136,19 +117,16 @@ class Import implements IHandler
      * @param Zend_Config $config
      * @return void
      */
-    protected function _mergeAllImports(\Zend_Config $config)
+    protected function _mergeAllImports(\Zend_Config $config, $solveProperties)
     {
-        $imports = $this->getImports();
+        $imports = $this->getAllImportUrls();
         foreach($imports as $import) {
-            foreach( $import as $key => $value ) {
-                if( is_array($value) ) {
-                    foreach( $value as $url ) {
-                        $config->merge($this->buildConfigFile($url));
-                    }
-                } else {
-                    $config->merge($this->buildConfigFile($value));
-                }
+            $target = $this->buildConfigFile($import);
+            if( $solveProperties ) {
+                $handler = $this->getPropertyHandler();
+                $handler->handle($target);
             }
+            $config->merge($target);
         }
     }
     
@@ -159,22 +137,13 @@ class Import implements IHandler
      * @param $allowModifications true|false
      * @return Zend_Config_ini
      * 
-     * FIXME: steven's note: if you can't catch the exception it is probably becuase
-     * you are currently trying to catch \Majisti\Config\Handler\Exception
-     * since you are catching Exception. If you catch \Exception it's gonna
-     * be any php exception and if you catch \Zend_Config_Exception well you are
-     * going to catch the right exception I'm guessing ;). N.B. Do not put any
-     * occurences to Zend_Config_Ini here, it should interact with Zend_Config
-     * only. Note also the case sensitive here that won't work on my linux machine :)
      */
     public function buildConfigFile($configPath, $allowModifications = true)
     {
-        /*
-         * FIXME: Not working properly.  If path is invalid, a core Zend Exception is thrown and the custom 
-         * printing never occurs.
-         */
+        
         try {
-            $config = new \Zend_Config_ini($configPath, null, $allowModifications);
+            $type = $this->getCallerType();
+            $config = new $type($configPath, null, $allowModifications);
         } catch (\Zend_Config_Exception $e) {
             throw new Exception ( "Error: Invalid configuration path specified.  Invalid path given: " . $configPath );
         }
@@ -191,10 +160,13 @@ class Import implements IHandler
      */
     protected function _validateDepth($configPath, $parentKey)
     {
+        $imports = $this->getAllImportUrls();
         $tempConfig = $this->buildConfigFile($configPath);
         if( isset( $tempConfig->import ) ) {
             foreach ($tempConfig->import as $url) {
-                $this->_dig($url, $parentKey);
+                if( !in_array($url, $imports) ) {
+                    $this->_dig($url, $parentKey);
+                }
             }
         }
     }
@@ -216,5 +188,23 @@ class Import implements IHandler
                 $this->_dig($url, $parentKey);
             }
         }
+    }
+    
+    public function setCallerType(\Zend_Config $config)
+    {
+        $this->_configType = get_class($config);
+    }
+    
+    public function getCallerType(){
+        return $this->_configType;
+    }
+    
+    public function getPropertyHandler()
+    {
+        if( !isset( $this->_propertyHandler ) ) {
+            $this->_propertyHandler = new Property();
+        }
+        
+        return $this->_propertyHandler;
     }
 }
