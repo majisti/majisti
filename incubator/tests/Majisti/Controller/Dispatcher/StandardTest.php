@@ -81,7 +81,7 @@ class StandardTest extends \Zend_Controller_Dispatcher_StandardTest
     {
         $request = new \Zend_Controller_Request_Http();
         $request->setModuleName('users')
-                ->setControllerName('presentOnlyInLibrary');
+                ->setControllerName('present-only-in-library');
             
         $response = new \Zend_Controller_Response_Cli();
         

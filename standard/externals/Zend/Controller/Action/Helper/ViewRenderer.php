@@ -469,7 +469,7 @@ class Zend_Controller_Action_Helper_ViewRenderer extends Zend_Controller_Action_
 
         // Set options first; may be used to determine other initializations
         $this->_setOptions($options);
-
+        
         // Get base view path
         if (empty($path)) {
             $path = $this->_getBasePath();
@@ -497,6 +497,7 @@ class Zend_Controller_Action_Helper_ViewRenderer extends Zend_Controller_Action_
                 break;
             }
         }
+        
         if (!$pathExists) {
             $this->view->addBasePath($path, $prefix);
         }
@@ -639,6 +640,7 @@ class Zend_Controller_Action_Helper_ViewRenderer extends Zend_Controller_Action_
         } else {
             $this->_setInflectorTarget($this->getViewScriptPathSpec());
         }
+        
         return $this->_translateSpec($vars);
     }
 

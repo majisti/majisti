@@ -46,4 +46,30 @@ class View extends \Zend_View
         }
         return null;
     }
+    
+    protected function _script($name)
+    {
+        try {
+            return parent::_script($name);
+        } catch( \Zend_View_Exception $e ) {
+            $front      = \Zend_Controller_Front::getInstance();
+            $dispatcher = $front->getDispatcher();
+            $request    = $front->getRequest();
+            
+            if( $dispatcher instanceof \Majisti\Controller\Dispatcher\Standard ) {
+                $fallbacks = $dispatcher->getFallbackControllerDirectory('users');
+                
+                if( null !== $fallbacks ) {
+                    foreach ($fallbacks as $fallback) {
+                        $script = realpath($fallback . '/../views/scripts/' . $name);
+                        if( is_readable($script) ) {
+                            return $script;
+                        }
+                    }
+                }
+            }
+            
+            throw $e;
+        }
+    }
 }

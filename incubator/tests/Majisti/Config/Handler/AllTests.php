@@ -19,6 +19,7 @@ class AllTests extends \Majisti\Test\PHPUnit\TestSuite
         $suite = new self('Majisti - Config - Handler - All tests');
         $suite->addTestSuite(__NAMESPACE__ . '\CompositeTest');
         $suite->addTestSuite(__NAMESPACE__ . '\MarkupTest');
+        $suite->addTestSuite(__NAMESPACE__ . '\ImportTest');
         $suite->addTestSuite(__NAMESPACE__ . '\PropertyTest');
         
         return $suite;
