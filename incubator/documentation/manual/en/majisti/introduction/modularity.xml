@@ -46,7 +46,7 @@
                     It is possible to have multiple controller directories under the same module,
                     the latest controller directory always overiding the others, provided that
                     every controller extends the prior ones to ensure extensibility though controllers
-                    still can be rewritten from scratch. See the Module section for more information.
+                    still can be rewritten from scratch. See the MajistiX\Module section for more information.
                 </para>
                 <para>
                     That way, specific actions can be overriden with the use of polymorphism

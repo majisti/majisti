@@ -57,11 +57,12 @@ class View extends \Zend_View
             $request    = $front->getRequest();
             
             if( null !== $request &&
-                $dispatcher instanceof \Majisti\Controller\Dispatcher\Standard ) {
+                $dispatcher instanceof \Majisti\Controller\Dispatcher\IDispatcher ) {
                 $fallbacks = $dispatcher->getFallbackControllerDirectory($request->getModuleName());
                 
                 if( null !== $fallbacks ) {
                     foreach ($fallbacks as $fallback) {
+                        //FIXME: check if views/scripts should be the way to go
                         $script = realpath($fallback . '/../views/scripts/' . $name);
                         if( is_readable($script) ) {
                             return $script;

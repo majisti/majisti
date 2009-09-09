@@ -24,7 +24,6 @@ class Bootstrap extends \Zend_Application_Bootstrap_Bootstrap
     
     protected function _initDispatcher()
     {
-        $this->bootstrap('view');
     	$dispatcher = new \Majisti\Controller\Dispatcher\Standard();
     	$dispatcher->addFallbackControllerDirectory(
     	   MAJISTIX_MODULES_PATH . '/default/controllers');

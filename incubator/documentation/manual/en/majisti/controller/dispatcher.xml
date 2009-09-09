@@ -5,13 +5,13 @@
 
     <title>The Dispatcher</title>
 
-    <para> The dispatcher has been rewritten to comply to the modularity Majisti is trying to
+    <para>The dispatcher has been rewritten to comply to the modularity Majisti is trying to
         accomplish. The only difference is that it is possible to have multiple controller
         directories under the same module. When it is dispatched, it will use its list of controller
         directories and fallback to the next one each time the directory does not exist. That way,
-        it would be possible to extend entire modules in another library by adding or redefining
+        it is possible to extend entire modules in another library by adding or redefining
         controllers, models, views in the application's or user's library without having to import
-        all the files of that actual module. </para>
+        all the files of that actual module.</para>
     
     <example>
         <title>Multiple controller directories</title>
@@ -28,6 +28,8 @@ MajistiC
                 ... //bunch of other controllers
             models
             views
+                comments
+                    index.phtml
         AnotherModule
             ...
 ]]></programlisting>
@@ -43,22 +45,23 @@ application
             controllers
                 CommentsController.php
                 NewControllerNotContainedInShippedModule.php
-                ...
         ... //other modules
 ]]></programlisting>
     
-        <para>You added the module into your configuration file:</para>
+        <para>For the fallback process you need to add in your config file the following:</para>
     
         <programlisting><![CDATA[
-resources.frontController.controllerDirectory[blog] = MAJISTIX_MODULES_PATH "/blog/controllers"        
-resources.frontController.controllerDirectory[blog] = APPLICATION_PATH "/blog/controllers"        
+resources.frontController.controllerDirectory[blog] = APPLICATION_PATH "/blog/controllers"
+resources.dispatcher.fallbackControllerDirectory[blog][] = MAJISTIX_MODULES_PATH "/blog/controllers"        
 ]]></programlisting>
     
         <para>Extending controllers would simply require that you extend the one
             you wish to redefine behaviour:</para>
 
         <programlisting><![CDATA[
-namespace MyApplication\Modules\Blog;
+namespace MyApplication\Modules\Blog; //wrapping in a namespace is optionnal
+
+require_once MAJISTIX_MODULES_PATH . '/blog/controllers/CommentsController.php';
 
 class CommentsController extends \Majisti\Modules\Blog\CommentsController  
 {
@@ -68,12 +71,19 @@ class CommentsController extends \Majisti\Modules\Blog\CommentsController
     }
 }
 ]]></programlisting>
-        
     </example>
     
-    <note><para>Notice here that Zend's Standard Dispatcher would only add the last
-        controller directory which in this example would be the
-        application's blog controller directory but with Majisti's
-        Standard Dispatcher it will append them.
-    </para></note>
+    <para>Namespacing controllers is also a feature supported by the dispatcher.
+        Whenever you namespace you controllers be sure to add it to your config: 
+    </para>
+    
+    <programlisting><![CDATA[
+resources.dispatcher.namespace[] = "\MyApplication\Modules\Blog\"
+]]></programlisting>
+    
+    <para>Modules officially supported will have their namespace added whenever
+        a module is added in the configuration. Adding the blog module would then
+        add the <classname>\Majisti\Modules\Blog</classname> namespace to
+        the dispatcher.
+    </para>
 </section>

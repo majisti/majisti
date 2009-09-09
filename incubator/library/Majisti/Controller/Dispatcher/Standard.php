@@ -9,7 +9,7 @@ namespace Majisti\Controller\Dispatcher;
  * @package Majisti\Controller\Dispatcher;
  * @author Steven Rosato
  */
-class Standard extends \Zend_Controller_Dispatcher_Standard
+class Standard extends \Zend_Controller_Dispatcher_Standard implements IDispatcher
 {
     /**
      * @desc Additional controller directories

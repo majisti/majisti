@@ -7,16 +7,16 @@
     
     <title>Introduction</title>
     
-    <para>
+    <note><para>
         Note that you should be already familiar with Zend Framework
         since this library is actually using it for its deployment. Moreover,
         Zend Frameworks terms are used in this documentation without explicitely
-        defining what they do since it should be already knowns. For example,
+        defining what they do since it should be already known. For example,
         Zend_Application is used, but not described on how to configure it, only
         how to configure Majisti_Application. Another example would be an official
         module that uses Zend_Acl, it is considered that such components is already
         well known.
-    </para>
+    </para></note>
     
     <xi:include href="introduction/preface.xml" />
     <xi:include href="introduction/goals.xml" />
