@@ -82,6 +82,8 @@ class StandardTest extends \Zend_Controller_Dispatcher_StandardTest
         $request = new \Zend_Controller_Request_Http();
         $request->setModuleName('users')
                 ->setControllerName('present-only-in-library');
+                
+        $this->_dispatcher->resetFallbackControllerDirectory();
             
         $response = new \Zend_Controller_Response_Cli();
         
@@ -133,6 +135,11 @@ class StandardTest extends \Zend_Controller_Dispatcher_StandardTest
     public function testSetGetControllerDirectory()
     {
        $this->markTestIncomplete();
+    }
+    
+    public function testSanelyDiscardOutputBufferOnException()
+    {
+        $this->markTestSkipped();
     }
 }
 

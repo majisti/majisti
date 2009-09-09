@@ -56,8 +56,9 @@ class View extends \Zend_View
             $dispatcher = $front->getDispatcher();
             $request    = $front->getRequest();
             
-            if( $dispatcher instanceof \Majisti\Controller\Dispatcher\Standard ) {
-                $fallbacks = $dispatcher->getFallbackControllerDirectory('users');
+            if( null !== $request &&
+                $dispatcher instanceof \Majisti\Controller\Dispatcher\Standard ) {
+                $fallbacks = $dispatcher->getFallbackControllerDirectory($request->getModuleName());
                 
                 if( null !== $fallbacks ) {
                     foreach ($fallbacks as $fallback) {

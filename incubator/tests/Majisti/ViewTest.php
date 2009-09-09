@@ -4,14 +4,16 @@ namespace Majisti;
 
 require_once 'TestHelper.php';
 
+if( !defined('PHPUnit_MAIN_METHOD') ) {
+    define("PHPUnit_MAIN_METHOD", false);
+}
+
 /**
  * @desc
- * @author 
+ * @author Steven Rosato
  */
-class ViewTest extends \Majisti\Test\PHPUnit\TestCase
+class ViewTest extends \Zend_ViewTest
 {
-    static protected $_class = __CLASS__;
-    
     public $basePath;
     
     public $view;
@@ -24,19 +26,24 @@ class ViewTest extends \Majisti\Test\PHPUnit\TestCase
     
     public $response;
     
+    static public function runAlone()
+    {
+        \Majisti\Test\PHPUnit\TestCase::setClass(__CLASS__);
+        \Majisti\Test\PHPUnit\TestCase::runAlone();
+    }
+    
     /**
      * Setups the test case
      */
     public function setUp()
     {
+        parent::setUp();
+        
         $this->basePath = dirname(__FILE__) . 
             str_replace('/', DIRECTORY_SEPARATOR, '/Controller/_files');
         
         $this->front = \Zend_Controller_Front::getInstance();
             
-        $this->_prepareDispatcher();
-        $this->_prepareFront();
-        
         \Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer')
             ->setView($this->_getView());
     }
@@ -54,6 +61,9 @@ class ViewTest extends \Majisti\Test\PHPUnit\TestCase
         
         $this->request  = new \Zend_Controller_Request_Http();
         $this->response = new \Zend_Controller_Response_Http();
+        
+        $this->front->setRequest($this->request);
+        $this->front->setResponse($this->response);
         
         $this->front->setControllerDirectory(array(
             'default' => $this->basePath,
@@ -74,20 +84,28 @@ class ViewTest extends \Majisti\Test\PHPUnit\TestCase
     
     public function testScriptNotContainedInApplicationButInLibraryDispatchesCorrectly()
     {
+        $this->_prepareDispatcher();
+        $this->_prepareFront();
+        
         $this->request
             ->setModuleName('users')
             ->setControllerName('present-in-both')
             ->setActionName('index');
             
         try {
-            $this->dispatcher->dispatch($this->request, $this->response);    
+            $this->dispatcher->dispatch($this->request, $this->response);
         } catch( \Zend_View_Exception $e ) {
             $this->fail('present-in-both/index.phtml should be found in the alibrary view scripts');
         }
         
         $this->assertContains('aLibrary\Users_PresentInBothController::index.phtml script was called',
             $this->response->getBody());
-        $this->assertNotContains('anApplication', $this->response->getBody());    
+        $this->assertNotContains('anApplication', $this->response->getBody());
+    }
+    
+    public function testRenderSubTemplates()
+    {
+        $this->markTestSkipped();
     }
 }
 
