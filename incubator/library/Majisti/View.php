@@ -3,17 +3,17 @@
 namespace Majisti;
 
 /**
- * Adds directly the 'underscore' method to the view
- * adding the possibility to translate with the helper.
- * 
- * TODO: doc
+ * @desc The core view class adding more behaviour to the traditional
+ * {@link \Zend_View} by providing the underscore function for traduction and
+ * the support for multiple fallback directories for view scripts (according
+ * to the standard dispatcher).
  *
  * @author Steven Rosato
  */
 class View extends \Zend_View 
 {
     /**
-     * Traduction function
+     * @desc Traduction function that proxies to the translate view helper.
      * 
      * @param string $messageId The message to translate
      * @param string|Zend_Locale $locale (Optional)
@@ -29,16 +29,30 @@ class View extends \Zend_View
         }
     }
     
+    /**
+     * @desc Returns whether if a translator is registered with this view
+     * @return boolean True if a translator is registered.
+     */
     public function hasTranslator()
     {
         return \Zend_Registry::isRegistered('Zend_Translate');
     }
     
-    public function setTranslator($translate)
+    /**
+     * @desc Sets the translator
+     * @param \Zend_Translate $translate The translator
+     * @return View this
+     */
+    public function setTranslator(\Zend_Translate $translate)
     {
         \Zend_Registry::set('Zend_Translate', $translate);
+        return $this;
     }
     
+    /**
+     * @desc Returns the translator
+     * @return \Zend_Translate
+     */
     public function getTranslator()
     {
         if( $this->hasTranslator() ) {
@@ -47,6 +61,15 @@ class View extends \Zend_View
         return null;
     }
     
+    /**
+     * @desc Fallbacks to the Dispatcher's controller directories whenever
+     * a script is not found in the default controller directory. Provided that
+     * the front controller's dispatcher is an instance of 
+     * Majisti\Dispatcher\IDispatcher
+     * 
+     * @param $name The script name to find
+     * @return string The script name
+     */
     protected function _script($name)
     {
         try {
@@ -55,7 +78,8 @@ class View extends \Zend_View
             $front      = \Zend_Controller_Front::getInstance();
             $dispatcher = $front->getDispatcher();
             $request    = $front->getRequest();
-            
+
+            /* fallback to the dispatcher's controller directories */
             if( null !== $request &&
                 $dispatcher instanceof \Majisti\Controller\Dispatcher\IDispatcher ) {
                 $fallbacks = $dispatcher->getFallbackControllerDirectory($request->getModuleName());

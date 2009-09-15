@@ -26,7 +26,7 @@ class DefaultBuilder extends BuilderAbstract
         //TODO: use internationalised modules/controllers/actions name for default title generation
         $head .= $this->getView()->headTitle('Majisti');
         
-        $head . $this->getView()->headScript();
+        $head .= $this->getView()->headScript();
         
         return "<head>{$head}</head>{$dom}";
         

@@ -22,6 +22,11 @@ class Bootstrap extends \Zend_Application_Bootstrap_Bootstrap
         $this->_postConstruct();
     }
     
+    /**
+     * @desc Inits the standard dispatcher that supports multiple controller
+     * directories for a single module and PHP namespaces.
+     * @return \Majisti\Dispatcher\Standard The dispatcher
+     */
     protected function _initDispatcher()
     {
     	$dispatcher = new \Majisti\Controller\Dispatcher\Standard();

@@ -3,7 +3,7 @@
 namespace Majisti\Loader;
 
 /**
- * Fast implementation of PHP 5.3+ namespace autoloading. Zend will
+ * @desc Fast implementation of PHP 5.3+ namespace autoloading. Zend will
  * probably release something so this class is lightly tested and
  * will surely eventually get deprecated.
  * 
