@@ -20,27 +20,40 @@ class Property implements IHandler
     protected $_properties = array();
     
     /**
-     * @desc Needed for stack tracing when calling a property fails
+     * @desc Needed for stack tracing when calling a property throws an
+     * exception
      * @var array
      */
     protected $_passedKeys;
     
     /**
-     * @desc Syntax used for calling defined properties. 'id' serves as the 
-     * delimiter.
-     * @var string
+     * @desc Syntax used for calling defined properties.
+     * @var array Associative array with prefix and postfix
      */
-    protected $_syntax = '#{id}';
+    protected $_syntax = array(
+        'prefix'    => '#{', 
+        'postfix'   => '}'
+    );
     
     /**
      * @desc Handles the configuration by parsing it for properties
      * and replacing the called properties in values afterwards.
+     * 
+     * As long as the handler is not cleared, everytime the handle function
+     * is called, it will stack up or override prexisting properties
+     * and therefore the detected one in the new config will get replaced.
+     * 
+     * @see clear() For clearing the properties
      * @param Zend_Config $config
+     * @param boolean Clear properties before parsing
      * @return Zend_Config
      */
-    public function handle(\Zend_Config $config)
+    public function handle(\Zend_Config $config, $clearPropertiesFirst = false)
     {
-//        $this->clear();
+        if( $clearPropertiesFirst ) {
+            $this->clear();
+        }
+        
         if( isset($config->property) ) {
             $this->_loadProperties($config->property);
             $config->merge($this->_parseConfigWithProperties($config, 
@@ -88,11 +101,23 @@ class Property implements IHandler
     
     /**
      * @desc Sets the properties.
-     * @param array $properties The properties
+     * 
+     * Ex: array('applicationPath' => '/var/www/myProject');
+     * 
+     * @param array $properties The properties as an id => value paired
+     * array
+     * @param boolean $stackUp [optional] whether to stakp up the given properties, same
+     * keys will override previous values.
+     * 
+     * @return Property this
      */
-    protected function _setProperties(array $properties)
+    public function setProperties(array $properties, $stackUp = true)
     {
-        $this->_properties = $properties;
+        $this->_properties = $stackUp
+            ? array_merge($this->_properties, $properties)
+            : $properties;
+        
+        return $this;
     }
     
     /**
@@ -106,7 +131,7 @@ class Property implements IHandler
     
     /**
      * @desc Returns the syntax used for calling declared properties.
-     * @return string The syntax
+     * @return Array Associative array with prefix and postfix keys
      */
     public function getSyntax()
     {
@@ -115,28 +140,31 @@ class Property implements IHandler
     
     /**
      * @desc Sets the syntax for calling defined properties
-     * @param $prefix
-     * @param $suffix
+     * @param string $prefix The prefix
+     * @param string $suffix The postfix
      * @return Property this
      */
-    public function setSyntax($prefix, $suffix)
+    public function setSyntax($prefix, $postfix)
     {
-        $this->_syntax = (string) $prefix . 'id' . (string) $suffix;
+        $this->_syntax = array(
+            'prefix'    => $prefix,
+            'postfix'   => $postfix
+        );
         
         return $this;
     }
     
     /**
-     * @desc Fetches all the declared properties in the Majisti's properties
+     * @desc Fetches all the declared properties in the properties
      * section, and stores them in this configuration's properties bag
      * and replaces the found keys' values inside the config provided
      *
      * @param \Zend_Config $properties A \Zend_Config loaded only with the 
-     *  properties
+     * properties
      */
     protected function _loadProperties(\Zend_Config $properties)
     {
-        $this->_setProperties($this->_resolveProperties($properties->toArray()));
+        $this->setProperties($this->_resolveProperties($properties->toArray()));
     }
     
     /**
@@ -214,12 +242,13 @@ class Property implements IHandler
      */
     protected function _findPropertiesWithinValue($value)
     {
-        $syntaxParts = explode('id', $this->getSyntax(), 2);
-
-        $syntaxPreffix  = preg_quote($syntaxParts[0]);
-        $syntaxSuffix   = preg_quote($syntaxParts[1]);
+        $syntax = $this->getSyntax();
         
-        preg_match_all("/{$syntaxPreffix}(.*){$syntaxSuffix}/U", $value, $matches);
+
+        $syntaxPrefix  = preg_quote($syntax['prefix']);
+        $syntaxPostfix = preg_quote($syntax['postfix']);
+        
+        preg_match_all("/{$syntaxPrefix}(.*){$syntaxPostfix}/U", $value, $matches);
         
         if( !count($matches[0]) ) {
             $matches = array();

@@ -1,7 +1,6 @@
 <?php
 
 namespace Majisti\Config\Handler;
-use Majisti as Majisti;
 
 require_once 'TestHelper.php';
 
@@ -9,45 +8,47 @@ require_once 'TestHelper.php';
  * @desc Property test case
  * @author Steven Rosato
  * 
- * TODO: test xml and array configuration as well
+ * TODO: test xml and array configuration as well for the syntax.
  */
-class PropertyTest extends Majisti\Test\PHPUnit\TestCase 
+class PropertyTest extends \Majisti\Test\PHPUnit\TestCase 
 {
     static protected $_class = __CLASS__;
     
-    private $_validProperties;
-    private $_secondValidProperties;
-    private $_invalidProperty;
-    private $_invalidNestedProperty;
-    private $_invalidCalledProperty;
+    /* files paths */
+    protected $_validProperties;
+    protected $_secondValidProperties;
+    protected $_invalidProperty;
+    protected $_invalidNestedProperty;
+    protected $_invalidCalledProperty;
     
     /**
      * @var Property
      */
-    private $_propertyHandler;
+    public $propertyHandler;
+    
+    public $basePath;
     
     /**
-     * Setups
+     * @desc Setups the required files
      */
     public function setUp()
     {
-        $this->_validProperties = new \Zend_Config_Ini(
-            dirname(__FILE__) . '/../_files/validProperties.ini', 
-            'production' ,true);
-        $this->_secondValidProperties = new \Zend_Config_Ini(
-            dirname(__FILE__) . '/../_files/secondValidProperties.ini', 
-            'production' ,true);
-        $this->_invalidProperty = new \Zend_Config_Ini(
-            dirname(__FILE__) . '/../_files/invalidProperty.ini', 
-            'production', true);
-        $this->_invalidNestedProperty = new \Zend_Config_ini(
-            dirname(__FILE__) . '/../_files/invalidNestedProperty.ini', 
-            'production', true);
-        $this->_invalidCalledProperty = new \Zend_Config_ini(
-            dirname(__FILE__) . '/../_files/invalidCalledProperty.ini', 
-            'production', true);
+        $this->basePath = dirname(__FILE__) . '/../_files/property';
         
-        $this->_propertyHandler = new Property();
+        $this->_validProperties = new \Zend_Config_Ini(
+            $this->basePath . '/validProperties.ini', 'production' ,true);
+        $this->_secondValidProperties = new \Zend_Config_Ini(
+            $this->basePath . '/secondValidProperties.ini', 'production' ,true);
+        $this->_invalidProperty = new \Zend_Config_Ini(
+            $this->basePath . '/invalidProperty.ini', 'production', true);
+        $this->_invalidNestedProperty = new \Zend_Config_Ini(
+            $this->basePath . '/invalidNestedProperty.ini', 'production', true);
+        $this->_invalidCalledProperty = new \Zend_Config_Ini(
+            $this->basePath . '/invalidCalledProperty.ini', 'production', true);
+        $this->_noProperties = new \Zend_Config_Ini(
+            $this->basePath . '/noProperties.ini', 'production', true);
+        
+        $this->propertyHandler = new Property();
     }
     
     /**
@@ -59,11 +60,11 @@ class PropertyTest extends Majisti\Test\PHPUnit\TestCase
      */
     public function testHandle()
     {
-        $handler = $this->_propertyHandler;
+        $handler = $this->propertyHandler;
         $config = $handler->handle($this->_validProperties);
         
-        $this->assertNotSame(array(), $handler->getProperties());
-        
+        /* properties should have been loaded correctly */
+        $this->assertNotEquals(array(), $handler->getProperties());
         $this->assertNull($config->property);
         
         /* properties loaded */
@@ -84,57 +85,82 @@ class PropertyTest extends Majisti\Test\PHPUnit\TestCase
         $this->assertSame('/var/var/www/someProject/public/foo/var/www/bar', 
             $config->app->dir->dualInBetween);
         $this->assertNull($config->app->dir->nonExistantNode);
+        
+        /* make sure that passing true as second parameter clears the properties */
+        $handler->handle($this->_noProperties, true);
+        $this->assertEquals(array(), $handler->getProperties());
     }
     
-    public function testHandleMoreThanOneTimeWillStackUpProperties()
+    /**
+     * @desc Properties must stack up or override others as long as 
+     * {@link Property::cleared()} is not called
+     */
+    public function testHandleConfigMoreThanOneTimeWillStackUpAndOverrideProperties()
     {
-        $handler = $this->_propertyHandler;
+        $handler = $this->propertyHandler;
         
         $handler->handle($this->_validProperties);
         $handler->handle($this->_secondValidProperties);
         
-        $this->assertContains('applicationPath', $handler->getProperties());
-        $this->assertContains('baseUrl', $handler->getProperties());
-        $this->assertContains('foo', $handler->getProperties());
-    }
-    
-    public function testClear()
-    {
-        $this->markTestIncomplete();
+        $expectedProperties = array(
+            'applicationPath'   => '/var/www',
+            'baseUrl'           => '/var/www/someProject/public',
+            'foo'               => 'foo'
+        );
+        
+        $this->assertSame($expectedProperties, $handler->getProperties());
     }
     
     /**
-     * @desc Asserts that the Ini is loaded correctly and that an exception
+     * @desc Asserts that the properties get cleared.
+     */
+    public function testClear()
+    {
+        $handler = $this->propertyHandler;
+        
+        $handler->handle($this->_validProperties);
+        $handler->clear();
+        $this->assertSame(array(), $handler->getProperties());
+    }
+    
+    /**
+     * @desc Asserts that the config is loaded correctly and that an exception
      * is thrown when a invalid property is declared.
+     * 
+     * TODO: multiple config type testing
      * 
      * @expectedException Majisti\Config\Handler\Exception
      */
     public function testHandleWithInvalidProperty()
     {
-        $this->_propertyHandler->handle($this->_invalidProperty);
+        $this->propertyHandler->handle($this->_invalidProperty);
     }
     
     /**
-     * @desc Asserts that the Ini is loaded correctly and that
+     * @desc Asserts that the config is loaded correctly and that
      * an exception is thrown when an invalid nested
      * property is declared.
+     * 
+     * TODO: multiple config type testing
      * 
      * @expectedException Majisti\Config\Handler\Exception
      */
     public function testHandleWithInvalidNestedProperty()
     {
-        $this->_propertyHandler->handle($this->_invalidNestedProperty);
+        $this->propertyHandler->handle($this->_invalidNestedProperty);
     }
     
     /**
-     * @desc Asserts that the Ini is loaded correctly and that an
+     * @desc Asserts that the config is loaded correctly and that an
      * exception is thrown when an invalid property is called.
+     * 
+     * TODO: multiple config type testing
      * 
      * @expectedException Majisti\Config\Handler\Exception
      */
     public function testHandleWithInvalidCalledProperty()
     {
-        $this->_propertyHandler->handle($this->_invalidCalledProperty);
+        $this->propertyHandler->handle($this->_invalidCalledProperty);
     }
     
     /**
@@ -142,31 +168,47 @@ class PropertyTest extends Majisti\Test\PHPUnit\TestCase
      */
     public function testPropertiesAccessorsMutators()
     {
-        $handler = $this->_propertyHandler;
+        $handler = $this->propertyHandler;
         $handler->handle($this->_validProperties);
+        $expectedProperties = array(
+            'applicationPath'     => '/var/www',
+            'baseUrl'            => '/var/www/someProject/public'
+        );
         
         $this->assertEquals(2, count($handler->getProperties()));
         $this->assertTrue($handler->hasProperties());
-        $this->assertSame(array(
-            'applicationPath'     => '/var/www',
-            'baseUrl'            => '/var/www/someProject/public'
-        ), $handler->getProperties());
+        $this->assertSame($expectedProperties, $handler->getProperties());
         $this->assertSame('/var/www', $handler->getProperty('applicationPath'));
-        
         $this->assertNull($handler->getProperty('nonExistantProperty'));
+        
+        $handler->setProperties($expectedProperties);
+        $this->assertSame($expectedProperties, $handler->getProperties());
     }
     
     /**
-     * Test multiple property syntaxs for property parsing
+     * @desc Test multiple property syntaxs for property parsing
      */
-    public function testSyntax() 
+    public function testGetSetSyntax() 
     {
-        $handler = $this->_propertyHandler;
-        $handler->handle($this->_validProperties);
+        $handler = $this->propertyHandler;
+        $expectedSyntax = array(
+            'prefix'    => '#{',
+            'postfix'   => '}'
+        );
         
+        $this->assertSame($expectedSyntax, $handler->getSyntax());
+        
+        $handler->handle($this->_validProperties);
         $handler->setSyntax('#{', '}');
         
-        $this->markTestIncomplete();
+        $this->assertSame($expectedSyntax, $handler->getSyntax());
+        
+        /* test that no properties get resolved with a different syntax */
+        $handler->setSyntax('${', '}');
+        $handler->clear();
+        $handler->handle($this->_validProperties);
+        
+        $this->assertEquals(array(), $handler->getProperties());
     }
 }
 
