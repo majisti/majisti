@@ -16,6 +16,7 @@ class PropertyTest extends Majisti\Test\PHPUnit\TestCase
     static protected $_class = __CLASS__;
     
     private $_validProperties;
+    private $_secondValidProperties;
     private $_invalidProperty;
     private $_invalidNestedProperty;
     private $_invalidCalledProperty;
@@ -32,6 +33,9 @@ class PropertyTest extends Majisti\Test\PHPUnit\TestCase
     {
         $this->_validProperties = new \Zend_Config_Ini(
             dirname(__FILE__) . '/../_files/validProperties.ini', 
+            'production' ,true);
+        $this->_secondValidProperties = new \Zend_Config_Ini(
+            dirname(__FILE__) . '/../_files/secondValidProperties.ini', 
             'production' ,true);
         $this->_invalidProperty = new \Zend_Config_Ini(
             dirname(__FILE__) . '/../_files/invalidProperty.ini', 
@@ -58,6 +62,8 @@ class PropertyTest extends Majisti\Test\PHPUnit\TestCase
         $handler = $this->_propertyHandler;
         $config = $handler->handle($this->_validProperties);
         
+        $this->assertNotSame(array(), $handler->getProperties());
+        
         $this->assertNull($config->property);
         
         /* properties loaded */
@@ -78,6 +84,23 @@ class PropertyTest extends Majisti\Test\PHPUnit\TestCase
         $this->assertSame('/var/var/www/someProject/public/foo/var/www/bar', 
             $config->app->dir->dualInBetween);
         $this->assertNull($config->app->dir->nonExistantNode);
+    }
+    
+    public function testHandleMoreThanOneTimeWillStackUpProperties()
+    {
+        $handler = $this->_propertyHandler;
+        
+        $handler->handle($this->_validProperties);
+        $handler->handle($this->_secondValidProperties);
+        
+        $this->assertContains('applicationPath', $handler->getProperties());
+        $this->assertContains('baseUrl', $handler->getProperties());
+        $this->assertContains('foo', $handler->getProperties());
+    }
+    
+    public function testClear()
+    {
+        $this->markTestIncomplete();
     }
     
     /**

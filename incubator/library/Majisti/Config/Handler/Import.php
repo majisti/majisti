@@ -3,10 +3,12 @@
 namespace Majisti\Config\Handler;
 
 /**
- * @desc Import Handler enabling a [ini] configuration file to import 
- * another [ini] configuration file and merging the files into the current Zend_Config object.
- * The import handler will merge on an ascendant manner, overriding the parent configuration 
- * values, if necessary, with the children configuration files imported.
+ * @desc Import handler enabling a configuration file to import 
+ * another configuration file and 
+ * merging the files into the current \Zend_Config object.
+ * The ImportHandler will merge on an ascendant manner, overriding the parent 
+ * configuration values, if necessary, 
+ * with the children configuration files imported.
  * 
  * Ex:  A core module calling upon the Users module, thus importing it's configuration file, will cause
  *      the core configuration values to be overriden by the Users' configuration values if duplicate
@@ -14,6 +16,8 @@ namespace Majisti\Config\Handler;
  * 
  * The Import Handler digs recursively into the configuration files, meaning that a configuration file
  * can import one or several other files, wich can themselves import and so on.
+ * 
+ * Note: Circular importing is not supported.
  * 
  * @author Jean-Francois Hamelin
  */
@@ -30,14 +34,14 @@ class Import implements IHandler
     
     protected $_configType;
     
-    protected $_propertyHandler;
+    protected $_compositeHandler;
     
     /**
      * @desc Handles the configuration by finding the import URLs and then merging everything.
      * @param Zend_Config $config
      * @return Zend_Config
      */
-    public function handle(\Zend_Config $config, $resolveProperties = false)
+    public function handle(\Zend_Config $config, $compositeHandler = null)
     {
         $this->clear();
         if( isset( $config->import ) ) {
@@ -69,7 +73,7 @@ class Import implements IHandler
     protected function _findImports(\Zend_Config $config, $resolveProperties)
     {
         foreach( $config as $key => $value ) {
-            $this->_importUrls[$key]["parent"] = $value;
+            $this->_importUrls[$key]['parent'] = $value;
             $this->_validateDepth($value, $key, $resolveProperties);
         }
     }
@@ -79,16 +83,22 @@ class Import implements IHandler
      * @see The array's structure above at variable declaration.
      * @return array The import URLs
      */
-    public function getImports()
+//    public function getImports()
+//    {
+//        return $this->_importUrls;
+//    }
+    
+    public function getUrls()
     {
-        return $this->_importUrls;
+        return $this->getFlatArray();
     }
     
     /**
-     * Returns a flat array containing all the import URLs based on the associative array $_importUrls.
-     * @return array a flat array containing all the import URLs.
+     * @desc Returns the import URLs
+     * @deprecated Steven
+     * @return array The import URLs
      */
-    public function getFlatArray($importsArray)
+    public function getFlatArray()
     {
         $imports = array();
         foreach ($importsArray as $urlSet) {
@@ -126,21 +136,26 @@ class Import implements IHandler
     }
     
     /**
-     * @desc Attempts to build a Zend_Config_ini object with the specified path and catches the exception
-     *       in case the path is invalid.
+     * @desc Attempts to build a \Zend_Config object with the specified path 
+     * and catches any config exceptions
      * @param $configPath
      * @param $allowModifications true|false
      * @return Zend_Config
      * 
      */
-    public function buildConfigFile($configPath, $allowModifications = true)
+    protected function _buildConfigFile($configPath, $allowModifications = true)
     {
         $config = new \Zend_Config(array());
         try {
             $type = $this->getCallerType();
             $config = new $type($configPath, null, $allowModifications);
         } catch (\Zend_Config_Exception $e) {
+<<<<<<< .mine
+//              print "Cannot instanciate {$type} with path {$configPath}.<br />";
+//            throw new Exception("Cannot instanciate {$type} with path {$configPath}.");
+=======
             throw new Exception("Cannot instanciate {$type} with path {$configPath}.");
+>>>>>>> .r401
         }
         
         return $config;
@@ -178,6 +193,8 @@ class Import implements IHandler
      * @param $url
      * @param $parentKey
      * @return void
+     * 
+     * FIXME: rename this functioni
      */
     protected function _dig($url, $parentKey)
     {
@@ -196,8 +213,29 @@ class Import implements IHandler
         $this->_configType = get_class($config);
     }
     
-    public function getCallerType(){
+    /**
+     * @deprecated
+     * @return unknown_type
+     */
+    public function getCallerType() 
+    {
         return $this->_configType;
+    }
+    
+    
+    /**
+     * 
+     * @param $config The 
+     * @return unknown_type
+     */
+    public function setConfigType(\Zend_Config $config)
+    {
+        //get_class($config);
+    }
+    
+    public function getConfigType()
+    {
+        //TODO:
     }
     
     public function getPropertyHandler()
