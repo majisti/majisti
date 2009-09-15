@@ -74,6 +74,7 @@ class ImportTest extends Majisti\Test\PHPUnit\TestCase
      * @desc Asserts that the Ini is loaded correctly and that an exception
      * is thrown when an invalid import path is declared.
      * 
+     * @expectedException Exception
      */
     public function testHandleWithInvalidImportPath()
     {

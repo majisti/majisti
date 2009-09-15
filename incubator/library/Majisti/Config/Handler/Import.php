@@ -140,8 +140,7 @@ class Import implements IHandler
             $type = $this->getCallerType();
             $config = new $type($configPath, null, $allowModifications);
         } catch (\Zend_Config_Exception $e) {
-              print "Cannot instanciate {$type} with path {$configPath}.<br />";
-//            throw new Exception("Cannot instanciate {$type} with path {$configPath}.");
+            throw new Exception("Cannot instanciate {$type} with path {$configPath}.");
         }
         
         return $config;
@@ -164,7 +163,7 @@ class Import implements IHandler
             $tempConfig = $propertyHandler->handle($tempConfig);
         }
         
-        if( isset( $tempConfig->import ) ) {
+        if( null !== $tempConfig->import ) {
             foreach ($tempConfig->import as $url) {
                 if( !in_array($url, $imports) ) {
                     $this->_dig($url, $parentKey);
