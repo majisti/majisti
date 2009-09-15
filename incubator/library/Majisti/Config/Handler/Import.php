@@ -41,15 +41,18 @@ class Import implements IHandler
      * @param Zend_Config $config
      * @return Zend_Config
      */
-    public function handle(\Zend_Config $config, $compositeHandler = null)
+    public function handle(\Zend_Config $config, Composite $compositeHandler = null)
     {
         $this->clear();
+        $this->_compositeHandler = $compositeHandler;
+        
         if( isset( $config->import ) ) {
-            $this->_setCallerType($config);
-            $this->_findImports($config->import, $resolveProperties);
-            $this->_mergeAllImports($config, $resolveProperties);
+            $this->setConfigType($config);
+            $this->_lookForImports($config->import);
+            $this->_mergeAllImports($config);
             unset($config->import);
         }
+        
         return $config;
     }
     
@@ -70,46 +73,31 @@ class Import implements IHandler
      * @param Zend_Config $config
      * @return void
      */
-    protected function _findImports(\Zend_Config $config, $resolveProperties)
+    protected function _lookForImports(\Zend_Config $config)
     {
         foreach( $config as $key => $value ) {
             $this->_importUrls[$key]['parent'] = $value;
-            $this->_validateDepth($value, $key, $resolveProperties);
+            $this->_lookForMoreImports($value, $key);
         }
-    }
-    
-    /**
-     * @desc Returns the import URLs as an array.
-     * @see The array's structure above at variable declaration.
-     * @return array The import URLs
-     */
-//    public function getImports()
-//    {
-//        return $this->_importUrls;
-//    }
-    
-    public function getUrls()
-    {
-        return $this->getFlatArray();
     }
     
     /**
      * @desc Returns the import URLs
-     * @deprecated Steven
      * @return array The import URLs
      */
-    public function getFlatArray()
+    public function getUrls($importUrls)
     {
         $imports = array();
-        foreach ($importsArray as $urlSet) {
-        	$imports[] = $urlSet['parent'];
-        	if( array_key_exists('children', $urlSet) && is_array($urlSet['children']) ) {
-        	    $children = array_values($urlSet['children']);
-        	    $imports = array_merge($imports, $children);
-        	}
+        foreach ($importUrls as $urlSet) {
+            $imports[] = $urlSet['parent'];
+            if( array_key_exists('children', $urlSet) && is_array($urlSet['children']) ) {
+                $children = array_values($urlSet['children']);
+                $imports = array_merge($imports, $children);
+            }
         }
         return $imports;
     }
+    
     
     /**
      * @desc Merging function that iterates through the $_importUrls array and will merge both
@@ -122,16 +110,15 @@ class Import implements IHandler
      * @param Zend_Config $config
      * @return void
      */
-    protected function _mergeAllImports(\Zend_Config $config, $solveProperties)
+    protected function _mergeAllImports(\Zend_Config $config)
     {
-        $imports = $this->getFlatArray($this->getImports());
+        $imports = $this->getUrls($this->_importUrls);
         foreach($imports as $import) {
-            $target = $this->buildConfigFile($import);
-            if( $solveProperties ) {
-                $handler = $this->getPropertyHandler();
-                $target = $handler->handle($target);
+            $importing = $this->_getConfigFileByPath($import);
+            if( null !== ($compositeHandler = $this->getCompositeHandler()) ) {
+                $importing = $compositeHandler->handle($importing);
             }
-            $config->merge($target);
+            $config->merge($importing);
         }
     }
     
@@ -143,19 +130,16 @@ class Import implements IHandler
      * @return Zend_Config
      * 
      */
-    protected function _buildConfigFile($configPath, $allowModifications = true)
+    protected function _getConfigFileByPath($configPath)
     {
-        $config = new \Zend_Config(array());
         try {
-            $type = $this->getCallerType();
-            $config = new $type($configPath, null, $allowModifications);
+            $type = $this->getConfigType();
+            
+            $config = "Zend_Config" === $type ? new $type($configPath, true) : new $type($configPath, null, true);
+          
         } catch (\Zend_Config_Exception $e) {
-<<<<<<< .mine
-//              print "Cannot instanciate {$type} with path {$configPath}.<br />";
-//            throw new Exception("Cannot instanciate {$type} with path {$configPath}.");
-=======
+            
             throw new Exception("Cannot instanciate {$type} with path {$configPath}.");
->>>>>>> .r401
         }
         
         return $config;
@@ -168,60 +152,25 @@ class Import implements IHandler
      * @param $parentKey
      * @return void
      */
-    protected function _validateDepth($configPath, $parentKey, $resolveProperties)
+    protected function _lookForMoreImports($configPath, $parentKey)
     {
-        $imports = $this->getFlatArray($this->getImports());
-        $tempConfig = $this->buildConfigFile($configPath);
+        $imports = $this->getUrls($this->_importUrls);
+        $examinatedConfig = $this->_getConfigFileByPath($configPath);
         
-        if( $resolveProperties ) {
-            $propertyHandler = $this->getPropertyHandler();
-            $tempConfig = $propertyHandler->handle($tempConfig);
-        }
-        
-        if( null !== $tempConfig->import ) {
-            foreach ($tempConfig->import as $url) {
+        if( isset( $examinatedConfig->import ) ) {
+            
+            if( null !== ($compositeHandler = $this->getCompositeHandler()) ) {
+                $examinatedConfig = $compositeHandler->handle($examinatedConfig);
+            }
+            
+            foreach ($examinatedConfig->import as $url) {
                 if( !in_array($url, $imports) ) {
-                    $this->_dig($url, $parentKey);
+                    $this->_importUrls[$parentKey]["children"][] = $url;
+                    $this->_lookForMoreImports($url, $parentKey);
                 }
             }
         }
     }
-    
-    /**
-     * @desc Inserts the children URL found in the import array and digs every URL found
-     *       afterward until none is found.
-     * @param $url
-     * @param $parentKey
-     * @return void
-     * 
-     * FIXME: rename this functioni
-     */
-    protected function _dig($url, $parentKey)
-    {
-        $this->_importUrls[$parentKey]["children"][] = $url;
-        
-        $config = $this->buildConfigFile($url);
-        if( $config->import ) {
-            foreach($config->import as $url) {
-                $this->_dig($url, $parentKey);
-            }
-        }
-    }
-    
-    protected function _setCallerType(\Zend_Config $config)
-    {
-        $this->_configType = get_class($config);
-    }
-    
-    /**
-     * @deprecated
-     * @return unknown_type
-     */
-    public function getCallerType() 
-    {
-        return $this->_configType;
-    }
-    
     
     /**
      * 
@@ -230,20 +179,21 @@ class Import implements IHandler
      */
     public function setConfigType(\Zend_Config $config)
     {
-        //get_class($config);
+        $this->_configType = get_class($config);
     }
     
     public function getConfigType()
     {
-        //TODO:
+        return $this->_configType;
     }
     
-    public function getPropertyHandler()
+    public function getCompositeHandler()
     {
-        if( !isset( $this->_propertyHandler ) ) {
-            $this->_propertyHandler = new Property();
-        }
-        
-        return $this->_propertyHandler;
+        return $this->_compositeHandler;
+    }
+    
+    public function getImportsHierarchy()
+    {
+        return $this->_importUrls;
     }
 }

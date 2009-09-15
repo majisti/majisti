@@ -33,6 +33,8 @@ class ImportTest extends Majisti\Test\PHPUnit\TestCase
      */
     public function setUp()
     {
+        chdir("/home/dji/www/Majisti/incubator/tests/Majisti/");
+        
         $this->_validImport = new \Zend_Config_Ini(
             dirname(__FILE__) . '/../_files/imports/validImports.ini', 
             'production' ,true);
@@ -56,8 +58,7 @@ class ImportTest extends Majisti\Test\PHPUnit\TestCase
          * Parsing first for the properties then importing the external ini files.
          */
         $config = $this->_propertyHandler->handle($this->_validImport);
-        $config = $handler->handle($config, true);
-        $config = $this->_propertyHandler->handle($config);
+        $config = $handler->handle($config, new Composite($this->_propertyHandler));
         
         /* config content should have been replaced if duplicate entries are found, else new entries are appended. */
         $this->assertSame('/var/www', $config->app->dir->applicationPath);
@@ -68,6 +69,7 @@ class ImportTest extends Majisti\Test\PHPUnit\TestCase
         $this->assertSame('foo/OVERRIDEN', //Appended as new entry then also overriden
             $config->app->dir->foo);
         $this->assertNull($config->app->dir->nonExistantNode);
+        
     }
     
      /**
@@ -84,19 +86,39 @@ class ImportTest extends Majisti\Test\PHPUnit\TestCase
         $this->assertEquals(0, count($config->toArray()));
     }
     
-    public function testGetFlatArray()
+    public function testGettersAndSetters()
     {
-        $handler = $this->_importHandler;
+        /* getUrls() test */
+        $importHandler = $this->_importHandler;
         $testArray['foo'] = array('parent' => 'fooParent', 'children' => array('fooChildOne', 'fooChildTwo'));
         $testArray['br'] = array('parent' => 'barParent', 'children' => array('barChildOne', 'barChildTwo'));
         
-        $flat = $handler->getFlatArray($testArray);
+        $flat = $importHandler->getUrls($testArray);
         
         $this->assertEquals(6, count($flat));
         $this->assertSame('fooParent', $flat[0]);
         $this->assertSame('fooChildTwo', $flat[2]);
         $this->assertSame('barParent', $flat[3]);
         $this->assertSame('barChildTwo', $flat[5]);
+        
+        /*
+         * setConfigType(\Zend_Config $config) 
+         * getConfigType()
+         * test
+         */
+        $importHandler->setConfigType(new \Zend_Config_Ini(getcwd() . "/config/_files/imports/validImports.ini"));
+        
+        $this->assertSame("Zend_Config_Ini", $importHandler->getConfigType());
+        
+        /* getCompositeHandler() test */
+        $config = $this->_propertyHandler->handle($this->_validImport);
+        $importHandler->handle($config, new Composite($this->_propertyHandler));
+        $this->assertTrue( $importHandler->getCompositeHandler() instanceof Composite );
+        
+         
+        /* getImportsHierarchy() */
+        $hierarchy = $importHandler->getImportsHierarchy();
+        $this->assertSame($hierarchy['bar']['children'][0], "config/_files/imports/fourthLevelImport.ini");
     }
 }
 ImportTest::runAlone();
