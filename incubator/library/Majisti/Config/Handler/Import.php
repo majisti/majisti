@@ -41,8 +41,8 @@ class Import implements IHandler
     {
         $this->clear();
         if( isset( $config->import ) ) {
-            $this->setCallerType($config);
-            $this->_findImports($config->import);
+            $this->_setCallerType($config);
+            $this->_findImports($config->import, $resolveProperties);
             $this->_mergeAllImports($config, $resolveProperties);
             unset($config->import);
         }
@@ -66,11 +66,11 @@ class Import implements IHandler
      * @param Zend_Config $config
      * @return void
      */
-    protected function _findImports(\Zend_Config $config)
+    protected function _findImports(\Zend_Config $config, $resolveProperties)
     {
         foreach( $config as $key => $value ) {
             $this->_importUrls[$key]["parent"] = $value;
-            $this->_validateDepth($value, $key);
+            $this->_validateDepth($value, $key, $resolveProperties);
         }
     }
     
@@ -88,21 +88,16 @@ class Import implements IHandler
      * Returns a flat array containing all the import URLs based on the associative array $_importUrls.
      * @return array a flat array containing all the import URLs.
      */
-    public function getAllImportUrls()
+    public function getFlatArray($importsArray)
     {
         $imports = array();
-        foreach ($this->_importUrls as $urlSet) {
-            foreach( $urlSet as $url) {
-                if( is_array($url) ) {
-                    foreach( $url as $child ) {
-                        $imports[] = $child;
-                    }
-                } else {
-                    $imports[] = $url;
-                }
-            }
+        foreach ($importsArray as $urlSet) {
+        	$imports[] = $urlSet['parent'];
+        	if( array_key_exists('children', $urlSet) && is_array($urlSet['children']) ) {
+        	    $children = array_values($urlSet['children']);
+        	    $imports = array_merge($imports, $children);
+        	}
         }
-        
         return $imports;
     }
     
@@ -119,12 +114,12 @@ class Import implements IHandler
      */
     protected function _mergeAllImports(\Zend_Config $config, $solveProperties)
     {
-        $imports = $this->getAllImportUrls();
+        $imports = $this->getFlatArray($this->getImports());
         foreach($imports as $import) {
             $target = $this->buildConfigFile($import);
             if( $solveProperties ) {
                 $handler = $this->getPropertyHandler();
-                $handler->handle($target);
+                $target = $handler->handle($target);
             }
             $config->merge($target);
         }
@@ -135,17 +130,18 @@ class Import implements IHandler
      *       in case the path is invalid.
      * @param $configPath
      * @param $allowModifications true|false
-     * @return Zend_Config_ini
+     * @return Zend_Config
      * 
      */
     public function buildConfigFile($configPath, $allowModifications = true)
     {
-        
+        $config = new \Zend_Config(array());
         try {
             $type = $this->getCallerType();
             $config = new $type($configPath, null, $allowModifications);
         } catch (\Zend_Config_Exception $e) {
-            throw new Exception ( "Error: Invalid configuration path specified.  Invalid path given: " . $configPath );
+              print "Cannot instanciate {$type} with path {$configPath}.<br />";
+//            throw new Exception("Cannot instanciate {$type} with path {$configPath}.");
         }
         
         return $config;
@@ -158,10 +154,16 @@ class Import implements IHandler
      * @param $parentKey
      * @return void
      */
-    protected function _validateDepth($configPath, $parentKey)
+    protected function _validateDepth($configPath, $parentKey, $resolveProperties)
     {
-        $imports = $this->getAllImportUrls();
+        $imports = $this->getFlatArray($this->getImports());
         $tempConfig = $this->buildConfigFile($configPath);
+        
+        if( $resolveProperties ) {
+            $propertyHandler = $this->getPropertyHandler();
+            $tempConfig = $propertyHandler->handle($tempConfig);
+        }
+        
         if( isset( $tempConfig->import ) ) {
             foreach ($tempConfig->import as $url) {
                 if( !in_array($url, $imports) ) {
@@ -190,7 +192,7 @@ class Import implements IHandler
         }
     }
     
-    public function setCallerType(\Zend_Config $config)
+    protected function _setCallerType(\Zend_Config $config)
     {
         $this->_configType = get_class($config);
     }

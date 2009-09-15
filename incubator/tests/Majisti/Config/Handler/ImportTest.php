@@ -49,24 +49,22 @@ class ImportTest extends Majisti\Test\PHPUnit\TestCase
      */
     public function testHandle()
     {
-        $this->markTestIncomplete(); //added by steven, fails on AllTest facade
+//        $this->markTestIncomplete(); //added by steven, fails on AllTest facade
         $handler = $this->_importHandler;
         
         /*
          * Parsing first for the properties then importing the external ini files.
          */
         $config = $this->_propertyHandler->handle($this->_validImport);
-        $config = $handler->handle($this->_validImport, true);
+        $config = $handler->handle($config, true);
         $config = $this->_propertyHandler->handle($config);
-        
-        /* Imports loaded */
-        $this->assertEquals(4, count($handler->getAllImportUrls()));
         
         /* config content should have been replaced if duplicate entries are found, else new entries are appended. */
         $this->assertSame('/var/www', $config->app->dir->applicationPath);
         $this->assertSame('/var/www/someProject/public/images/OVERRIDEN', 
             $config->app->dir->images);
         $this->assertSame('/', $config->app->dir->root);
+        $this->assertSame('dir/baz', $config->app->dir->baz);
         $this->assertSame('foo/OVERRIDEN', //Appended as new entry then also overriden
             $config->app->dir->foo);
         $this->assertNull($config->app->dir->nonExistantNode);
@@ -76,12 +74,28 @@ class ImportTest extends Majisti\Test\PHPUnit\TestCase
      * @desc Asserts that the Ini is loaded correctly and that an exception
      * is thrown when an invalid import path is declared.
      * 
-     * @expectedException Majisti\Config\Handler\Exception
      */
     public function testHandleWithInvalidImportPath()
     {
         $config = $this->_propertyHandler->handle($this->_invalidImport);
-        $this->_importHandler->handle($this->_invalidImport);
+        $this->_importHandler->handle($config);
+        
+        $this->assertEquals(0, count($config->toArray()));
+    }
+    
+    public function testGetFlatArray()
+    {
+        $handler = $this->_importHandler;
+        $testArray['foo'] = array('parent' => 'fooParent', 'children' => array('fooChildOne', 'fooChildTwo'));
+        $testArray['br'] = array('parent' => 'barParent', 'children' => array('barChildOne', 'barChildTwo'));
+        
+        $flat = $handler->getFlatArray($testArray);
+        
+        $this->assertEquals(6, count($flat));
+        $this->assertSame('fooParent', $flat[0]);
+        $this->assertSame('fooChildTwo', $flat[2]);
+        $this->assertSame('barParent', $flat[3]);
+        $this->assertSame('barChildTwo', $flat[5]);
     }
 }
 ImportTest::runAlone();
