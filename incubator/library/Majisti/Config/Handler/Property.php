@@ -44,18 +44,19 @@ class Property implements IHandler
      * and therefore the detected one in the new config will get replaced.
      * 
      * @see clear() For clearing the properties
-     * @param Zend_Config $config
-     * @param boolean Clear properties before parsing
-     * @return Zend_Config
+     * @param \Zend_Config $config
+     * @param boolean $clearFirst cleat properties before parsing
+     * @return \Zend_Config
      */
-    public function handle(\Zend_Config $config, $clearPropertiesFirst = false)
+    public function handle(\Zend_Config $config, $clearFirst = false)
     {
-        if( $clearPropertiesFirst ) {
+        if( $clearFirst ) {
             $this->clear();
         }
         
-        if( isset($config->property) ) {
-            $this->_loadProperties($config->property);
+        $this->_loadProperties($config);
+        
+        if( $this->hasProperties() ) {
             $config->merge($this->_parseConfigWithProperties($config, 
                 $this->getProperties()));
             unset($config->property);
@@ -162,9 +163,15 @@ class Property implements IHandler
      * @param \Zend_Config $properties A \Zend_Config loaded only with the 
      * properties
      */
-    protected function _loadProperties(\Zend_Config $properties)
+    protected function _loadProperties(\Zend_Config $config)
     {
-        $this->setProperties($this->_resolveProperties($properties->toArray()));
+        $properties = $this->getProperties();
+        
+        if( isset($config->property) ) {
+            $properties = array_merge($properties, $config->property->toArray());
+        }
+            
+        $this->setProperties($this->_resolveProperties($properties));
     }
     
     /**

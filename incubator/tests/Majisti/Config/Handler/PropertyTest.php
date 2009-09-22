@@ -101,6 +101,7 @@ class PropertyTest extends \Majisti\Test\PHPUnit\TestCase
         
         $handler->handle($this->_validProperties);
         $handler->handle($this->_secondValidProperties);
+        $handler->handle($this->_noProperties);
         
         $expectedProperties = array(
             'applicationPath'   => '/var/www',
@@ -109,6 +110,25 @@ class PropertyTest extends \Majisti\Test\PHPUnit\TestCase
         );
         
         $this->assertSame($expectedProperties, $handler->getProperties());
+    }
+    
+    /**
+     * @desc Asserts that calling handle will always parse a given config
+     * with the stacked up properties
+     */
+    public function testHandleWithMultipleFilesAlwaysReplacesPreviouslyDeclaredProperties()
+    {
+        $handler = $this->propertyHandler;
+        
+        $handler->handle($this->_validProperties);
+        
+        $config = $handler->handle($this->_secondValidProperties);
+        $this->assertEquals('/var/www/bar', $config->bar);
+        
+        $config = $handler->handle($this->_noProperties);
+        $this->assertEquals('/var/www/baz', $config->baz);
+        $this->assertEquals('foo/bazz', $config->bazz);
+        $handler->handle($this->_noProperties);
     }
     
     /**
