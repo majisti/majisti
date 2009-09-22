@@ -57,8 +57,8 @@ class ImportTest extends Majisti\Test\PHPUnit\TestCase
         /*
          * Parsing first for the properties then importing the external ini files.
          */
-        $config = $this->_propertyHandler->handle($this->_validImport);
-        $config = $handler->handle($config, new Composite($this->_propertyHandler));
+//        $config = $this->_propertyHandler->handle($this->_validImport);
+        $config = $handler->handle($this->_validImport, new Composite($this->_propertyHandler));
         
         /* config content should have been replaced if duplicate entries are found, else new entries are appended. */
         $this->assertSame('/var/www', $config->app->dir->applicationPath);
@@ -111,8 +111,8 @@ class ImportTest extends Majisti\Test\PHPUnit\TestCase
         $this->assertSame("Zend_Config_Ini", $importHandler->getConfigType());
         
         /* getCompositeHandler() test */
-        $config = $this->_propertyHandler->handle($this->_validImport);
-        $importHandler->handle($config, new Composite($this->_propertyHandler));
+//        $config = $this->_propertyHandler->handle($this->_validImport);
+        $importHandler->handle($this->_validImport, new Composite($this->_propertyHandler));
         $this->assertTrue( $importHandler->getCompositeHandler() instanceof Composite );
         
          

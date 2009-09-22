@@ -48,6 +48,11 @@ class Import implements IHandler
         
         if( isset( $config->import ) ) {
             $this->setConfigType($config);
+            
+            if( null !== ($compositeHandler = $this->getCompositeHandler()) ) {
+                $config = $compositeHandler->handle($config);
+            }
+            
             $this->_lookForImports($config->import);
             $this->_mergeAllImports($config);
             unset($config->import);
@@ -155,15 +160,16 @@ class Import implements IHandler
     protected function _lookForMoreImports($configPath, $parentKey)
     {
         $imports = $this->getUrls($this->_importUrls);
-        $examinatedConfig = $this->_getConfigFileByPath($configPath);
         
-        if( isset( $examinatedConfig->import ) ) {
+        $examinedConfig = $this->_getConfigFileByPath($configPath);
+        
+        if( isset( $examinedConfig->import ) ) {
             
-            if( null !== ($compositeHandler = $this->getCompositeHandler()) ) {
-                $examinatedConfig = $compositeHandler->handle($examinatedConfig);
+            if( null !== $compositeHandler = $this->getCompositeHandler() ) {
+                $examinedConfig = $compositeHandler->handle($examinedConfig);
             }
             
-            foreach ($examinatedConfig->import as $url) {
+            foreach ($examinedConfig->import as $url) {
                 if( !in_array($url, $imports) ) {
                     $this->_importUrls[$parentKey]["children"][] = $url;
                     $this->_lookForMoreImports($url, $parentKey);
