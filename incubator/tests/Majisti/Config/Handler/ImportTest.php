@@ -51,13 +51,11 @@ class ImportTest extends Majisti\Test\PHPUnit\TestCase
      */
     public function testHandle()
     {
-//        $this->markTestIncomplete(); //added by steven, fails on AllTest facade
         $handler = $this->_importHandler;
         
         /*
          * Parsing first for the properties then importing the external ini files.
          */
-//        $config = $this->_propertyHandler->handle($this->_validImport);
         $config = $handler->handle($this->_validImport, new Composite($this->_propertyHandler));
         
         /* config content should have been replaced if duplicate entries are found, else new entries are appended. */
@@ -101,17 +99,11 @@ class ImportTest extends Majisti\Test\PHPUnit\TestCase
         $this->assertSame('barParent', $flat[3]);
         $this->assertSame('barChildTwo', $flat[5]);
         
-        /*
-         * setConfigType(\Zend_Config $config) 
-         * getConfigType()
-         * test
-         */
         $importHandler->setConfigType(new \Zend_Config_Ini(getcwd() . "/config/_files/imports/validImports.ini"));
         
         $this->assertSame("Zend_Config_Ini", $importHandler->getConfigType());
         
         /* getCompositeHandler() test */
-//        $config = $this->_propertyHandler->handle($this->_validImport);
         $importHandler->handle($this->_validImport, new Composite($this->_propertyHandler));
         $this->assertTrue( $importHandler->getCompositeHandler() instanceof Composite );
         
