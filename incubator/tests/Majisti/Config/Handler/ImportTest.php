@@ -1,7 +1,6 @@
 <?php
 
 namespace Majisti\Config\Handler;
-use Majisti as Majisti;
 
 require_once 'TestHelper.php';
 
@@ -11,7 +10,7 @@ require_once 'TestHelper.php';
  * 
  * TODO: test xml and array configuration as well
  */
-class ImportTest extends Majisti\Test\PHPUnit\TestCase 
+class ImportTest extends \Majisti\Test\PHPUnit\TestCase 
 {
     static protected $_class = __CLASS__;
     
@@ -33,7 +32,7 @@ class ImportTest extends Majisti\Test\PHPUnit\TestCase
      */
     public function setUp()
     {
-        chdir("/home/dji/www/Majisti/incubator/tests/Majisti/");
+        chdir(realpath(dirname(__FILE__) . '/../..'));
         
         $this->_validImport = new \Zend_Config_Ini(
             dirname(__FILE__) . '/../_files/imports/validImports.ini', 
@@ -99,7 +98,7 @@ class ImportTest extends Majisti\Test\PHPUnit\TestCase
         $this->assertSame('barParent', $flat[3]);
         $this->assertSame('barChildTwo', $flat[5]);
         
-        $importHandler->setConfigType(new \Zend_Config_Ini(getcwd() . "/config/_files/imports/validImports.ini"));
+        $importHandler->setConfigType(new \Zend_Config_Ini(getcwd() . "/Config/_files/imports/validImports.ini"));
         
         $this->assertSame("Zend_Config_Ini", $importHandler->getConfigType());
         
@@ -110,7 +109,7 @@ class ImportTest extends Majisti\Test\PHPUnit\TestCase
          
         /* getImportsHierarchy() */
         $hierarchy = $importHandler->getImportsHierarchy();
-        $this->assertSame($hierarchy['bar']['children'][0], "config/_files/imports/fourthLevelImport.ini");
+        $this->assertSame($hierarchy['bar']['children'][0], "Config/_files/imports/fourthLevelImport.ini");
     }
 }
 ImportTest::runAlone();

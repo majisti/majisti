@@ -20,16 +20,19 @@ class I18n extends AbstractPlugin
     public function preDispatch(\Zend_Controller_Request_Abstract $request)
     {
          $i18n 		= new \Majisti\I18n\I18n();
-         $config 	= $this->getConfig()->plugins->i18n;
+         $config 	= $this->getConfig();
          
-         if( !isset($config->requestParam) ) {
-         	throw new Exception("Request parameter is mandatory in the config");
-         }
-         
-         if( $lang = $request->getParam($config->requestParam, false) ) {
-         	if( $i18n->isLocaleSupported($lang) && $lang !== $i18n->getCurrentLocale() ) {
-         		$i18n->switchLocale($lang);
-         	}
+         if( isset($config->plugins) && isset($config->plugins->i18n) ) {
+             $config = $config->plugins->i18n;
+             if( !isset($config->requestParam) ) {
+             	throw new Exception("Request parameter is mandatory in the config");
+             }
+             
+             if( $lang = $request->getParam($config->requestParam, false) ) {
+             	if( $i18n->isLocaleSupported($lang) && $lang !== $i18n->getCurrentLocale() ) {
+             		$i18n->switchLocale($lang);
+             	}
+             }
          }
     }
 }

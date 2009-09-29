@@ -36,6 +36,8 @@ class Import implements IHandler
     
     protected $_compositeHandler;
     
+    protected $_configSectionName;
+    
     /**
      * @desc Handles the configuration by finding the import URLs and then merging everything.
      * @param Zend_Config $config
@@ -45,6 +47,7 @@ class Import implements IHandler
     {
         $this->clear();
         $this->_compositeHandler = $compositeHandler;
+        $this->_configSectionName = $config->getSectionName();
         
         if( isset( $config->import ) ) {
             $this->setConfigType($config);
@@ -57,7 +60,6 @@ class Import implements IHandler
             $this->_mergeAllImports($config);
             unset($config->import);
         }
-        
         return $config;
     }
     
@@ -138,12 +140,17 @@ class Import implements IHandler
     protected function _getConfigFileByPath($configPath)
     {
         try {
-            $type = $this->getConfigType();
+            $type           = $this->getConfigType();
+            $isZendConfig   = 'Zend_Config' === $type;
             
-            $config = "Zend_Config" === $type ? new $type($configPath, true) : new $type($configPath, null, true);
-          
+            if( $isZendConfig && is_string($configPath) ) {
+                throw new Exception("Cannot instanciate a Zend_Config with a string");
+            }
+            
+            $config = $isZendConfig 
+                    ? new $type($configPath, true) 
+                    : new $type($configPath, $this->_configSectionName, true);
         } catch (\Zend_Config_Exception $e) {
-            
             throw new Exception("Cannot instanciate {$type} with path {$configPath}.");
         }
         

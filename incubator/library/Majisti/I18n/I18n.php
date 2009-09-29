@@ -40,23 +40,28 @@ class I18n
     public function reset()
     {
     	$session 	= $this->_session;
-    	$config 	= \Zend_Registry::get('Majisti_Config')->plugins->i18n;
+    	$config 	= \Zend_Registry::get('Majisti_Config');
     	
-    	$defaultLocale = isset($config->defaultLocale)
-    		? $config->defaultLocale
-    		: 'en';
-    	
-    	$session->unlock();
-        
-        if( !(isset($session->locales) && isset($session->defaultLocale)) ) {
-        	$session->defaultLocale = $session->currentLocale = $defaultLocale;
-        	$session->locales 		= array();
-        }
-        
-        $this->_registerLocales($config);
-        $this->_registerLocaleObject();
-        
-        $session->lock();
+    	if( isset($config->plugins) && isset($config->plugins->i18n) ) {
+    	    $config = $config->plugins->i18n;
+    	    
+        	$defaultLocale = isset($config->defaultLocale)
+        		? $config->defaultLocale
+        		: 'en';
+        	
+        	$session->unlock();
+            
+            if( !(isset($session->locales) && isset($session->defaultLocale)) ) {
+            	$session->defaultLocale = $session->currentLocale = $defaultLocale;
+            	$session->locales 		= array();
+            }
+            
+            $this->_registerLocales($config);
+            $this->_registerLocaleObject();
+            
+            $session->lock();
+            
+    	}
         
         return $this;
     }

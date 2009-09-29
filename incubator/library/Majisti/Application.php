@@ -29,10 +29,17 @@ class Application extends \Zend_Application
     {
     	Application\Constants::defineConstants($applicationPath);
     	
-        $config = $this->_loadConfiguration()->{APPLICATION_ENVIRONMENT};
+        $config = $this->_loadConfiguration();
         \Zend_Registry::set('Majisti_Config', $config);
         
         parent::__construct(APPLICATION_ENVIRONMENT, $config);
+        
+        /* further config handling */
+        $bootstrap = $this->getBootstrap();
+        if( $bootstrap->hasPluginResource('ConfigHandler') ) {
+            $bootstrap->bootstrap('ConfigHandler');
+            $this->setOptions(\Zend_Registry::get('Majisti_Config')->toArray());
+        }
     }
     
     /**
@@ -45,10 +52,10 @@ class Application extends \Zend_Application
     protected function _loadConfiguration()
     {
         $defaultConfig = new \Zend_Config_Ini( dirname(__FILE__) . 
-            '/Application/Configs/core.ini', null, true);
+            '/Application/Configs/core.ini', APPLICATION_ENVIRONMENT, true);
         
         $majistixConfig = new \Zend_Config_Ini(MAJISTIX_PATH 
-        	. '/Application/Configs/core.ini');
+        	. '/Application/Configs/core.ini', APPLICATION_ENVIRONMENT);
         	
 //        $majisticConfig =  new \Zend_Config_Ini(MAJISTIC_PATH 
 //        	. '/Application/Configs/default.ini');
@@ -56,11 +63,11 @@ class Application extends \Zend_Application
         $concreteConfigPath = APPLICATION_PATH . '/configs/application.ini'; 
         if( !file_exists($concreteConfigPath) ) {
             throw new Exception("The application.ini under 
-                application/configs/ in mendatory!");
+                application/configs/ is mendatory!");
         }
         
         return $defaultConfig
         	->merge($majistixConfig)
-        	->merge(new \Zend_Config_Ini($concreteConfigPath, null, true));
+        	->merge(new \Zend_Config_Ini($concreteConfigPath, APPLICATION_ENVIRONMENT, true));
     }
 }

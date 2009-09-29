@@ -350,7 +350,7 @@ abstract class Zend_Application_Bootstrap_BootstrapAbstract
                     return $this->_pluginResources[$pluginName];
                 }
             }
-
+            
             if (class_exists($plugin)) {
                 $spec = (array) $spec;
                 $spec['bootstrap'] = $this;

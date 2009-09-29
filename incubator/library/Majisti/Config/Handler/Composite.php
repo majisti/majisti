@@ -23,7 +23,7 @@ class Composite extends \Majisti\Util\Model\Stack implements IHandler
     public function handle(\Zend_Config $config)
     {
         foreach ($this as $handler) {
-            $config->merge($handler->handle($config));
+           $config->merge($handler->handle($config));
         }
         return $config;
     }
