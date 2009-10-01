@@ -5,8 +5,8 @@ namespace Majisti\Config\Handler;
 require_once 'TestHelper.php';
 
 /**
- * @desc Property test case
- * @author Steven Rosato
+ * @desc Import test case
+ * @author Jean-Francois Hamelin, Steven Rosato
  * 
  * TODO: test xml and array configuration as well
  */
