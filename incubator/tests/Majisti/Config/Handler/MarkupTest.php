@@ -14,6 +14,8 @@ class MarkupTest extends \Majisti\Test\PHPUnit\TestCase
     
     public function setUp()
     {
+        $this->markTestSkipped();
+        
         $bbCode = \Zend_Markup::factory('BbCode', 'Html');
         $bbCode->addTag('br', \Zend_Markup::REPLACE_SINGLE, 
             array('replace' => '<br />'));

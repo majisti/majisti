@@ -14,6 +14,9 @@ class ImportTest extends \Majisti\Test\PHPUnit\TestCase
 {
     static protected $_class = __CLASS__;
     
+    public $basePath;
+    public $serverDir;
+    
     protected $_validImport;
     protected $_invalidImport;
     
@@ -32,17 +35,23 @@ class ImportTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function setUp()
     {
+        $this->basePath     = dirname(__FILE__) . '/../_files/import';
+        $this->serverDir    = getcwd();
+        
         chdir(realpath(dirname(__FILE__) . '/../..'));
         
-        $this->_validImport = new \Zend_Config_Ini(
-            dirname(__FILE__) . '/../_files/imports/validImports.ini', 
-            'production' ,true);
-        $this->_invalidImport = new \Zend_Config_Ini(
-            dirname(__FILE__) . '/../_files/imports/invalidImports.ini', 
-            'production', true);
+        $this->_validImport = new \Zend_Config_Ini($this->basePath .
+            '/validImports.ini', 'production' ,true);
+        $this->_invalidImport = new \Zend_Config_Ini($this->basePath . 
+            '/invalidImports.ini', 'production', true);
         
         $this->_propertyHandler = new Property();
         $this->_importHandler   = new Import();
+    }
+    
+    public function tearDown()
+    {
+        chdir($this->serverDir);
     }
     
     /**
@@ -66,7 +75,6 @@ class ImportTest extends \Majisti\Test\PHPUnit\TestCase
         $this->assertSame('foo/OVERRIDEN', //Appended as new entry then also overriden
             $config->app->dir->foo);
         $this->assertNull($config->app->dir->nonExistantNode);
-        
     }
     
      /**
@@ -87,8 +95,11 @@ class ImportTest extends \Majisti\Test\PHPUnit\TestCase
     {
         /* getUrls() test */
         $importHandler = $this->_importHandler;
-        $testArray['foo'] = array('parent' => 'fooParent', 'children' => array('fooChildOne', 'fooChildTwo'));
-        $testArray['br'] = array('parent' => 'barParent', 'children' => array('barChildOne', 'barChildTwo'));
+        $testArray['foo'] = array(
+            'parent'    => 'fooParent', 
+            'children'  => array('fooChildOne', 'fooChildTwo'));
+        $testArray['br'] = array('parent' => 'barParent', 
+            'children'  => array('barChildOne', 'barChildTwo'));
         
         $flat = $importHandler->getUrls($testArray);
         
@@ -98,18 +109,23 @@ class ImportTest extends \Majisti\Test\PHPUnit\TestCase
         $this->assertSame('barParent', $flat[3]);
         $this->assertSame('barChildTwo', $flat[5]);
         
-        $importHandler->setConfigType(new \Zend_Config_Ini(getcwd() . "/Config/_files/imports/validImports.ini"));
+        $importHandler->setConfigType(new \Zend_Config_Ini($this->basePath .
+            '/validImports.ini'));
         
         $this->assertSame("Zend_Config_Ini", $importHandler->getConfigType());
         
         /* getCompositeHandler() test */
-        $importHandler->handle($this->_validImport, new Composite($this->_propertyHandler));
-        $this->assertTrue( $importHandler->getCompositeHandler() instanceof Composite );
+        $importHandler->handle($this->_validImport, 
+            new Composite($this->_propertyHandler));
+        $this->assertTrue($importHandler->getCompositeHandler() instanceof Composite);
         
          
         /* getImportsHierarchy() */
         $hierarchy = $importHandler->getImportsHierarchy();
-        $this->assertSame($hierarchy['bar']['children'][0], "Config/_files/imports/fourthLevelImport.ini");
+        
+        $this->assertContains($hierarchy['bar']['children'][0], 
+            'Config/_files/imports/fourthLevelImport.ini');
     }
 }
+
 ImportTest::runAlone();

@@ -148,10 +148,11 @@ class Import implements IHandler
             }
             
             $config = $isZendConfig 
-                    ? new $type($configPath, true) 
+                    ? new $type($configPath, $this->_configSectionName, true) 
                     : new $type($configPath, $this->_configSectionName, true);
         } catch (\Zend_Config_Exception $e) {
-            throw new Exception("Cannot instanciate {$type} with path {$configPath}.");
+            throw new Exception("Cannot instanciate {$type} with path {$configPath}.
+            Message was {$e->getMessage()}");
         }
         
         return $config;
