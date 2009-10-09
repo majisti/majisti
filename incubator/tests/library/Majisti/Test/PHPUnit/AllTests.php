@@ -1,6 +1,5 @@
 <?php
-
-namespace Majisti\Test\All;
+namespace Majisti\Test\PHPUnit;
 
 require_once 'TestHelper.php';
 
@@ -19,13 +18,11 @@ class AllTests extends \Majisti\Test\PHPUnit\TestSuite
      */
     public static function suite()
     {
-        $suite = new self('Majisti Framework - All tests');
+        $suite = new self('Majisti Framework - Test - PHPUnit - All tests');
         
-        require_once 'library/AllTests.php';
-        $suite->addTest(\Majisti\Test\Library\AllTests::suite());
-        
-        require_once 'integration/AllTests.php';
-        $suite->addTest(\Majisti\Test\Integration\AllTests::suite());
+//        $suite->addTest(Folder\AllTests::suite());
+        $suite->addTestSuite(__NAMESPACE__ . '\TestCaseTest');
+        $suite->addTestSuite(__NAMESPACE__ . '\TestSuiteTest');
         
         return $suite;
     }
