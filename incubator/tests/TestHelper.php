@@ -48,13 +48,17 @@ error_reporting( E_ALL | E_STRICT );
 /* Determine the root, library, and tests directories of the framework distribution. */
 $majistiRoot   = realpath(dirname(__FILE__) . '/../../');
 
-$majistiLaboratoryLibrary = "$majistiRoot/laboratory/library";
-$majistiIncubatorLibrary = "$majistiRoot/incubator/library";
-$majistiStandardLibrary = "$majistiRoot/standard/library";
+$majistiLaboratoryLibrary   = "$majistiRoot/laboratory/library";
+$majistiIncubatorLibrary    = "$majistiRoot/incubator/library";
+$majistiStandardLibrary     = "$majistiRoot/standard/library";
 
 $laboratoryTests = "$majistiRoot/laboratory/tests";
 $incubatorTests  = "$majistiRoot/incubator/tests";
 $standardTests   = "$majistiRoot/standard/tests";
+
+$laboratoryLibraryTests = "$laboratoryTests/library";
+$incubatorLibraryTests  = "$incubatorTests/library";
+$standardLibraryTests   = "$standardTests/library";
 
 $laboratoryExternals    = "$majistiRoot/laboratory/externals";
 $incubatorExternals     = "$majistiRoot/incubator/externals";
@@ -67,6 +71,7 @@ $includePaths = array(
     $majistiRoot,
     $majistiLaboratoryLibrary, $majistiIncubatorLibrary, $majistiStandardLibrary,
     $laboratoryTests, $incubatorTests, $standardTests,
+    $laboratoryLibraryTests, $incubatorLibraryTests, $standardLibraryTests,
     $laboratoryExternals, $incubatorExternals, $standardExternals,
     get_include_path()
 );

@@ -40,7 +40,7 @@ class ConfigHandler extends \Zend_Application_Resource_ResourceAbstract
     }
     
     /**
-     * @desc Prepares the composite handler by pushing
+     * @desc Prepares the composite handler by pushing instances of
      * \Majisti\Config\Handler\IHandler to it
      * @return \Majisti\Config\Handler\CompositeHandler
      * TODO: cleanup this before release, hard to understand for other programmers
@@ -58,7 +58,7 @@ class ConfigHandler extends \Zend_Application_Resource_ResourceAbstract
                     } else if( is_string($enabled) ) {
                         $compositeHandler->push(new $enabled());
                     } else if( is_array($enabled) ) {
-                        $className = isset($enabled['class']) 
+                        $className = isset($enabled['class'])
                             ? $enabled['class']
                             : 'Majisti\Config\Handler\\' . ucfirst($className);
                         $values = array();

@@ -60,9 +60,9 @@ class Application extends \Zend_Application
 //        $majisticConfig =  new \Zend_Config_Ini(MAJISTIC_PATH 
 //        	. '/Application/Configs/default.ini');
         	
-        $concreteConfigPath = APPLICATION_PATH . '/configs/application.ini'; 
+        $concreteConfigPath = APPLICATION_PATH . '/configs/core.ini'; 
         if( !file_exists($concreteConfigPath) ) {
-            throw new Exception("The application.ini under 
+            throw new Exception("The core.ini under 
                 application/configs/ is mendatory!");
         }
         

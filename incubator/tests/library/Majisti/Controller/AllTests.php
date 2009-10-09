@@ -11,6 +11,7 @@ class AllTests extends \Majisti\Test\PHPUnit\TestSuite
         $suite = new self('Majisti Framework - Controller - All tests');
         
         $suite->addTest(Dispatcher\AllTests::suite());
+        $suite->addTest(Plugin\AllTests::suite());
         
         return $suite;
     }

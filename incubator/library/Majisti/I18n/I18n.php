@@ -8,7 +8,7 @@ namespace Majisti\I18n;
  * application's supported languages and default language which were all defined
  * in a configuration.
  * 
- * It is then possible to switch among the locales at any time.
+ * It is then possible to switch amongst the locales at any time.
  * 
  * TODO: review doc
  * 

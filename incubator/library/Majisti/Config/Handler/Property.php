@@ -45,7 +45,7 @@ class Property implements IHandler
      * 
      * @see clear() For clearing the properties
      * @param \Zend_Config $config
-     * @param boolean $clearFirst cleat properties before parsing
+     * @param boolean $clearFirst clear properties before parsing
      * @return \Zend_Config
      */
     public function handle(\Zend_Config $config, $clearFirst = false)

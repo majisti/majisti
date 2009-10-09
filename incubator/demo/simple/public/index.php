@@ -10,8 +10,6 @@ if( version_compare(PHP_VERSION, '5.3.0') < 0 ) {
  */
 define('MAJISTI_FOLDER_NAME', 'Majisti');
 
-/* include Application class */
-require_once '../application/Loader.php';
-
 /* PHP parsers below 5.3.0 will understand this, but die in version compare */
-call_user_func('\MyProject\Loader::load');
+require_once '../application/Loader.php';
+call_user_func('\Majisti\Demo\Simple\Application\Loader::load');

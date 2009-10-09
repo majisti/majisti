@@ -1,6 +1,6 @@
 <?php
 
-namespace MyProject;
+namespace Majisti\Demo\Simple\Application;
 
 /**
  * TODO: documentation
@@ -8,6 +8,7 @@ namespace MyProject;
  * @desc Deploy anywhere Majisti's concrete loader
  * 
  * @author Steven Rosato
+ * @version 1.0.0
  */
 final class Loader
 {

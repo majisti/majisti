@@ -2,7 +2,7 @@
 
 namespace MajistiX\Controller\Plugin;
 
-class FckEditor extends AbstractPlugin
+class CkEditor extends AbstractPlugin
 {
     public function preDispatch(\Zend_Controller_Request_Abstract $request)
     {

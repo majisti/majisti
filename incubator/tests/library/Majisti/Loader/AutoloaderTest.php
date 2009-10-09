@@ -18,10 +18,19 @@ class AutoloaderTest extends \Majisti\Test\PHPUnit\TestCase
      */
     private $_autoloader;
     
+    public $serverDir;
+    
     /* Prepares the environment before running a test. */
     protected function setUp()
     {
+        $this->serverDir = getcwd();
+        chdir(realpath(dirname(__FILE__) . '/../')); 
         $this->_autoloader = new Autoloader();
+    }
+    
+    protected function tearDown()
+    {
+        chdir($this->serverDir);
     }
     
     /**
