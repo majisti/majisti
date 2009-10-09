@@ -1,0 +1,13 @@
+<?
+/**
+ * @desc Renders a service with a default behaviour described in the partial's documentation
+ *  
+ * @author Steven Rosato
+ */
+print $this->partial()
+	->setObjectKey('model')
+	->partial(
+		'default/blocks/service.phtml', 
+		$this->service
+	);
+?>

@@ -1,0 +1,17 @@
+<?
+/**
+ * @desc Footer
+ * 
+ * @author Steven Rosato
+ */
+?>
+
+<div class="footer">
+	<?=$this->_("Tous droits réservés") . ' ' . date('Y') . ' &copy; Anatothérapie'?> | 
+	
+	<?	if( !$this->isAdminLogged() ) { ?>
+		<a href="<?=BASE_URL?>/admin/index/">Admin</a>
+	<?  } else {  ?>
+		<a href="<?=BASE_URL?>/admin/therapists">Admin</a> | <a href="<?=BASE_URL?>/admin/auth/logout">Logout</a>
+	<?	} ?>
+</div>

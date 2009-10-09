@@ -1,0 +1,24 @@
+<?
+/**
+ * @desc List the therapists in a ul/li output fashion
+ * 
+ * @param therapists The object key
+ * 
+ * @author Steven Rosato and Jean-François Hamelin
+ */
+
+$therapists = $this->therapists;
+?>
+
+<ul>
+<?foreach ($therapists as $therapist) {?>
+
+<?/* bold every first td of every tr */?>
+<li>
+	<a href="<?=BASE_URL?>/therapists/view/id/<?=$therapist->id?>">
+		<?= $therapist->fName . ' ' . $therapist->name?>
+	</a>
+</li>
+
+<?}?>
+</ul>

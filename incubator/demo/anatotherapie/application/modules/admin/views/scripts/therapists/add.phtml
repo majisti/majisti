@@ -1,0 +1,13 @@
+<script type="text/javascript">
+	$(function() {
+		$("#ms_therapists_regions").multiselect();
+	});
+</script>
+<?
+if( $this->form != NULL ) {
+	/* print messages */
+	print $this->flashMessages()->toString($this->form->isErrors() ? '' : 'success', true, 5);
+	
+	/* print form */
+	print $this->form;
+}

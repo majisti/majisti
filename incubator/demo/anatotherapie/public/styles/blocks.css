@@ -1,0 +1,26 @@
+/******************
+* 	Default block
+*******************/
+.default-block-wrapper { margin: 0 0 20px 0; }
+.default-block-wrapper.block2 ul { list-style: none; }
+.default-block-list { margin: 10px 0 10px 30px; }
+
+/**************
+* 	Comment
+***************/
+.comment-wrapper { 
+	background: url('../images/common/body/comments/quotes-start.png') no-repeat;
+	margin-bottom: 50px;
+}
+.comment-quotes-end-wrapper { background: url('../images/common/body/comments/quotes-end.png') bottom right no-repeat; }
+
+.comment-content { padding: 10px 0 0 60px; }
+
+.comment-signature {
+	color: black;
+	font-size: 110%;
+	font-weight: bold;
+	padding: 0 80px 0 0;
+	text-align: right;
+}
+

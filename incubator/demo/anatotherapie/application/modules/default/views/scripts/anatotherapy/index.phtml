@@ -1,0 +1,35 @@
+<?
+/**
+ * @desc Anatotherapy description. A custom view rendering is scripted here
+ * but consider having a recursive partial for ul/li printing if they ask for more
+ * recursive ul/li
+ * 
+ * @author Steven Rosato
+ */
+?>
+
+<h1><?=$this->_("Qu'est-ce que l'anatothérapie?")?></h1>
+
+<?$about = new Majisti_Object(Anato_Center::getInstance()->getTherapyModel()->getAbout());?>
+<?$explications = new Majisti_Object(Anato_Center::getInstance()->getTherapyModel()->getExplications());?>
+
+<ul>
+<?foreach ($about as $data) {
+	if( $data instanceof Majisti_Object ) {
+		print "<li>{$data->value}</li>" . '<li style="list-style:none"><ul>';
+		foreach ($data->data as $datum) {
+			print '<li>' . $datum . '</li>';
+		}
+		print '</ul></li>';
+	} else {
+		print '<li>' . $data . '</li>';
+	}
+}?>
+</ul>
+<h1><?=$this->_("Explication")?></h1>
+<?
+foreach ($explications as $data) {
+		print $data . "<br /><br />";
+}
+
+?>

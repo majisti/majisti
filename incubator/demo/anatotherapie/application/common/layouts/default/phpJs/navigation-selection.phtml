@@ -1,0 +1,37 @@
+<?
+/**
+ * @desc The jQuery navigation selection based on which
+ * module/controller/action is selected. Supports wildcards.
+ * 
+ * @author Steven Rosato
+ */
+?>
+
+<script type="text/javascript">
+	/**
+	 * Will add the selected class to any anchors' rel attribute
+	 * of a .navigable wrapper depending on the server's
+	 * module name, controller name and action.
+	 *
+	 * The rel text supports regex so that wildcard can be used in e.g:
+	 *
+	 * default/index/.*
+	 * admin/auth/.*
+	 *
+	 * @author Steven Rosato
+	 */
+	$(function(){
+		moduleName 		= '<?=$this->request()->getModuleName()?>';
+		controllerName 	= '<?=$this->request()->getControllerName()?>';
+		actionName 		= '<?=$this->request()->getActionName()?>';
+		
+		selectedPage = moduleName + '/' + controllerName + '/' + actionName;
+
+		/* iterate so we can support regex in the anchor's rel */
+		$('.navigable a').each(function() {
+			if( selectedPage.match(new RegExp(this.rel)) ) {
+				$(this).addClass('selected').hide().fadeIn(2000);
+			}
+		} );
+	});
+</script>

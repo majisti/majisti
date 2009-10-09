@@ -1,0 +1,11 @@
+<?=$this->listing('Therapists')?>
+
+<!-- Dialog when deleting a therapist -->
+<div id="dialog" title="<?=$this->_("Confirmation de suppression")?>">
+	<p>
+		<span class="ui-icon ui-icon-alert float_left margin_right10 margin_bottom40">&nbsp;</span>
+		<?=$this->_("Êtes-vous certain de vouloir supprimer ce thérapeute?")?>
+	</p>
+</div>
+
+<?=$this->render('default/partials/js-pagination-control.phtml')?>

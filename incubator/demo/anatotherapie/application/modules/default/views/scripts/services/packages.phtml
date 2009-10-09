@@ -1,0 +1,51 @@
+<?
+/**
+ * @desc The packages listing. This one has a customer rendering.
+ * 
+ * @author Steven Rosato
+ */
+?>
+
+<h1><?=$this->_("Nos forfaits")?></h1>
+
+<p>Tous nos forfaits incluent : peignoir, pantoufles et serviettes.</p>
+
+<p>
+	½ journée = 3h30<br />
+	1 journée &nbsp;= 6h
+</p>
+
+<table>
+	<tr>
+		<td class="bold">Nos promotions d’anatothérapie :</td>
+		<td>
+			10 traitements + 1 gratuit &nbsp;= &nbsp;&nbsp;600 $<br />
+			20 traitements + 3 gratuits = 1200 $ 
+		</td>
+	</tr>
+</table>
+<br />
+* Prix sujets à changement
+
+<?
+$packages = new Majisti_Object(Anato_Center::getInstance()->getServicesModel()->packages->getProductList());
+
+foreach ($packages as $package) {?>
+	<h1><?=$package->package->title?></h1>
+	<table>
+		<?	foreach ($package->package->product as $product) {?>
+			<tr>
+				<td class="bold"><?=$product->title?></td>
+				<td>
+					<?	foreach ($product->option as $option) {?>
+						<?= '- ' . $option?><br />
+					<?	}?>
+					
+				</td>
+				<td style="text-align: right; padding-right: 30px;"><?=$product->fee?>$</td>
+			</tr>
+		<?	}?>
+	</table>
+<?}?>
+<br />
+* Prix sujets à changement

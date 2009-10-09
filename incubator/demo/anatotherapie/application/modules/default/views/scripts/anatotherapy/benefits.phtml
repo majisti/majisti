@@ -1,0 +1,19 @@
+<?
+/**
+ * @desc The benefits
+ * 
+ * @author Steven Rosato
+ */
+?>
+
+<h1><?=$this->_("Les bienfaits de l’anatothérapie")?></h1>
+
+<ul>
+	<?
+	$benefits = Anato_Center::getInstance()->getTherapyModel()->getBenefits();
+	
+	foreach ($benefits as $benefit) {
+		print '<li>' . $benefit . '</li>';
+	}
+	?>	
+</ul>

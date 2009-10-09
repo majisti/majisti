@@ -1,0 +1,28 @@
+<img src="<?=DIR_IMAGES_COMMON?>/icons/back.gif" alt="<?=$this->_("Retour")?>" />
+<a href="<?=BASE_URL?>/comments">
+	<?=$this->_("Retourner aux témoignages")?>
+</a>
+
+<?$comment = $this->comment?>
+
+<h4><?=$comment->getSummary()?></h4>
+
+<?=$comment->getComment();?>
+
+<?if( $comment->hasAttachment() ):?>
+	<p>
+		<img src="<?=DIR_IMAGES_COMMON?>/icons/pdf.png" alt="<?=$this->_("Télécharger")?>" />
+		<a href="<?=BASE_URL?>/uploaded/comments-attachments/<?=$comment->getId()?>.pdf">
+			Télécharger le commentaire
+		</a> 
+	</p>
+<?endif;?>
+
+<p class="right bold margin_right60">- <?=$comment->getSignature();?></p>
+
+<p>
+	<img src="<?=DIR_IMAGES_COMMON?>/icons/back.gif" alt="<?=$this->_("Retour")?>" />
+	<a href="<?=BASE_URL?>/comments">
+		<?=$this->_("Voir d'autres témoignages")?>
+	</a>
+</p>

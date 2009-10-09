@@ -1,0 +1,30 @@
+<?
+/**
+ * @desc This is a comment block partialLoop.
+ * A comment is surrounded by quotation marks
+ * and has an author as signature
+ * 
+ * @param model The Anato_Comment
+ * 
+ * Empty strings will generate &nbsp; for W3C compliance.
+ * 
+ * @author Steven Rosato
+ */
+if( !($this->model instanceof Anato_Comment) ) {
+	throw new Majisti_Exception("No Anato_Comment given for partialLoop comment block.");
+}
+?>
+
+<div class="comment-wrapper">
+	<div class="comment-quotes-end-wrapper">
+		<p class="comment-content">
+			 <span class="italic">
+			 	<?=strlen($this->model->getSummary()) === 0 ? '&nbsp;' : $this->model->getSummary()?>
+			 </span>
+			 <br />
+			 <a class="smaller" href="<?=BASE_URL?>/comments/view/id/<?=$this->model->getId()?>">
+			 	Détails &gt;&gt;&gt;
+			 </a>
+		</p>
+	</div>
+</div>

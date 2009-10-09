@@ -1,0 +1,20 @@
+<?
+/**
+ * @desc Prints a basic unordered-list
+ * 
+ * @param model The object key
+ * 
+ * Note: Currently not recursive
+ * 
+ * @author Steven Rosato 
+ */
+
+print '<ul class="unordered-block">';
+
+foreach ($this->model as $value) {
+	print "<li>{$value}</li>";
+}
+
+print '</ul>';
+?>
+
