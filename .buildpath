@@ -11,14 +11,14 @@
 	<buildpathentry kind="src" path="standard/library/MajistiX"/>
 	
 	<!-- Majisti tests -->
-	<buildpathentry kind="src" path="incubator/tests/Majisti"/>
-	<buildpathentry kind="src" path="incubator/tests/MajistiX"/>
+	<buildpathentry kind="src" path="incubator/tests/library/Majisti"/>
+	<buildpathentry kind="src" path="incubator/tests/library/MajistiX"/>
 	
-	<buildpathentry kind="src" path="laboratory/tests/Majisti"/>
-	<buildpathentry kind="src" path="laboratory/tests/MajistiX"/>
+	<buildpathentry kind="src" path="laboratory/tests/library/Majisti"/>
+	<buildpathentry kind="src" path="laboratory/tests/library/MajistiX"/>
 	
-	<buildpathentry kind="src" path="standard/tests/Majisti"/>
-	<buildpathentry kind="src" path="standard/tests/MajistiX"/>
+	<buildpathentry kind="src" path="standard/tests/library/Majisti"/>
+	<buildpathentry kind="src" path="standard/tests/library/MajistiX"/>
 	
 	<!-- Other libraries -->
 	<buildpathentry kind="con" path="com.zend.php.phpunit.CONTAINER"/>
