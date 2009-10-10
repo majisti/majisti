@@ -1,9 +1,10 @@
 <?php
 
-class Forums_Bootstrap
+//namespace MajistiX\Forums;
+
+class Forums_Bootstrap 
 {
-	public function __construct()
-	{
-		print 'foo';
-	}
+    public function bootstrap()
+    {
+    }
 }

@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<section 
+<section
     xmlns="http://docbook.org/ns/docbook" 
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:xi="http://www.w3.org/2001/XInclude" 
-    xml:lang="en" xml:id="majisti.quickstart.creatingAProject" 
+    xml:lang="en" xml:id="majisti.introduction.php53" 
     version="5.0">
     
-    <title>Creating a Project</title>
+    <title>PHP5.3 Support</title>
     
     <para>
         Lorem ipsum dolor sit amer
     </para>
+    
+    <xi:include href="php53/namespaces.xml" />
+    <xi:include href="php53/autoloader.xml" />
 </section>

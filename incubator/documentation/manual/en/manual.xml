@@ -33,9 +33,14 @@
     <!-- START: Chapters -->
     <xi:include href="majisti/introduction.xml" />
     <xi:include href="majisti/quickstart.xml" />
+    <xi:include href="majisti/application.xml" />
     <xi:include href="majisti/config.xml" />
     <xi:include href="majisti/controller.xml" />
+    <xi:include href="majisti/i18n.xml" />
     <xi:include href="majisti/model.xml" />
-    <xi:include href="majisti/majistix.xml"></xi:include>
+    <xi:include href="majisti/test.xml" />
+    <xi:include href="majisti/util.xml" />
+    <xi:include href="majisti/view.xml" />
+    <xi:include href="majisti/majistix.xml" />
     <!-- END: Chapters -->
 </book>

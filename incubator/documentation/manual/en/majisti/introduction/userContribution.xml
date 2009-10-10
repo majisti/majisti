@@ -6,7 +6,7 @@
     xml:lang="en" xml:id="majisti.introduction.userContribution" 
     version="5.0">
     
-    <title>User contribution</title>
+    <title>User Contribution</title>
     
     <para>User contribution is a big part of Majisti. In fact, the entire library
         is driven by it since it only provides tools for modularity. With no modules

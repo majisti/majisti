@@ -141,7 +141,7 @@ login.phtml
         <para>By default, every models that are not PHP namespaced will be grouped
         under the 'default' scope. Through those namespaces, it is possible
         for every modules to automatically have their model namespaced in the
-        <classname>Majisti\Model\Container</classname>so that interacting or using
+        <classname>Majisti\Model\Container</classname> so that interacting or using
         common models is simplified.</para>
     </example>
 </chapter>

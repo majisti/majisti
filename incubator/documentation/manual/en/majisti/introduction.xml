@@ -22,4 +22,5 @@
     <xi:include href="introduction/goals.xml" />
     <xi:include href="introduction/modularity.xml" />
     <xi:include href="introduction/userContribution.xml" />
+    <xi:include href="introduction/php53.xml" />
 </chapter>
