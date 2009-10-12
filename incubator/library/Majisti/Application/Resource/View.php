@@ -29,8 +29,13 @@ class View extends \Zend_Application_Resource_View
     {
         $view = new \Majisti\View();
         $view->addBasePath(MAJISTI_PATH . '/Layouts/');
+        
         $view->addHelperPath('Majisti/View/Helper/', 'Majisti_View_Helper');
         $view->addHelperPath('Majisti/View/Helper/', 'Majisti\View\Helper\\');
+        
+        $view->addHelperPath('MajistiX/View/Helper/', 'MajistiX_View_Helper');
+        $view->addHelperPath('MajistiX/View/Helper/', 'MajistiX\View\Helper\\');
+        
         $view->addHelperPath('ZendX/JQuery/View/Helper', 'ZendX_JQuery_View_Helper');
         \Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer')->setView($view);
         \Zend_Controller_Action_HelperBroker::addPath('Majisti/Controller/Action/Helper', 'Majisti_Controller_Action_Helper');
