@@ -29,8 +29,6 @@ class ConfigHandler extends \Zend_Application_Resource_ResourceAbstract
      */
     public function init()
     {
-        $this->getBootstrap()->bootstrap('FrontController');
-        
         $compositeHandler = $this->_prepareComposite();
         
         \Zend_Registry::set('Majisti_Config', 
