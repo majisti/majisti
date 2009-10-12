@@ -14,12 +14,14 @@ namespace Majisti\I18n;
  * 
  * @author Steven Rosato
  */
-class I18n
+class LocaleSession extends \Majisti\Util\Pattern\SingletonAbstract implements ILocale
 {
     /** 
      * @var \Zend_Session_Namespace 
      */
     protected $_session;
+    
+    static protected $_instance;
     
     /**
      * @desc Constructs a new Internationalisation object which will handle
@@ -27,14 +29,14 @@ class I18n
      * 
      * Based on the application's configuration, it will populate the supported locales.
      */
-    public function __construct()
+    protected function __construct()
     {
     	$this->_session = new \Zend_Session_Namespace('Majisti_I18n');
     	$this->reset();
     }
     
 	/**
-     * @desc Flushes all I18n persistence.
+     * @desc Flushes all I18n persistence and puts back defaults.
      * @return I18n this
      */
     public function reset()

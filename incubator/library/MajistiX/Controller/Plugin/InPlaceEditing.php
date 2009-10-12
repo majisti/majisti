@@ -15,10 +15,9 @@ class InPlaceEditing extends AbstractPlugin
             $post = $request->getPost();
             if( array_search('##MAJISTI_INPLACE_EDITING##', $post) ) {
                 //FIXME: should be retrieved via model container
-                $i18n   = new \Majisti\I18n\I18n();
                 $editor = new \MajistiX\Model\Editing\InPlace();
                 
-                $editor->editContent(key($post), current($post), $i18n->getCurrentLocale());
+                $editor->editContent(key($post), current($post));
                 
                 if( $request->isXmlHttpRequest() ) {
                     //TODO: send response success

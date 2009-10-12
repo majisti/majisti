@@ -14,7 +14,8 @@ class DefaultBuilderBody extends BuilderBodyAbstract implements IBuilderBody
         return $content 
             . '<div class="content">'
             . $this->getView()->layout()->content
-            . '</div>';
+            . '</div>' 
+            . $this->getView()->inlineScript();
     }
     
     public function buildFooter($content)
