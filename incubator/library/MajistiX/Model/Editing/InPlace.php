@@ -11,12 +11,6 @@ class InPlace extends \Majisti\Model\Storage\StorableModel
 {
     protected $_genericStorage = 'MajistiX\Model\Editing\IInPlaceStorage';
     
-    public function __construct()
-    {
-        //TODO: replace this with configuration params
-        $this->setStorageModel(new InPlaceDbStorage(new Blocks()));
-    }
-    
     public function getContent($key, $locale = null)
     {
         return $this->getStorageModel()->getContent($key, $this->_getLocale($locale));
@@ -24,13 +18,13 @@ class InPlace extends \Majisti\Model\Storage\StorableModel
     
     public function editContent($key, $content, $locale = null)
     {
-        $this->getStorageModel()->editContent($key, $this->_getLocale($locale), $content);
+        $this->getStorageModel()->editContent($key, $content, $this->_getLocale($locale));
     }
     
     protected function _getLocale($locale)
     {
         if( null === $locale ) {
-            $locale = \Zend_Registry::get('Majisti_I18n')->getCurrentLocale();
+            $locale = \Majisti\I18n\LocaleSession::getInstance()->getCurrentLocale();
         }
         
         return $locale;

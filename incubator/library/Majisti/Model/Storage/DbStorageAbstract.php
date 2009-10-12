@@ -2,21 +2,31 @@
 
 namespace Majisti\Model\Storage;
 
-abstract class DbStorageAbstract implements IStorage
+abstract class DbStorageAbstract extends StorageAdapter
 {
     /**
      * @var \Zend_Db_Table_Abstract
      */
     protected $_table;
     
-    public function __construct($table = null)
+    public function __construct(array $params)
     {
-        if( null !== $table ) {
-            $this->_table = $table;
+        if( !isset($params['table']) ) {
+            throw new Exception("A table name or instance of Zend_Db_Table_Abstract
+                must be given as 'table' key/value within constructor \$params parameter");
         }
+        
+        $table = $params['table'];
+        
+        if( !($table instanceof \Zend_Db_Table_Abstract) ) {
+            $table = \Majisti\Model\Storage\DbTableContainer::getInstance()
+                ->getTable($table);
+        }
+        
+        $this->setTable($table);
     }
     
-    public function setProxyColumns(array $columnsMap)
+    public function setProxyColumns(array $proxyColumns)
     {
         //TODO: complete method stub
     }
@@ -28,6 +38,7 @@ abstract class DbStorageAbstract implements IStorage
     
     public function proxy($column)
     {
+        //TODO: complete method stub
         return $column;
     }
     
@@ -38,17 +49,15 @@ abstract class DbStorageAbstract implements IStorage
     
     public function getTable()
     {
-        //TODO: should it throw exception or should I implement a NullObject table?
         return $this->_table;
     }
     
     public function getRow(array $args)
     {
-        $row = call_user_func_array(array($this, 'read'), $args);
+        $row = $this->read($args);
         
         return null === $row
             ? $this->getTable()->createRow()
             : $row;
-         
     }
 }

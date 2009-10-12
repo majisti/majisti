@@ -4,40 +4,40 @@ namespace MajistiX\Model\Editing;
 
 class InPlaceDbStorage extends \Majisti\Model\Storage\DbStorageAbstract implements IInPlaceStorage
 {
-    public function read($key, $locale)
+    public function read(array $args)
     {
         $table      = $this->getTable();
         $adapter    = $table->getAdapter();
         
         $select = $table->select($this->proxy('content'))
-            ->where($adapter->quoteIdentifier($this->proxy('key')) . ' = ?', $key)
-            ->where($adapter->quoteIdentifier($this->proxy('locale')) . ' = ?', $locale);
+            ->where($adapter->quoteIdentifier($this->proxy('key')) . ' = ?', $args[0])
+            ->where($adapter->quoteIdentifier($this->proxy('locale')) . ' = ?', $args[1]);
             
         return $table->fetchRow($select);
     }
     
-    public function upsert($key, $locale, $content)
+    public function upcreate(array $args)
     {
         $table  = $this->getTable();
-        $row    = $this->getRow(array($key, $locale));
+        $row    = $this->getRow(array($args[0], $args[2]));
             
-        $row->{$this->proxy('key')}       = $key;
-        $row->{$this->proxy('locale')}    = $locale;
-        $row->{$this->proxy('content')}   = $content;
+        $row->{$this->proxy('key')}       = $args[0];
+        $row->{$this->proxy('content')}   = $args[1];
+        $row->{$this->proxy('locale')}    = $args[2];
         $row->save();
     }
     
     public function getContent($key, $locale)
     {
-        $row = $this->read($key, $locale);
+        $row = $this->read(array($key, $locale));
         
         return null !== $row
             ? $row->content
             : null;
     }
     
-    public function editContent($key, $locale, $content)
+    public function editContent($key, $content, $locale)
     {
-        $this->upsert($key, $locale, $content);
+        $this->upcreate(array($key, $content, $locale));
     }
 }
