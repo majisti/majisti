@@ -5,9 +5,9 @@
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:xi="http://www.w3.org/2001/XInclude">
     <info>
-        <title>Programmer's Reference Guide</title>
+        <title>Developer's Reference Guide</title>
         <subtitle>Majisti Framework</subtitle>
-        <edition>Programmer's Reference Guide for Majisti Framework</edition>
+        <edition>Developer's Reference Guide for Majisti Framework</edition>
         <pubdate><?dbtimestamp format="Y-m-d" ?></pubdate>
 
         <copyright>
