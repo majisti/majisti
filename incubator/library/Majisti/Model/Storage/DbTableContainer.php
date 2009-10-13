@@ -4,7 +4,7 @@ namespace Majisti\Model\Storage;
 
 class Blocks extends \Zend_Db_Table_Abstract
 {
-    protected $_name = "majisti_demo_simple_blocks";
+    protected $_name = 'majisti_demo_simple_blocks';
 }
 
 class DbTableContainer extends \Majisti\Util\Pattern\SingletonAbstract
@@ -29,7 +29,7 @@ class DbTableContainer extends \Majisti\Util\Pattern\SingletonAbstract
     
     protected function _createTable($tableName)
     {
-        return new Blocks();
+        return new $tableName();
     }
     
     public function getTables()

@@ -15,7 +15,7 @@ class InPlaceEditing extends AbstractPlugin
             $post = $request->getPost();
             if( array_search('##MAJISTI_INPLACE_EDITING##', $post) ) {
                 //FIXME: should be retrieved via model container
-                $editor = new \MajistiX\Model\Editing\InPlace();
+                $editor = \Zend_Registry::get('Majisti_InPlaceEditing_Model');
                 
                 $editor->editContent(key($post), current($post));
                 

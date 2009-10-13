@@ -42,7 +42,10 @@ class MajistiX_View_Helper_InPlaceEditing extends \Majisti\View\Helper\HelperAbs
         $adapter = \MajistiX\Model\Editing\InPlaceStorageFactory::createStorage(
             (string)$storageAdapter, $storageParams->toArray());
             
-        return new \MajistiX\Model\Editing\InPlace($adapter);
+        //TODO: use future model container
+        $editor = new \MajistiX\Model\Editing\InPlace($adapter);
+        \Zend_Registry::set('Majisti_InPlaceEditing_Model', $editor);
+        return $editor;
     }
     
     /**

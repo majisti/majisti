@@ -42,6 +42,7 @@ class Zend_Application_Module_Autoloader extends Zend_Loader_Autoloader_Resource
      */
     public function __construct($options)
     {
+        print 'here';exit;
         parent::__construct($options);
         $this->initDefaultResourceTypes();
     }
