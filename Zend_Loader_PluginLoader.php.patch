@@ -1,7 +1,7 @@
-Index: ../Zend/Loader/PluginLoader.php
+Index: standard/externals/Zend/Loader/PluginLoader.php
 ===================================================================
---- ../Zend/Loader/PluginLoader.php	(revision 329)
-+++ ../Zend/Loader/PluginLoader.php	(working copy)
+--- standard/externals/Zend/Loader/PluginLoader.php	(revision 329)
++++ standard/externals/Zend/Loader/PluginLoader.php	(working copy)
 @@ -125,6 +125,12 @@
      	if($prefix == "") {
      		return $prefix;

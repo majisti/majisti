@@ -20,11 +20,11 @@ class MajistiX_View_Helper_InPlaceEditing extends \Majisti\View\Helper\HelperAbs
         $i18n = \Majisti\I18n\LocaleSession::getInstance();
         $this->view->inlineScript()->appendScript("CKEDITOR.replace('{$key}', " .
             \Zend_Json::encode(array(
-                'toolbar'           => 'Basic',
+                'toolbar'           => 'Full',
                 'language'          => $i18n->getCurrentLocale(),
-                'width'             => '400',
-                'resize_minWidth'   => '400',
-                'resize_maxWidth'   => '800'
+                //'width'             => '400',
+                //'resize_minWidth'   => '400',
+                //'resize_maxWidth'   => '800'
             )) . ');'
         );
         
