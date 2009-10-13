@@ -77,9 +77,10 @@ abstract class Zend_Application_Module_Bootstrap
         }
 
         // ZF-6545: prevent recursive registration of modules
-        if ($this->hasPluginResource('modules')) {
-            $this->unregisterPluginResource('modules');
-        }
+//        if ($this->hasPluginResource('modules')) {
+//            $this->unregisterPluginResource('modules');
+//        }
+        //FIXME: some weird error here!
     }
 
     /**

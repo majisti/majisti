@@ -2,11 +2,6 @@
 
 namespace Majisti\Model\Storage;
 
-class Blocks extends \Zend_Db_Table_Abstract
-{
-    protected $_name = 'majisti_demo_simple_blocks';
-}
-
 class DbTableContainer extends \Majisti\Util\Pattern\SingletonAbstract
 {
     protected $_tables = array();
