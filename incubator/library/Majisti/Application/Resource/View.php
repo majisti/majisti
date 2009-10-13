@@ -11,6 +11,17 @@ namespace Majisti\Application\Resource;
 class View extends \Zend_Application_Resource_View
 {
     /**
+     * @desc Inits the view
+     */
+    public function init()
+    {
+        $view = parent::init();
+        
+        \Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer')->setView($view);
+        \Zend_Controller_Action_HelperBroker::addPath('Majisti/Controller/Action/Helper', 'Majisti_Controller_Action_Helper');
+    }
+    
+    /**
      * @desc Returns the configured Majisti\View
      * 
      * The view will be setup with the following:
@@ -36,9 +47,9 @@ class View extends \Zend_Application_Resource_View
         $view->addHelperPath('MajistiX/View/Helper/', 'MajistiX_View_Helper');
         $view->addHelperPath('MajistiX/View/Helper/', 'MajistiX\View\Helper\\');
         
+        $view->doctype('XHTML1_STRICT');
+        
         $view->addHelperPath('ZendX/JQuery/View/Helper', 'ZendX_JQuery_View_Helper');
-        \Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer')->setView($view);
-        \Zend_Controller_Action_HelperBroker::addPath('Majisti/Controller/Action/Helper', 'Majisti_Controller_Action_Helper');
         
         \Zend_Registry::set('Zend_View', $view);
         
