@@ -76,6 +76,7 @@ $includePaths = array(
     get_include_path()
 );
 
+
 set_include_path(implode(PATH_SEPARATOR, $includePaths));
 
 require_once 'Zend/Loader/Autoloader.php';
