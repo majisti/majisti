@@ -50,11 +50,13 @@
     <!-- ///////////////////////////////////////////////////////////////// -->
     
     <target name="clean">
-        <delete dir="${dir.build}/**"/>
+        <delete includeemptydirs="true">
+            <fileset dir="${dir.build}" includes="**/*"/>
+        </delete>
     </target>
     
     <target name="prepare">
-        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${dir.build}"/>
         <mkdir dir="${dir.build.logs}"/>
         <mkdir dir="${dir.build.manual}"/>
     </target>
@@ -64,8 +66,13 @@
     <!-- ///////////////////////////////////////////////////////////////// -->
     
     <target name="manual" depends="prepare">
-        <exec dir="${dir.manual}" executable="phing" failonerror="true" />
-        <copy todir="${dir.build.manual}" />
+        <exec dir="${dir.manual}/build" executable="phing" failonerror="true" />
+        <copy todir="${dir.build.manual}">
+            <fileset dir="${dir.manual}/build/bin/html/">
+                <include name="*" />
+                <include name="**" />
+            </fileset>
+        </copy>
     </target>
     
     <!-- ///////////////////////////////////////////////////////////////// -->
