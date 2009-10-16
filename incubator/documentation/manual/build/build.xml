@@ -29,11 +29,16 @@
    -D<property>={value}
      Override a property in build.properties
 -->
-<project name="Majisti Framework Reference Guide" description="Majisti Framework Reference Guide Build" default="dist" basedir=".">
+<project 
+    name="Majisti Framework Reference Guide" 
+    description="Majisti Framework Reference Guide Build" 
+    default="build" 
+    basedir="." >
+    
     <property file="./build.properties" />
     
-    <target name="dist" depends="clean, html">
-        <echo message="Building distribution" />
+    <target name="build" depends="clean, html">
+        <echo message="Building manuals" />
     </target>
     
     <target name="html" description="Build HTML docs">
@@ -41,12 +46,20 @@
     </target>
     
     <target name="checkLangExists" description="Make sure lang exists">
-        <available file="${path.src}/${lang.current}/manual.xml" property="lang.${lang.current}.exists" />
+        <available 
+            file="${path.src}/${lang.current}/manual.xml" 
+            property="lang.${lang.current}.exists" />
     </target>
     
-    <target name="html.build" depends="checkLangExists" if="lang.${lang.current}.exists">
+    <target 
+        name="html.build" 
+        depends="checkLangExists" 
+        if="lang.${lang.current}.exists" >
         <echo message="Copying HTML assets..." />
-        <copy todir="${path.build.bin}/html/${lang.current}/" includeemptydirs="true">
+        <copy 
+            todir="${path.build.bin}/html/${lang.current}/" 
+            includeemptydirs="true">
+            
             <fileset dir="${path.build}/html/assets">
                 <include name="*"/>
                 <include name="**"/>
@@ -56,18 +69,23 @@
         <phingcall target="html.build.compile" />
         
         <delete file="${path.build}/HTML.manifest" />
-        <delete file="${path.build.bin}/html/${lang.current}/manual.xml" verbose="true" /> 
+        <delete 
+            file="${path.build.bin}/html/${lang.current}/manual.xml" 
+            verbose="true" /> 
     </target>
     
     <target name="html.build.compile">
-        <!-- Target isolated because xlst causes error and execution of phing stops -->
+        <!-- Target isolated because xlst causes error 
+            and execution of phing stops -->
         
         <echo message="Compiling HTML documentation..." />
         <copy todir="${path.build.bin}/html/${lang.current}">
             <filterchain>
                 <xincludefilter basedir="${path.src}/${lang.current}/"/>
                 <xsltfilter style="html/html.xsl">
-                    <param name="base.dir" expression="${path.build.bin}/html/${lang.current}/"/>
+                    <param 
+                        name="base.dir" 
+                        expression="${path.build.bin}/html/${lang.current}/"/>
                 </xsltfilter>
             </filterchain>
             
@@ -77,7 +95,11 @@
         </copy>
     </target>
     
-    <target name="clean" description="Clean out existing files" depends="clean.html">
+    <target 
+        name="clean" 
+        description="Clean out existing files" 
+        depends="clean.html">
+        
         <echo message="Cleaning out documentation" />
         
         <delete includeemptydirs="true" failonerror="false">
@@ -91,7 +113,11 @@
     <target name="clean.html" description="Clean out HTML existing files">
         <echo message="Cleaning old HTML documentation..." />
         
-        <delete includeemptydirs="true" failonerror="false" dir="${path.build.bin}/html" />
+        <delete 
+            includeemptydirs="true" 
+            failonerror="false" 
+            dir="${path.build.bin}/html" />
+        
         <delete file="${path.build}/HTML.manifest" failonerror="false" />
     </target>
 </project>
