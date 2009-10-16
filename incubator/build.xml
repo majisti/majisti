@@ -18,6 +18,7 @@
        
        Documentation:
            - Phing (tested with 2.3.3)
+           - php5-xsl
            - Docbook-xsl 1.75 and above (tested with 1.75.2)
                installed under /usr/share/docbook-xsl or you can edit
                ${dir.build.manual}/build/html/html.xsl to use a chunk from the web
@@ -25,15 +26,15 @@
            - Docbook (tested with 5.0)
        
        Unit testing:
-           - PHP5, PHP5-CLI, PHP5-COMMON, PHP5-MYSQL
+           - php5, php5-cli, php5-common, php5-mysql
            - PHP Packages must be 5.3.0 and higher.
-           - PHPUnit inside PHP-CLI include_path
+           - PHPUnit inside php-cli include_path
        
        Code coverage:
            - XDebug extension for apache 2.0.5 and above
     
     General Usage:
-        ant build
+        ant all
         ant tests
         ant manual
 -->
