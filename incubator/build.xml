@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
    Project: Majisti Framework
    Author: Steven Rosato
@@ -25,20 +26,20 @@
                or different path (symbolic links recommended)
            - Docbook (tested with 5.0)
        
-       Unit testing:
+       Unit testing and code coverage:
            - php5, php5-cli, php5-common, php5-mysql
            - PHP Packages must be 5.3.0 and higher.
            - PHPUnit inside php-cli include_path
-       
-       Code coverage:
-           - XDebug extension for apache 2.0.5 and above
+           - XDebug extension for apache 2.0.5 and above (for code coverage)
     
     General Usage:
         ant all
+        ant clean
         ant tests
         ant manual
 -->
-<project name="Majisti-incubator" default="build">
+<!DOCTYPE project>
+<project name="Majisti-incubator" default="all" basedir=".">
     <property name="dir.build"     value="${basedir}/build" />
     <property name="dir.tests"     value="${basedir}/tests" />
     <property name="dir.manual"    value="${basedir}/documentation/manual" />
