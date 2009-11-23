@@ -8,7 +8,7 @@ require_once 'TestHelper.php';
  * @desc
  * @author Steven Rosato
  */
-class I18nTest extends \Majisti\Test\PHPUnit\TestCase
+class LocaleSessionTest extends \Majisti\Test\PHPUnit\TestCase
 {
     static protected $_class = __CLASS__;
     
@@ -27,7 +27,7 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
         	))
         )), true);
         
-        $this->_i18n = new I18n();
+        $this->_i18n = LocaleSession::getInstance();
     }
     
     public function tearDown()
@@ -121,4 +121,4 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
     }
 }
 
-I18nTest::runAlone();
+LocaleSessionTest::runAlone();

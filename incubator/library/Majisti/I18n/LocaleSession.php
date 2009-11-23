@@ -31,7 +31,7 @@ class LocaleSession extends \Majisti\Util\Pattern\SingletonAbstract implements I
      */
     protected function __construct()
     {
-    	$this->_session = new \Zend_Session_Namespace('Majisti_I18n');
+    	$this->_session = new \Zend_Session_Namespace('Majisti_I18n', true);
     	$this->reset();
     }
     
@@ -51,7 +51,7 @@ class LocaleSession extends \Majisti\Util\Pattern\SingletonAbstract implements I
         		? $config->defaultLocale
         		: 'en';
         	
-        	$session->unlock();
+//        	$session->unlock();
             
             if( !(isset($session->locales) && isset($session->defaultLocale)) ) {
             	$session->defaultLocale = $session->currentLocale = $defaultLocale;
@@ -61,7 +61,7 @@ class LocaleSession extends \Majisti\Util\Pattern\SingletonAbstract implements I
             $this->_registerLocales($config);
             $this->_registerLocaleObject();
             
-            $session->lock();
+//            $session->lock();
             
     	}
         
@@ -193,9 +193,9 @@ class LocaleSession extends \Majisti\Util\Pattern\SingletonAbstract implements I
 				: $key + 1;
 		}
 		
-		$session->unlock();
+//		$session->unlock();
 		$session->currentLocale = $locales[$key];
-		$session->lock();
+//		$session->lock();
 		
 		return $session->currentLocale;
     }
