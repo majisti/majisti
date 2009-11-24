@@ -44,25 +44,23 @@ class LocaleSession extends \Majisti\Util\Pattern\SingletonAbstract implements I
     	$session 	= $this->_session;
     	$config 	= \Zend_Registry::get('Majisti_Config');
     	
-    	if( isset($config->plugins) && isset($config->plugins->i18n) ) {
-    	    $config = $config->plugins->i18n;
+    	if( !(isset($session->locales) && isset($session->defaultLocale)) ) {
+    	    $selector = new \Majisti\Config\Selector($config);
     	    
-        	$defaultLocale = isset($config->defaultLocale)
-        		? $config->defaultLocale
-        		: 'en';
-        	
-//        	$session->unlock();
-            
-            if( !(isset($session->locales) && isset($session->defaultLocale)) ) {
-            	$session->defaultLocale = $session->currentLocale = $defaultLocale;
-            	$session->locales 		= array();
-            }
+    	    $defaultLocale     = $selector->find('plugins.i18n.defaultLocale', 'en');
+            $currentLocale     = $selector->find('plugins.i18n.currentLocale', $defaultLocale);
+            $supportedLocales  = $selector->find('plugins.i18n.supportedLocales', 
+                new \Zend_Config(array()))->toArray();
+           
+    	    $session->unlock();
+    	    
+    	    $session->defaultLocale = $session->currentLocale = $defaultLocale;
+            $session->locales       = $supportedLocales;
             
             $this->_registerLocales($config);
             $this->_registerLocaleObject();
             
-//            $session->lock();
-            
+            $session->lock();
     	}
         
         return $this;
@@ -88,14 +86,14 @@ class LocaleSession extends \Majisti\Util\Pattern\SingletonAbstract implements I
      */
     protected function _registerLocales(\Zend_Config $config)
     {
-    	$defaultLocale = isset($config->defaultLocale)
-    		? $config->defaultLocale
-    		: 'en';
-    		
+        $selector = new \Majisti\Config\Selector($config);
+        
+        $defaultLocale = $selector->find('defaultLocale', 'en');
+        
     	$this->_session->defaultLocale = $defaultLocale;
     	
-    	if( isset($config->supportedLocales) ) {
-    		$this->_session->locales = $config->supportedLocales->toArray();
+    	if( $supportedLocales = $selector->find('supportedLocales', false) ) {
+    		$this->_session->locales = $supportedLocales->toArray();
     	}
     	
     	array_unshift($this->_session->locales, $defaultLocale);
@@ -193,9 +191,9 @@ class LocaleSession extends \Majisti\Util\Pattern\SingletonAbstract implements I
 				: $key + 1;
 		}
 		
-//		$session->unlock();
+		$session->unlock();
 		$session->currentLocale = $locales[$key];
-//		$session->lock();
+		$session->lock();
 		
 		return $session->currentLocale;
     }

@@ -12,29 +12,37 @@ class LocaleSessionTest extends \Majisti\Test\PHPUnit\TestCase
 {
     static protected $_class = __CLASS__;
     
+    /**
+     * @var LocaleSession
+     */ 
     protected $_i18n;
+    
+    /* default i18n configuration */
+    protected $_i18nConfig = array(
+       'plugins' => array('i18n' => array(
+       'requestParam'      => 'lang',
+       'defaultLocale'     => 'en',
+       'supportedLocales'  => array('fr', 'es')
+    )));
     
     /**
      * Setups the test case
      */
     public function setUp()
     {
-        \Zend_Registry::set('Majisti_Config', new \Zend_Config(array(
-        	'plugins' => array('i18n' => array(
-        		'requestParam' 			=> 'lang',
-        		'defaultLocale' 		=> 'en',
-        		'supportedLocales'		=> array('fr', 'es')
-        	))
-        )), true);
+        \Zend_Session::start();
+        
+        \Zend_Registry::set('Majisti_Config', 
+            new \Zend_Config($this->_i18nConfig, true));
         
         $this->_i18n = LocaleSession::getInstance();
+        $this->_i18n->reset();
     }
     
-    public function tearDown()
+    protected function _restartSession()
     {
-    	if( null !== $this->_i18n ) {
-	    	$this->_i18n->reset();
-    	}
+        \Zend_Session::writeClose();
+        \Zend_Session::start();
     }
     
     public function test__construct()
@@ -98,26 +106,27 @@ class LocaleSessionTest extends \Majisti\Test\PHPUnit\TestCase
     	$i18n->switchLocale('de');
     }
     
+    
     public function testCurrentLocalePersistance()
     {
     	$i18n = $this->_i18n;
     	$i18n->switchLocale();
     	
-    	$i18n = new I18n();
+    	$this->_restartSession();
+    	
+    	$i18n = LocaleSession::getInstance();
     	$this->assertEquals('fr', $i18n->getCurrentLocale());
     	
+    	$this->_restartSession();
+    	
     	$i18n->switchLocale('es');
-    	$i18n = new I18n();
+    	$i18n = LocaleSession::getInstance();
     	$this->assertEquals('es', $i18n->getCurrentLocale());
     	
+    	$this->_restartSession();
+    	
     	$i18n->switchLocale();
-    	$i18n = new I18n();
     	$this->assertEquals('en', $i18n->getCurrentLocale());
-    }
-    
-    public function testReset()
-    {
-    	$this->markTestIncomplete();
     }
 }
 
