@@ -19,6 +19,11 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
     {
         
     }
+    
+    public function testLocaleIsSwitchedOnPost()
+    {
+        $this->markTestIncomplete();
+    }
 }
 
 I18nTest::runAlone();

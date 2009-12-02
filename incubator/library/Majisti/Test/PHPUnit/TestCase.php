@@ -12,7 +12,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
     
     static public function getClass()
     {
-        if( __CLASS__ === static::$_class ) {
+        if( __CLASS__ === static::$_class || null === static::$_class ) {
             throw new Exception('You must override with late static binding the protected static 
                 variable $_class with __CLASS__ or through the setClass function');
         }

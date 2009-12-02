@@ -27,7 +27,9 @@ class TestCaseTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function testGetClassWithNoLateStaticBinding()
     {
-        TestCase::getClass();
+        self::$_class = null;
+        self::getClass();
+        self::$_class = __CLASS__;
     }
 }
 
