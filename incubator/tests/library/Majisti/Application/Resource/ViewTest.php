@@ -19,6 +19,11 @@ class ViewTest extends \Majisti\Test\PHPUnit\TestCase
     {
         
     }
+    
+    public function testInit()
+    {
+         $this->markTestIncomplete();
+    }
 }
 
 ViewTest::runAlone();

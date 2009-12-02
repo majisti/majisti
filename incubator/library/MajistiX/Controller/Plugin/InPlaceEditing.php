@@ -17,6 +17,7 @@ class InPlaceEditing extends AbstractPlugin
                 //FIXME: should be retrieved via model container
                 $editor = \Zend_Registry::get('Majisti_InPlaceEditing_Model');
                 
+                //FIXME: if other elements are posted, key/value may not be the first
                 $editor->editContent(key($post), current($post));
                 
                 if( $request->isXmlHttpRequest() ) {

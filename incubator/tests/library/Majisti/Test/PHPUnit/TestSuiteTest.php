@@ -19,6 +19,11 @@ class TestSuiteTest extends \Majisti\Test\PHPUnit\TestCase
     {
         
     }
+    
+    public function testRunAlone()
+    {
+        $this->markTestIncomplete();
+    }
 }
 
 TestSuiteTest::runAlone();

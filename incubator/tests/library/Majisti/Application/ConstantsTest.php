@@ -19,6 +19,11 @@ class ConstantsTest extends \Majisti\Test\PHPUnit\TestCase
     {
         
     }
+    
+    public function testConstantsAreAllDefined()
+    {
+        $this->markTestIncomplete();
+    }
 }
 
 ConstantsTest::runAlone();

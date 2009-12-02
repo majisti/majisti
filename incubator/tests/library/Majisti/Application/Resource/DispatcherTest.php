@@ -19,6 +19,11 @@ class DispatcherTest extends \Majisti\Test\PHPUnit\TestCase
     {
         
     }
+    
+    public function testInit()
+    {
+        $this->markTestIncomplete();
+    }
 }
 
 DispatcherTest::runAlone();

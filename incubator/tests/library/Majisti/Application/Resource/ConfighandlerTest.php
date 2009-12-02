@@ -19,6 +19,11 @@ class ConfighandlerTest extends \Majisti\Test\PHPUnit\TestCase
     {
         
     }
+    
+    public function testInitWithProperConfig()
+    {
+        $this->markTestIncomplete();
+    }
 }
 
 ConfighandlerTest::runAlone();
