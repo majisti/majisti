@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<chapter 
+<section 
     xmlns="http://docbook.org/ns/docbook" 
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:xi="http://www.w3.org/2001/XInclude" 
-    xml:lang="en" xml:id="majistix" 
+    xml:lang="en" xml:id="majistix.extension.inPlaceEditing.storage" 
     version="5.0">
     
-    <title>MajistiX</title>
+    <title>Storage</title>
     
     <para>
         Lorem ipsum dolor sit amer
     </para>
-    
-    <xi:include href="majistix/module.xml"></xi:include>
-    <xi:include href="majistix/extension.xml"></xi:include>
-</chapter>
+</section>
