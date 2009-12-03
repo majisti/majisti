@@ -2,7 +2,7 @@
 
 //namespace MajistiX\View\Helper;
 
-//TODO: this will move in its actual package when plugin bootstraping will work
+//TODO: this will move in its actual namespace when plugin bootstraping will work
 
 class MajistiX_View_Helper_InPlaceEditing extends \Majisti\View\Helper\HelperAbstract
 {
@@ -19,7 +19,7 @@ class MajistiX_View_Helper_InPlaceEditing extends \Majisti\View\Helper\HelperAbs
     protected function getModel()
     {
         if( null === $this->_inPlaceEditingModel ) {
-            $this->_inPlaceEditingModel = \MajistiX\Model\Editing\Factory::
+            $this->_inPlaceEditingModel = \MajistiX\Extensions\InPlaceEditing\Model\Factory::
                 createInPlaceEditingModel($this->getConfig());
             
             //FIXME: temporary

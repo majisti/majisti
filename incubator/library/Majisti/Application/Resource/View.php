@@ -19,6 +19,8 @@ class View extends \Zend_Application_Resource_View
         
         \Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer')->setView($view);
         \Zend_Controller_Action_HelperBroker::addPath('Majisti/Controller/Action/Helper', 'Majisti_Controller_Action_Helper');
+        
+        return $view;
     }
     
     /**

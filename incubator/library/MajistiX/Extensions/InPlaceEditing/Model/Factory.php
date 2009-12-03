@@ -1,6 +1,6 @@
 <?php
 
-namespace MajistiX\Model\Editing;
+namespace MajistiX\Extensions\InPlaceEditing\Model;
 
 class Factory
 {
@@ -15,7 +15,7 @@ class Factory
     
     static public function createInPlaceEditingModel($config = array())
     {
-        return new \MajistiX\Model\Editing\InPlace(
+        return new \MajistiX\Extensions\InPlaceEditing\Model\InPlace(
             static::createStorage($config), 
             static::createEditor($config)
         );
@@ -24,10 +24,9 @@ class Factory
     static public function createStorage($config = array())
     {
         $configSelector = new \Majisti\Config\Selector(static::_configToZendConfig($config));
-        
         /* find config and in case that a selection is not found, use a default value */
-        $storageAdapter = $configSelector->find('plugins.inPlaceEditing.storage.adapter', 'db');
-        $storageParams  = $configSelector->find('plugins.inPlaceEditing.storage.params', 
+        $storageAdapter = $configSelector->find('resources.extensions.inPlaceEditing.storage.adapter', 'db');
+        $storageParams  = $configSelector->find('resources.extensions.inPlaceEditing.storage.params', 
             new \Zend_Config(array()));
             
         $className = __NAMESPACE__ . '\InPlace' . ucfirst((string)$storageAdapter) . 'Storage';

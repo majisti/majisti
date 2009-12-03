@@ -3,7 +3,9 @@
 namespace Majisti\Application;
 
 /**
- * @desc Class that declares constants
+ * @desc Class that declares constants needed in standard applications.
+ * 
+ * TODO: this should be more flexible according to configuration
  * 
  * @author Steven Rosato
  */
@@ -27,7 +29,7 @@ class Constants
      * - MAJISTIX_MODULES_PATH  -> dropped in modules under library/Modules
      * - MAJISTI_URL            -> public library
      * 
-     * TODO: move in Application/Constants class
+     * TODO: update comment documentation
      * 
      * @param $applicationPath The application path
      */
@@ -51,6 +53,7 @@ class Constants
         define('MAJISTIC_PATH', MAJISTI_ROOT . '/MajistiC');
         
         define('MAJISTIX_PATH', MAJISTI_ROOT . '/MajistiX');
+        define('MAJISTIX_EXTENSIONS_PATH', MAJISTIX_PATH . '/Extensions');
         define('MAJISTIX_MODULES_PATH', MAJISTIX_PATH . '/Modules');
         
         /* 
@@ -67,8 +70,6 @@ class Constants
     
 	/**
      * @desc Define aliases if it is supported in the configuration
-     * 
-     * TODO: move in Application/Constants class
      */
     static protected function _defineAliases()
     {
