@@ -2,14 +2,25 @@
 
 namespace MajistiX\Controller\Plugin;
 
+/**
+ * @desc InPlaceEditing controller plugin that listens for a special
+ * InPlaceEditing post that will be inserted in the current InPlaceEditing
+ * model from the static model container. It supports either normal post
+ * or xml http request and sends a response for the latter.
+ *  
+ * @author Steven Rosato
+ */
 class InPlaceEditing extends \Majisti\Controller\Plugin\AbstractPlugin
 {
+    /**
+     * @desc On InPlaceEditing post, update or insert provided post value
+     * for provided post key.
+     * 
+     * @param $request The request
+     */
     public function postDispatch(\Zend_Controller_Request_Abstract $request)
     {
-        $view = \Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer')->view;
-        $view->headScript()->appendFile(MAJISTI_URL . '/majistix/scripts/ckeditor/ckeditor.js');
-        
-        //TODO: according to config, if in-place-editing is enabled per acl, check acl first
+        //TODO: according to config, if in-place-editing is enabled per ACL, check acl first
         
         if( $request->isPost() ) {
             $post = $request->getPost();
