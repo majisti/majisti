@@ -1,6 +1,6 @@
 <?php
 
-namespace MajistiX\Model\Editing;
+namespace MajistiX\Extensions\InPlaceEditing\Model;
 
 class CkEditor implements IEditor
 {

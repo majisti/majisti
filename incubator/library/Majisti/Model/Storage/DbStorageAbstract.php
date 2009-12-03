@@ -2,7 +2,14 @@
 
 namespace Majisti\Model\Storage;
 
-abstract class DbStorageAbstract extends StorageAdapter
+/**
+ * @desc Provides database storage and proxy column reading. Proxy column
+ * reading is simply a mapping between a virtual column name setup on
+ * object instanciation/mutator and the real database table column.
+ * 
+ * @author Steven Rosato
+ */
+abstract class DbStorageAbstract extends StorageAbstract
 {
     /**
      * @var \Zend_Db_Table_Abstract
@@ -22,6 +29,8 @@ abstract class DbStorageAbstract extends StorageAdapter
             $table = \Majisti\Model\Storage\DbTableContainer::getInstance()
                 ->getTable($table);
         }
+        
+        //TODO: add up proxy columns from params
         
         $this->setTable($table);
     }

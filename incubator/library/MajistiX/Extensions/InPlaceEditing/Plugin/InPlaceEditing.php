@@ -2,7 +2,7 @@
 
 namespace MajistiX\Controller\Plugin;
 
-class InPlaceEditing extends AbstractPlugin
+class InPlaceEditing extends \Majisti\Controller\Plugin\AbstractPlugin
 {
     public function postDispatch(\Zend_Controller_Request_Abstract $request)
     {

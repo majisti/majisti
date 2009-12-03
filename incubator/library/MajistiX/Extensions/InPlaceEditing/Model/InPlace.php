@@ -1,10 +1,10 @@
 <?php
 
-namespace MajistiX\Model\Editing;
+namespace MajistiX\Extensions\InPlaceEditing\Model;
 
 class InPlace extends \Majisti\Model\Storage\StorableModel
 {
-    protected $_genericStorage = 'MajistiX\Model\Editing\IInPlaceStorage';
+    protected $_genericStorage = 'MajistiX\Extensions\InPlaceEditing\Model\IInPlaceStorage';
     
     /**
      * @var IEditor

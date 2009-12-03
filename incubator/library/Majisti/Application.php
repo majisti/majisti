@@ -54,8 +54,8 @@ class Application extends \Zend_Application
         $defaultConfig = new \Zend_Config_Ini( dirname(__FILE__) . 
             '/Application/Configs/core.ini', APPLICATION_ENVIRONMENT, true);
         
-        $majistixConfig = new \Zend_Config_Ini(MAJISTIX_PATH 
-        	. '/Application/Configs/core.ini', APPLICATION_ENVIRONMENT);
+//        $majistixConfig = new \Zend_Config_Ini(MAJISTIX_PATH 
+//        	. '/Application/Configs/core.ini', APPLICATION_ENVIRONMENT);
         	
 //        $majisticConfig =  new \Zend_Config_Ini(MAJISTIC_PATH 
 //        	. '/Application/Configs/default.ini');
@@ -67,7 +67,7 @@ class Application extends \Zend_Application
         }
         
         return $defaultConfig
-        	->merge($majistixConfig)
+//        	->merge($majistixConfig)
         	->merge(new \Zend_Config_Ini($concreteConfigPath, APPLICATION_ENVIRONMENT, true));
     }
 }
