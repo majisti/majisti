@@ -14,6 +14,7 @@ class AllTests extends Test\PHPUnit\TestSuite
         $suite->addTest(Controller\AllTests::suite());
         $suite->addTest(I18n\AllTests::suite());
         $suite->addTest(Loader\AllTests::suite());
+        $suite->addTest(Model\AllTests::suite());
         $suite->addTest(Test\AllTests::suite());
         $suite->addTest(Util\AllTests::suite());
         
