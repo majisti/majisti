@@ -38,6 +38,17 @@ class Bootstrap extends \Zend_Application_Bootstrap_Bootstrap
     }
     
     /**
+     * @desc Inits the model aggregator for cross application
+     * model retrieval.
+     * 
+     * @return \Majisti\Model\Container The model container
+     */
+    protected function _initModelContainer()
+    {
+        return new \Majisti\Model\Container();
+    }
+    
+    /**
      * @desc Anything related after the construction of the bootstrap class
      */
     protected function _postConstruct() {}
