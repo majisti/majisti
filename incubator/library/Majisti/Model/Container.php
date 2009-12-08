@@ -3,8 +3,10 @@
 namespace Majisti\Model;
 
 /**
- * @desc Container for holding single models by providing namespace access 
- * and lazy instanciation.
+ * @desc Container for holding single models by providing case insensitive
+ * namespace access and lazy instanciation.
+ * 
+ * @version $Id$
  * 
  * @author Steven Rosato
  */
@@ -68,6 +70,8 @@ class Container
      * 
      * @param $key The key the model was stored in
      * @param $namespace [opt; def=default] The namespace key
+     * 
+     * @return True if the model was successfully removed, false otherwise
      */
     public function removeModel($key, $namespace = 'default')
     {
