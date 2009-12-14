@@ -52,6 +52,7 @@ class Container
         
         $registry   = $this->_registry;
         $namespace  = strtolower((string) $namespace);
+        $key        = strtolower((string)$key);
         
         /* create namespace */
         if( !$registry->offsetExists($namespace) ) {
@@ -77,6 +78,7 @@ class Container
     {
         $registry   = $this->_registry;
         $namespace  = strtolower((string) $namespace);
+        $key        = strtolower((string)$key);
         
         /* wrong namespace */
         if( !$registry->offsetExists($namespace) ) {
@@ -103,38 +105,55 @@ class Container
      * that same model.
      * 
      * @param $key The model key stored in this container
-     * @param $namespace [opt; def=default] The container's namespace
+     * @param $namespace [opt] The container's namespace
+     * @param $returnModel [opt] If model does not exist with the provided
+     * key and namespace, it will attempt to instanciate the classname given
+     * in this parameter while adding it to this container. If an object or null
+     * is given, the model returned by this function will likewise, adding it
+     * meanwhile if it was an object
+     * @param $args [opt] provide args for addModel fallback, when a returnModel
+     * classname is specified
+     * 
+     * @return A laziliy loaded model if it was never instanciated, the contained
+     * model if it was already loaded
      */
-    public function getModel($key, $namespace = 'default')
+    public function getModel($key, $namespace = 'default', 
+        $returnModel = null, array $args = array())
     {
         $registry   = $this->_registry;
         $namespace  = strtolower((string) $namespace);
-        
-        /* namespace not existant, so the model is not found */
-        if( !$registry->offsetExists($namespace) ) {
-            return null;
-        }
+        $key        = strtolower((string) $key);
         
         /*
          * retrieve model, if it is a class name, attempt to
          * instanciate it with provided args. Once loaded,
          * the container will always return that model.
          */
-        if( $registry->$namespace->offsetExists($key) ) {
-            $model = $registry->$namespace->$key->model;
-            
-            if( !is_object($model) ) {
-                $model = new \ReflectionClass($model);
-                $model = $model->newInstanceArgs($registry->$namespace->$key->args);
-                
-                $registry->$namespace->$key->model = $model;
-                unset($registry->$namespace->$key->args);
-            }
-            
-            return $model;
+        if( $registry->offsetExists($namespace) && $registry->$namespace->offsetExists($key) ) {
+            $returnModel    = $registry->$namespace->$key->model;
+            $args           = $registry->$namespace->$key->args;
         }
         
-        /* model was not found */
-        return null;
+        return $this->_loadModel($key, $returnModel, $namespace, $args);
+    }
+    
+    /**
+     * @desc Loads a model with with the provided arguments
+     * 
+     * @param string|object $model The classname or object
+     * @param array $args The args
+     */
+    protected function _loadModel($key, $model, $namespace, array $args)
+    {
+        if( !(is_object($model) || null === $model) ) {
+            $model = new \ReflectionClass($model);
+            $model = $model->newInstanceArgs($args);
+        }
+        
+        if( null !== $model ) {
+            $this->addModel($key, $model, $namespace);
+        }
+            
+        return $model;
     }
 }
