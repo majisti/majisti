@@ -14,6 +14,6 @@ abstract class HelperAbstract extends \Zend_View_Helper_Abstract
     
     public function setConfig(\Zend_Config $config)
     {
-        
+        //TODO: complete method stub
     }
 }
