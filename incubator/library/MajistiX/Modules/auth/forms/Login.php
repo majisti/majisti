@@ -1,6 +1,6 @@
 <?php
 
-class Users_Form_Login extends Zend_Form
+class Auth_Form_Login extends Zend_Form
 {
     public function init()
     {
@@ -9,13 +9,19 @@ class Users_Form_Login extends Zend_Form
         
         /* login */
         $tf_login = new Zend_Form_Element_Text('login');
-        $tf_login->setLabel('Login' . ':');
+        $tf_login
+            ->setLabel('Login' . ':')
+            ->setRequired()
+        ;
         
         $this->addElement($tf_login);
         
         /* password */
         $tf_pass = new Zend_Form_Element_Password('pass');
-        $tf_pass->setLabel('Password' . ':');
+        $tf_pass
+            ->setLabel('Password' . ':')
+            ->setRequired()
+        ;
         
         $this->addElement($tf_pass);
         
