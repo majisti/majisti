@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @desc The authenfication main controller will process any form
+ * of login through a simple interface.
+ * 
+ * @author Steven Rosato
+ */
 class Auth_IndexController extends Zend_Controller_Action
 {
     /**
@@ -17,16 +23,31 @@ class Auth_IndexController extends Zend_Controller_Action
      */
     protected $_redirector;
     
+    /**
+     * @var Zend_Auth_Adapter_Interface
+     */
+    protected $_authAdapter;
+    
+    /**
+     * @desc Inits the controller by remembering the success redirection url
+     * provided [optionnaly] through request parameters.
+     */
     public function init()
     {
         $this->_auth       = Zend_Auth::getInstance();
         $this->_redirector = $this->_helper->getHelper('Redirector'); 
         
+        //TODO: fetch redirection URL from request
+        
         $request = new Zend_Controller_Request_Http();
-        $request->setModuleName(Zend_Controller_Front::getInstance()->getDefaultModule());
+        $request->setModuleName(Zend_Controller_Front::getInstance()
+            ->getDefaultModule());
         $this->_lastUrl = new Auth_Model_LastUrl($request);
     }
     
+    /**
+     * @desc Authentification index
+     */
     public function indexAction()
     {
         if( !$this->_auth->hasIdentity() ) {
@@ -34,6 +55,13 @@ class Auth_IndexController extends Zend_Controller_Action
         }
     }
     
+    /**
+     * @desc Login action where post data is handled through either simple post
+     * or ajax post. The form model will render appropriate errors
+     * depending on the authentification failure or form filling errors.
+     * When the authentification is done successfully through its adapter,
+     * either a redirection or response will be sent.
+     */
     public function loginAction()
     {
         if( $this->_auth->hasIdentity() ) {
@@ -44,22 +72,40 @@ class Auth_IndexController extends Zend_Controller_Action
          * TODO: change view->model to _helper->model
          * @var Zend_Form $form
          */
-        $form   = $this->view->model('login', 'Majistix_Users_Forms', 'Auth_Form_Login');
-        $req    = $this->_request;
+        $form = $this->view->model('login', 
+                                   'Majistix_Users_Forms', 
+                                   'Auth_Form_Login');
+        $req  = $this->_request;
         
         /* login request */
         if( $req->isPost() && $form->isValid($req->getPost()) ) {
-            $adapter    = $this->_getAdapter($req->getPost());
-            $result     = $this->_auth->authenticate($adapter);
+            $this->_adapter = $this->_createAdapter($req->getPost());
+            $result         = $this->_auth->authenticate($this->_adapter);
 
-            if( $result->getCode() === Zend_Auth_Result::SUCCESS ) {
-                $this->_storeData($adapter);
+            /* auth success */
+            if( $result->isValid() ) {
+                $this->_storeData();
                 $this->_lastUrl->gotoLastUrl();
             }
+            
+            /* append result's error message to the form */
+            $form->addDecorator('Errors');
+            $form->addErrors($result->getMessages());
         }
     }
     
-    protected function _getAdapter($postData)
+    /**
+     * @desc Returns the authentification adapter for this authentification
+     * module.
+     * 
+     * TODO: review the default identities file loading directory, 
+     * should it be fetched via a configuration model?
+     * 
+     * @param array $postData The post data
+     * 
+     * @return Zend_Auth_Adapter_Interface The adapter
+     */
+    protected function _createAdapter($postData)
     {
         return new Zend_Auth_Adapter_Digest(
             dirname(__FILE__) . '/../models/identities.txt',
@@ -69,8 +115,13 @@ class Auth_IndexController extends Zend_Controller_Action
         );
     }
     
-    protected function _storeData(Zend_Auth_Adapter_Interface $adapter)
+    /**
+     * @desc Stores the data in the authentifaction storage.
+     */
+    protected function _storeData()
     {
+        $adapter = $this->_adapter;
+        
         $this->_auth->getStorage()->write(array(
             'realm'     => $adapter->getRealm(),
             'username'  => $adapter->getUsername(),
