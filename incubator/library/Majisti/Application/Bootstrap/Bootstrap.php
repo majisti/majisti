@@ -11,18 +11,6 @@ namespace Majisti\Application\Bootstrap;
 class Bootstrap extends \Zend_Application_Bootstrap_Bootstrap
 {
     /**
-     * @desc Constructs the boostrap class and calls the postConstruct()
-     * method after instanciation.
-     *
-     * @param $application The Majisti's application
-     */
-    public function __construct($application)
-    {
-        parent::__construct($application);
-        $this->_postConstruct();
-    }
-
-    /**
      * @desc Inits the standard dispatcher that supports multiple controller
      * directories for a single module and PHP namespaces.
      * @return \Majisti\Dispatcher\Standard The dispatcher
@@ -55,9 +43,4 @@ class Bootstrap extends \Zend_Application_Bootstrap_Bootstrap
 
         return \Zend_Registry::get('Majisti_ModelContainer');
     }
-
-    /**
-     * @desc Anything related after the construction of the bootstrap class
-     */
-    protected function _postConstruct() {}
 }

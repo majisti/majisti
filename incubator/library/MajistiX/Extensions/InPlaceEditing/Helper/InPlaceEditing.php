@@ -7,16 +7,16 @@
  * @desc InPlaceEditing view helper. Renders the default in place content editor
  * setup in the configuration. Check documentation for more information on how
  * to configure a in place editor.
- * 
+ *
  * @author Steven Rosato
  */
 class MajistiX_View_Helper_InPlaceEditing extends \Majisti\View\Helper\HelperAbstract
 {
     protected $_inPlaceEditingModel;
-    
+
     /**
      * @desc Renders content based on storage key.
-     *  
+     *
      * @param $key The storage key
      * @param $options the options
      */
@@ -24,7 +24,7 @@ class MajistiX_View_Helper_InPlaceEditing extends \Majisti\View\Helper\HelperAbs
     {
         return $this->getModel()->render($key);
     }
-    
+
     /**
      * @return \MajistiX\Model\Editing\InPlace
      */
@@ -33,11 +33,11 @@ class MajistiX_View_Helper_InPlaceEditing extends \Majisti\View\Helper\HelperAbs
         if( null === $this->_inPlaceEditingModel ) {
             $this->_inPlaceEditingModel = \MajistiX\Extensions\InPlaceEditing\Model\Factory::
                 createInPlaceEditingModel($this->getConfig());
-            
+
             //FIXME: temporary
             \Zend_Registry::set('Majisti_InPlaceEditing_Model', $this->_inPlaceEditingModel);
         }
-        
+
         return $this->_inPlaceEditingModel;
     }
 }
