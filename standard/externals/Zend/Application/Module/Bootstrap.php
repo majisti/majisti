@@ -75,12 +75,11 @@ abstract class Zend_Application_Module_Bootstrap
         if (!$this->hasPluginResource('FrontController')) {
             $this->registerPluginResource('FrontController');
         }
-
+        
         // ZF-6545: prevent recursive registration of modules
-//        if ($this->hasPluginResource('modules')) {
-//            $this->unregisterPluginResource('modules');
-//        }
-        //FIXME: some weird error here!
+        if ($this->hasPluginResource('modules')) {
+            $this->unregisterPluginResource('modules');
+        }
     }
 
     /**

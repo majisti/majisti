@@ -1,8 +1,11 @@
 <?
 /**
  * @desc Login view that basically just renders the provided form model.
- *  
+ *
  * @author Steven Rosato
  */
+?>
 
-print $this->model('login', 'Majistix_Users_Forms')->render();?>
+<div id="majisti_login-wrapper">
+    <?=$this->model('login', 'Majistix_Auth_Forms')->render();?>
+</div>

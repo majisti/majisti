@@ -13,20 +13,22 @@ class DefaultBuilder extends BuilderAbstract
     public function buildHead($dom)
     {
         $head = '';
+        $view = $this->getView();
         
-        $head .= $this->getView()->headLink()->prependStylesheet(BASE_URL . '/styles/core.css');
+        $head .= $view->headLink()->prependStylesheet(BASE_URL . '/styles/core.css');
         //$this->headLink()->prependStylesheet(LIB_URL . '/css/common.css')
-        $head .= $this->getView()->headLink()->prependStylesheet(MAJISTI_URL . '/styles/layouts/majisti/default.css');
+        $head .= $view->headLink()->prependStylesheet(MAJISTI_URL . '/styles/layouts/majisti/default.css');
         
-        $head .= $this->getView()->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=UTF-8');
+        $head .= $view->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=UTF-8');
         
-        $head .= $this->getView()->headMeta();
-        $head .= $this->getView()->headStyle();
+        $head .= $view->headMeta();
+        $head .= $view->headStyle();
         
         //TODO: use internationalised modules/controllers/actions name for default title generation
-        $head .= $this->getView()->headTitle('Majisti');
+        $head .= $view->headTitle('Majisti');
         
-        $head .= $this->getView()->headScript();
+        $head .= $view->headScript();
+        $head .= $view->jQuery();
         
         return "<head>{$head}</head>{$dom}";
         
