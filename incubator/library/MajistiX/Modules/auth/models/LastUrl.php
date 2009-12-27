@@ -24,6 +24,16 @@ class Auth_Model_LastUrl
     }
     
     /**
+     * @desc Returns the request
+     * 
+     * @return Zend_Controller_Request_Http The request
+     */
+    public function getRequest()
+    {
+        return $this->_session->request;
+    }
+    
+    /**
      * @desc Sets the request object.
      * @param $request The request object
      */

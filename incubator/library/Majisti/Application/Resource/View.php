@@ -53,6 +53,12 @@ class View extends \Zend_Application_Resource_View
         
         $view->addHelperPath('ZendX/JQuery/View/Helper', 'ZendX_JQuery_View_Helper');
         
+        $view->jQuery()->setLocalPath(MAJISTI_URL . '/libraries/jquery/jquery.js');
+        $view->jQuery()->setUiLocalPath(MAJISTI_URL . '/libraries/jquery/ui.js');
+        
+        //TODO: enable according to config
+        $view->jQuery()->enable();
+        
         \Zend_Registry::set('Zend_View', $view);
         
         return $view;
