@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * @desc Login view that basically just renders the provided form model.
  *
@@ -7,5 +7,5 @@
 ?>
 
 <div id="majisti_login-wrapper">
-    <?=$this->model('login', 'Majistix_Auth_Forms')->render();?>
+    <?php print $this->model('login', 'Majistix_Auth_Forms')->render();?>
 </div>

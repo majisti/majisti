@@ -70,7 +70,7 @@ class Auth_Form_Login extends Zend_Form
 
         $view->jQuery()->onLoadCaptureStart();?>
         callback = function() {
-            $.post('<?=$view->url()?>',
+            $.post('<?php print $view->url()?>',
                     {'login': $('#login').val(), 'pass' : $('#pass').val()}, function(data) {
                         $('#majisti_login-wrapper').html(data);
                         $('#majisti_login-wrapper form').submit(callback);
@@ -79,6 +79,6 @@ class Auth_Form_Login extends Zend_Form
         };
 
         $('#majisti_login-wrapper form').submit(callback);
-        <?$view->jQuery()->onLoadCaptureEnd();
+        <?php $view->jQuery()->onLoadCaptureEnd();
     }
 }

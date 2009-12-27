@@ -58,7 +58,7 @@ class View extends \Zend_Application_Resource_View
 
         //TODO: enable according to config
         $view->jQuery()->enable();
-
+        
         \Zend_Registry::set('Zend_View', $view);
 
         return $view;
