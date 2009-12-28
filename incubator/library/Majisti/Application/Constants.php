@@ -60,8 +60,11 @@ class Constants
          * TODO: support overriding with custom virtual host such as
          * static.local or static.majisti.com and etc...
          */
-        define('MAJISTI_PUBLIC', $request->getScheme()
-            . '://' . $request->getHttpHost()
+
+        define('MAJISTI_URL_PREFIX', $request->getScheme()
+            . '://' . $request->getHttpHost());
+
+        define('MAJISTI_PUBLIC', MAJISTI_URL_PREFIX
             . '/' . MAJISTI_FOLDER_NAME
             . '/incubator/public');
 

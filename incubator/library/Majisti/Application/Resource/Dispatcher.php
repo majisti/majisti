@@ -6,6 +6,6 @@ class Dispatcher extends \Zend_Application_Resource_ResourceAbstract
 {
     public function init()
     {
-        
-    }    
+        //TODO: complete method stub
+    }
 }
