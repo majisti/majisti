@@ -12,7 +12,8 @@ namespace Majisti\I18n;
  * 
  * TODO: review doc
  * 
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class LocaleSession extends \Majisti\Util\Pattern\SingletonAbstract implements ILocale
 {

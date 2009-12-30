@@ -4,7 +4,8 @@ namespace Majisti\Test\PHPUnit;
 
 /**
  *
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class TestCase extends \PHPUnit_Framework_TestCase
 {

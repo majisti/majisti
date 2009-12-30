@@ -7,7 +7,8 @@ namespace MajistiX\Extensions\InPlaceEditing\Model\Editor;
  * Configuration of the editor is issued through of list of params
  * available in the documentation.
  *
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class CkEditor implements IEditor
 {

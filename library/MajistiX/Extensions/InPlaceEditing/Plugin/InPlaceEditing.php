@@ -8,7 +8,8 @@ namespace MajistiX\Controller\Plugin;
  * model from the static model container. It supports either normal post
  * or xml http request and sends a response for the latter.
  *
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 use Majisti\Controller\Plugin;
 

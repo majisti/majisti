@@ -7,7 +7,8 @@ namespace Majisti\Loader;
  * probably release something so this class is lightly tested and
  * will surely eventually get deprecated.
  * 
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class Autoloader implements \Zend_Loader_Autoloader_Interface
 {

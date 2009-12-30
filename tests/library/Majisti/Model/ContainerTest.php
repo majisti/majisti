@@ -9,7 +9,8 @@ require_once 'TestHelper.php';
  * It must provide lazy loading, single models, multiple models instanciation
  * object params, removal and etc.
  * 
- * @author Steven Rosato 
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class ContainerTest extends \Majisti\Test\PHPUnit\TestCase
 {
@@ -159,7 +160,8 @@ class ContainerTest extends \Majisti\Test\PHPUnit\TestCase
 /**
  * @desc MockModel class used in the assertions
  * 
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class MockModel extends \ArrayObject
 {

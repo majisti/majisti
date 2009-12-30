@@ -6,7 +6,8 @@ namespace Majisti\Model\Storage;
  * @desc Adapter for IStorage interface. Class methods do nothing
  * unless overriden by child class. Based on Null Object pattern.
  * 
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 abstract class StorageAbstract implements IStorage
 {

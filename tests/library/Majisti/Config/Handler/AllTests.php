@@ -6,7 +6,8 @@ require_once 'TestHelper.php';
 
 /**
  * @desc Majisti - Config - Handler - All tests
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class AllTests extends \Majisti\Test\PHPUnit\TestSuite
 {

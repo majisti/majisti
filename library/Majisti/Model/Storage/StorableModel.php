@@ -6,7 +6,8 @@ namespace Majisti\Model\Storage;
  * @desc A storable model stores a storage model while providing generic
  * control to what type of storage that can be used.
  * 
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class StorableModel implements IStorable
 {

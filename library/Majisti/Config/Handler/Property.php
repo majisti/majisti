@@ -9,7 +9,8 @@ namespace Majisti\Config\Handler;
  * to call it on any values. Note that it is not supported on keys.
  * 
  * @see http://en.wikibooks.org/wiki/Apache_Ant/Property
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class Property implements IHandler
 {

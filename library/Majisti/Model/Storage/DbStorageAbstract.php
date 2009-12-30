@@ -7,7 +7,8 @@ namespace Majisti\Model\Storage;
  * reading is simply a mapping between a virtual column name setup on
  * object instanciation/mutator and the real database table column.
  * 
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 abstract class DbStorageAbstract extends StorageAbstract
 {

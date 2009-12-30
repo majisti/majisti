@@ -7,7 +7,8 @@ require_once 'TestHelper.php';
 /**
  * Autoloader test case.
  * 
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class AutoloaderTest extends \Majisti\Test\PHPUnit\TestCase
 {

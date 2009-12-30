@@ -13,7 +13,8 @@ namespace MajistiX\Rating;
  * This interface gives the responsability to the concrete instance
  * to implement it's own internal storage for the rating.
  *
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 interface IRating
 {

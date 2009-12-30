@@ -11,7 +11,8 @@ namespace Majisti\Application\Resource;
  * Should it automatically register controller plugins or should extensions
  * contain boostraping?
  * 
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class Extensions extends \Zend_Application_Resource_ResourceAbstract
 {

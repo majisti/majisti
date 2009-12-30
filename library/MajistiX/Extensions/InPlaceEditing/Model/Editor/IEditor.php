@@ -9,7 +9,8 @@ namespace MajistiX\Extensions\InPlaceEditing\Model\Editor;
  * posted. The editor should provide post or AJAX methods to post values
  * that will be used for insertion later on.
  *  
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 interface IEditor
 {

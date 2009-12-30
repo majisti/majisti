@@ -8,7 +8,8 @@ namespace Majisti;
  * the support for multiple fallback directories for view scripts (according
  * to the standard dispatcher).
  *
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class View extends \Zend_View 
 {

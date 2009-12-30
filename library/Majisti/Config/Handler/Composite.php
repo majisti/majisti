@@ -9,7 +9,8 @@ namespace Majisti\Config\Handler;
  * Handler is foremost a stack, the last handler added will be
  * the first one to parse the given config (LIFO order).
  * 
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class Composite extends \Majisti\Util\Model\Stack implements IHandler
 {

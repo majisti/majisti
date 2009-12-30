@@ -11,7 +11,8 @@ namespace MajistiX\Rating;
  * to calculate an average rating and thus could be used in a star
  * rating system.
  * 
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class DbRating implements IRating
 {

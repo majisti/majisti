@@ -6,7 +6,8 @@ namespace Majisti\Application\Resource;
  * @desc View resource that configurates and returns an application ready
  * view that will be used by mostly the entire application.
  *
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class View extends \Zend_Application_Resource_View
 {

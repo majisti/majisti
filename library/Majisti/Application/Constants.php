@@ -7,7 +7,8 @@ namespace Majisti\Application;
  *
  * TODO: this should be more flexible according to configuration
  *
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class Constants
 {

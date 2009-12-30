@@ -12,7 +12,8 @@ namespace Majisti\Config\Handler;
  * and therefore should do nothing on locked ones. The handler
  * always return the configuration modified or not.
  * 
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 interface IHandler
 {

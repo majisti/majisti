@@ -5,7 +5,8 @@ namespace MajistiX\Extensions\InPlaceEditing\Model;
 /**
  * @desc InPlaceEditing exception.
  *  
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class Exception extends \Majisti\Exception
 {

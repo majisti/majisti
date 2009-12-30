@@ -8,7 +8,8 @@ namespace Majisti\Util\Model;
  * with it starts up with the last element of this stack, which
  * is the last in.
  * 
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class Stack implements \IteratorAggregate, \Countable
 {

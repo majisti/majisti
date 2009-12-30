@@ -6,7 +6,8 @@ namespace Majisti\Util\Model;
  * @desc Class that aggregates a Zend_View_Interface and provides
  * mutators and accessors.
  * 
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class ViewAggregate implements IViewAggregate
 {

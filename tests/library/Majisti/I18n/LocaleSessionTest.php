@@ -6,7 +6,8 @@ require_once 'TestHelper.php';
 
 /**
  * @desc
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class LocaleSessionTest extends \Majisti\Test\PHPUnit\TestCase
 {

@@ -6,7 +6,8 @@ namespace MajistiX\Extensions\InPlaceEditing\Model;
  * @desc InPlaceEditing storage model facade that will render or edit content
  * according to its set editor and storage model.
  *
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class InPlaceEditing extends \Majisti\Model\Storage\StorableModel
 {

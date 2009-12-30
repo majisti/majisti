@@ -7,8 +7,8 @@ namespace Majisti\Demo\Simple\Application;
  *
  * @desc Deploy anywhere Majisti's concrete loader
  *
- * @author Steven Rosato
- * @version 1.0.0
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 final class Loader
 {

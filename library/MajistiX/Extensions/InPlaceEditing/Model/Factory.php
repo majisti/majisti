@@ -5,7 +5,8 @@ namespace MajistiX\Extensions\InPlaceEditing\Model;
 /**
  * @desc Factory class to help create an InPlaceEditing model from configuration.
  * 
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class Factory
 {

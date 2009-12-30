@@ -8,7 +8,8 @@
  * setup in the configuration. Check documentation for more information on how
  * to configure a in place editor.
  *
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class MajistiX_View_Helper_InPlaceEditing extends \Majisti\View\Helper\HelperAbstract
 {

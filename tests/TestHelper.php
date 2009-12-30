@@ -3,7 +3,8 @@
 /**
  * This file should be included with every TestCase.
  *
- * @author Steven Rosato, based on ZF's TestHelper.php
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 
 ini_set('memory_limit', '128M');

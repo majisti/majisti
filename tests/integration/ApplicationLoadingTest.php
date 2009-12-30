@@ -7,7 +7,8 @@ require_once 'TestHelper.php';
 /**
  * @desc Test case that asserts that the 'Deploy anywhere' works.
  * 
- * @author Steven Rosato 
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class ApplicationLoadingTest extends \Majisti\Test\PHPUnit\TestCase
 {

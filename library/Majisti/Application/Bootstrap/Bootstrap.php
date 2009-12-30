@@ -5,8 +5,8 @@ namespace Majisti\Application\Bootstrap;
 /**
  * @desc Majisti's application boostrap.
  *
- * @author Steven Rosato
- * @version 1.0
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class Bootstrap extends \Zend_Application_Bootstrap_Bootstrap
 {

@@ -6,7 +6,8 @@ require_once 'TestHelper.php';
 
 /**
  * @desc Property test case
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  * 
  * TODO: test xml and array configuration as well for the syntax.
  */

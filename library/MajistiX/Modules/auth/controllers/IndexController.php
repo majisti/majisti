@@ -4,7 +4,8 @@
  * @desc The authenfication main controller will process any form
  * of login through a simple interface.
  *
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class Auth_IndexController extends Zend_Controller_Action
 {

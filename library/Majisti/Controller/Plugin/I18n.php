@@ -6,7 +6,8 @@ namespace Majisti\Controller\Plugin;
  * @desc Listens for a specific URL param (that was setup in the
  * I18n plugin configuration) and switches locale according to that parameter
  * 
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class I18n extends AbstractPlugin
 {

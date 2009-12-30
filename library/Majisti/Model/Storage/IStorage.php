@@ -10,7 +10,8 @@ namespace Majisti\Model\Storage;
  * the storage model can restrict its access to either writing
  * or reading, but not both. 
  * 
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 interface IStorage
 {

@@ -9,7 +9,8 @@ namespace Majisti\Model\Storage;
  * the storage model that can be given. That way, only a
  * StorageModel<T> of type T can be given to that storable model.
  * 
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 interface IStorable
 {

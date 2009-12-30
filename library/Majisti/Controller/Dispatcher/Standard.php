@@ -7,7 +7,8 @@ namespace Majisti\Controller\Dispatcher;
  * and multiple fallback controller directories for one module.
  * 
  * @package Majisti\Controller\Dispatcher;
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class Standard extends \Zend_Controller_Dispatcher_Standard implements IDispatcher
 {

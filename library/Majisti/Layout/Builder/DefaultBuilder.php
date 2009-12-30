@@ -6,7 +6,8 @@ namespace Majisti\Layout\Builder;
  * TODO: Utility class (or view helper) for generating all kind of HTML elements so that no
  * HTML code is withing PHP code, only OOP.
  * 
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class DefaultBuilder extends BuilderAbstract
 {

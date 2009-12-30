@@ -6,7 +6,8 @@ namespace MajistiX\Extensions\InPlaceEditing\Model\Storage;
  * @desc Storage interface for InPlaceEditing model which accepts
  * only that type of editor.
  *  
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 interface IStorage
 {

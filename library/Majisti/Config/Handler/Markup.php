@@ -8,7 +8,8 @@ namespace Majisti\Config\Handler;
  * 
  * @see \Zend_Markup (if it ever makes it in the standard library)
  * 
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  * 
  * TODO: factory constructor ex: bbCode_html adds BbCode to Html markup
  */

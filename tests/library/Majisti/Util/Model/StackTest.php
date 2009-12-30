@@ -6,7 +6,8 @@ require_once 'TestHelper.php';
 
 /**
  * @desc Tests the Stack implementation
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class StackTest extends \Majisti\Test\PHPUnit\TestCase
 {

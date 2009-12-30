@@ -4,7 +4,8 @@ namespace Majisti\Layout\Builder;
 
 /**
  * 
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 interface IBuilderBody extends IBuildable
 {

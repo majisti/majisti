@@ -10,7 +10,8 @@ if( !defined('PHPUnit_MAIN_METHOD') ) {
 
 /**
  * @desc
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class StandardTest extends \Zend_Controller_Dispatcher_StandardTest
 {

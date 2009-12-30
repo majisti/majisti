@@ -2,6 +2,11 @@
 
 namespace Majisti\Application\Module;
 
+/**
+ * @desc Module Bootrap
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ */
 class Bootstrap extends \Majisti\Application\Bootstrap\Bootstrap
 {
     /**
@@ -11,8 +16,8 @@ class Bootstrap extends \Majisti\Application\Bootstrap\Bootstrap
 
     /**
      * Constructor
-     * 
-     * @param  \Zend_Application|\Zend_Application_Bootstrap_Bootstrapper $application 
+     *
+     * @param  \Zend_Application|\Zend_Application_Bootstrap_Bootstrapper $application
      * @return void
      */
     public function __construct($application)
@@ -50,8 +55,8 @@ class Bootstrap extends \Majisti\Application\Bootstrap\Bootstrap
 
     /**
      * Set module resource loader
-     * 
-     * @param  Zend_Loader_Autoloader_Resource $loader 
+     *
+     * @param  Zend_Loader_Autoloader_Resource $loader
      * @return Zend_Application_Module_Bootstrap
      */
     public function setResourceLoader(\Zend_Loader_Autoloader_Resource $loader)
@@ -62,7 +67,7 @@ class Bootstrap extends \Majisti\Application\Bootstrap\Bootstrap
 
     /**
      * Retrieve module resource loader
-     * 
+     *
      * @return Zend_Loader_Autoloader_Resource
      */
     public function getResourceLoader()
@@ -80,7 +85,7 @@ class Bootstrap extends \Majisti\Application\Bootstrap\Bootstrap
 
     /**
      * Ensure resource loader is loaded
-     * 
+     *
      * @return void
      */
     public function initResourceLoader()
@@ -90,7 +95,7 @@ class Bootstrap extends \Majisti\Application\Bootstrap\Bootstrap
 
     /**
      * Retrieve module name
-     * 
+     *
      * @return string
      */
     public function getModuleName()

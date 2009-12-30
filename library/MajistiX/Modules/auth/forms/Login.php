@@ -5,7 +5,8 @@
  * along with a submit button. It provides necessary CSS classes
  * for AJAX capabilities and style customization.
  *
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class Auth_Form_Login extends Zend_Form
 {

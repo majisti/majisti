@@ -6,7 +6,8 @@ namespace Majisti\Application\Resource;
  * @desc ConfigHandler that basically reads up from configuration
  * a list of IHandler to apply on the global Majisti_Config that
  * is used by the entire application.
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class ConfigHandler extends \Zend_Application_Resource_ResourceAbstract
 {

@@ -5,7 +5,8 @@ namespace MajistiX\Extensions\InPlaceEditing\Model\Storage;
 /**
  * @desc Db storage implementation for InPlaceEditing model.
  *
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class Db extends \Majisti\Model\Storage\DbStorageAbstract implements IStorage
 {

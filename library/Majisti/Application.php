@@ -16,7 +16,8 @@ namespace Majisti;
  * declared in the configuration. Refer to documentation for more
  * details and examples.
  *
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class Application extends \Zend_Application
 {

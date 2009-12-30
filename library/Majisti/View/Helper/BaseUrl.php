@@ -5,7 +5,7 @@
 /**
  * TODO: doc
  * 
- * @author Steven Rosato
+ * @author Majisti
  */
 class Majisti_View_Helper_BaseUrl extends \Zend_View_Helper_Abstract 
 {    

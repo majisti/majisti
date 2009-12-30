@@ -3,7 +3,8 @@
 /**
  * @desc Model that will remember an url through the session
  * 
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class Auth_Model_LastUrl
 {

@@ -6,7 +6,8 @@ namespace Majisti\Controller\Dispatcher;
  * @desc Dispatcher interface that adds fallback controller directories
  * and support PHP namespaces.
  * 
- * @author Steven Rosato
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 interface IDispatcher extends \Zend_Controller_Dispatcher_Interface
 {
