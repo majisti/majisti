@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section 
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" 
+    xml:lang="en" xml:id="majisti.config.handlers" version="5.0">
+    
+    <title>Handlers</title>
+
+ <para>
+     Since Majisti Application is built solely on configuration,
+     some more config handling was needed. Reading configuration is the
+     responsability of Zend_Config and therefore no other tasks should be
+     defined on how that read config is interpreted. Therefore, with config
+     handlers, it is possible to parse specific configuration syntax.
+     The following are the default configuration handlers shipped with Majisti.
+ </para>
+ 
+ <xi:include href="handlers/property.xml" />
+ <xi:include href="handlers/import.xml" />
+</section>

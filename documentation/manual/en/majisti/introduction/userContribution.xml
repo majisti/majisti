@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section 
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" 
+    xml:lang="en" xml:id="majisti.introduction.userContribution" 
+    version="5.0">
+    
+    <title>User Contribution</title>
+    
+    <para>User contribution is a big part of Majisti. In fact, the entire library
+        is driven by it since it only provides tools for modularity. With no modules
+        contributed well... no modularity is really achieved!
+    </para>
+    
+    <para>
+        We believe that concentrating on one simple and very concrete tasks is what
+        is the easiest for developpers hence most people are making websites on the fly
+        - maybe using a framework - but still coding until it is done. Using abstraction is harder
+        and requires more time and most of the time the end customer for the website does not
+        really care about the abstraction used within his website since usually that abstraction
+        can even be used again for his competitors! Business modeling is what usually
+        is the most interresting since its the making of something new, based
+        on the current knowledge and experience in the ways of creating something by
+        expending that knowledge and gaining more experience. But business modeling usually covers
+        so much of areas where everything must be focussed on the end user. So, how
+        can we achieve everything without going insane?
+    </para>
+    
+    <para>User contribution. Very well known by the open source community.
+        By using modularity most of the business model is solved up with already contributed
+        modules which are already proven successfull and working and the use case modeling
+        sums up of configuring those modules and coding the models related to that business.
+        In fact, after designing those models, the only thing left is building the actual website
+        and its layout, provided you don't use the default templates shipped with the standard
+        distribution! <emphasis>The key is to concentrate on business modeling</emphasis>.
+    </para>
+    
+    <para>Majisti is using a proposal system which promotes user contributed modules
+        so that the most popular ideas climb up the ladder as fast and possible
+        and gather the maximum number of developers. With your reputation it is even possible
+        to feedback on a proposed component by suggesting more interesting ideas.
+        More on that on the actual website.
+    </para>
+</section>

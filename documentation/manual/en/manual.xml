@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<book
+    version="5.0"
+    xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <info>
+        <title>Developer's Reference Guide</title>
+        <subtitle>Majisti Framework</subtitle>
+        <edition>Developer's Reference Guide for Majisti Framework</edition>
+        <pubdate><?dbtimestamp format="Y-m-d" ?></pubdate>
+
+        <copyright>
+            <year><?dbtimestamp format="Y" ?></year>
+            <holder>
+                Majisti (<link xlink:href="http://www.majisti.com/" />)
+            </holder>
+        </copyright>
+                
+        <!-- START: Front Cover -->
+        <cover>
+            <para role="tagline">The official documentation for Majisti Framework</para>
+        </cover>
+        <!-- END: Front Cover -->
+        
+        <!-- START: Back Cover -->
+        <cover>
+            <para>Majisti Framework</para>
+        </cover>
+        <!-- END: Back Cover -->
+    </info>
+    
+    <!-- START: Chapters -->
+    <xi:include href="majisti/introduction.xml" />
+    <xi:include href="majisti/quickstart.xml" />
+    <xi:include href="majisti/application.xml" />
+    <xi:include href="majisti/config.xml" />
+    <xi:include href="majisti/controller.xml" />
+    <xi:include href="majisti/i18n.xml" />
+    <xi:include href="majisti/model.xml" />
+    <xi:include href="majisti/test.xml" />
+    <xi:include href="majisti/util.xml" />
+    <xi:include href="majisti/view.xml" />
+    <xi:include href="majisti/majistix.xml" />
+    <!-- END: Chapters -->
+</book>

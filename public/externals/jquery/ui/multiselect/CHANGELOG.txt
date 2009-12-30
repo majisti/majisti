@@ -1,0 +1,25 @@
+Expected features...
+------------------------
+
+TODO - support for JSON, XML
+TODO - callback: formatData, onSelect, onUnselect, etc.
+TODO - handle option groups
+TODO - handle disabled options
+
+
+
+
+1.7-1pre
+------------------------
+
+- the selected items are not removed from the available list (until a search is executed) so the available items' order are preserved
+- no-conflict mode compatible
+- fixed some CSS positionning
+- added simple effects animation (show, fade, slide)
+- added an input field for ajax item quick search (plain text only for now)
+
+
+1.7pre
+------------------------
+
+- alpha release by Michael Aufreiter

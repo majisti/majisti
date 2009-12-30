@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section 
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" 
+    xml:lang="en" xml:id="majisti.introduction.goals" 
+    version="5.0">
+    
+    <title>Goals</title>
+
+    <para>
+        Here is a short list of what Majisti is trying to achieve
+        as a modular application framework:
+    </para>
+    
+    <itemizedlist>
+    	<listitem>
+    	    <para>
+    	        User contributed components that were proposed,
+    	        reviewed, commented and accepted for development and rated by the community
+    	        through the proposal and rating systems for use in the standard distribution.
+    	    </para>
+    	</listitem>
+    	<listitem>
+    		<para>
+    		    The core library should be minimalist, providing the tools
+    		    to create the modules, plugins and utility classes.
+    		</para>
+    	    
+    	    <para>
+    	        Actually, the library is splitted as such:
+    	        <segmentedlist>
+    	            <segtitle>Majisti</segtitle>
+    	            <segtitle>MajistiX</segtitle>
+    	            <segtitle>MajistiC</segtitle>
+    	            <seglistitem>
+    	                <seg>The core library</seg>
+    	                <seg>Modules, controller plugins, view helpers,
+    	                  etc... that were accepted as part of the standard distribution.
+    	                </seg>
+    	                <seg>User dropins or customization, modules and components 
+    	                    not officially supported by Majisti.
+    	                </seg>
+    	            </seglistitem>
+    	        </segmentedlist>
+    	    </para>
+    	</listitem>
+    	<listitem>
+    		<para>Beforehand configurable through its set of configuration files or other
+    			configuration storage for any official or non official modules and
+    			extendable.
+    		</para>
+    	</listitem>
+        <listitem>
+            <para>Client-side modules (using JQuery) that interacts with the server side modules.</para>
+        </listitem>
+    	<listitem>
+    		<para>Templates and themes for different layouts.</para>
+    	</listitem>
+    </itemizedlist>
+	
+	<para>What Majisti is NOT:</para>
+	
+	<itemizedlist>
+		<listitem><para>A first level component library. Example: reading a 
+			word document will never show up as a component in the standard distribution under Majisti\Word but User Handling
+			could make it under Majisti\User since its related to applications. (That is why it uses the Zend Framework).
+			First level components should be submitted to the Zend Framework community.
+		</para></listitem>
+		<listitem><para>Mainly a <acronym>CMS</acronym> (A Content Management System could be part of a contributed module or set of modules)</para></listitem>
+		<listitem><para>A JQuery module creator. It uses already proven and tested JQuery modules.</para></listitem>
+	</itemizedlist>
+	
+	<para>To sum up, Majisti is simply a module engine where everything needed for a rich application should already be defined and ready to get
+	configured if any of the default behaviour is not wanted and extendable for even more specific needs without having to rewrite
+	an entire module.</para>
+</section>

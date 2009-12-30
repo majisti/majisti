@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Project: Majisti Framework
+   Author: Steven Rosato
+   Ant file version: 1.0
+   
+   License: TODO
+   
+   Changelog:
+       - First core builds: tests/code-coverage and manual
+   
+   This ant file is used by Majisti's Bamboo server located at:
+       http://integration.majisti.com/
+   
+   Requirements:
+   
+       Project build-all:
+           - apache ant (tested with 1.7.1)
+       
+       Documentation:
+           - Phing (tested with 2.3.3)
+           - php5-xsl
+           - Docbook-xsl 1.75 and above (tested with 1.75.2)
+               installed under /usr/share/docbook-xsl or you can edit
+               ${dir.build.manual}/build/html/html.xsl to use a chunk from the web
+               or different path (symbolic links recommended)
+           - Docbook (tested with 5.0)
+       
+       Unit testing and code coverage:
+           - php5, php5-cli, php5-common, php5-mysql
+           - PHP Packages must be 5.3.0 and higher.
+           - PHPUnit inside php-cli include_path
+           - XDebug extension for apache 2.0.5 and above (for code coverage)
+    
+    General Usage:
+        ant all
+        ant clean
+        ant tests
+        ant manual
+-->
+<!DOCTYPE project>
+<project name="Majisti-incubator" default="all" basedir=".">
+    <property name="dir.build"     value="${basedir}/build" />
+    <property name="dir.tests"     value="${basedir}/tests" />
+    <property name="dir.manual"    value="${basedir}/documentation/manual" />
+    
+    <property name="dir.build.logs"     value="${dir.build}/logs" />
+    <property name="dir.build.manual"   value="${dir.build}/manual" />
+    
+    <!-- ///////////////////////////////////////////////////////////////// -->
+    <!--                        CLEAN and PREPARE                          -->
+    <!-- ///////////////////////////////////////////////////////////////// -->
+    
+    <target name="clean">
+        <delete includeemptydirs="true">
+            <fileset dir="${dir.build}" includes="**/*"/>
+        </delete>
+    </target>
+    
+    <target name="prepare">
+        <mkdir dir="${dir.build}"/>
+        <mkdir dir="${dir.build.logs}"/>
+        <mkdir dir="${dir.build.manual}"/>
+    </target>
+    
+    <!-- ///////////////////////////////////////////////////////////////// -->
+    <!--                               MANUAL                              -->
+    <!-- ///////////////////////////////////////////////////////////////// -->
+    
+    <target name="manual" depends="prepare">
+        <exec dir="${dir.manual}/build" executable="phing" failonerror="true" />
+        <copy todir="${dir.build.manual}">
+            <fileset dir="${dir.manual}/build/bin/html/">
+                <include name="*" />
+                <include name="**" />
+            </fileset>
+        </copy>
+    </target>
+    
+    <!-- ///////////////////////////////////////////////////////////////// -->
+    <!--                    UNIT TESTS and CODE COVERAGE                   -->
+    <!-- ///////////////////////////////////////////////////////////////// -->
+    
+    <target name="tests" depends="prepare">
+        <exec dir="${dir.tests}" executable="phpunit" failonerror="true">
+            <arg line="--log-xml  ${dir.build.logs}/phpunit.xml
+                --coverage-clover ${dir.build.logs}/clover.xml
+                --coverage-html   ${dir.build}/coverage
+                AllTests" />
+        </exec>
+    </target>
+    
+    <!-- ///////////////////////////////////////////////////////////////// -->
+    <!--                             BUILD ALL                             -->
+    <!-- ///////////////////////////////////////////////////////////////// -->
+    <target name="all" depends="clean, prepare, manual, tests"/>
+</project>

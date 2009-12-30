@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter 
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" 
+    xml:lang="en" xml:id="majisti.model" 
+    version="5.0">
+    
+    <title>Majisti\Model</title>
+    
+    <para>
+        <acronym>Model-View-Controller</acronym>(MVC) applications is what Zend has fully
+        aimed for with big focus on views and controllers. There is still some minor but still
+        very important need here on the models. With Business Modeling in mind, Majisti is trying
+        to rely most on the design of models so that we can keep controllers thin and views
+        interchangable. A very common way to communicate between views and models within Zend
+        is with the controller such as
+    </para>
+    
+    <programlisting><![CDATA[
+//file IndexController.php
+
+class IndexController extends Zend_Controller_Action
+{
+    public function indexAction()
+    {
+        require_once 'Models/Users.php';
+        $users = new Users(); //a Zend_Db_Table_Abstract model
+        
+        $this->view->users = $users->fetchAll();
+    }
+}
+]]>
+    </programlisting>
+    
+    <para>Though that way is very simple and straightforward it still break
+    some of the MVC dogmatic, where views do actual aggregate or communicate
+    with their known models, usually known with the Observer Pattern where an observer
+    attach itself to the model it is aggregating.</para>
+    
+    <para>A better way is through the use of a placeholder model limiting the useless
+    coupling between the controller and the view.</para>
+    
+    <para>
+        Still, it would be better if the controller's sole task was actually to tell the model
+        to prepare its data. It should not then give the returned content to the view.
+        It is the views responsability to extract the needed information from its known model.
+    </para>
+    
+    <para>Very theoric and a good argument against that theory would be that it would make
+        a lot of PHP code within the views. With Majisti it gets even simplier than that.
+    </para>
+    
+    <para><classname>Majisti\Model</classname> is focussing on a true MVC implementation by giving
+        multiple ways to achieve that goal through the common Zend components.
+    </para>
+    
+    <example>
+        <title>Interacting with models</title>
+        
+        <para>
+            Let's take the simple example of a user's model:
+        </para>
+        
+        <programlisting><![CDATA[
+/* Model */
+<?php
+
+namespace MyApplication\Models;
+
+class Users
+{
+    /** @var Zend_Db_Table_Abstract */
+    private $_table;
+    
+    /** @var Zend_Session_Namespace */
+    private $_session;
+    
+    public function login($user, $passwd)
+    {
+        //do login by retrieving from table and storing user in session
+    }
+    
+    /**
+     * @return boolean
+     */
+    public function isUserLogged()
+    {
+        //check session
+    }
+    
+    //other user data functions...
+}
+
+/* Controller */
+class IndexController extends Zend_Controller_Action
+{
+    public function loginAction()
+    {
+        if( $this->_request->isPost() ) {
+            $user   = $this->_getParam('user', false);
+            $passwd = $this->_getParam('passwd', false);
+            
+            if( $user && $passwd ) {
+                /** @var Users $mUsers */
+                $mUsers = $this->_helper->model('users');
+                $mUsers->login($user, $passwd);
+            }
+        }
+    }
+}
+
+/* View */
+login.phtml
+
+<? if( $this->model('users')->isUserLogged() ) : ?>
+       //render logged in content
+<? endif; ?>
+]]>
+        </programlisting>
+        
+        <para>
+            Notice that there is no instanciation of the <classname>User</classname> class and this is
+            because no arguments except of the model's name was given to the
+            controller's action helper or the view's helper. By default, every model
+            are lazily instanciated and future calls to the helper functions will
+            return that same instance unless specified otherwise in the options
+            function argument. Moreover, there is no need to call <function>require_once</function>
+            if the file was placed under the models folder since by default the model
+            folder is added to the global PluginLoader.
+        </para>
+        
+        <para>If you find that using an action helper is still too long, you can
+            always extend <classname>\Majisti\Controller\Action</classname>
+            within your controllers which contains the function
+            <function>model</function> and takes the same number of arguments
+            as its helper object. Majisti does not impose the use of its action
+            controller but that can always reduce code length.
+        </para>
+        
+        <para>By default, every models that are not PHP namespaced will be grouped
+        under the 'default' scope. Through those namespaces, it is possible
+        for every modules to automatically have their model namespaced in the
+        <classname>Majisti\Model\Container</classname> so that interacting or using
+        common models is simplified.</para>
+    </example>
+</chapter>
