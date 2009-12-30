@@ -39,7 +39,7 @@
         ant manual
 -->
 <!DOCTYPE project>
-<project name="Majisti-incubator" default="all" basedir=".">
+<project name="Majisti" default="all" basedir=".">
     <property name="dir.build"     value="${basedir}/build" />
     <property name="dir.tests"     value="${basedir}/tests" />
     <property name="dir.manual"    value="${basedir}/documentation/manual" />

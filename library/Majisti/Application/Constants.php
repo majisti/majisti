@@ -66,7 +66,7 @@ class Constants
 
         define('MAJISTI_PUBLIC', MAJISTI_URL_PREFIX
             . '/' . MAJISTI_FOLDER_NAME
-            . '/incubator/public');
+            . '/public');
 
         define('MAJISTI_URL', MAJISTI_PUBLIC . '/majisti');
         define('MAJISTIC_URL', MAJISTI_PUBLIC . '/majistic');
