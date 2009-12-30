@@ -4,9 +4,9 @@ namespace Majisti\Demo\Simple\Application;
 
 /**
  * TODO: documentation
- * 
+ *
  * @desc Deploy anywhere Majisti's concrete loader
- * 
+ *
  * @author Steven Rosato
  * @version 1.0.0
  */
@@ -19,7 +19,7 @@ final class Loader
 	
 	/**
 	 * @desc Starts the loading
-	 * 
+	 *
 	 * @throws Exception If this function is called more than one time
 	 */
 	static public function load($autoRunApplication = true)
@@ -32,8 +32,8 @@ final class Loader
 	}
 	
 	/**
-	 * @desc Constructs this application's Loader, initializing the include paths, the required Loaders
-	 * and the application's constants.
+	 * @desc Constructs this application's Loader, initializing the
+	 * include paths, the required Loaders and the application's constants.
 	 */
 	private function __construct($autoRun = true)
 	{
@@ -46,22 +46,21 @@ final class Loader
 	}
 	
 	/**
-	 * @desc Includes Majisti's library and its external libraries such as Zend and ZendX.
+	 * @desc Includes Majisti's library and its external libraries
+	 * such as Zend and ZendX.
 	 */
 	private function _setIncludePaths()
 	{
-		set_include_path(implode(PATH_SEPARATOR, array( 
-			realpath($this->_getMajistiTopLevelLibraryPath() . '/laboratory/library'), /* laboratory */ 
-			$this->_getMajistiTopLevelLibraryPath() . '/incubator/library', /* incubator */
-			$this->_getMajistiTopLevelLibraryPath() . '/standard/library', /* standard */
-			$this->_getMajistiTopLevelLibraryPath() . '/standard/externals',
+		set_include_path(implode(PATH_SEPARATOR, array(
+			realpath($this->_getMajistiTopLevelLibraryPath() . '/library'),
+			realpath($this->_getMajistiTopLevelLibraryPath() . '/externals'),
 			get_include_path(),
 		)));
 	}
 	
 	/**
-	 * @desc Registers Zend's loader for Zend's default class searching and Majisti's default AutoLoader
-	 * which supports PHP namespaces.
+	 * @desc Registers Zend's loader for Zend's default class searching and
+	 * Majisti's default AutoLoader which supports PHP namespaces.
 	 */
 	private function _registerLoaders()
 	{
@@ -73,21 +72,24 @@ final class Loader
 	}
 	
 	/**
-	 * @desc Will start a upright directory search for a folder entitled by the MAJISTI_FOLDER_NAME constant
-	 * unless a MAJISTI_LIBRARY_PATH absolute path is setup.
-	 * If the folder is not found after the depth param counter has reached 0 an exception will be thrown.
-	 * 
-	 * Note that this function is lazy and note that calling this function more than once after the
-	 * initial call will always return the same path, even if the library is no longer on the filesystem.
-	 * 
+	 * @desc Will start a upright directory search for a folder entitled by
+	 * the MAJISTI_FOLDER_NAME constant unless a MAJISTI_LIBRARY_PATH absolute
+	 * path is setup. If the folder is not found after the depth param
+	 * counter has reached 0 an exception will be thrown.
+	 *
+	 * Note that this function is lazy and note that calling this function
+	 * more than once after the initial call will always return the same
+	 * path, even if the library is no longer on the filesystem.
+	 *
 	 * @param int $maxDepth [optionnal] The maximum depth the search should go.
-	 * 
-	 * @throws Exception if MAJISTI_FOLDER_NAME constant is not defined when MAJISTI_LIBRARY_PATH
-	 * is omitted.
-	 * 
-	 * @return String Returns Majisti's library top level library path. Top level means
-	 * the absolute path found according to MAJISTI_FOLDER_NAME | MAJIST_LIBRARY_PATH 
-	 * constant defined in public/index.php
+	 *
+	 * @throws Exception if MAJISTI_FOLDER_NAME constant is not
+	 * defined when MAJISTI_LIBRARY_PATH is omitted.
+	 *
+	 * @return String Returns Majisti's library top level library path.
+	 * Top level means the absolute path found according to
+	 * MAJISTI_FOLDER_NAME | MAJIST_LIBRARY_PATH constant defined
+	 * in public/index.php
 	 */
 	private function _getMajistiTopLevelLibraryPath($maxDepth = 100)
 	{
@@ -110,8 +112,9 @@ final class Loader
 	}
 	
 	/**
-	 * @desc Starts the lazy searching, will stop on $depth max depth to ensure no infinite loops.
-	 * 
+	 * @desc Starts the lazy searching, will stop on $depth max depth to
+	 * ensure no infinite loops.
+	 *
 	 * @throws Exception If the library directory was never found
 	 * @return String Majisti's library absolute path
 	 */
@@ -130,7 +133,8 @@ final class Loader
 		}
 		
 		if( $maxDepth === 0 ) {
-			throw new \Exception("Majisti's library folder not found under the name " . MAJISTI_FOLDER_NAME);
+			throw new \Exception("Majisti's library
+			     folder not found under the name " . MAJISTI_FOLDER_NAME);
 		}
 		
 		return realpath($upDir . '/' . MAJISTI_FOLDER_NAME);
