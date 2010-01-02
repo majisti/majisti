@@ -53,7 +53,10 @@
     
     <target name="clean">
         <delete includeemptydirs="true">
-            <fileset dir="${dir.build}" includes="**/*"/>
+            <fileset 
+                dir="${dir.build}" 
+                includes="**/*"
+                excludes=".gitignore" />
         </delete>
     </target>
     
