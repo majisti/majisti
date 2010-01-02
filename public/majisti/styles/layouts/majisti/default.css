@@ -7,7 +7,7 @@
     border: 1px solid black;
 }
 
-.container .banner {
+.container > .header > .banner {
     background: url('images/banner.jpg') no-repeat black;
     color: white;
     min-height: 150px;
@@ -15,12 +15,12 @@
     height: 150px;
 }
 
-.container .content {
+.container > .content {
     min-height: 500px;
     height: auto !important; /* FF and others */
     height: 500px; /* IE 6 */
 }
 
-.container .footer {
+.container > .footer {
     text-align: center;
 }
