@@ -102,6 +102,7 @@
             <fileset dir="${path.build.bin}/">
                 <include name="*" />                
                 <include name="**" />
+                <exclude name=".gitignore" />
             </fileset> 
         </delete>
     </target>
