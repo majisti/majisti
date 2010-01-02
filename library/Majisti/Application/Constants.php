@@ -48,6 +48,11 @@ class Constants
             define('BASE_URL', $request->getBaseUrl());
         }
 
+        define('APPLICATION_URL', BASE_URL);
+        define('APPLICATION_STYLES', APPLICATION_URL . '/styles');
+        define('APPLICATION_SCRIPTS', APPLICATION_URL . '/scripts');
+        define('APPLICATION_IMAGES', APPLICATION_URL . '/images');
+
         define('MAJISTI_ROOT', dirname(dirname(dirname(__FILE__))));
         define('MAJISTI_PATH', MAJISTI_ROOT . '/Majisti');
 
@@ -72,6 +77,12 @@ class Constants
         define('MAJISTI_URL', MAJISTI_PUBLIC . '/majisti');
         define('MAJISTIC_URL', MAJISTI_PUBLIC . '/majistic');
         define('MAJISTIX_URL', MAJISTI_PUBLIC . '/majistix');
+
+        define('JQUERY', MAJISTI_PUBLIC . '/externals/jquery');
+        define('JQUERY_PLUGINS', JQUERY . '/plugins');
+        define('JQUERY_STYLES', JQUERY . '/styles');
+        define('JQUERY_THEMES', JQUERY . '/themes');
+        define('JQUERY_UI', JQUERY . '/ui');
 
         self::_defineAliases();
     }
