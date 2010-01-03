@@ -38,6 +38,7 @@ class Constants
     {
         define('APPLICATION_PATH', $applicationPath);
         define('APPLICATION_LIBRARY', realpath(APPLICATION_PATH . '/../library'));
+
         defined('APPLICATION_ENVIRONMENT')  /* should have been defined in .htaccess */
             || define('APPLICATION_ENVIRONMENT', (getenv('APPLICATION_ENVIRONMENT')
                 ? getenv('APPLICATION_ENVIRONMENT')
@@ -47,11 +48,6 @@ class Constants
         if( !defined('BASE_URL') ) {
             define('BASE_URL', $request->getBaseUrl());
         }
-
-        define('APPLICATION_URL', BASE_URL);
-        define('APPLICATION_STYLES', APPLICATION_URL . '/styles');
-        define('APPLICATION_SCRIPTS', APPLICATION_URL . '/scripts');
-        define('APPLICATION_IMAGES', APPLICATION_URL . '/images');
 
         define('MAJISTI_ROOT', dirname(dirname(dirname(__FILE__))));
         define('MAJISTI_PATH', MAJISTI_ROOT . '/Majisti');
@@ -67,10 +63,16 @@ class Constants
          * static.local or static.majisti.com and etc...
          */
 
-        define('MAJISTI_URL_PREFIX', $request->getScheme()
+        define('APPLICATION_URL_PREFIX', $request->getScheme()
             . '://' . $request->getHttpHost());
 
-        define('MAJISTI_PUBLIC', MAJISTI_URL_PREFIX
+        define('APPLICATION_URL', APPLICATION_URL_PREFIX . '/' . APPLICATION_FOLDER_NAME);
+        define('APPLICATION_LIBRARY_URL', APPLICATION_URL . '/library');
+        define('APPLICATION_STYLES', APPLICATION_URL . '/styles');
+        define('APPLICATION_SCRIPTS', APPLICATION_URL . '/scripts');
+        define('APPLICATION_IMAGES', APPLICATION_URL . '/images');
+
+        define('MAJISTI_PUBLIC', APPLICATION_URL_PREFIX
             . '/' . MAJISTI_FOLDER_NAME
             . '/public');
 
