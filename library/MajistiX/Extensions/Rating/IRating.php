@@ -1,6 +1,6 @@
 <?php
 
-namespace MajistiX\Rating;
+namespace MajistiX\Extensions\Rating;
 
 /**
  * @desc This is the interface that will identify a concrete rating.
@@ -9,7 +9,7 @@ namespace MajistiX\Rating;
  * by applying a 'rating' on it. All of these can then be used
  * to calculate an average rating and thus could be used in a star
  * rating system for example.
- * 
+ *
  * This interface gives the responsability to the concrete instance
  * to implement it's own internal storage for the rating.
  *
@@ -23,22 +23,22 @@ interface IRating
 	 * @return true if the vote was cast correctly.
 	 */
 	public function rate($rater, $rated, $rating);
-	
+
 	/**
 	 * @return boolean True, if the rater has already rated on a given 'rated' object
 	 */
 	public function hasRated($rater, $rated);
-	
+
 	/**
 	 * @return float The rating's average for a rated object. Same as dividing totalRating by totalVotes.
 	 */
 	public function getAverageRating($rated);
-	
+
 	/**
 	 * @return integer The scale used for rating
 	 */
 	public function getScale();
-	
+
 	/**
 	 * @desc Returns the rating of a rater.
 	 *
@@ -47,12 +47,12 @@ interface IRating
 	 * @return int The rater's rating or -1 if the rater has never rated.
 	 */
 	public function getRating($rater, $rated);
-	
+
 	/**
 	 * @return integer The total rating for a particular rated object
 	 */
 	public function getTotalRating($rated);
-	
+
 	/**
 	 * @return integer the total number of votes on a particular rated object
 	 */
