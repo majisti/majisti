@@ -98,10 +98,23 @@ class Auth_IndexController extends Zend_Controller_Action
             }
         }
 
+        /* send response on ajax request */
         if( $req->isXmlHttpRequest() ) {
             $this->_response->setBody($form->render())->sendResponse();
             exit;
         }
+    }
+
+    /**
+     * @desc Clears indentity
+     * TODO: redirect from referer instead
+     */
+    public function logoutAction()
+    {
+        \Zend_Session::forgetMe();
+        $this->_auth->clearIdentity();
+
+        $this->_redirector->gotoSimpleAndExit('index', 'index', 'auth');
     }
 
     /**

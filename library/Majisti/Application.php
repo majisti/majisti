@@ -19,6 +19,8 @@ namespace Majisti;
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
+use Majisti\Application;
+
 class Application extends \Zend_Application
 {
     /**
@@ -29,20 +31,22 @@ class Application extends \Zend_Application
     public function __construct($applicationPath)
     {
         Application\Constants::defineConstants($applicationPath);
-    
+
         $config = $this->_loadConfiguration();
         \Zend_Registry::set('Majisti_Config', $config);
-        
+
         parent::__construct(APPLICATION_ENVIRONMENT, $config);
-        
+
         /* further config handling */
         $bootstrap = $this->getBootstrap();
         if( $bootstrap->hasPluginResource('ConfigHandler') ) {
             $bootstrap->bootstrap('ConfigHandler');
             $this->setOptions(\Zend_Registry::get('Majisti_Config')->toArray());
         }
+
+        Application\Constants::defineVolatileConstants();
     }
-    
+
     /**
      * @desc Returns a merged Majisti's default configuration with
      * the application's configuration, the later overwriting the former.
@@ -54,21 +58,14 @@ class Application extends \Zend_Application
     {
         $defaultConfig = new \Zend_Config_Ini( dirname(__FILE__) .
             '/Application/Configs/core.ini', APPLICATION_ENVIRONMENT, true);
-        
-//        $majistixConfig = new \Zend_Config_Ini(MAJISTIX_PATH
-//        	. '/Application/Configs/core.ini', APPLICATION_ENVIRONMENT);
-        	
-//        $majisticConfig =  new \Zend_Config_Ini(MAJISTIC_PATH
-//        	. '/Application/Configs/default.ini');
-        	
+
         $concreteConfigPath = APPLICATION_PATH . '/configs/core.ini';
         if( !file_exists($concreteConfigPath) ) {
             throw new Exception("The core.ini under
                 application/configs/ is mendatory!");
         }
-        
-        return $defaultConfig
-//        	->merge($majistixConfig)
-        	->merge(new \Zend_Config_Ini($concreteConfigPath, APPLICATION_ENVIRONMENT, true));
+
+        return $defaultConfig->merge(new \Zend_Config_Ini(
+            $concreteConfigPath, APPLICATION_ENVIRONMENT, true));
     }
 }

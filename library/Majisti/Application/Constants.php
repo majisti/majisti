@@ -10,6 +10,8 @@ namespace Majisti\Application;
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
+use Majisti\Config;
+
 class Constants
 {
 	private function __construct()
@@ -17,18 +19,6 @@ class Constants
 
 	/**
      * @desc Defines all the needed constants for an application.
-     *
-     * Currently defined constants:
-     *
-     * - APPLICATION_PATH       -> Application's path
-     * - APPLICATION_LIBRARY    -> Application's library
-     * - APPLICATION_ENVIRONMENT-> Envoronment mode
-     *
-     * - BASE_URL               -> Application's public folder
-     *
-     * - MAJISTI_               -> Library's path
-     * - MAJISTIX_MODULES_PATH  -> dropped in modules under library/Modules
-     * - MAJISTI_URL            -> public library
      *
      * TODO: update comment documentation
      *
@@ -56,7 +46,7 @@ class Constants
 
         define('MAJISTIX_PATH', MAJISTI_ROOT . '/MajistiX');
         define('MAJISTIX_EXTENSIONS_PATH', MAJISTIX_PATH . '/Extensions');
-        define('MAJISTIX_MODULES_PATH', MAJISTIX_PATH . '/Modules');
+        define('MAJISTIX_MODULES_PATH',    MAJISTIX_PATH . '/Modules');
 
         /*
          * TODO: support overriding with custom virtual host such as
@@ -66,27 +56,51 @@ class Constants
         define('APPLICATION_URL_PREFIX', $request->getScheme()
             . '://' . $request->getHttpHost());
 
-        define('APPLICATION_URL', APPLICATION_URL_PREFIX . '/' . APPLICATION_FOLDER_NAME);
-        define('APPLICATION_LIBRARY_URL', APPLICATION_URL . '/library');
-        define('APPLICATION_STYLES', APPLICATION_URL . '/styles');
+        define('APPLICATION_URL', APPLICATION_URL_PREFIX . BASE_URL);
+        define('APPLICATION_STYLES',  APPLICATION_URL . '/styles');
         define('APPLICATION_SCRIPTS', APPLICATION_URL . '/scripts');
-        define('APPLICATION_IMAGES', APPLICATION_URL . '/images');
+        define('APPLICATION_IMAGES',  APPLICATION_URL . '/images');
 
-        define('MAJISTI_PUBLIC', APPLICATION_URL_PREFIX
-            . '/' . MAJISTI_FOLDER_NAME
-            . '/public');
+        self::_defineAliases();
+    }
 
-        define('MAJISTI_URL', MAJISTI_PUBLIC . '/majisti');
+    /**
+     * @desc Defines all volatile constants
+     *
+     * TODO: update comment documentation
+     */
+    static public function defineVolatileConstants()
+    {
+        $selector = new \Majisti\Config\Selector(
+            \Zend_Registry::get('Majisti_Config'));
+
+        if( $staticUrl = $selector->find('urls.static', false) ) {
+            define('MAJISTI_PUBLIC', $staticUrl);
+        }
+
+        if( !defined('MAJISTI_PUBLIC') ) {
+            $request = new \Zend_Controller_Request_Http();
+            define('MAJISTI_PUBLIC',
+                APPLICATION_URL_PREFIX . '/' . MAJISTI_FOLDER_NAME . '/public');
+        }
+
+        if( $urls = $selector->find('urls', false) ) {
+            foreach ($urls as $key => $url) {
+            	define(
+            	   strtoupper(APPLICATION_NAME) . '_URL_' .
+            	   strtoupper($key), $url);
+            }
+        }
+
+        define('MAJISTI_URL',  MAJISTI_PUBLIC . '/majisti');
         define('MAJISTIC_URL', MAJISTI_PUBLIC . '/majistic');
         define('MAJISTIX_URL', MAJISTI_PUBLIC . '/majistix');
 
         define('JQUERY', MAJISTI_PUBLIC . '/externals/jquery');
         define('JQUERY_PLUGINS', JQUERY . '/plugins');
-        define('JQUERY_STYLES', JQUERY . '/styles');
-        define('JQUERY_THEMES', JQUERY . '/themes');
-        define('JQUERY_UI', JQUERY . '/ui');
-
-        self::_defineAliases();
+        define('JQUERY_STYLES',  JQUERY . '/styles');
+        define('JQUERY_THEMES',  JQUERY . '/themes');
+        define('JQUERY_UI',      JQUERY . '/ui');
     }
 
 	/**
@@ -96,8 +110,8 @@ class Constants
     {
         /* TODO: support disable aliases */
         define('APP_PATH', APPLICATION_PATH);
-        define('APP_LIB', APPLICATION_LIBRARY);
-        define('APP_ENV', APPLICATION_ENVIRONMENT);
+        define('APP_LIB',  APPLICATION_LIBRARY);
+        define('APP_ENV',  APPLICATION_ENVIRONMENT);
 
         define('MA_ROOT', MAJISTI_ROOT);
         define('MA_PATH', MAJISTI_PATH);
