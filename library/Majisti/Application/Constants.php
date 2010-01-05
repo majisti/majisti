@@ -32,7 +32,9 @@ class Constants
         defined('APPLICATION_ENVIRONMENT')  /* should have been defined in .htaccess */
             || define('APPLICATION_ENVIRONMENT', (getenv('APPLICATION_ENVIRONMENT')
                 ? getenv('APPLICATION_ENVIRONMENT')
-                : 'production'));
+                : (getenv('REDIRECT_APPLICATION_ENVIRONMENT') /* fastcgi */
+                    ? getenv('REDIRECT_APPLICATION_ENVIRONMENT')
+                    : 'production')));
 
         $request = new \Zend_Controller_Request_Http();
         if( !defined('BASE_URL') ) {
