@@ -23,6 +23,7 @@
                 <row>
                     <entry>Constant</entry>
                     <entry>Description</entry>
+                    <entry>Alias</entry>
                 </row>
 
                 <!-- APPLICATION_PATH -->
@@ -31,64 +32,113 @@
                     <entry>This is where the application folder resides inside a
                         project. This is an absolute path. Ex:
                         /var/www/MyProject/application</entry>
+                    <entry>APP_PATH</entry>
                 </row>
 
                 <!-- APPLICATION_LIBRARY -->
                 <row>
                     <entry>APPLICATION_LIBRARY</entry>
                     <entry>This is where the library folder resides in a project
-                        Ex: /var/www/MyProject/library</entry>
+                    Ex: /var/www/MyProject/library</entry>
+                    <entry>APP_LIB</entry>
                 </row>
+                
                 <!-- APPLICATION_ENVIRONNEMENT -->
                 <row>
                     <entry>APPLICATION_ENVIRONNEMENT</entry>
                     <entry>The application environnement based on what was setup
                         in the application's htaccess. Usually development,
                         production testing, staging.</entry>
+                    <entry>APP_ENV</entry>
                 </row>
+                
                 <!-- BASE_URL -->
                 <row>
                     <entry>BASE_URL</entry>
                     <entry>This is the base url of the application. This is an
                         alias to the http request
                             <methodname>Zend_Controller_Request_Http::getBaseUrl()</methodname>
-                        function. Ex: /MyProject/public</entry>
+                            function. Ex: /MyProject/public</entry>
+                    <entry>No alias</entry>
                 </row>
 
                 <!-- MAJISTI_ROOT -->
                 <row>
                     <entry>MAJISTI_ROOT</entry>
                     <entry>Majisti's root absolute path.
-                        /absolute/path/to/Majisti/library</entry>
+                    /absolute/path/to/Majisti/library</entry>
+                    <entry>MAJ_ROOT</entry>
                 </row>
 
                 <!-- MAJISTI_PATH-->
                 <row>
                     <entry>MAJISTI_PATH</entry>
                     <entry>/absolute/path/to/Majisti/library/Majisti</entry>
-                </row>
-
-                <!-- MAJISTIC_PATH -->
-                <row>
-                    <entry>MAJISTIC_PATH</entry>
-                    <entry>/absolute/path/to/Majisti/library/MajistiC</entry>
+                    <entry>MAJ_PATH</entry>
                 </row>
 
                 <!-- MAJISTIX_PATH -->
                 <row>
                     <entry>MAJISTIX_PATH</entry>
                     <entry>/absolute/path/to/Majisti/library/MajistiX</entry>
+                    <entry>MAJX_PATH</entry>
                 </row>
 
-                <!-- MAJISTIX_MODULES_PATH -->
+                <!-- MAJISTIX_MODULES -->
                 <row>
-                    <entry>MAJISTIX_MODULES_PATH</entry>
+                    <entry>MAJISTIX_MODULES</entry>
                     <entry>/absolute/path/to/Majisti/library/Majistix/Modules</entry>
+                    <entry>MAJX_MOD</entry>
                 </row>
-
-                <!-- MAJISTI_URL -->
+                
+                <!-- MAJISTIX_MODULES -->
                 <row>
-                    <entry>MAJISTI_URL</entry>
+                    <entry>MAJISTIX_MODULES</entry>
+                    <entry>/absolute/path/to/Majisti/library/Majistix/Extensions</entry>
+                    <entry>MAJX_EXT</entry>
+                </row>
+                
+                <!-- APPLICATION_URL_PREFIX -->
+                <row>
+                    <entry>APPLICATION_URL_PREFIX</entry>
+                    <entry>Composed of request scheme and http host.
+                    Ex: http://localhost</entry>
+                    <entry>No alias</entry>
+                </row>
+                
+                <!-- APPLICATION_URL -->
+                <row>
+                    <entry>APPLICATION_URL</entry>
+                    <entry>Simply BASE_URL appended to APPLICATION_URL_PREFIX</entry>
+                    <entry>APP_URL</entry>
+                </row>
+                
+                <!-- APPLICATION_URL_STYLES -->
+                <row>
+                    <entry>APPLICATION_URL_STYLES</entry>
+                    <entry>Application url to stylesheets under styles directory</entry>
+                    <entry>APP_STYLES</entry>
+                </row>
+                
+                <!-- APPLICATION_URL_SCRIPTS -->
+                <row>
+                    <entry>APPLICATION_URL_SCRIPTS</entry>
+                    <entry>Application url to javascript files under public/scripts
+                    directory</entry>
+                    <entry>APP_SCRIPTS</entry>
+                </row>
+                
+                <!-- APPLICATION_URL_IMAGES -->
+                <row>
+                    <entry>APPLICATION_URL_IMAGES</entry>
+                    <entry>Application url to images files under public/images
+                    directory</entry>
+                    <entry>APP_IMAGES</entry>
+                </row>
+                
+                <!-- MAJISTI_PUBLIC -->
+                <row>
+                    <entry>MAJISTI_PUBLIC</entry>
                     <entry>This is really important since this is the public
                         access to the library. AJAX scripts, stylesheets or
                         images can be accessed directly with the autodetected
@@ -96,6 +146,13 @@
                         static.hostname.com is usually the DNS that points to
                         the public library. If not,
                         http://hostname:port/Majisti/public will be used</entry>
+                    <entry>MAJ_PUB</entry>
+                </row>
+
+                <!-- MAJISTI_URL -->
+                <row>
+                    <entry>MAJISTI_URL</entry>
+                    <entry></entry>
                 </row>
             </tbody>
         </tgroup>

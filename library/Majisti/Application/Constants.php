@@ -5,18 +5,27 @@ namespace Majisti\Application;
 /**
  * @desc Class that declares constants needed in standard applications.
  *
- * TODO: this should be more flexible according to configuration
- *
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 use Majisti\Config;
 
+/**
+ * @desc Class for defining all required constants in an application.
+ * It supports short names aliases as well by default.
+ *
+ * @author Majisti
+ */
 class Constants
 {
+    static protected $_aliasesUsed;
+    
+    /**
+     * @desc Private constructor for no instanciation
+     */
 	private function __construct()
 	{}
-
+	
 	/**
      * @desc Defines all the needed constants for an application.
      *
@@ -24,68 +33,75 @@ class Constants
      *
      * @param $applicationPath The application path
      */
-    static public function defineConstants($applicationPath)
+    static public function defineStaticConstants($applicationPath)
     {
+        /* application's constants */
         define('APPLICATION_PATH', $applicationPath);
         define('APPLICATION_LIBRARY', realpath(APPLICATION_PATH . '/../library'));
 
+        /*
+         * retrieve environment variable that should have been defined in
+         * a .htaccess. If APPLICATION_ENVIRONMENT can't be retrieved,
+         * it will try the fastcgi REDIRECT_APPLICATION_ENVIRONMENT and if
+         * there is still no defined constants, it will use production as default
+         */
         defined('APPLICATION_ENVIRONMENT')  /* should have been defined in .htaccess */
             || define('APPLICATION_ENVIRONMENT', (getenv('APPLICATION_ENVIRONMENT')
                 ? getenv('APPLICATION_ENVIRONMENT')
                 : (getenv('REDIRECT_APPLICATION_ENVIRONMENT') /* fastcgi */
                     ? getenv('REDIRECT_APPLICATION_ENVIRONMENT')
                     : 'production')));
-
+        
         $request = new \Zend_Controller_Request_Http();
+        
+        /* retrieve base url based on request object */
         if( !defined('BASE_URL') ) {
             define('BASE_URL', $request->getBaseUrl());
         }
 
+        /* majisti's library path constants */
         define('MAJISTI_ROOT', dirname(dirname(dirname(__FILE__))));
         define('MAJISTI_PATH', MAJISTI_ROOT . '/Majisti');
 
-        define('MAJISTIC_PATH', MAJISTI_ROOT . '/MajistiC');
-
         define('MAJISTIX_PATH', MAJISTI_ROOT . '/MajistiX');
-        define('MAJISTIX_EXTENSIONS_PATH', MAJISTIX_PATH . '/Extensions');
-        define('MAJISTIX_MODULES_PATH',    MAJISTIX_PATH . '/Modules');
+        define('MAJISTIX_MODULES',    MAJISTIX_PATH . '/Modules');
+        define('MAJISTIX_EXTENSIONS', MAJISTIX_PATH . '/Extensions');
 
-        /*
-         * TODO: support overriding with custom virtual host such as
-         * static.local or static.majisti.com and etc...
-         */
-
-        define('APPLICATION_URL_PREFIX', $request->getScheme()
-            . '://' . $request->getHttpHost());
-
+        /* majisti's library url constants */
+        define('APPLICATION_URL_PREFIX', $request->getScheme() . '://' .
+            $request->getHttpHost());
         define('APPLICATION_URL', APPLICATION_URL_PREFIX . BASE_URL);
-        define('APPLICATION_STYLES',  APPLICATION_URL . '/styles');
-        define('APPLICATION_SCRIPTS', APPLICATION_URL . '/scripts');
-        define('APPLICATION_IMAGES',  APPLICATION_URL . '/images');
-
-        self::_defineAliases();
+        define('APPLICATION_URL_STYLES',  APPLICATION_URL . '/styles');
+        define('APPLICATION_URL_SCRIPTS', APPLICATION_URL . '/scripts');
+        define('APPLICATION_URL_IMAGES',  APPLICATION_URL . '/images');
     }
 
     /**
-     * @desc Defines all volatile constants
-     *
-     * TODO: update comment documentation
+     * @desc Defines all dynamic constants that will be built
+     * according to configuration.
      */
-    static public function defineVolatileConstants()
+    static public function defineDynamicConstants()
     {
         $selector = new \Majisti\Config\Selector(
             \Zend_Registry::get('Majisti_Config'));
-
+            
+        /*
+         * Majisti's library public directory, a static url could had been
+         * provided in the configuration.
+         * exemple: http://static.mydomain.com
+         */
         if( $staticUrl = $selector->find('urls.static', false) ) {
             define('MAJISTI_PUBLIC', $staticUrl);
-        }
-
-        if( !defined('MAJISTI_PUBLIC') ) {
-            $request = new \Zend_Controller_Request_Http();
+        } else {
             define('MAJISTI_PUBLIC',
                 APPLICATION_URL_PREFIX . '/' . MAJISTI_FOLDER_NAME . '/public');
         }
 
+        /*
+         * other custom urls for the website. One could define say
+         * urls[blog] = "http://blog.mydomain.com" in the production config
+         * so that it can be easily retrieved via ${APPLICATION_NAME}_URL_BLOG
+         */
         if( $urls = $selector->find('urls', false) ) {
             foreach ($urls as $key => $url) {
             	define(
@@ -94,34 +110,77 @@ class Constants
             }
         }
 
+        /*
+         * the majisti[x]'s public folders according
+         * to the static url previously setup
+         */
         define('MAJISTI_URL',  MAJISTI_PUBLIC . '/majisti');
-        define('MAJISTIC_URL', MAJISTI_PUBLIC . '/majistic');
         define('MAJISTIX_URL', MAJISTI_PUBLIC . '/majistix');
 
+        /* JQuery public directories */
         define('JQUERY', MAJISTI_PUBLIC . '/externals/jquery');
         define('JQUERY_PLUGINS', JQUERY . '/plugins');
         define('JQUERY_STYLES',  JQUERY . '/styles');
         define('JQUERY_THEMES',  JQUERY . '/themes');
         define('JQUERY_UI',      JQUERY . '/ui');
     }
-
-	/**
-     * @desc Define aliases if it is supported in the configuration
+    
+    /**
+     * @desc Whether aliases should be defined or not. Will
+     * lazily checks the configuration for majisti.app.useConstantsAliases
+     * to determine if constants aliases should be defined. If no such
+     * configuration is found, aliases will be defined by default.
+     *
+     * @return True if aliases should be used
      */
-    static protected function _defineAliases()
+    static public function isAliasesUsed()
     {
-        /* TODO: support disable aliases */
-        define('APP_PATH', APPLICATION_PATH);
-        define('APP_LIB',  APPLICATION_LIBRARY);
-        define('APP_ENV',  APPLICATION_ENVIRONMENT);
-
-        define('MA_ROOT', MAJISTI_ROOT);
-        define('MA_PATH', MAJISTI_PATH);
-
-        /* those constants are way too confusing, something better must be thought of */
-        define('MAC_PATH', MAJISTIC_PATH);
-
-        define('MAX_PATH', MAJISTIX_PATH);
-        define('MAX_MODULES_PATH', MAJISTIX_MODULES_PATH);
+        if( null === static::$_aliasesUsed ) {
+            $selector = new \Majisti\Config\Selector(
+                \Zend_Registry::get('Majisti_Config'));
+            static::$_aliasesUsed = (bool)$selector->find(
+                'majisti.app.useConstantsAliases', true);
+        }
+        
+        return static::$_aliasesUsed;
+    }
+    
+    /**
+     * @desc Whether this application should define aliases.
+     *
+     * @param bool $useAliases
+     */
+    static public function setUseAliases($useAliases)
+    {
+        static::$_aliasesUsed = (bool)$useAliases;
+    }
+    
+    /**
+     * @desc Defines aliases for the previous defined constants.
+     */
+    static public function defineAliases()
+    {
+        if( static::isAliasesUsed() ) {
+            define('APP_PATH', APPLICATION_PATH);
+            define('APP_LIB',  APPLICATION_LIBRARY);
+            define('APP_ENV',  APPLICATION_ENVIRONMENT);
+            
+            define('APP_PREFIX', APPLICATION_URL_PREFIX);
+            define('APP_URL', APPLICATION_URL);
+            define('APP_SCRIPTS', APPLICATION_URL_SCRIPTS);
+            define('APP_STYLES', APPLICATION_URL_STYLES);
+            define('APP_IMAGES', APPLICATION_URL_IMAGES);
+    
+            define('MAJ_ROOT', MAJISTI_ROOT);
+            define('MAJ_PATH', MAJISTI_PATH);
+            define('MAJ_PUB',  MAJISTI_PUBLIC);
+    
+            define('MAJX_PATH', MAJISTIX_PATH);
+            define('MAJX_EXT',  MAJISTIX_EXTENSIONS);
+            define('MAJX_MOD',  MAJISTIX_MODULES);
+            
+            define('MAJ_URL',  MAJISTI_URL);
+            define('MAJX_URL', MAJISTIX_URL);
+        }
     }
 }

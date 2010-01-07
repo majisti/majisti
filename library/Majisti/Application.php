@@ -30,7 +30,7 @@ class Application extends \Zend_Application
      */
     public function __construct($applicationPath)
     {
-        Application\Constants::defineConstants($applicationPath);
+        Application\Constants::defineStaticConstants($applicationPath);
 
         $config = $this->_loadConfiguration();
         \Zend_Registry::set('Majisti_Config', $config);
@@ -45,6 +45,7 @@ class Application extends \Zend_Application
         }
 
         Application\Constants::defineVolatileConstants();
+        Application\Constants::defineAliases();
     }
 
     /**
