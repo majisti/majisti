@@ -44,7 +44,7 @@ class Application extends \Zend_Application
             $this->setOptions(\Zend_Registry::get('Majisti_Config')->toArray());
         }
 
-        Application\Constants::defineVolatileConstants();
+        Application\Constants::defineDynamicConstants();
         Application\Constants::defineAliases();
     }
 
