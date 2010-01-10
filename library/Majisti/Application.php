@@ -19,8 +19,6 @@ namespace Majisti;
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-use Majisti\Application;
-
 class Application extends \Zend_Application
 {
     /**
@@ -30,7 +28,7 @@ class Application extends \Zend_Application
      */
     public function __construct($applicationPath)
     {
-        Application\Constants::defineStaticConstants($applicationPath);
+        Application\Constants::defineConstants($applicationPath);
 
         $config = $this->_loadConfiguration();
         \Zend_Registry::set('Majisti_Config', $config);
@@ -44,7 +42,7 @@ class Application extends \Zend_Application
             $this->setOptions(\Zend_Registry::get('Majisti_Config')->toArray());
         }
 
-        Application\Constants::defineDynamicConstants();
+        Application\Constants::defineConfigurableConstants();
         Application\Constants::defineAliases();
     }
 
