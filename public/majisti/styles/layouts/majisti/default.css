@@ -19,6 +19,7 @@
     min-height: 500px;
     height: auto !important; /* FF and others */
     height: 500px; /* IE 6 */
+    padding: 10px;
 }
 
 .container > .footer {
