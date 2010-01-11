@@ -31,6 +31,7 @@ $majistiRoot   = realpath(dirname(__FILE__) . '/../');
 
 $includePaths = array(
     $majistiRoot,
+    "$majistiRoot/externals",
     "$majistiRoot/library",
     "$majistiRoot/tests",
     "$majistiRoot/tests/externals",
