@@ -91,9 +91,9 @@
                     <entry>MAJX_MOD</entry>
                 </row>
                 
-                <!-- MAJISTIX_MODULES -->
+                <!-- MAJISTIX_EXTENSIONS -->
                 <row>
-                    <entry>MAJISTIX_MODULES</entry>
+                    <entry>MAJISTIX_EXTENSIONS</entry>
                     <entry>/absolute/path/to/Majisti/library/Majistix/Extensions</entry>
                     <entry>MAJX_EXT</entry>
                 </row>
@@ -153,7 +153,51 @@
                 <row>
                     <entry>MAJISTI_URL</entry>
                     <entry></entry>
+                    <entry>MAJ_URL</entry>
                 </row>
+
+                <!-- MAJISTI_URL_STYLES -->
+                <row>
+                    <entry>MAJISTI_URL_STYLES</entry>
+                    <entry></entry>
+                    <entry>MAJ_STYLES</entry>
+                </row>
+                
+                <!-- MAJISTI_URL_SCRIPTS -->
+                <row>
+                    <entry>MAJISTI_URL_SCRIPTS</entry>
+                    <entry></entry>
+                    <entry>MAJ_SCRIPTS</entry>
+                </row>
+                
+                <!-- MAJISTI_URL_IMAGES -->
+                <row>
+                    <entry>MAJISTI_URL_IMAGES</entry>
+                    <entry></entry>
+                    <entry>MAJ_IMAGES</entry>
+                </row>
+                
+                <!-- MAJISTIX_URL_STYLES -->
+                <row>
+                    <entry>MAJISTIX_URL_STYLES</entry>
+                    <entry></entry>
+                    <entry>MAJX_STYLES</entry>
+                </row>
+                
+                <!-- MAJISTIX_URL_SCRIPTS -->
+                <row>
+                    <entry>MAJISTIX_URL_SCRIPTS</entry>
+                    <entry></entry>
+                    <entry>MAJX_SCRIPTS</entry>
+                </row>
+                
+                <!-- MAJISTIX_URL_IMAGES -->
+                <row>
+                    <entry>MAJISTIX_URL_IMAGES</entry>
+                    <entry></entry>
+                    <entry>MAJX_IMAGES</entry>
+                </row>
+                
             </tbody>
         </tgroup>
     </table>

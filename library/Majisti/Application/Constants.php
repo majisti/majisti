@@ -111,6 +111,14 @@ class Constants
         define('MAJISTI_URL',  MAJISTI_PUBLIC . '/majisti');
         define('MAJISTIX_URL', MAJISTI_PUBLIC . '/majistix');
 
+        define('MAJISTI_URL_STYLES',  MAJISTI_URL . '/styles');
+        define('MAJISTI_URL_SCRIPTS', MAJISTI_URL . '/scripts');
+        define('MAJISTI_URL_IMAGES',  MAJISTI_URL . '/images');
+
+        define('MAJISTIX_URL_STYLES',  MAJISTIX_URL . '/styles');
+        define('MAJISTIX_URL_SCRIPTS', MAJISTIX_URL . '/scripts');
+        define('MAJISTIX_URL_IMAGES',  MAJISTIX_URL . '/images');
+
         /* JQuery public directories */
         define('JQUERY', MAJISTI_PUBLIC . '/externals/jquery');
         define('JQUERY_PLUGINS', JQUERY . '/plugins');
@@ -175,6 +183,14 @@ class Constants
 
             define('MAJ_URL',  MAJISTI_URL);
             define('MAJX_URL', MAJISTIX_URL);
+
+            define('MAJ_STYLES', MAJISTI_URL_STYLES);
+            define('MAJ_SCRIPTS', MAJISTI_URL_SCRIPTS);
+            define('MAJ_IMAGES', MAJISTI_URL_IMAGES);
+
+            define('MAJX_STYLES', MAJISTI_URL_STYLES);
+            define('MAJX_SCRIPTS', MAJISTI_URL_SCRIPTS);
+            define('MAJX_IMAGES', MAJISTI_URL_IMAGES);
         }
     }
 }
