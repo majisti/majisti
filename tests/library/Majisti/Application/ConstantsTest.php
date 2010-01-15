@@ -14,9 +14,9 @@ require_once 'TestHelper.php';
 class ConstantsTest extends \Majisti\Test\PHPUnit\TestCase
 {
     static protected $_class = __CLASS__;
-    
+
     public $applicationPath;
-    
+
     /**
      * Setups the test case
      */
@@ -27,7 +27,7 @@ class ConstantsTest extends \Majisti\Test\PHPUnit\TestCase
         @define('MAJISTI_FOLDER_NAME', 'majisti');
         putenv('APPLICATION_ENVIRONMENT=development');
     }
-    
+
     /**
      * @desc Asserts that constants are correctly defined
      * and that their values match exactly as the expected value.
@@ -44,53 +44,53 @@ class ConstantsTest extends \Majisti\Test\PHPUnit\TestCase
                 "Constant {$name} value's is incorrect");
         }
     }
-    
+
     /**
      * @return Returns the expected static constants
      */
-    public function getExpectedStaticConstants()
+    public function getExpectedConstants()
     {
         return array(
             'APPLICATION_PATH'          => $this->applicationPath,
             'APPLICATION_ENVIRONMENT'   => 'development',
         );
     }
-    
+
     /**
      * @return Returns the expected static constants
      */
-    public function getExpectedDynamicConstants()
+    public function getExpectedConfigurableConstants()
     {
         return array();
     }
-    
+
     public function getExpectedAliases()
     {
         return array();
     }
-    
-    public function testStaticConstantsAreAllDefinedCorrectly()
+
+    public function testConstantsAreAllDefinedCorrectly()
     {
-        Constants::defineStaticConstants($this->applicationPath);
-        $this->_assertConstants($this->getExpectedStaticConstants());
+        Constants::defineConstants($this->applicationPath);
+        $this->_assertConstants($this->getExpectedConstants());
     }
-    
-    public function testDynamicConstantsAreAllDefinedCorrectly()
+
+    public function testConfigurableConstantsAreAllDefinedCorrectly()
     {
-        Constants::defineDynamicConstants();
-        $this->_assertConstants($this->getExpectedDynamicConstants());
+        Constants::defineConfigurableConstants();
+        $this->_assertConstants($this->getExpectedConfigurableConstants());
     }
-    
+
     public function testAliasesAreAllDefinedCorrectly()
     {
         $this->_assertConstants($this->getExpectedAliases());
     }
-    
+
     public function testAliasesDisabled()
     {
         $this->markTestIncomplete();
     }
-    
+
     public function testAliasesDisabledInConfig()
     {
         $this->markTestIncomplete();
