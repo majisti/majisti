@@ -7,7 +7,7 @@ namespace Majisti\Util\Model;
  * returned Iterator is reversed which means that iterating
  * with it starts up with the last element of this stack, which
  * is the last in.
- * 
+ *
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
@@ -17,7 +17,7 @@ class Stack implements \IteratorAggregate, \Countable
      * @var Array
      */
     protected $_elements = array();
-    
+
     /**
      * @desc Constructs the stack with the provided
      * elements, if any.
@@ -32,7 +32,16 @@ class Stack implements \IteratorAggregate, \Countable
         $this->push($elements);
         end($this->_elements);
     }
-    
+
+    /**
+     * @desc Clears all elements in this stack
+     * @return Stack this
+     */
+    public function clear()
+    {
+        $this->_elements = array();
+    }
+
     /**
      * @desc Returns the stack's iterator. Note that the iterator first
      * element will be the last element added to that stack (meaning
@@ -43,7 +52,7 @@ class Stack implements \IteratorAggregate, \Countable
     {
         return new \ArrayIterator(array_reverse($this->_elements));
     }
-    
+
     /**
      * @desc Pushes one or multiple elements to the top of stack.
      * @param mixed|array $elements Pushes an array or a single element
@@ -57,13 +66,13 @@ class Stack implements \IteratorAggregate, \Countable
         if( is_array($elements) ) {
             foreach ($elements as $element) {
                 $this->_elements[] = $element;
-            }    
+            }
         } else {
             $this->_elements[] = $elements;
         }
         return $this;
     }
-    
+
     /**
      * @desc Returns whether this stack is empty or not.
      * @return bool true is the stack is empty
@@ -72,7 +81,7 @@ class Stack implements \IteratorAggregate, \Countable
     {
         return $this->count() === 0;
     }
-    
+
     /**
      * @desc Returns the stack's count
      * @return int The stack's count
@@ -81,16 +90,16 @@ class Stack implements \IteratorAggregate, \Countable
     {
         return count($this->_elements);
     }
-    
+
     /**
      * @desc Removes an element from the stack and returns it.
      * @return The popped element, if the stack is not empty.
-     */    
+     */
     public function pop()
     {
         return array_pop($this->_elements);
     }
-    
+
     /**
      * @desc Peeks at the top of the stack, returning the element
      * but not removing it from the stack.
@@ -99,5 +108,20 @@ class Stack implements \IteratorAggregate, \Countable
     public function peek()
     {
         return $this->_elements[$this->count() - 1];
+    }
+
+    /**
+     * @desc Returns this stack as an array
+     * @return array The elements as an indexed array
+     */
+    public function toArray()
+    {
+        $elements = array();
+
+        foreach ($this as $element) {
+        	array_push($elements, $element);
+        }
+
+        return $elements;
     }
 }
