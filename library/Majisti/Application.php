@@ -8,13 +8,11 @@ namespace Majisti;
  * together to form the application's configuration as a whole.
  *
  * Moreover, it applies some needed constants for application development
- * see {@link Application::_defineConstants()} method documentation for
- * declared constants.
+ * see {@link Application\Constants}.
  *
  * Any post bootstraping is defined by a concrete Bootstrap class
- * that extends Majisti\Bootstrap\Bootstrap
- * declared in the configuration. Refer to documentation for more
- * details and examples.
+ * that extends Majisti\Bootstrap\Bootstrap declared in the configuration.
+ * Refer to documentation for more details and examples.
  *
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
@@ -39,7 +37,7 @@ class Application extends \Zend_Application
         $bootstrap = $this->getBootstrap();
         if( $bootstrap->hasPluginResource('ConfigHandler') ) {
             $bootstrap->bootstrap('ConfigHandler');
-            $this->setOptions(\Zend_Registry::get('Majisti_Config')->toArray());
+            $this->setOptions($config->toArray());
         }
 
         Application\Constants::defineConfigurableConstants();
