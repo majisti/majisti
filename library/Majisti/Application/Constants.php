@@ -67,7 +67,7 @@ class Constants
         define('APPLICATION_URL', APPLICATION_URL_PREFIX . BASE_URL);
         define('APPLICATION_URL_STYLES',  BASE_URL . '/styles');
         define('APPLICATION_URL_SCRIPTS', BASE_URL . '/scripts');
-        define('APPLICATION_URL_IMAGES',  BASE_URL . '/images');
+        define('APPLICATION_URL_IMAGES',  BASE_URL . '/images/common');
     }
 
     /**
@@ -113,11 +113,15 @@ class Constants
 
         define('MAJISTI_URL_STYLES',  MAJISTI_URL . '/styles');
         define('MAJISTI_URL_SCRIPTS', MAJISTI_URL . '/scripts');
-        define('MAJISTI_URL_IMAGES',  MAJISTI_URL . '/images');
+        define('MAJISTI_URL_IMAGES',  MAJISTI_URL . '/images/common');
 
-        define('MAJISTIX_URL_STYLES',  MAJISTIX_URL . '/styles');
-        define('MAJISTIX_URL_SCRIPTS', MAJISTIX_URL . '/scripts');
-        define('MAJISTIX_URL_IMAGES',  MAJISTIX_URL . '/images');
+        $lang = \Majisti\I18n\LocaleSession::getInstance()->getCurrentLocale();
+        define('MAJISTI_URL_IMAGES_LOCALE', MAJISTI_URL . "/images/{$lang}");
+        define('APPLICATION_URL_IMAGES_LOCALE', BASE_URL . "/images/{$lang}");
+
+//        define('MAJISTIX_URL_STYLES',  MAJISTIX_URL . '/styles');
+//        define('MAJISTIX_URL_SCRIPTS', MAJISTIX_URL . '/scripts');
+//        define('MAJISTIX_URL_IMAGES',  MAJISTIX_URL . '/images/common');
 
         /* JQuery public directories */
         define('JQUERY', MAJISTI_PUBLIC . '/externals/jquery');
@@ -171,7 +175,8 @@ class Constants
             define('APP_URL', APPLICATION_URL);
             define('APP_SCRIPTS', APPLICATION_URL_SCRIPTS);
             define('APP_STYLES', APPLICATION_URL_STYLES);
-            define('APP_IMAGES', APPLICATION_URL_IMAGES);
+            define('APP_IMG', APPLICATION_URL_IMAGES);
+            define('APP_IMG_LOC', APPLICATION_URL_IMAGES_LOCALE);
 
             define('MAJ_ROOT', MAJISTI_ROOT);
             define('MAJ_PATH', MAJISTI_PATH);
