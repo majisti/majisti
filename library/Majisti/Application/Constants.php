@@ -9,6 +9,8 @@ namespace Majisti\Application;
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
+use Majisti\I18n;
+
 class Constants
 {
     /**
@@ -115,9 +117,12 @@ class Constants
         define('MAJISTI_URL_SCRIPTS', MAJISTI_URL . '/scripts');
         define('MAJISTI_URL_IMAGES',  MAJISTI_URL . '/images/common');
 
-        $lang = \Majisti\I18n\LocaleSession::getInstance()->getCurrentLocale();
-        define('MAJISTI_URL_IMAGES_LOCALE', MAJISTI_URL . "/images/{$lang}");
-        define('APPLICATION_URL_IMAGES_LOCALE', BASE_URL . "/images/{$lang}");
+        $locale = \Majisti\I18n\LocaleSession::getInstance();
+        define('MAJISTI_URL_IMAGES_LOCALE', MAJISTI_URL . "/images/{$locale->getCurrentLocale()}");
+        define('APPLICATION_URL_IMAGES_LOCALE', BASE_URL . "/images/{$locale->getCurrentLocale()}");
+
+        define('APPLICATION_LOCALE_CURRENT', $locale->getCurrentLocale());
+        define('APPLICATION_LOCALE_DEFAULT', $locale->getDefaultLocale());
 
 //        define('MAJISTIX_URL_STYLES',  MAJISTIX_URL . '/styles');
 //        define('MAJISTIX_URL_SCRIPTS', MAJISTIX_URL . '/scripts');
@@ -177,6 +182,9 @@ class Constants
             define('APP_STYLES', APPLICATION_URL_STYLES);
             define('APP_IMG', APPLICATION_URL_IMAGES);
             define('APP_IMG_LOC', APPLICATION_URL_IMAGES_LOCALE);
+
+            define('APP_LANG', APPLICATION_LOCALE_CURRENT);
+            define('APP_LANG_DEF', APPLICATION_LOCALE_DEFAULT);
 
             define('MAJ_ROOT', MAJISTI_ROOT);
             define('MAJ_PATH', MAJISTI_PATH);
