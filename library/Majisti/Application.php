@@ -28,6 +28,7 @@ class Application extends \Zend_Application
     {
         Application\Constants::defineConstants($applicationPath);
 
+        /* setup config and call parent */
         $config = $this->_loadConfiguration();
         \Zend_Registry::set('Majisti_Config', $config);
 
@@ -40,6 +41,7 @@ class Application extends \Zend_Application
             $this->setOptions($config->toArray());
         }
 
+        /* declare yet more constants */
         Application\Constants::defineConfigurableConstants();
         Application\Constants::defineAliases();
     }
