@@ -5,7 +5,8 @@ namespace Majisti\Loader;
 /**
  * @desc Fast implementation of PHP 5.3+ namespace autoloading. Zend will
  * probably release something so this class is lightly tested and
- * will surely eventually get deprecated.
+ * will surely eventually get deprecated. This autoloader can only
+ * load \Namespaced\Elements and not Underscored_Elements.
  *
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
@@ -16,18 +17,19 @@ class Autoloader implements \Zend_Loader_Autoloader_Interface
 
     public function autoload($class)
     {
+        if( empty($class) ) {
+            throw new Exception("Class can't be empty");
+        }
+
         $loaded = false;
         $parts = explode('\\', $class);
 
-        $path = '';
-        if( count($parts) > 1 ) {
-            $path = implode(DIRECTORY_SEPARATOR, $parts);
-        } else if( count($parts) === 1 ) {
-            $path = array_shift($parts);
-            return; //FIXME: temporary fix
+        if( count($parts) === 1 ) {
+            return false;
         }
 
-        $phpScript = $path . '.php';
+        $path       = implode(DIRECTORY_SEPARATOR, $parts);
+        $phpScript  = $path . '.php';
 
         if( strlen($path) > 0 ) {
             set_error_handler(array($this, 'includeFileErrorHandler'));
