@@ -11,44 +11,50 @@ namespace Majisti\Application\Resource;
  */
 class ConfigHandler extends \Zend_Application_Resource_ResourceAbstract
 {
+    /**
+     * @var \Majisti\Config\Handler\CompositeHandler
+     */
     protected $_compositeHandler;
 
     /**
      * @desc Handles a configuration by applying instances of
      * Config\Handler\IHandler on it using the Config\Handler\Composite
-     * 
+     *
      * To enable config handlers here are some examples for an ini configuration:
-     * 
+     *
      * configHandler.property = 1 //Enables Majisti Property Handler
      * configHander.markup = "MyProject\Config\Handler\Markup" //specific handler
-     * 
+     *
      * Note that setting 0 as value will skip the instanciation of that config handler
-     * 
+     *
      * The handled configuration in put back in the Majisti_Config registry key
-     * 
+     *
      * @return \Majisti\Config\Handler\Composite the composite handler.
      */
     public function init()
     {
         $compositeHandler = $this->_prepareComposite();
-        
-        \Zend_Registry::set('Majisti_Config', 
-            $compositeHandler->handle(\Zend_Registry::get('Majisti_Config'))); 
-            
+
+        \Zend_Registry::set('Majisti_Config',
+            $compositeHandler->handle(\Zend_Registry::get('Majisti_Config')));
+
         return $compositeHandler;
     }
-    
+
     /**
      * @desc Prepares the composite handler by pushing instances of
-     * \Majisti\Config\Handler\IHandler to it
+     * \Majisti\Config\Handler\IHandler to it.
+     *
      * @return \Majisti\Config\Handler\CompositeHandler
+     *
      * TODO: cleanup this before release, hard to understand for other programmers
      */
     protected function _prepareComposite()
     {
+        /* lazy instanciation */
         if( null === $this->_compositeHandler ) {
             $compositeHandler = $this->getCompositeHandler();
-            
+
             foreach ($this->getOptions() as $className => $enabled) {
                 if( $enabled ) {
                     if( 1 == $enabled ) {
@@ -70,13 +76,13 @@ class ConfigHandler extends \Zend_Application_Resource_ResourceAbstract
                     }
                 }
             }
-            
+
             $this->_compositeHandler = $compositeHandler;
         }
-        
+
         return $this->getCompositeHandler();
     }
-    
+
     /**
      * @desc Lazily instanciates the Composite Handler
      * @return \Majisti\Config\Handler\Composite
@@ -86,7 +92,7 @@ class ConfigHandler extends \Zend_Application_Resource_ResourceAbstract
         if( null === $this->_compositeHandler ) {
             $this->_compositeHandler = new \Majisti\Config\Handler\Composite();
         }
-        
+
         return $this->_compositeHandler;
     }
 }

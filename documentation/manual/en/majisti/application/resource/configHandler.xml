@@ -1,14 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<section 
-    xmlns="http://docbook.org/ns/docbook" 
+<section xmlns="http://docbook.org/ns/docbook"
     xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:xi="http://www.w3.org/2001/XInclude" 
-    xml:lang="en" xml:id="majisti.application.resource.configHandler" 
-    version="5.0">
-    
+    xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en"
+    xml:id="majisti.application.resource.configHandler" version="5.0">
+
     <title>Config Handler</title>
 
-    <para>
-        Lorem ipsum dolor sit amer
-    </para>
+    <para> The <classname>ConfigHandler</classname> resource enables easy <link
+            xlink:href="majisti.config.handlers.html">config handling</link>
+        through the application's configuration. It makes use of the
+            <classname>Composite</classname> handler to aggregate multiple
+        handlers that will modify the entire configuration. </para>
+
+    <example>
+        <title>Using config handler resource</title>
+        <para> Any sort of config handling is supported by this resource. To add
+            a handler that will handle the global configuration you simply need
+            to do: </para>
+
+        <programlisting><![CDATA[
+    resources.configHandler.import      = 1
+    resources.configHandler.property    = 1]]></programlisting>
+
+        <para> That would enable the already shipped <link
+                xlink:href="majisti.config.handlers.html#majisti.config.handlers.property"
+                >Property</link> and <link
+                xlink:href="majisti.config.handlers.html#majisti.config.handlers.import"
+                >Import</link> handlers. You may note though that Import and
+            Property handers are already enabled within Majisti's core
+            configuration and if you need those disabled you would only need to
+            override their values:</para>
+
+        <programlisting><![CDATA[
+    resources.configHandler.import      = 0
+    resources.configHandler.property    = 0]]></programlisting>
+
+        <para> To specify a custom class already loadable from the autoloader,
+            you can simply provide: </para>
+
+        <programlisting><![CDATA[
+    resources.configHandler.import      = "My_Config_Handler_Import"
+    
+    /* PHP5.3 namespace supported too */
+    resources.configHandler.property    = "\My\Config\Handler\Property\\"]]></programlisting>
+    </example>
+
+    <!-- TODO: there is another way to add config handlers and unit tests must be
+        implemented -->
 </section>
