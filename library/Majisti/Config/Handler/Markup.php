@@ -35,6 +35,9 @@ class Markup extends \Majisti\Util\Model\Stack implements IHandler
     /**
      * @desc Parses the configuration, applying the Markup stack
      * on every values.
+     *
+     * @throws Exception if Markup provided in not an instance of
+     *  \Zend_Markup_Renderer_Abstract
      */
     protected function _parseConfig(\Zend_Config $config)
     {
@@ -47,8 +50,8 @@ class Markup extends \Majisti\Util\Model\Stack implements IHandler
                         $markup = is_object($markup)
                             ? get_class($markup)
                             : $markup;
-                        throw new \Exception("Markup {$markup} must be an instance
-                            of Zend_Markup");
+                        throw new \Exception("Markup {$markup} must be an"
+                            . " instance of Zend_Markup_Renderer_Abstract");
                     }
                     $config->{$key} = $markup->render($value);
                 }

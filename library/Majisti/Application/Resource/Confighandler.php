@@ -9,7 +9,7 @@ namespace Majisti\Application\Resource;
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-class ConfigHandler extends \Zend_Application_Resource_ResourceAbstract
+class Confighandler extends \Zend_Application_Resource_ResourceAbstract
 {
     /**
      * @var \Majisti\Config\Handler\CompositeHandler
@@ -18,16 +18,13 @@ class ConfigHandler extends \Zend_Application_Resource_ResourceAbstract
 
     /**
      * @desc Handles a configuration by applying instances of
-     * Config\Handler\IHandler on it using the Config\Handler\Composite
-     *
-     * To enable config handlers here are some examples for an ini configuration:
-     *
-     * configHandler.property = 1 //Enables Majisti Property Handler
-     * configHander.markup = "MyProject\Config\Handler\Markup" //specific handler
-     *
-     * Note that setting 0 as value will skip the instanciation of that config handler
+     * \Majisti\Config\Handler\IHandler on it using the
+     * \Majisti\Config\Handler\Composite
      *
      * The handled configuration in put back in the Majisti_Config registry key
+     *
+     * @throws Exception if an exception occurs while handling the confuration
+     * it will be thrown wrapped in this namespace's Exception.
      *
      * @return \Majisti\Config\Handler\Composite the composite handler.
      */
@@ -35,8 +32,17 @@ class ConfigHandler extends \Zend_Application_Resource_ResourceAbstract
     {
         $compositeHandler = $this->_prepareComposite();
 
-        \Zend_Registry::set('Majisti_Config',
-            $compositeHandler->handle(\Zend_Registry::get('Majisti_Config')));
+        try {
+            \Zend_Registry::set('Majisti_Config',
+                $compositeHandler->handle(\Zend_Registry::get('Majisti_Config')));
+        } catch( \Exception $e ) {
+            throw new Exception("An exception occured in ConfigHandler resource
+            while trying to load configuration with exception message:
+            {$e->getMessage()},
+            thrown from {$e->getFile()},
+            with stack trace:
+            {$e->getTraceAsString()}");
+        }
 
         return $compositeHandler;
     }
@@ -46,45 +52,45 @@ class ConfigHandler extends \Zend_Application_Resource_ResourceAbstract
      * \Majisti\Config\Handler\IHandler to it.
      *
      * @return \Majisti\Config\Handler\CompositeHandler
-     *
-     * TODO: cleanup this before release, hard to understand for other programmers
      */
     protected function _prepareComposite()
     {
-        /* lazy instanciation */
-        if( null === $this->_compositeHandler ) {
-            $compositeHandler = $this->getCompositeHandler();
+        if( null !== $this->_compositeHandler ) {
+            return $this->_compositeHandler;
+        }
 
-            foreach ($this->getOptions() as $className => $enabled) {
-                if( $enabled ) {
-                    if( 1 == $enabled ) {
-                        $class = 'Majisti\Config\Handler\\' . ucfirst($className);
-                        $compositeHandler->push(new $class());
-                    } else if( is_string($enabled) ) {
-                        $compositeHandler->push(new $enabled());
-                    } else if( is_array($enabled) ) {
-                        $className = isset($enabled['class'])
-                            ? $enabled['class']
-                            : 'Majisti\Config\Handler\\' . ucfirst($className);
-                        $values = array();
-                        foreach ($enabled as $k => $v) {
-                            $values[] = 1 == $v
-                                ? $k
-                                : $v;
-                        }
-                        $compositeHandler->push(new $className($values));
-                    }
+        $compositeHandler = $this->getCompositeHandler();
+
+        foreach ($this->getOptions() as $className => $value) {
+            if( !empty($value) ) {
+                /* denotes that the handler should be enabled */
+                if( 1 == $value ) {
+                    $class = 'Majisti\Config\Handler\\' . ucfirst($className);
+                    $compositeHandler->push(new $class());
+                /* the value is a class name */
+                } else if( is_string($value) ) {
+                    $compositeHandler->push(new $value());
+                /* handler parameters provided */
+                } else if( is_array($value) ) {
+                    /* class key for finding the propert class */
+                    $className = isset($value['class'])
+                        ? $value['class']
+                        : 'Majisti\Config\Handler\\' . ucfirst($className);
+
+                    unset($value['class']);
+                    $compositeHandler->push(new $className($value));
                 }
             }
-
-            $this->_compositeHandler = $compositeHandler;
         }
+
+        $this->_compositeHandler = $compositeHandler;
 
         return $this->getCompositeHandler();
     }
 
     /**
      * @desc Lazily instanciates the Composite Handler
+     *
      * @return \Majisti\Config\Handler\Composite
      */
     public function getCompositeHandler()
