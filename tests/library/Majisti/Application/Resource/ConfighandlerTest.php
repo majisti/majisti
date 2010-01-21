@@ -24,19 +24,23 @@ class ConfighandlerTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public $config;
 
+    /**
+     * Will change to Zend_Config on setup.
+     * @var \Zend_Config
+     */
     public $wrongConfig = array(
-        'custom' => 'Non_Existant_Class'
+        'wrongClassname' => array(
+            'custom' => 'Non_Existant_Class'
+        ),
+        'wrongNamespaceClassname' => array(
+            'custom' => '\Non\Existant\Class'
+        ),
     );
 
     /**
      * @var Confighandler
      */
     public $configHandler;
-
-    /**
-     * @var Confighandler
-     */
-    public $wrongConfigHandler;
 
     /**
      * @desc Setups the test case
@@ -52,9 +56,8 @@ class ConfighandlerTest extends \Majisti\Test\PHPUnit\TestCase
 
         $this->configHandler = new Confighandler(
             $this->config->resources->configHandler);
-
-        $this->wrongConfigHandler = new Confighandler(
-            new \Zend_Config($this->wrongConfig));
+            
+        $this->wrongConfig = new \Zend_Config($this->wrongConfig);
     }
 
     /**
@@ -94,11 +97,20 @@ class ConfighandlerTest extends \Majisti\Test\PHPUnit\TestCase
     }
 
     /**
-     * @expectedException \Majisti\Application\Resource\Exception
+     * @desc Asserts that wrong configuration throws exceptions
      */
     public function testWrongConfigThrowsException()
     {
-        $this->wrongConfigHandler->init();
+        $init = function($handler) {
+            try {
+                $handler->init();
+                $this->fail('Should throw exception');
+            } catch( \Exception $e ) {}
+        };
+        
+        foreach ($this->wrongConfig as $config) {
+        	$init(new Confighandler($config));
+        }
     }
 }
 

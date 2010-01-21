@@ -6,6 +6,7 @@ namespace Majisti\Application\Resource;
  * @desc ConfigHandler that basically reads up from configuration
  * a list of IHandler to apply on the global Majisti_Config that
  * is used by the entire application.
+ *
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
@@ -30,9 +31,9 @@ class Confighandler extends \Zend_Application_Resource_ResourceAbstract
      */
     public function init()
     {
-        $compositeHandler = $this->_prepareComposite();
-
         try {
+            $compositeHandler = $this->_prepareComposite();
+            
             \Zend_Registry::set('Majisti_Config',
                 $compositeHandler->handle(\Zend_Registry::get('Majisti_Config')));
         } catch( \Exception $e ) {
@@ -69,6 +70,9 @@ class Confighandler extends \Zend_Application_Resource_ResourceAbstract
                     $compositeHandler->push(new $class());
                 /* the value is a class name */
                 } else if( is_string($value) ) {
+                    if( !class_exists($value) ) {
+                        throw new Exception("Class {$value} does not exists");
+                    }
                     $compositeHandler->push(new $value());
                 /* handler parameters provided */
                 } else if( is_array($value) ) {
