@@ -24,10 +24,19 @@ class ConfighandlerTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public $config;
 
+    public $wrongConfig = array(
+        'custom' => 'Non_Existant_Class'
+    );
+
     /**
      * @var Confighandler
      */
     public $configHandler;
+
+    /**
+     * @var Confighandler
+     */
+    public $wrongConfigHandler;
 
     /**
      * @desc Setups the test case
@@ -43,6 +52,9 @@ class ConfighandlerTest extends \Majisti\Test\PHPUnit\TestCase
 
         $this->configHandler = new Confighandler(
             $this->config->resources->configHandler);
+
+        $this->wrongConfigHandler = new Confighandler(
+            new \Zend_Config($this->wrongConfig));
     }
 
     /**
@@ -79,6 +91,14 @@ class ConfighandlerTest extends \Majisti\Test\PHPUnit\TestCase
     public function testInitialCompositeIsEmpty()
     {
         $this->assertTrue($this->configHandler->getCompositeHandler()->isEmpty());
+    }
+
+    /**
+     * @expectedException \Majisti\Application\Resource\Exception
+     */
+    public function testWrongConfigThrowsException()
+    {
+        $this->wrongConfigHandler->init();
     }
 }
 
