@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\Mail;
+namespace Majisti\Model\Mail;
 
 class Message extends \Zend_Mail
 {

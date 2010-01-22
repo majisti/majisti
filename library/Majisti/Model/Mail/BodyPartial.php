@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\Mail;
+namespace Majisti\Model\Mail;
 
 /**
  * @desc A BodyPartial is simply a class that will return the content of
