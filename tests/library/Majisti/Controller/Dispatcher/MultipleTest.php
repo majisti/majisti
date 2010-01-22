@@ -13,7 +13,7 @@ if( !defined('PHPUnit_MAIN_METHOD') ) {
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-class StandardTest extends \Zend_Controller_Dispatcher_StandardTest
+class MultipleTest extends \Zend_Controller_Dispatcher_StandardTest
 {
     protected $_filesPath;
 
@@ -35,7 +35,7 @@ class StandardTest extends \Zend_Controller_Dispatcher_StandardTest
     public function setUp()
     {
         parent::setUp();
-        $dispatcher = new Standard();
+        $dispatcher = new Multiple();
 
         $dispatcher->setControllerDirectory($this->_dispatcher->getControllerDirectory());
         $dispatcher->addControllerDirectory(
@@ -144,4 +144,4 @@ class StandardTest extends \Zend_Controller_Dispatcher_StandardTest
     }
 }
 
-StandardTest::runAlone();
+MultipleTest::runAlone();

@@ -20,7 +20,7 @@ class Bootstrap extends \Zend_Application_Bootstrap_Bootstrap
         $this->bootstrap('FrontController');
         $front = $this->getResource('FrontController');
 
-    	$dispatcher = new \Majisti\Controller\Dispatcher\Standard();
+    	$dispatcher = new \Majisti\Controller\Dispatcher\Multiple();
     	$dispatcher->setControllerDirectory($front->getControllerDirectory());
     	$dispatcher->addFallbackControllerDirectory(
     	   MAJISTIX_MODULES . '/default/controllers');

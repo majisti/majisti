@@ -3,14 +3,14 @@
 namespace Majisti\Controller\Dispatcher;
 
 /**
- * @desc Majisti's Standard Dispatcher supporting namespaces
+ * @desc Majisti's Multiple Dispatcher supporting namespaces
  * and multiple fallback controller directories for one module.
- * 
+ *
  * @package Majisti\Controller\Dispatcher;
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-class Standard extends \Zend_Controller_Dispatcher_Standard implements IDispatcher
+class Multiple extends \Zend_Controller_Dispatcher_Standard implements IDispatcher
 {
     /**
      * @desc Additional controller directories
@@ -30,7 +30,7 @@ class Standard extends \Zend_Controller_Dispatcher_Standard implements IDispatch
     
     /**
      * @desc Adds a fallback controller directory.
-     * 
+     *
      * @param $path The path to add
      * @param $module [optional, defaults to default module] The module name
      * @return Standard this
@@ -94,7 +94,7 @@ class Standard extends \Zend_Controller_Dispatcher_Standard implements IDispatch
     
     /**
      * @desc Resets the fallback controller directories.
-     * 
+     *
      * @param $module [optional, default to the default module] The module name
      * @return Standard this
      */
@@ -124,7 +124,7 @@ class Standard extends \Zend_Controller_Dispatcher_Standard implements IDispatch
                 foreach( $this->getFallbackControllerDirectory($this->_curModule) as $dir ) {
                     if( !\Zend_Loader::isReadable($dir . DIRECTORY_SEPARATOR . $fileName) ) {
                         continue;
-                    } 
+                    }
                     $this->_curDirectory = $dir;
                     return parent::loadClass($className);
                 }
@@ -154,7 +154,7 @@ class Standard extends \Zend_Controller_Dispatcher_Standard implements IDispatch
      * @desc Returns whether a request is dipatchable based on the parent's
      * behaviour and if it is not dispatchable, it will try the fallback controller
      * directories to check whether it is dispatchable or not.
-     * 
+     *
      * @param \Zend_Controller_Request_Abstract $request The request object
      * @return boolean If the request is dispatchable based on additionnal
      * fallback controller directories
@@ -191,7 +191,7 @@ class Standard extends \Zend_Controller_Dispatcher_Standard implements IDispatch
     
     /**
      * @desc Adds a supported PHP namespace for a module's controllers
-     * 
+     *
      * @param $namespace The PHP namespace
      * @param $module [optional, default to the default module] The module name
      * @return Standard this
@@ -216,7 +216,7 @@ class Standard extends \Zend_Controller_Dispatcher_Standard implements IDispatch
      * @param $module [optional, default to the default module] The module name
      * @return boolean True if the namespace is registered
      */
-    public function hasNamespace($module = null) 
+    public function hasNamespace($module = null)
     {
         if( null === $module ) {
             $module = $this->getDefaultModule();
@@ -230,7 +230,7 @@ class Standard extends \Zend_Controller_Dispatcher_Standard implements IDispatch
      * @param $module [optional, default to the default module] The module name
      * @return Array With the namespaces, empty array if no namespaces were registered.
      */
-    public function getNamespaces($module = null) 
+    public function getNamespaces($module = null)
     {
         if( null === $module ) {
             $module = $this->getDefaultModule();
