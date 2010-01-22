@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\Layout\Builder;
+namespace Majisti\View\LayoutBuilder;
 
 abstract class BuilderAbstract extends \Majisti\Util\Model\ViewAggregate implements IBuilder
 {
@@ -13,13 +13,13 @@ abstract class BuilderAbstract extends \Majisti\Util\Model\ViewAggregate impleme
     }
     
     /**
-     * 
+     *
      * @return IBuilderBody
      */
     public function getBuilderBody()
     {
         if( null === $this->_builderBody ) {
-            $this->_builderBody = new DefaultBuilderBody();    
+            $this->_builderBody = new DefaultBuilderBody();
         }
         
         return $this->_builderBody;

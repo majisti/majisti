@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\Layout\Builder;
+namespace Majisti\View\LayoutBuilder;
 
 interface IBuildable
 {

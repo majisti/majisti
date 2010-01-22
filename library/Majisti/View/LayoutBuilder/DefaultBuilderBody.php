@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\Layout\Builder;
+namespace Majisti\View\LayoutBuilder;
 
 class DefaultBuilderBody extends BuilderBodyAbstract implements IBuilderBody
 {
@@ -11,10 +11,10 @@ class DefaultBuilderBody extends BuilderBodyAbstract implements IBuilderBody
     
     public function buildContent($content)
     {
-        return $content 
+        return $content
             . '<div class="content">'
             . $this->getView()->layout()->content
-            . '</div>' 
+            . '</div>'
             . $this->getView()->inlineScript();
     }
     
