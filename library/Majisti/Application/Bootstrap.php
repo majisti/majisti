@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\Application\Bootstrap;
+namespace Majisti\Application;
 
 /**
  * @desc Majisti's application boostrap.

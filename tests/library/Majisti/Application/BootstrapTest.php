@@ -1,12 +1,12 @@
 <?php
 
-namespace Majisti\Application\Bootstrap;
+namespace Majisti\Application;
 
 require_once 'TestHelper.php';
 
 /**
  * @desc
- * @author 
+ * @author
  */
 class BootstrapTest extends \Majisti\Test\PHPUnit\TestCase
 {
@@ -18,6 +18,11 @@ class BootstrapTest extends \Majisti\Test\PHPUnit\TestCase
     public function setUp()
     {
         
+    }
+    
+    public function test__construct()
+    {
+        $this->markTestIncomplete();
     }
 }
 
