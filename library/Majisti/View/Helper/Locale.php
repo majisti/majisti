@@ -1,6 +1,6 @@
 <?php
 
-class Majisti_View_Helper_Locale extends Zend_View_Helper_Abstract
+class Majisti_View_Helper_Locale extends HelperAbstract
 {
     /**
      * @var \Majisti\I18n\LocaleSession
