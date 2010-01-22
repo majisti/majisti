@@ -7,7 +7,7 @@ namespace Majisti\Application\Module;
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-class Bootstrap extends \Majisti\Application\Bootstrap\Bootstrap
+class ModuleBootstrap extends \Majisti\Application\Bootstrap
 {
     /**
      * @var \Zend_Loader_Autoloader_Resource
