@@ -12,7 +12,7 @@ namespace Majisti\Config\Handler;
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-class Composite extends \Majisti\Util\Model\Stack implements IHandler
+class Composite extends \Majisti\Util\Model\Collection\Stack implements IHandler
 {
     /**
      * @desc Handles the configuration by delegating to this

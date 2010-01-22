@@ -9,7 +9,8 @@ namespace Majisti\Model\Mail;
  *
  * @author Steven Rosato
  */
-class BodyPartial extends \Majisti\Util\Model\ViewAggregate implements IBodyObject
+class BodyPartial extends \Majisti\Util\Model\Aggregator\View
+    implements IBodyObject
 {
     /**
      * @var string

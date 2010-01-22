@@ -2,8 +2,11 @@
 
 namespace Majisti\Controller\Plugin;
 
-abstract class AbstractPlugin extends \Zend_Controller_Plugin_Abstract 
-    implements \Majisti\Util\Model\IViewAggregate, \Majisti\Util\Model\IConfigAggregate
+abstract class AbstractPlugin
+    extends     \Zend_Controller_Plugin_Abstract
+     
+    implements  \Majisti\Util\Model\Aggregator\IView,
+                \Majisti\Util\Model\Aggregator\IConfig
 {
     /**
      * @var \Zend_View_Interface
@@ -17,7 +20,7 @@ abstract class AbstractPlugin extends \Zend_Controller_Plugin_Abstract
     
     public function __construct(\Zend_Config $config = null)
     {
-        $this->_config = $config;        
+        $this->_config = $config;
     }
     
     public function getConfig()

@@ -1,8 +1,8 @@
 <?php
 
-namespace Majisit\Util\Model;
+namespace Majisit\Util\Model\Aggregator;
 
-class ConfigAggregate implements IConfigAggregate
+class Config implements IConfig
 {
     /**
      * @var \Zend_Config

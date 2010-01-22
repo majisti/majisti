@@ -5,7 +5,7 @@
  *
  * @author Majisti
  */
-class Majisti_Controller_Action_Helper_Model extends Zend_Controller_Action_Helper_Abstract
+class Majisti_Controller_ActionHelper_Model extends Zend_Controller_Action_Helper_Abstract
 {
     /**
      * @desc Returns the registered Majisti ModelContainer

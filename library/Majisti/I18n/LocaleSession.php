@@ -3,14 +3,11 @@
 namespace Majisti\I18n;
 
 /**
- * @desc This class handles automatically with the aid of a \Zend_Session_Namespace
- * the internationalisation of an application by populating the class with the
- * application's supported languages and default language which were all defined
- * in a configuration.
- *
- * It is then possible to switch amongst the locales at any time.
- *
- * TODO: review doc
+ * @desc This controller handles internationalisation of an application
+ * automatically with the aid of a \Zend_Session_Namespace by populating
+ * the class with the application's supported languages and default
+ * language which were all defined in a configuration. It is then possible
+ * to switch amongst the locales at any time.
  *
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
@@ -22,13 +19,17 @@ class LocaleSession implements ILocale
      */
     protected $_session;
 
+    /**
+     * @var LocaleSession
+     */
     static protected $_instance;
 
     /**
      * @desc Constructs a new Internationalisation object which will handle
      * the locale through \Zend_Locale automatically using the session.
      *
-     * Based on the application's configuration, it will populate the supported locales.
+     * Based on the application's configuration,
+     * it will populate the supported locales.
      */
     protected function __construct()
     {

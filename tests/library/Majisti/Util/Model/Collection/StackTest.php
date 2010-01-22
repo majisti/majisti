@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\Util\Model;
+namespace Majisti\Util\Model\Collection;
 
 require_once 'TestHelper.php';
 
@@ -29,7 +29,7 @@ class StackTest extends \Majisti\Test\PHPUnit\TestCase
     public function test__construct()
     {
         new Stack();
-        $this->markTestIncomplete();  
+        $this->markTestIncomplete();
     }
     
     /**
@@ -39,7 +39,7 @@ class StackTest extends \Majisti\Test\PHPUnit\TestCase
     {
         $element = 'foo';
         new Stack($element);
-        $this->markTestIncomplete();  
+        $this->markTestIncomplete();
     }
 
     /**
@@ -49,7 +49,7 @@ class StackTest extends \Majisti\Test\PHPUnit\TestCase
     {
         $indexedArray = array('foo', 'bar');
         new Stack($indexedArray);
-        $this->markTestIncomplete();  
+        $this->markTestIncomplete();
     }
     
     /**
@@ -67,7 +67,7 @@ class StackTest extends \Majisti\Test\PHPUnit\TestCase
         $this->assertNotNull($element);
         $this->assertEquals($size - 1, $stack->count());
         $this->assertNotContains($element, $stack);
-        $this->markTestIncomplete();  
+        $this->markTestIncomplete();
     }
     
     /**
@@ -79,7 +79,7 @@ class StackTest extends \Majisti\Test\PHPUnit\TestCase
         
         $this->assertEquals('4', $stack->peek());
         $this->assertEquals(4, $stack->count());
-        $this->markTestIncomplete();  
+        $this->markTestIncomplete();
     }
     
     /**
@@ -107,7 +107,7 @@ class StackTest extends \Majisti\Test\PHPUnit\TestCase
         }
         
         $this->assertNull($iterator->current());
-        $this->markTestIncomplete();  
+        $this->markTestIncomplete();
     }
 }
 

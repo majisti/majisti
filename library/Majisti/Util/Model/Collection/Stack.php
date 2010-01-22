@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\Util\Model;
+namespace Majisti\Util\Model\Collection;
 
 /**
  * @desc Implementation of a simple Stack in LIFO order. Even the

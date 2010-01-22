@@ -9,8 +9,6 @@ namespace Majisti\Application;
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-use Majisti\I18n;
-
 class Constants
 {
     /**

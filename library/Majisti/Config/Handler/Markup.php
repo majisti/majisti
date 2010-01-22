@@ -15,7 +15,7 @@ namespace Majisti\Config\Handler;
  */
 use Majisti\Util\Model;
 
-class Markup extends \Majisti\Util\Model\Stack implements IHandler
+class Markup extends \Majisti\Util\Model\Collection\Stack implements IHandler
 {
     /**
      * @link IHandler::handle()

@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\Util\Model;
+namespace Majisti\Util\Model\Aggregator;
 
 /**
  * @desc Class that aggregates a Zend_View_Interface and provides
@@ -9,7 +9,7 @@ namespace Majisti\Util\Model;
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-class ViewAggregate implements IViewAggregate
+class View implements IView
 {
     protected $_view;
 
