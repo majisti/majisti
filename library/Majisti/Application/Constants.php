@@ -129,11 +129,11 @@ class Constants
 //        define('MAJISTIX_URL_IMAGES',  MAJISTIX_URL . '/images/common');
 
         /* JQuery public directories */
-        define('JQUERY', MAJISTI_PUBLIC . '/externals/jquery');
-        define('JQUERY_PLUGINS', JQUERY . '/plugins');
-        define('JQUERY_STYLES',  JQUERY . '/styles');
-        define('JQUERY_THEMES',  JQUERY . '/themes');
-        define('JQUERY_UI',      JQUERY . '/ui');
+        define('JQUERY',         MAJISTI_PUBLIC . '/jquery');
+        define('JQUERY_UI',      JQUERY         . '/ui');
+        define('JQUERY_PLUGINS', MAJISTIX_URL   . '/jquery/plugins');
+        define('JQUERY_STYLES',  MAJISTIX_URL   . '/jquery/styles');
+        define('JQUERY_THEMES',  MAJISTIX_URL   . '/jquery/themes');
     }
 
     /**

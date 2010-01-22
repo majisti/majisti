@@ -58,8 +58,8 @@ class View extends \Zend_Application_Resource_View
 
         $view->addHelperPath('ZendX/JQuery/View/Helper', 'ZendX_JQuery_View_Helper');
 
-        $view->jQuery()->setLocalPath(MAJISTI_PUBLIC . '/externals/jquery/jquery.js');
-        $view->jQuery()->setUiLocalPath(MAJISTI_PUBLIC . '/externals/jquery/ui.js');
+        $view->jQuery()->setLocalPath(JQUERY    . '/jquery.js');
+        $view->jQuery()->setUiLocalPath(JQUERY  . '/ui.js');
 
         //TODO: enable according to config
         $view->jQuery()->enable();
