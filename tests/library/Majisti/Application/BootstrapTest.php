@@ -20,16 +20,6 @@ class BootstrapTest extends \Zend_Application_Bootstrap_BootstrapTest
         \Majisti\Test\PHPUnit\TestCase::runAlone();
     }
     
-    public function testDispatcherInitialized()
-    {
-        $this->markTestIncomplete();
-    }
-    
-    public function testTranslationInitialized()
-    {
-        $this->markTestIncomplete();
-    }
-    
     public function testLibraryAutoloaderInitialized()
     {
         $this->markTestIncomplete();
