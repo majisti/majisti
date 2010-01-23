@@ -19,18 +19,20 @@ class ApplicationTest extends \Zend_Application_ApplicationTest
         \Majisti\Test\PHPUnit\TestCase::setClass(__CLASS__);
         \Majisti\Test\PHPUnit\TestCase::runAlone();
     }
-
-    /**
-     * @desc Setups the test case
-     */
-    public function setUp()
+    
+    public function testConfigurationMergedProperly()
     {
-
+        $this->markTestIncomplete();
     }
-
-    public function test__construct()
+    
+    public function testConfigHandlerResourceHandlesConfig()
     {
-
+        $this->markTestIncomplete();
+    }
+    
+    public function testConstantsGotDefinedAfterConstruct()
+    {
+        $this->markTestIncomplete();
     }
 }
 

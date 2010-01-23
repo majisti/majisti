@@ -15,6 +15,9 @@ class ConstantsTest extends \Majisti\Test\PHPUnit\TestCase
 {
     static protected $_class = __CLASS__;
 
+    /**
+     * @var string
+     */
     public $applicationPath;
 
     /**
