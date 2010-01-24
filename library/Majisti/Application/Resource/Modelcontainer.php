@@ -14,7 +14,7 @@ class ModelContainer extends \Zend_Application_Resource_ResourceAbstract
     {
         return $this->getModelContainer();
     }
-    
+
     public function getModelContainer()
     {
         if( !\Zend_Registry::isRegistered('Majisti_ModelContainer') ) {
