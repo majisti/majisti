@@ -122,9 +122,9 @@ class Constants
         define('APPLICATION_LOCALE_CURRENT', $locale->getCurrentLocale());
         define('APPLICATION_LOCALE_DEFAULT', $locale->getDefaultLocale());
 
-//        define('MAJISTIX_URL_STYLES',  MAJISTIX_URL . '/styles');
-//        define('MAJISTIX_URL_SCRIPTS', MAJISTIX_URL . '/scripts');
-//        define('MAJISTIX_URL_IMAGES',  MAJISTIX_URL . '/images/common');
+        define('MAJISTIX_URL_STYLES',  MAJISTIX_URL . '/styles');
+        define('MAJISTIX_URL_SCRIPTS', MAJISTIX_URL . '/scripts');
+        define('MAJISTIX_URL_IMAGES',  MAJISTIX_URL . '/images/common');
 
         /* JQuery public directories */
         define('JQUERY',         MAJISTI_PUBLIC . '/jquery');
@@ -199,9 +199,9 @@ class Constants
             define('MAJ_SCRIPTS', MAJISTI_URL_SCRIPTS);
             define('MAJ_IMAGES', MAJISTI_URL_IMAGES);
 
-            define('MAJX_STYLES', MAJISTI_URL_STYLES);
-            define('MAJX_SCRIPTS', MAJISTI_URL_SCRIPTS);
-            define('MAJX_IMAGES', MAJISTI_URL_IMAGES);
+            define('MAJX_STYLES', MAJISTIX_URL_STYLES);
+            define('MAJX_SCRIPTS', MAJISTIX_URL_SCRIPTS);
+            define('MAJX_IMAGES', MAJISTIX_URL_IMAGES);
         }
     }
 }
