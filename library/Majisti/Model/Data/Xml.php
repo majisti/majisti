@@ -2,8 +2,10 @@
 
 namespace Majisti\Model\Data;
 
-use \Majisti\Util\Model\Stack   as Stack;
-use \Majisti\I18n\LocaleSession as LocaleSession;
+use Majisti\Util\Model\Collection;
+
+use \Majisti\Util\Model\Collection\Stack    as Stack;
+use \Majisti\I18n\LocaleSession             as LocaleSession;
 
 class Xml
 {
@@ -59,9 +61,15 @@ class Xml
 
             if( $this->isBBCodeMarkupUsed() ) {
                 /* parse with BBCode Zend_Markup */
-                $bbCode = \Zend_Markup::factory('BbCode', 'Html');
-                $bbCode->addTag('br', \Zend_Markup::REPLACE_SINGLE,
-                    array('replace' => '<br />'));
+                $bbCode = \Zend_Markup::factory('Bbcode');
+                $bbCode->addTag(
+                    'br',
+                    \Zend_Markup::REPLACE,
+                    array(
+                        'replace'   => '<br />',
+                        'group'     => 'inline',
+                    )
+                );
 
                 $this->_markupStack->push($bbCode);
             }
@@ -103,10 +111,14 @@ class Xml
                 );
             }
 
-            $markup = new \Majisti\Config\Handler\Markup(
-                $this->getMarkupStack()->toArray());
+            $stack = $this->getMarkupStack();
+            if( !$stack->isEmpty() ) {
+                $markup = new \Majisti\Config\Handler\Markup(
+                    $stack->toArray());
 
-            $data = $markup->handle($data);
+                $data = $markup->handle($data);
+            }
+
             $data->setReadOnly();
 
             $this->_data = $data;

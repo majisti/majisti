@@ -1,6 +1,6 @@
 <?php
 
-class Majisti_View_Helper_Locale extends HelperAbstract
+class Majisti_View_Helper_Locale extends Majisti_View_Helper_Abstract
 {
     /**
      * @var \Majisti\I18n\LocaleSession

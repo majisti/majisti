@@ -18,8 +18,8 @@ class View extends \Zend_Application_Resource_View
     {
         //FIXME: does it have anything to do here?
         \Zend_Controller_Action_HelperBroker::addPath(
-            'Majisti/Controller/Action/Helper',
-            'Majisti_Controller_Action_Helper');
+            'Majisti/Controller/ActionHelper',
+            'Majisti_Controller_ActionHelper');
 
         return parent::init();
     }

@@ -29,7 +29,7 @@ class Markup extends \Majisti\Util\Model\Collection\Stack implements IHandler
             throw new Exception('No markup was pushed to the stack');
         }
 
-        return $this->_parseConfig($config);
+        return $this->_parseConfig(clone $config);
     }
 
     /**
@@ -37,21 +37,21 @@ class Markup extends \Majisti\Util\Model\Collection\Stack implements IHandler
      * on every values.
      *
      * @throws Exception if Markup provided in not an instance of
-     *  \Zend_Markup_Renderer_Abstract
+     *  \Zend_Markup_RendererAbstract
      */
     protected function _parseConfig(\Zend_Config $config)
     {
         foreach ($config as $key => $value) {
             if( $value instanceof \Zend_Config ) {
-                $config->merge($this->_parseConfig($value));
+                $config->{$key}->merge($this->_parseConfig($value));
             } else {
                 foreach ($this as $markup) {
-                    if( !($markup instanceof \Zend_Markup_Renderer_Abstract) ) {
+                    if( !($markup instanceof \Zend_Markup_Renderer_RendererAbstract) ) {
                         $markup = is_object($markup)
                             ? get_class($markup)
                             : $markup;
                         throw new \Exception("Markup {$markup} must be an"
-                            . " instance of Zend_Markup_Renderer_Abstract");
+                            . " instance of Zend_Markup_RendererAbstract");
                     }
                     $config->{$key} = $markup->render($value);
                 }

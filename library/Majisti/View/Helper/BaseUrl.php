@@ -7,7 +7,7 @@
  *
  * @author Majisti
  */
-class Majisti_View_Helper_BaseUrl extends HelperAbstract
+class Majisti_View_Helper_BaseUrl extends Majisti_View_Helper_Abstract
 {
     public function baseUrl()
     {
