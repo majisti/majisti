@@ -42,8 +42,8 @@ class View extends \Zend_Application_Resource_View
     public function getView()
     {
         $view = new \Majisti\View();
-        $view->addBasePath(MAJISTI_PATH . '/Layouts/');
-        $view->addScriptPath(APPLICATION_LIBRARY . '/layouts');
+//        $view->addBasePath(MAJISTI_PATH . '/Layouts/');
+        $view->addScriptPath(APPLICATION_LIBRARY . '/views/scripts');
 
         $view->addHelperPath('Majisti/View/Helper/', 'Majisti_View_Helper');
         $view->addHelperPath('Majisti/View/Helper/', 'Majisti\View\Helper\\');
@@ -51,8 +51,8 @@ class View extends \Zend_Application_Resource_View
         $view->addHelperPath('MajistiX/View/Helper/', 'MajistiX_View_Helper');
         $view->addHelperPath('MajistiX/View/Helper/', 'MajistiX\View\Helper\\');
 
-        $view->addHelperPath(APPLICATION_LIBRARY . '/helpers', APPLICATION_NAME . '_View_Helper');
-        $view->addHelperPath(APPLICATION_LIBRARY . '/helpers', APPLICATION_NAME . '\View\Helper\\');
+        $view->addHelperPath(APPLICATION_LIBRARY . '/views/helpers', APPLICATION_NAME . '_View_Helper');
+        $view->addHelperPath(APPLICATION_LIBRARY . '/views/helpers', APPLICATION_NAME . '\View\Helper\\');
 
         $view->doctype('XHTML1_STRICT');
 
