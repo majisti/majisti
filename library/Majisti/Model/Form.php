@@ -6,6 +6,10 @@ class Form extends \Zend_Form
 {
     public function setLayout(Form\Layout\ILayout $layout)
     {
-        $layout->apply($this);
+        $layout->visitForm($this);
+
+        foreach ($this->getSubForms() as $subForm) {
+        	$layout->visitForm($subForm);
+        }
     }
 }

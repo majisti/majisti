@@ -4,15 +4,14 @@ namespace Majisti\Model\Form\Layout;
 
 class Table implements ILayout
 {
-    public function apply(\Zend_Form $form)
+    public function visitForm(\Zend_Form $form)
     {
         $elementDecorators = array(
                 'ViewHelper',
                 'Errors',
                 array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')),
-                array('Label', array('tag' => 'td'),
+                array('Label', array('tag' => 'td')),
                 array(array('row' => 'HtmlTag'), array('tag' => 'tr')),
-            )
         );
 
         $buttonDecorators = array(
@@ -27,7 +26,12 @@ class Table implements ILayout
             array('HtmlTag', array('tag' => 'table')),
             'Form',
         ));
-        
+
         $form->setElementDecorators($elementDecorators);
+    }
+
+    public function visitElement(\Zend_Form_Element $element)
+    {
+
     }
 }
