@@ -15,7 +15,7 @@ class Container
      * @var \ArrayObject
      */
     protected $_registry;
-    
+
     /**
      * @desc Constructs the model container
      */
@@ -23,7 +23,7 @@ class Container
     {
         $this->_registry = new \ArrayObject(array(), \ArrayObject::ARRAY_AS_PROPS);
     }
-    
+
     /**
      * @desc Adds a model to the container, inside a namespace. Either an object
      * or classname can be provided, autoloaders and pluginloaders should be
@@ -44,27 +44,27 @@ class Container
             $args       = $namespace;
             $namespace  = 'default';
         }
-        
+
         if( null === $namespace ) {
             $namespace = 'default';
         }
-        
+
         $registry   = $this->_registry;
         $namespace  = strtolower((string) $namespace);
         $key        = strtolower((string)$key);
-        
+
         /* create namespace */
         if( !$registry->offsetExists($namespace) ) {
             $registry->$namespace = new \ArrayObject(array(), \ArrayObject::ARRAY_AS_PROPS);
         }
-        
+
         /* add model */
         $registry->$namespace->$key = new \ArrayObject(array(
             'model' => $model,
             'args'  => $args
         ), \ArrayObject::ARRAY_AS_PROPS);
     }
-    
+
     /**
      * @desc Removes a model from the provided key and namespace.
      *
@@ -78,23 +78,23 @@ class Container
         $registry   = $this->_registry;
         $namespace  = strtolower((string) $namespace);
         $key        = strtolower((string)$key);
-        
+
         /* wrong namespace */
         if( !$registry->offsetExists($namespace) ) {
             return false;
         }
-        
+
         /* wrong key */
         if( !$registry->$namespace->offsetExists($key) ) {
             return false;
         }
-        
+
         /* remove model */
         unset($registry->$namespace->$key);
-        
+
         return true;
     }
-    
+
     /**
      * @desc Retrieves a model from the container. If the model was a classname,
      * instanciation will occur with the args provided with addModel(),
@@ -122,7 +122,7 @@ class Container
         $registry   = $this->_registry;
         $namespace  = strtolower((string) $namespace);
         $key        = strtolower((string) $key);
-        
+
         /*
          * retrieve model, if it is a class name, attempt to
          * instanciate it with provided args. Once loaded,
@@ -132,10 +132,10 @@ class Container
             $returnModel    = $registry->$namespace->$key->model;
             $args           = $registry->$namespace->$key->args;
         }
-        
+
         return $this->_loadModel($key, $returnModel, $namespace, $args);
     }
-    
+
     /**
      * @desc Loads a model with with the provided arguments
      *
@@ -146,13 +146,15 @@ class Container
     {
         if( !(is_object($model) || null === $model) ) {
             $model = new \ReflectionClass($model);
-            $model = $model->newInstanceArgs($args);
+            $model = $model->hasMethod('__construct')
+                ? $model->newInstanceArgs($args)
+                : $model->newInstance();
         }
-        
+
         if( null !== $model ) {
             $this->addModel($key, $model, $namespace);
         }
-            
+
         return $model;
     }
 }
