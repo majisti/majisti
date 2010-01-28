@@ -11,6 +11,7 @@ class Table implements ILayout
                 'Errors',
                 array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')),
                 array('Label', array('tag' => 'td')),
+                array('Description', array('tag' => 'td')),
                 array(array('row' => 'HtmlTag'), array('tag' => 'tr')),
         );
 
