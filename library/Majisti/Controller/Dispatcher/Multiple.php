@@ -19,7 +19,7 @@ class Multiple extends \Zend_Controller_Dispatcher_Standard implements IDispatch
      * @var Array 2 dimentional
      */
     protected $_controllerFallbackDirectories = array();
-    
+
     /**
      * @desc Provides support for namespaced controllers.
      * The last namespace added is the first one checked when
@@ -27,7 +27,7 @@ class Multiple extends \Zend_Controller_Dispatcher_Standard implements IDispatch
      * @var Array
      */
     protected $_namespaces = array();
-    
+
     /**
      * @desc Adds a fallback controller directory.
      *
@@ -40,16 +40,16 @@ class Multiple extends \Zend_Controller_Dispatcher_Standard implements IDispatch
         if( null === $module ) {
             $module = $this->getDefaultModule();
         }
-        
+
         if( array_key_exists($module, $this->_controllerFallbackDirectories) ) {
             $this->_controllerFallbackDirectories[$module][] = $path;
         } else {
             $this->_controllerFallbackDirectories[$module] = array($path);
         }
-        
+
         return $this;
     }
-    
+
     /**
      * @desc Returns the fallback controller directories for a module.
      * @param $module [optional, default to default module] The module name
@@ -60,14 +60,14 @@ class Multiple extends \Zend_Controller_Dispatcher_Standard implements IDispatch
         if( null === $module ) {
             $module = $this->getDefaultModule();
         }
-        
+
         if( array_key_exists($module, $this->_controllerFallbackDirectories) ) {
             return $this->_controllerFallbackDirectories[$module];
         }
-        
+
         return null;
     }
-    
+
     /**
      * @desc Returns whether a module has fallback controller directories
      * @param $module [optional, default to default module] The module name
@@ -77,7 +77,7 @@ class Multiple extends \Zend_Controller_Dispatcher_Standard implements IDispatch
     {
         throw new \Majisti\Util\Exception\NotImplementedException();
     }
-    
+
     /**
      * @desc Sets the fallback controller directoriesm overriding any previous
      * ones.
@@ -91,7 +91,7 @@ class Multiple extends \Zend_Controller_Dispatcher_Standard implements IDispatch
 
         return $this;
     }
-    
+
     /**
      * @desc Resets the fallback controller directories.
      *
@@ -102,7 +102,7 @@ class Multiple extends \Zend_Controller_Dispatcher_Standard implements IDispatch
     {
         $this->_controllerFallbackDirectories = array();
     }
-    
+
     /**
      * @desc Load a controller class
      *
@@ -118,7 +118,7 @@ class Multiple extends \Zend_Controller_Dispatcher_Standard implements IDispatch
     {
         $fileName = $this->classToFilename($className);
         $loadFile = $this->getDispatchDirectory() . DIRECTORY_SEPARATOR . $fileName;
-        
+
         try {
             if( !\Zend_Loader::isReadable($loadFile) ) {
                 foreach( $this->getFallbackControllerDirectory($this->_curModule) as $dir ) {
@@ -129,27 +129,28 @@ class Multiple extends \Zend_Controller_Dispatcher_Standard implements IDispatch
                     return parent::loadClass($className);
                 }
             }
-            $finalClass = parent::loadClass($className);
+            return parent::loadClass($className);
         } catch( \Zend_Controller_Dispatcher_Exception $e ) {
             if (($this->_defaultModule !== $this->_curModule)
                 || $this->getParam('prefixDefaultModule'))
             {
                 $finalClass = $this->formatClassName($this->_curModule, $className);
-            }
 
-            if (!class_exists($finalClass, false)) {
-                foreach (array_reverse($this->getNamespaces($this->_curModule)) as $namespace) {
-                    if( class_exists($namespace . $finalClass, false) ) {
-                        return $namespace . $finalClass;
+                if (!class_exists($finalClass, false)) {
+                    foreach (array_reverse($this->getNamespaces($this->_curModule)) as $namespace) {
+                        if( class_exists($namespace . $finalClass, false) ) {
+                            return $namespace . $finalClass;
+                        }
                     }
                 }
-                throw $e;
             }
+
+            throw $e;
         }
-        
-        return $finalClass;
+
+        return null;
     }
-    
+
     /**
      * @desc Returns whether a request is dipatchable based on the parent's
      * behaviour and if it is not dispatchable, it will try the fallback controller
@@ -162,22 +163,22 @@ class Multiple extends \Zend_Controller_Dispatcher_Standard implements IDispatch
     public function isDispatchable(\Zend_Controller_Request_Abstract $request)
     {
         $dispatchable = parent::isDispatchable($request);
-        
+
         /* When not dispatchable, fallback to the fallback controllers */
         if( !$dispatchable ) {
             $className = $this->getControllerClass($request);
-            
+
             if( !$className ) {
                 return false;
             }
-            
+
             $fileSpec = $this->classToFilename($className);
             $fallbackDirs = $this->getFallbackControllerDirectory($request->getModuleName());
-            
+
             if( null === $fallbackDirs ) {
                 return false;
             }
-            
+
             foreach ($fallbackDirs as $fallbackDir) {
                 $filePath = $fallbackDir . DIRECTORY_SEPARATOR . $fileSpec;
                 if( \Zend_Loader::isReadable($filePath) ) {
@@ -185,10 +186,10 @@ class Multiple extends \Zend_Controller_Dispatcher_Standard implements IDispatch
                 }
             }
         }
-        
+
         return $dispatchable;
     }
-    
+
     /**
      * @desc Adds a supported PHP namespace for a module's controllers
      *
@@ -201,16 +202,16 @@ class Multiple extends \Zend_Controller_Dispatcher_Standard implements IDispatch
         if( null === $module ) {
             $module = $this->getDefaultModule();
         }
-        
+
         if( array_key_exists($module, $this->_namespaces) ) {
             $this->_namespaces[$module][] = $namespace;
         } else {
             $this->_namespaces[$module] = array($namespace);
         }
-        
+
         return $this;
     }
-    
+
     /**
      * @desc Returns whether a namespace is registered for a module
      * @param $module [optional, default to the default module] The module name
@@ -221,10 +222,10 @@ class Multiple extends \Zend_Controller_Dispatcher_Standard implements IDispatch
         if( null === $module ) {
             $module = $this->getDefaultModule();
         }
-        
+
         return array_key_exists($module, $this->_namespaces);
     }
-    
+
     /**
      * @desc Returns all the namespace registered for a module
      * @param $module [optional, default to the default module] The module name
@@ -235,7 +236,7 @@ class Multiple extends \Zend_Controller_Dispatcher_Standard implements IDispatch
         if( null === $module ) {
             $module = $this->getDefaultModule();
         }
-        
+
         return $this->hasNamespace($module)
             ? $this->_namespaces[$module]
             : array();
