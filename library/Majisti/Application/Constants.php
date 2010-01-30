@@ -83,6 +83,10 @@ class Constants
          * Majisti's library public directory, a static url could had been
          * provided in the configuration.
          * exemple: http://static.mydomain.com
+         *
+         * otherwise it is mapped to public/development
+         * for development and testing environments
+         * and public/production for staging and production ones.
          */
         if( $staticUrl = $selector->find('urls.static', false) ) {
             define('MAJISTI_PUBLIC', $staticUrl);

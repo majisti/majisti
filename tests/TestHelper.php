@@ -39,6 +39,8 @@ $includePaths = array(
     get_include_path()
 );
 
+define('MAJISTI_ROOT', $majistiRoot);
+
 set_include_path(implode(PATH_SEPARATOR, $includePaths));
 
 /* autoloaders */

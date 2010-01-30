@@ -47,6 +47,8 @@
     <property name="dir.build.logs"     value="${dir.build}/logs" />
     <property name="dir.build.manual"   value="${dir.build}/manual" />
     
+    <property name="lib.yui.compressor" value="yuicompressor-2.4.2" />
+    
     <!-- ///////////////////////////////////////////////////////////////// -->
     <!--                        CLEAN and PREPARE                          -->
     <!-- ///////////////////////////////////////////////////////////////// -->
@@ -91,6 +93,19 @@
                 --coverage-html   ${dir.build}/coverage
                 AllTests" />
         </exec>
+    </target>
+    
+    <!-- ///////////////////////////////////////////////////////////////// -->
+    <!--                           PRODUCTION                              -->
+    <!-- ///////////////////////////////////////////////////////////////// -->
+    
+    <target name="production">
+        <java jar="${lib.yui.compressor}.jar" fork="true">
+            <arg value="public/development/jquery/jquery.js" />
+        	<arg value="-o" />
+        	<arg value="public/production/jquery.js" />
+        </java>
+        
     </target>
     
     <!-- ///////////////////////////////////////////////////////////////// -->
