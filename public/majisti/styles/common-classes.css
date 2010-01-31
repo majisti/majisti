@@ -128,14 +128,8 @@
 .list-lower-greek           {list-style-type: lower-greek;}
 .list-lower-latin           {list-style-type: lower-latin;}
 .list-upper-latin           {list-style-type: upper-latin;}
-.list-hebrew                {list-style-type: hebrew;}
 .list-armenian              {list-style-type: armenian;}
 .list-georgian              {list-style-type: georgian;}
-.list-cjkIdeographic        {list-style-type: cjk-ideographic;}
-.list-hiragana              {list-style-type: hiragana;}
-.list-katakana              {list-style-type: katakana;}
-.list-hiraganaIroha         {list-style-type: hiragana-iroha;}
-.list-katakanaIroha         {list-style-type: katakana-iroha;}
 
 /* mouse cursor */
 .cursor-crosshair   {cursor: crosshair;}
