@@ -41,6 +41,12 @@ class View extends \Zend_Application_Resource_View
      */
     public function getView()
     {
+        if( null !== $this->_view ) {
+            return $this->_view;
+        }
+
+        $options = $this->getOptions();
+
         $view = new \Majisti\View();
 //        $view->addBasePath(MAJISTI_PATH . '/Layouts/');
         $view->addScriptPath(APPLICATION_LIBRARY . '/views/scripts');
@@ -58,6 +64,10 @@ class View extends \Zend_Application_Resource_View
 
         $view->addHelperPath('ZendX/JQuery/View/Helper', 'ZendX_JQuery_View_Helper');
 
+        if( isset($options['google']) ) {
+            $this->loadGoogle($view, $options['google']);
+        }
+
         $view->jQuery()->setLocalPath(JQUERY    . '/jquery.js');
         $view->jQuery()->setUiLocalPath(JQUERY  . '/ui.js');
 
@@ -67,6 +77,32 @@ class View extends \Zend_Application_Resource_View
 
         \Zend_Registry::set('Zend_View', $view);
 
+        $this->_view = $view;
+
         return $view;
+    }
+
+    protected function loadGoogle($view, $google)
+    {
+        $key = $google['apikey'];
+        $view->headScript()->prependFile("http://www.google.com/jsapi?key={$key}");
+
+        $load = '';
+        foreach ($google['load'] as $key => $value) {
+
+            /* disable jquery and ui library loading */
+            if( 'jquery' === strtolower($key) ) {
+                $view->jQuery()->setRenderMode(30);
+            }
+
+        	$script = 'google.load("' . $key . '"';
+
+        	foreach ($value as $val) {
+        		$script .= ', ' . $val . '';
+        	}
+        	$load .= $script . ');' . PHP_EOL;
+        }
+
+        $view->headScript()->appendScript($load);
     }
 }

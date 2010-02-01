@@ -20,7 +20,7 @@ class AllTests extends \Majisti\Test\PHPUnit\TestSuite
     {
         $suite = new self('Majisti Framework - View - Helper - All tests');
 
-        $suite->addTestSuite(__NAMESPACE__ . '\HeadBundleTest');
+//        $suite->addTestSuite(__NAMESPACE__ . '\HeadLinkTest');
 
         return $suite;
     }

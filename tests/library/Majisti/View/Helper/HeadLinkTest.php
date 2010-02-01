@@ -8,7 +8,7 @@ require_once 'TestHelper.php';
  * @desc
  * @author
  */
-class HeadBundleTest extends \Majisti\Test\PHPUnit\TestCase
+class HeadLinkTest extends \Majisti\Test\PHPUnit\TestCase
 {
     static protected $_class = __CLASS__;
 
@@ -36,13 +36,13 @@ class HeadBundleTest extends \Majisti\Test\PHPUnit\TestCase
 
     public function testBundleCss()
     {
-        $bundler = $this->view->headBundle();
+        $bundler = $this->view->headLink();
         $styles  = $this->files . '/styles';
 
-        $bundler->appendBundle('themeStyles', 'HeadLink', $this->files . '/themes.css');
+        $bundler->appendBundle('themeStyles', 'Zend_View_Helper_HeadLink', $this->files . '/themes.css');
 
-        $bundler->bundle('themeStyles')->appendStylesheet("{$styles}/theme1.css");
-        $bundler->bundle('themeStyles')->appendStylesheet("{$styles}/theme2.css");
+        $bundler->headBundle('themeStyles')->appendStylesheet("{$styles}/theme1.css");
+        $bundler->headBundle('themeStyles')->appendStylesheet("{$styles}/theme2.css");
 
         $this->assertEquals(
             '<link href="' . $this->files .
@@ -53,7 +53,7 @@ class HeadBundleTest extends \Majisti\Test\PHPUnit\TestCase
         $this->assertTrue(file_exists($this->files . '/themes.css'));
 
         $this->assertEquals(
-            ".theme1 {\n    color: green;}\n.theme2 {\n    color: blue;}",
+            file_get_contents($this->files . '/themes.expected.css'),
             file_get_contents($this->files . '/themes.css')
         );
 
@@ -62,4 +62,4 @@ class HeadBundleTest extends \Majisti\Test\PHPUnit\TestCase
     }
 }
 
-HeadBundleTest::runAlone();
+HeadLinkTest::runAlone();
