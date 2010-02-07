@@ -1,6 +1,6 @@
 <?php
 
-class Auth_Bootstrap extends \Majisti\Application\Module\Bootstrap
+class Auth_Bootstrap extends \Majisti\Application\ModuleBootstrap
 {
     public function __construct($application)
     {

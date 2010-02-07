@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\Application\Module;
+namespace Majisti\Application;
 
 /**
  * @desc Module Bootrap
@@ -50,6 +50,10 @@ class ModuleBootstrap extends \Majisti\Application\Bootstrap
         // ZF-6545: ensure front controller resource is loaded
         if (!$this->hasPluginResource('FrontController')) {
             $this->registerPluginResource('FrontController');
+        }
+        
+        if( !$this->hasPluginResource('ModelContainer') ) {
+            $this->registerPluginResource('ModelContainer');
         }
     }
 
