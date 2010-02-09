@@ -18,7 +18,7 @@ require_once 'PHPUnit/Runner/Version.php';
 require_once 'PHPUnit/TextUI/TestRunner.php';
 require_once 'PHPUnit/Util/Filter.php';
 
-/* disable xdebug for performance */
+/* disable xdebug */
 if( extension_loaded('xdebug') ) {
     xdebug_disable();
 }
@@ -38,8 +38,6 @@ $includePaths = array(
     "$majistiRoot/tests/library",
     get_include_path()
 );
-
-define('MAJISTI_ROOT', $majistiRoot);
 
 set_include_path(implode(PATH_SEPARATOR, $includePaths));
 
