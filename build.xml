@@ -14,6 +14,8 @@
    
    Requirements:
    
+       - php5-cli
+   
        Project build-all:
            - apache ant (tested with 1.7.1)
        
@@ -27,10 +29,9 @@
            - Docbook (tested with 5.0)
        
        Unit testing and code coverage:
-           - php5, php5-cli, php5-common, php5-mysql
            - PHP Packages must be 5.3.0 and higher.
-           - PHPUnit inside php-cli include_path
-           - XDebug extension for apache 2.0.5 and above (for code coverage)
+           - PHPUnit 3.4.1 in include path (Does not seem to work with 3.4.2 to current)
+           - XDebug extension for apache 2.1.0 and above (for code coverage)
     
     General Usage:
         ant all
@@ -88,24 +89,11 @@
     
     <target name="tests" depends="prepare">
         <exec dir="${dir.tests}" executable="phpunit" failonerror="true">
-            <arg line="--log-xml  ${dir.build.logs}/phpunit.xml
+            <arg line="--log-junit  ${dir.build.logs}/phpunit.xml
                 --coverage-clover ${dir.build.logs}/clover.xml
                 --coverage-html   ${dir.build}/coverage
                 AllTests" />
         </exec>
-    </target>
-    
-    <!-- ///////////////////////////////////////////////////////////////// -->
-    <!--                           PRODUCTION                              -->
-    <!-- ///////////////////////////////////////////////////////////////// -->
-    
-    <target name="production">
-        <java jar="${lib.yui.compressor}.jar" fork="true">
-            <arg value="public/development/jquery/jquery.js" />
-        	<arg value="-o" />
-        	<arg value="public/production/jquery.js" />
-        </java>
-        
     </target>
     
     <!-- ///////////////////////////////////////////////////////////////// -->

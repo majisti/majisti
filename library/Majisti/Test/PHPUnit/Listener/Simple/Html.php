@@ -49,7 +49,7 @@ class Html extends PHPUnit\DefaultListener
         };
         
         $this->write(
-          htmlspecialchars($defect->toStringVerbose($this->verbose)) .
+          htmlspecialchars($defect->getExceptionAsString()) .
           \Majisti\Test\PHPUnit\Util\Filter::getFilteredStacktrace(
             $defect->thrownException(),
             false,
