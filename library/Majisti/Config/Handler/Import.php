@@ -3,35 +3,36 @@
 namespace Majisti\Config\Handler;
 
 /**
- * @desc Import handler enabling a configuration file to import another 
- * configuration file and merging the files into the current \Zend_Config 
- * object. The ImportHandler will override the parent configuration values, if 
+ * @desc Import handler enabling a configuration file to import another
+ * configuration file and merging the files into the current \Zend_Config
+ * object. The ImportHandler will override the parent configuration values, if
  * necessary, with the children configuration files imported.
- * 
- * Exemple:  A core module calling upon the Users module, thus importing it's 
-*            configuration file, will cause the core configuration values to be 
- *           overriden by the Users' configuration values if duplicate keys are 
+ *
+ * Exemple:  A core module calling upon the Users module, thus importing it's
+*            configuration file, will cause the core configuration values to be
+ *           overriden by the Users' configuration values if duplicate keys are
  *           found.
- * 
- * The Import Handler digs recursively into the configuration files, meaning 
- * that a configuration file may import one or several other files, wich can 
+ *
+ * The Import Handler digs recursively into the configuration files, meaning
+ * that a configuration file may import one or several other files, which can
  * themselves import and so on.
- * 
- * Note: Circular importing is not blocked. A parent-child endless call is 
+ *
+ * Note: Circular importing is not blocked. A parent-child endless call is
  * prevented and, if a child imports a parent, the parent will override any
- * duplicate keys of the child. Then, the 2 files will not be resolved 
- * afterward. 
- * 
+ * duplicate keys of the child. Then, the 2 files will not be resolved
+ * afterward.
+ *
  * Exemple: A imports config file B. B imports config file A. B had overriden
  * A's common keys, but since A is imported, A's keys' values will be replaced
  * by the originial ones. Then, both A and B have been resolved and the import
- * handler will not get back to them. Use round importing with care. 
- * 
- * @author Jean-Francois Hamelin
+ * handler will not get back to them. Use round importing with care.
+ *
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class Import implements IHandler
 {
-    /** 
+    /**
      * @desc Array containing all resolved import paths
      * @var array
      */
@@ -52,19 +53,20 @@ class Import implements IHandler
     protected $_configSectionName;
     
     /**
-     * @desc The final \Zend_Config object returned after all imports have been 
+     * @desc The final \Zend_Config object returned after all imports have been
      * resolved.
      * @var \Zend_Config
      */
     protected $_finalConfig;
     
     /**
-     * @desc Handles the configuration by finding the import paths and then 
+     * @desc Handles the configuration by finding the import paths and then
      * merging everything.
      * @param \Zend_Config $config
      * @param Composite $compositeHandler (optional)
      * @param array $params (optional)
      * @see _loadOptions() for $params
+     *
      * @return \Zend_Config
      */
     public function handle(\Zend_Config $config, Composite $compositeHandler = null, $params = array())
@@ -103,7 +105,7 @@ class Import implements IHandler
     
     /**
      * @desc Resolves the imports by checking that the every requested path is
-     * valid and unresolved. Then, \Zend_Config objects are instanciated and 
+     * valid and unresolved. Then, \Zend_Config objects are instanciated and
      * merged into the final configuration object.
      * @param \Zend_Config $config
      */
@@ -125,12 +127,12 @@ class Import implements IHandler
                 if( isset( $resolvedConfig->import ) ) {
                     $this->_resolveImports($resolvedConfig->import);
                 }
-            } 
+            }
         }
     }
     
     /**
-     * Checks weither the requested path has already been resolved.
+     * @desc Checks weither the requested path has already been resolved.
      * @param string $path
      * @return bool true if the path is unresolved
      */
@@ -170,11 +172,10 @@ class Import implements IHandler
     }
     
     /**
-     * @desc Attempts to build a \Zend_Config object with the specified path 
+     * @desc Attempts to build a \Zend_Config object with the specified path
      * and catches any config exceptions.
      * @param string $configPath
      * @return \Zend_Config
-     * 
      */
     protected function _getConfigFileByPath($configPath)
     {
@@ -186,8 +187,8 @@ class Import implements IHandler
                 throw new Exception("Cannot instanciate a Zend_Config with a string");
             }
             
-            $config = $isZendConfig 
-                    ? new $type($configPath, $this->_configSectionName, true) 
+            $config = $isZendConfig
+                    ? new $type($configPath, $this->_configSectionName, true)
                     : new $type($configPath, $this->_configSectionName, true);
         } catch (\Zend_Config_Exception $e) {
             throw new Exception("Cannot instanciate {$type} with path {$configPath}.
@@ -198,10 +199,9 @@ class Import implements IHandler
     }
     
     /**
-     * 
      * @desc Sets the configuration file type used to instanciate config objects
      * in _getConfigFileByPath function.
-     * @param \Zend_Config $config 
+     * @param \Zend_Config $config
      */
     public function setConfigType(\Zend_Config $config)
     {
