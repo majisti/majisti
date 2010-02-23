@@ -10,7 +10,7 @@ namespace Majisti\Test\PHPUnit;
 class TestCase extends \PHPUnit_Framework_TestCase
 {
     static protected $_class = __CLASS__;
-    
+
     static public function getClass()
     {
         if( __CLASS__ === static::$_class || null === static::$_class ) {
@@ -28,7 +28,8 @@ class TestCase extends \PHPUnit_Framework_TestCase
     
     static public function runAlone($force = false, $arguments = array())
     {
-        if( $force || !defined('PHPUNIT_TESTCASE_RUNNING') ) {
+        if( ($force || !defined('PHPUNIT_TESTCASE_RUNNING'))
+                && 'cli' !== PHP_SAPI ) {
             if( !count($arguments) ) {
                 $arguments = \Majisti\Test\PHPUnit\Runner::getDefaultArguments();
             }
