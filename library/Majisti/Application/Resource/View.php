@@ -84,25 +84,25 @@ class View extends \Zend_Application_Resource_View
 
     protected function loadGoogle($view, $google)
     {
-        $key = $google['apikey'];
-        $view->headScript()->prependFile("http://www.google.com/jsapi?key={$key}");
-
-        $load = '';
-        foreach ($google['load'] as $key => $value) {
-
-            /* disable jquery and ui library loading */
-            if( 'jquery' === strtolower($key) ) {
-                $view->jQuery()->setRenderMode(30);
-            }
-
-        	$script = 'google.load("' . $key . '"';
-
-        	foreach ($value as $val) {
-        		$script .= ', ' . $val . '';
-        	}
-        	$load .= $script . ');' . PHP_EOL;
-        }
-
-        $view->headScript()->appendScript($load);
+//        $key = $google['apikey'];
+//        $view->headScript()->prependFile("http://www.google.com/jsapi?key={$key}");
+//
+//        $load = '';
+//        foreach ($google['load'] as $key => $value) {
+//
+//            /* disable jquery and ui library loading */
+//            if( 'jquery' === strtolower($key) ) {
+//                $view->jQuery()->setRenderMode(30);
+//            }
+//
+//        	$script = 'google.load("' . $key . '"';
+//
+//        	foreach ($value as $val) {
+//        		$script .= ', ' . $val . '';
+//        	}
+//        	$load .= $script . ');' . PHP_EOL;
+//        }
+//
+//        $view->headScript()->appendScript($load);
     }
 }
