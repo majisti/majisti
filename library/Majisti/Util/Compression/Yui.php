@@ -3,7 +3,7 @@
 namespace Majisti\Util\Compression;
 
 /**
- * Compress Javascript/CSS using the YUI Compressor
+ * @desc Compress Javascript/CSS using the YUI Compressor
  *
  * You must set $jarFile and $tempDir before calling the minify functions.
  * Also, depending on your shell's environment, you may need to specify
@@ -21,7 +21,6 @@ namespace Majisti\Util\Compression;
  *
  * @todo unit tests, $options docs
  *
- * @package Minify
  * @author Stephen Clay <steve@mrclay.org>
  */
 class Yui
@@ -97,14 +96,14 @@ class Yui
     {
         $o = array_merge(
             array(
-                'charset' => ''
-                ,'line-break' => 5000
-                ,'type' => $type
-                ,'nomunge' => false
-                ,'preserve-semi' => false
-                ,'disable-optimizations' => false
-            )
-            ,$userOptions
+                'charset'                  => '',
+                'line-break'               => 5000,
+                'type'                     => $type,
+                'nomunge'                  => false,
+                'preserve-semi'            => false,
+                'disable-optimizations'    => false,
+            ),
+            $userOptions
         );
         $cmd = self::$javaExecutable . ' -jar ' . escapeshellarg(self::$jarFile)
              . " --type {$type}"
@@ -115,7 +114,8 @@ class Yui
                 ? ' --line-break ' . (int)$o['line-break']
                 : '');
         if ($type === 'js') {
-            foreach (array('nomunge', 'preserve-semi', 'disable-optimizations') as $opt) {
+            $options = array('nomunge', 'preserve-semi', 'disable-optimizations');
+            foreach ($options as $opt) {
                 $cmd .= $o[$opt]
                     ? " --{$opt}"
                     : '';
@@ -130,7 +130,8 @@ class Yui
             || ! is_dir(self::$tempDir)
             || ! is_writable(self::$tempDir)
         ) {
-            throw new Exception('Minify_YUICompressor : $jarFile and $tempDir must be set.');
+            throw new Exception('Minify_YUICompressor :
+                $jarFile and $tempDir must be set.');
         }
     }
 }

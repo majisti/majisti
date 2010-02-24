@@ -1,5 +1,5 @@
 <?php
-namespace Majisti\View\Helper;
+namespace Majisti;
 
 require_once 'TestHelper.php';
 
@@ -18,9 +18,10 @@ class AllTests extends \Majisti\Test\PHPUnit\TestSuite
      */
     public static function suite()
     {
-        $suite = new self('Majisti Framework - View - Helper - All tests');
+        $suite = new self('Majisti Framework - All tests');
 
-        $suite->addTestSuite(__NAMESPACE__ . '\HeadLinkTest');
+        $suite->addTest(Folder\AllTests::suite());
+        $suite->addTestSuite(__NAMESPACE__ . '\FooTest');
 
         return $suite;
     }
