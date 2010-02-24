@@ -7,7 +7,7 @@ namespace Majisti\Config\Handler;
  * from a configuration. Properties follow the apache id/value paired
  * properties and as soon as a property is declared, it is possible
  * to call it on any values. Note that it is not supported on keys.
- * 
+ *
  * @see http://en.wikibooks.org/wiki/Apache_Ant/Property
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
@@ -32,18 +32,18 @@ class Property implements IHandler
      * @var array Associative array with prefix and postfix
      */
     protected $_syntax = array(
-        'prefix'    => '#{', 
+        'prefix'    => '#{',
         'postfix'   => '}'
     );
     
     /**
      * @desc Handles the configuration by parsing it for properties
      * and replacing the called properties in values afterwards.
-     * 
+     *
      * As long as the handler is not cleared, everytime the handle function
      * is called, it will stack up or override prexisting properties
      * and therefore the detected one in the new config will get replaced.
-     * 
+     *
      * @see clear() For clearing the properties
      * @param \Zend_Config $config
      * @param boolean $clearFirst clear properties before parsing
@@ -58,7 +58,7 @@ class Property implements IHandler
         $this->_loadProperties($config);
         
         if( $this->hasProperties() ) {
-            $config->merge($this->_parseConfigWithProperties($config, 
+            $config->merge($this->_parseConfigWithProperties($config,
                 $this->getProperties()));
             unset($config->property);
         }
@@ -103,14 +103,14 @@ class Property implements IHandler
     
     /**
      * @desc Sets the properties.
-     * 
+     *
      * Ex: array('applicationPath' => '/var/www/myProject');
-     * 
+     *
      * @param array $properties The properties as an id => value paired
      * array
-     * @param boolean $stackUp [optional] whether to stakp up the given properties, same
-     * keys will override previous values.
-     * 
+     * @param boolean $stackUp [optional] whether to stack up the given
+     * properties, same keys will override previous values.
+     *
      * @return Property this
      */
     public function setProperties(array $properties, $stackUp = true)
@@ -161,7 +161,7 @@ class Property implements IHandler
      * section, and stores them in this configuration's properties bag
      * and replaces the found keys' values inside the config provided
      *
-     * @param \Zend_Config $properties A \Zend_Config loaded only with the 
+     * @param \Zend_Config $properties A \Zend_Config loaded only with the
      * properties
      */
     protected function _loadProperties(\Zend_Config $config)
@@ -209,7 +209,7 @@ class Property implements IHandler
      * @desc Parses the given configuration with the given properties,
      * replacing every key found in the configuration
      * data values.
-     * 
+     *
      * @param array $properties The properties
      * @param \Zend_Config $config The configuration to parse
      * @return \Zend_Config The parsed config
@@ -223,11 +223,11 @@ class Property implements IHandler
         foreach ($config as $key => $value) {
             if( $value instanceof \Zend_Config ) {
                 $this->_passedKeys[] = $key;
-                $value->merge($this->_parseConfigWithProperties($value, 
+                $value->merge($this->_parseConfigWithProperties($value,
                     $properties));
             } else {
                 try {
-                    $config->{$key} = $this->_replaceValueFromProperties($value, 
+                    $config->{$key} = $this->_replaceValueFromProperties($value,
                         $properties);
                 } catch(Exception $e) {
                     $nodeNamespace = implode('.', $this->_passedKeys);

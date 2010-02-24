@@ -3,139 +3,179 @@
 namespace Majisti\Config\Handler;
 
 /**
- * @desc Import handler enabling a configuration file to import 
- * another configuration file and 
- * merging the files into the current \Zend_Config object.
- * The ImportHandler will merge on an ascendant manner, overriding the parent 
- * configuration values, if necessary, 
- * with the children configuration files imported.
- * 
- * Ex:  A core module calling upon the Users module, thus importing it's configuration file, will cause
- *      the core configuration values to be overriden by the Users' configuration values if duplicate
- *      data is found.
- * 
- * The Import Handler digs recursively into the configuration files, meaning that a configuration file
- * can import one or several other files, wich can themselves import and so on.
- * 
- * Note: Circular importing is not supported.
- * 
- * @author Jean-Francois Hamelin
+ * @desc Import handler enabling a configuration file to import another
+ * configuration file and merging the files into the current \Zend_Config
+ * object. The ImportHandler will override the parent configuration values, if
+ * necessary, with the children configuration files imported.
+ *
+ * Exemple:  A core module calling upon the Users module, thus importing it's
+*            configuration file, will cause the core configuration values to be
+ *           overriden by the Users' configuration values if duplicate keys are
+ *           found.
+ *
+ * The Import Handler digs recursively into the configuration files, meaning
+ * that a configuration file may import one or several other files, which can
+ * themselves import and so on.
+ *
+ * Note: Circular importing is not blocked. A parent-child endless call is
+ * prevented and, if a child imports a parent, the parent will override any
+ * duplicate keys of the child. Then, the 2 files will not be resolved
+ * afterward.
+ *
+ * Exemple: A imports config file B. B imports config file A. B had overriden
+ * A's common keys, but since A is imported, A's keys' values will be replaced
+ * by the originial ones. Then, both A and B have been resolved and the import
+ * handler will not get back to them. Use round importing with care.
+ *
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class Import implements IHandler
 {
-    /*
-     * Array containing the URLs to import
-     * Parent URL is the configuration file making the import.
-     * Children URL is/are the configuration files demanded recursively.
-     * Structure goes like this: array[key]=>array['parent']   = 'SomeUrl'
-     *                                     =>array['children'] = array['url1'] [...] 
+    /**
+     * @desc Array containing all resolved import paths
+     * @var array
      */
-    protected $_importUrls = array();
+    protected $_importPaths = array();
     
+    /**
+     * @desc Type of the Config objects we will attempt to instanciate
+     * @var \Zend_Config
+     */
     protected $_configType;
     
+    /**
+     * @desc Optional Composite object
+     * @var Composite
+     */
     protected $_compositeHandler;
     
     protected $_configSectionName;
     
     /**
-     * @desc Handles the configuration by finding the import URLs and then merging everything.
-     * @param Zend_Config $config
-     * @return Zend_Config
+     * @desc The final \Zend_Config object returned after all imports have been
+     * resolved.
+     * @var \Zend_Config
      */
-    public function handle(\Zend_Config $config, Composite $compositeHandler = null)
+    protected $_finalConfig;
+    
+    /**
+     * @desc Handles the configuration by finding the import paths and then
+     * merging everything.
+     * @param \Zend_Config $config
+     * @param Composite $compositeHandler (optional)
+     * @param array $params (optional)
+     * @see _loadOptions() for $params
+     *
+     * @return \Zend_Config
+     */
+    public function handle(\Zend_Config $config, Composite $compositeHandler = null, $params = array())
     {
         $this->clear();
-        $this->_compositeHandler = $compositeHandler;
+        $this->_compositeHandler  = $compositeHandler;
         $this->_configSectionName = $config->getSectionName();
+        $this->_finalConfig       = new \Zend_Config(array(), true);
         
+        if( !empty($params) ) {
+            $this->_loadParams($params);
+        }
+
         if( isset( $config->import ) ) {
             $this->setConfigType($config);
             
             if( null !== ($compositeHandler = $this->getCompositeHandler()) ) {
-                $config = $compositeHandler->handle($config);
+                $this->_finalConfig = $compositeHandler->handle($config);
             }
-            
-            $this->_lookForImports($config->import);
-            $this->_mergeAllImports($config);
-            unset($config->import);
+
+            $this->_resolveImports($config->import);
+            unset($this->_finalConfig->import);
         }
-        return $config;
+        return $this->_finalConfig;
     }
     
     /**
-     * @desc Clears the import handler from its URLs.
-     * @return Property this
+     * @desc Clears the import paths array
+     * @return Import this
      */
     public function clear()
     {
-        $this->_importUrls = array();
+        $this->_importPaths = array();
         return $this;
     }
     
     /**
-     * @desc Function called on the FIRST PARENT configuration file.
-     *       Function will parse the 1st file and look for the first importations.
-     *       Then, it will validate the depth of the requested files and dig through them if necessary.
-     * @param Zend_Config $config
-     * @return void
+     * @desc Resolves the imports by checking that the every requested path is
+     * valid and unresolved. Then, \Zend_Config objects are instanciated and
+     * merged into the final configuration object.
+     * @param \Zend_Config $config
      */
-    protected function _lookForImports(\Zend_Config $config)
+    protected function _resolveImports(\Zend_Config $config)
     {
-        foreach( $config as $key => $value ) {
-            $this->_importUrls[$key]['parent'] = $value;
-            $this->_lookForMoreImports($value, $key);
-        }
-    }
-    
-    /**
-     * @desc Returns the import URLs
-     * @return array The import URLs
-     */
-    public function getUrls($importUrls)
-    {
-        $imports = array();
-        foreach ($importUrls as $urlSet) {
-            $imports[] = $urlSet['parent'];
-            if( array_key_exists('children', $urlSet) && is_array($urlSet['children']) ) {
-                $children = array_values($urlSet['children']);
-                $imports = array_merge($imports, $children);
+        foreach( $config as $key => $path ) {
+            
+            if($this->_isUnresolvedPath($path)) {
+                
+                $this->_importPaths[] = $path;
+                $resolvedConfig = $this->_getConfigFileByPath($path);
+                
+                if( null !== ($compositeHandler = $this->getCompositeHandler()) ) {
+                    $resolvedConfig = $compositeHandler->handle($resolvedConfig);
+                }
+                
+                $this->_mergeImports($resolvedConfig);
+                
+                if( isset( $resolvedConfig->import ) ) {
+                    $this->_resolveImports($resolvedConfig->import);
+                }
             }
         }
-        return $imports;
+    }
+    
+    /**
+     * @desc Checks weither the requested path has already been resolved.
+     * @param string $path
+     * @return bool true if the path is unresolved
+     */
+    protected function _isUnresolvedPath($path)
+    {
+        return !in_array($path, $this->_importPaths);
     }
     
     
     /**
-     * @desc Merging function that iterates through the $_importUrls array and will merge both
-     *       the PARENT URLs (1st importations) and the CHILDREN URLs.
-     *       
-     *       Exemple: Core configuration imports the Forums module's configuration.  Forums will be PARENT.
-     *                Forums' configuration relies on the Users' configuration and imports it in his own file.
-     *                Users' configuration URL will be CHILDREN.  Any files required by the Users' configuration 
-     *                will also be considered children URLs of the parent Forums.
-     * @param Zend_Config $config
-     * @return void
+     * @desc Merges given \Zend_Config with local final config object.
+     * @param \Zend_Config $config
      */
-    protected function _mergeAllImports(\Zend_Config $config)
+    protected function _mergeImports(\Zend_Config $config)
     {
-        $imports = $this->getUrls($this->_importUrls);
-        foreach($imports as $import) {
-            $importing = $this->_getConfigFileByPath($import);
-            if( null !== ($compositeHandler = $this->getCompositeHandler()) ) {
-                $importing = $compositeHandler->handle($importing);
-            }
-            $config->merge($importing);
+            $this->_finalConfig->merge($config);
+    }
+    
+    /**
+     * @desc Loads optional parameters. Available parameters are:
+     * parent - specify the topmost config file path, so that it's impossible
+     *          to reload it once by a child config file.
+     * @param array $params
+     */
+    protected function _loadParams($params)
+    {
+        foreach ($params as $key => $value) {
+        	switch ($key) {
+        		case "parent":
+        		$this->_importPaths[] = $value;
+        		break;
+        		
+        		default: /* Do nothing */
+        		break;
+        	};
         }
     }
     
     /**
-     * @desc Attempts to build a \Zend_Config object with the specified path 
-     * and catches any config exceptions
-     * @param $configPath
-     * @param $allowModifications true|false
-     * @return Zend_Config
-     * 
+     * @desc Attempts to build a \Zend_Config object with the specified path
+     * and catches any config exceptions.
+     * @param string $configPath
+     * @return \Zend_Config
      */
     protected function _getConfigFileByPath($configPath)
     {
@@ -147,8 +187,8 @@ class Import implements IHandler
                 throw new Exception("Cannot instanciate a Zend_Config with a string");
             }
             
-            $config = $isZendConfig 
-                    ? new $type($configPath, $this->_configSectionName, true) 
+            $config = $isZendConfig
+                    ? new $type($configPath, $this->_configSectionName, true)
                     : new $type($configPath, $this->_configSectionName, true);
         } catch (\Zend_Config_Exception $e) {
             throw new Exception("Cannot instanciate {$type} with path {$configPath}.
@@ -159,55 +199,39 @@ class Import implements IHandler
     }
     
     /**
-     * @desc Validates the depth of the imports demanded.  If the importation URL does not contain any other
-     *       importations, no action is required.  If it does however, recursive digging will occur. 
-     * @param $configPath
-     * @param $parentKey
-     * @return void
-     */
-    protected function _lookForMoreImports($configPath, $parentKey)
-    {
-        $imports = $this->getUrls($this->_importUrls);
-        
-        $examinedConfig = $this->_getConfigFileByPath($configPath);
-        
-        if( isset( $examinedConfig->import ) ) {
-            
-            if( null !== $compositeHandler = $this->getCompositeHandler() ) {
-                $examinedConfig = $compositeHandler->handle($examinedConfig);
-            }
-            
-            foreach ($examinedConfig->import as $url) {
-                if( !in_array($url, $imports) ) {
-                    $this->_importUrls[$parentKey]["children"][] = $url;
-                    $this->_lookForMoreImports($url, $parentKey);
-                }
-            }
-        }
-    }
-    
-    /**
-     * 
-     * @param $config The 
-     * @return unknown_type
+     * @desc Sets the configuration file type used to instanciate config objects
+     * in _getConfigFileByPath function.
+     * @param \Zend_Config $config
      */
     public function setConfigType(\Zend_Config $config)
     {
         $this->_configType = get_class($config);
     }
     
+    /**
+     * @desc $_configType getter
+     * @return \Zend_Config configType
+     */
     public function getConfigType()
     {
         return $this->_configType;
     }
     
+    /**
+     * @desc Config handler composite object getter
+     * @return Composite
+     */
     public function getCompositeHandler()
     {
         return $this->_compositeHandler;
     }
     
-    public function getImportsHierarchy()
+    /**
+     * @desc $_importPaths getter
+     * @return array
+     */
+    public function getImportPaths()
     {
-        return $this->_importUrls;
+        return $this->_importPaths;
     }
 }

@@ -60,24 +60,26 @@ class ImportTest extends \Majisti\Test\PHPUnit\TestCase
     public function testHandle()
     {
         $handler = $this->_importHandler;
+        $params = array("parent" => "Config/_files/import/validImports.ini");
         
-        /*
-         * Parsing first for the properties then importing the external ini files.
-         */
-        $config = $handler->handle($this->_validImport, new Composite($this->_propertyHandler));
+        /* Parsing first for the properties then importing the external ini files. */
+        $config = $handler->handle($this->_validImport, new Composite($this->_propertyHandler), $params);
         
-        /* config content should have been replaced if duplicate entries are found, else new entries are appended. */
+        /* Config content should have been replaced if common keys are found, else new entries are appended. */
         $this->assertSame('/var/www', $config->app->dir->applicationPath);
-        
-        $this->markTestSkipped();
-        
-        //FIXME: test fails
-        $this->assertSame('/var/www/someProject/public/images/OVERRIDEN', 
-            $config->app->dir->images);
         $this->assertSame('/', $config->app->dir->root);
         $this->assertSame('dir/baz', $config->app->dir->baz);
-        $this->assertSame('foo/OVERRIDEN', //Appended as new entry then also overriden
-            $config->app->dir->foo);
+        $this->assertSame('/var/www/someProject/public/newFolder', 
+                          $config->app->dir->new);
+                          
+        /* Param "parent" prevents round import */
+        $this->assertSame('/var/www/someProject/public/images/OVERRIDEN',
+                          $config->app->dir->images);
+        
+        /* Appended as new entry then also overriden */
+        $this->assertSame('foo/OVERRIDEN', $config->app->dir->foo);
+        
+        /* Unexistant key */
         $this->assertNull($config->app->dir->nonExistantNode);
     }
     
@@ -97,41 +99,25 @@ class ImportTest extends \Majisti\Test\PHPUnit\TestCase
     
     public function testGettersAndSetters()
     {
-        /* getUrls() test */
-        $importHandler = $this->_importHandler;
-        $testArray['foo'] = array(
-            'parent'    => 'fooParent', 
-            'children'  => array('fooChildOne', 'fooChildTwo'));
-        $testArray['br'] = array('parent' => 'barParent', 
-            'children'  => array('barChildOne', 'barChildTwo'));
+        $handler = $this->_importHandler;
         
-        $flat = $importHandler->getUrls($testArray);
-        
-        $this->assertEquals(6, count($flat));
-        $this->assertSame('fooParent', $flat[0]);
-        $this->assertSame('fooChildTwo', $flat[2]);
-        $this->assertSame('barParent', $flat[3]);
-        $this->assertSame('barChildTwo', $flat[5]);
-        
-        $importHandler->setConfigType(new \Zend_Config_Ini($this->basePath .
+        /* getConfigType test */
+        $handler->setConfigType(new \Zend_Config_Ini($this->basePath .
             '/validImports.ini'));
-        
-        $this->assertSame("Zend_Config_Ini", $importHandler->getConfigType());
+        $this->assertSame("Zend_Config_Ini", $handler->getConfigType());
         
         /* getCompositeHandler() test */
-        $importHandler->handle($this->_validImport, 
-            new Composite($this->_propertyHandler));
-        $this->assertTrue($importHandler->getCompositeHandler() instanceof Composite);
+        $handler->handle($this->_validImport, 
+                               new Composite($this->_propertyHandler));
+        $this->assertTrue($handler->getCompositeHandler() instanceof Composite);
         
          
-        /* getImportsHierarchy() */
-        $hierarchy = $importHandler->getImportsHierarchy();
-        
-        $this->markTestSkipped();
-        
-        //FIXME: test fails here
-        $this->assertContains($hierarchy['bar']['children'][0], 
-            'Config/_files/imports/fourthLevelImport.ini');
+        /* getImportPaths() test */
+        $paths = $handler->getImportPaths();
+        $this->assertEquals(5, sizeof($paths));
+        $this->assertSame("Config/_files/import/twoLevelImport.ini", $paths[0]);
+        $this->assertSame("Config/_files/import/validImports.ini", $paths[1]);
+        $this->assertSame("Config/_files/import/threeLevelImport.ini", $paths[2]);
     }
 }
 

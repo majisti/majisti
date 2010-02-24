@@ -7,8 +7,6 @@
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 
-ini_set('memory_limit', '128M');
-
 /* Include PHPUnit dependencies */
 require_once 'PHPUnit/Framework.php';
 require_once 'PHPUnit/Framework/IncompleteTestError.php';
