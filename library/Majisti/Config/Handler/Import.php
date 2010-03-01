@@ -18,7 +18,7 @@ namespace Majisti\Config\Handler;
  * themselves import and so on.
  *
  * Note: Circular importing is not blocked. A parent-child endless call is
- * prevented and, if a child imports a parent, the parent will override any
+ * prevented but, if a child imports a parent, the parent will override any
  * duplicate keys of the child. Then, the 2 files will not be resolved
  * afterward.
  *
