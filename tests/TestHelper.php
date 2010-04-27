@@ -59,6 +59,13 @@ unset($majistiRoot, $loader, $includePaths);
 
 \Zend_Session::$_unitTestEnabled = true;
 
+/* be a little bit more verbose according to request param */
+$request = new \Zend_Controller_Request_Http();
+if( $request->has('verbose') ) {
+    \Majisti\Test\PHPUnit\Runner::setDefaultArguments(array(
+        'printer' => new \Majisti\Test\PHPUnit\Listener\Simple\Html(null, true)
+    ));
+}
 //ob_start();
 
 //$zfRoot        = dirname(__FILE__) . '/..';
