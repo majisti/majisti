@@ -7,15 +7,6 @@
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 
-/* Include PHPUnit dependencies */
-require_once 'PHPUnit/Framework.php';
-require_once 'PHPUnit/Framework/IncompleteTestError.php';
-require_once 'PHPUnit/Framework/TestCase.php';
-require_once 'PHPUnit/Framework/TestSuite.php';
-require_once 'PHPUnit/Runner/Version.php';
-require_once 'PHPUnit/TextUI/TestRunner.php';
-require_once 'PHPUnit/Util/Filter.php';
-
 /* disable xdebug */
 if( extension_loaded('xdebug') ) {
     xdebug_disable();
@@ -38,6 +29,15 @@ $includePaths = array(
 );
 
 set_include_path(implode(PATH_SEPARATOR, $includePaths));
+
+/* Include PHPUnit dependencies */
+require_once 'PHPUnit/Framework.php';
+require_once 'PHPUnit/Framework/IncompleteTestError.php';
+require_once 'PHPUnit/Framework/TestCase.php';
+require_once 'PHPUnit/Framework/TestSuite.php';
+require_once 'PHPUnit/Runner/Version.php';
+require_once 'PHPUnit/TextUI/TestRunner.php';
+require_once 'PHPUnit/Util/Filter.php';
 
 /* autoloaders */
 require_once 'Zend/Loader/Autoloader.php';
