@@ -119,9 +119,9 @@ class Stack implements \IteratorAggregate, \Countable
         $elements = array();
 
         foreach ($this as $element) {
-        	array_push($elements, $element);
+            array_push($elements, $element);
         }
 
-        return $elements;
+        return array_reverse($elements);
     }
 }
