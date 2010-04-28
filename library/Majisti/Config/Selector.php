@@ -23,7 +23,8 @@ class Selector
         	if( !isset($config->$part)) {
         	    if( null === $returnDefault ) {
         	        rtrim($currentSelection, '.');
-            	    throw new Exception("Cannot find current selection [{$currentSelection}]");
+            	    throw new Exception("Cannot find current selection
+                        [{$currentSelection}]");
         	    }
         	    return $returnDefault;
         	}

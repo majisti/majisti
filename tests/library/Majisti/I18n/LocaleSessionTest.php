@@ -5,7 +5,9 @@ namespace Majisti\I18n;
 require_once 'TestHelper.php';
 
 /**
- * @desc
+ * @desc Tests that the locale session can switch session through multiple
+ * session instances.
+ *
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
@@ -25,16 +27,25 @@ class LocaleSessionTest extends \Majisti\Test\PHPUnit\TestCase
        'defaultLocale'     => 'en',
        'supportedLocales'  => array('fr', 'es')
     )));
+
+    /**
+     * @desc Namespace cleanup since an application was already
+     * instanciated in the test helper
+     */
+    public function __construct()
+    {
+        \Zend_Session::namespaceUnset('Majisti_I18n');
+    }
     
     /**
-     * Setups the test case
+     * @desc Setups the test case
      */
     public function setUp()
     {
         \Zend_Session::start();
         
-        \Zend_Registry::set('Majisti_Config', 
-            new \Zend_Config($this->_i18nConfig, true));
+        \Zend_Registry::set('Majisti_Config', new \Zend_Config(
+            $this->_i18nConfig, true));
         
         $this->_i18n = LocaleSession::getInstance();
         $this->_i18n->reset();

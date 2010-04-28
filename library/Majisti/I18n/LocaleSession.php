@@ -63,8 +63,10 @@ class LocaleSession implements ILocale
     	if( !(isset($session->locales) && isset($session->defaultLocale)) ) {
     	    $selector = new \Majisti\Config\Selector($config);
 
-    	    $defaultLocale     = $selector->find('plugins.i18n.defaultLocale', 'en');
-            $currentLocale     = $selector->find('plugins.i18n.currentLocale', $defaultLocale);
+    	    $defaultLocale     = $selector->find('plugins.i18n.defaultLocale',
+                'en');
+            $currentLocale     = $selector->find('plugins.i18n.currentLocale',
+                $defaultLocale);
             $supportedLocales  = $selector->find('plugins.i18n.supportedLocales',
                 new \Zend_Config(array()))->toArray();
 
@@ -96,9 +98,9 @@ class LocaleSession implements ILocale
     }
 
     /**
-     * @desc Registers the default locale among with all the supported locales defined by
-     * the application's configuration. The default locale will always be
-     * the first element in the array returned by getLocales().
+     * @desc Registers the default locale among with all the supported locales
+     * defined by the application's configuration. The default locale will
+     * always be the first element in the array returned by getLocales().
      */
     protected function _registerLocales(\Zend_Config $config)
     {
@@ -180,7 +182,8 @@ class LocaleSession implements ILocale
      * and sets the pointer to that locale. An abbreviation must be passed
      * (ex: fr, fr_CA) depending on what was setup in the configuration.
      *
-     * @throws Exception If the locale given is not supported by this application.
+     * @throws Exception If the locale given is not supported by
+     * this application.
      *
      * @return The next locale or the given locale if it was passed
      * as parameter.
@@ -217,7 +220,8 @@ class LocaleSession implements ILocale
     /**
      * @desc Returns whether the given local is supported by this application.
      *
-     * @param String $locale The locale abbreviation following the configuration's syntax
+     * @param String $locale The locale abbreviation following the
+     * configuration's syntax
      * @return bool True if this locale is supported.
      */
     public function isLocaleSupported($locale)

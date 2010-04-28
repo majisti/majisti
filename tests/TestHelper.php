@@ -15,7 +15,7 @@ if( extension_loaded('xdebug') ) {
 /* Set error reporting to the level to which the code must comply. */
 error_reporting( E_ALL | E_STRICT );
 
-/* Determine the root, library, and tests directories of the framework distribution. */
+/* Determine the root, library, and tests directories of the library distribution. */
 $majistiRoot   = realpath(dirname(__FILE__) . '/../');
 
 $includePaths = array(
@@ -46,18 +46,21 @@ $loader = Zend_Loader_Autoloader::getInstance();
 require_once 'Majisti/Loader/Autoloader.php';
 $loader->pushAutoloader(new \Majisti\Loader\Autoloader());
 
-PHPUnit_Util_Filter::addDirectoryToFilter("$majistiRoot/tests");
+PHPUnit_Util_Filter::addDirectoryToFilter($majistiRoot . '/externals');
+foreach (array('phtml') as $suffix) {
+    PHPUnit_Util_Filter::addDirectoryToFilter($majistiRoot . '/tests', ".$suffix");
+}
 
-//if( version_compare(PHPUnit_Runner_Version::id(), '3.1.6', '>=') ) {
-// Segmentation fault thrown by phpunit?
-//    PHPUnit_Util_Filter::addDirectoryToWhitelist($majistiLaboratoryLibrary);
-//    PHPUnit_Util_Filter::addDirectoryToWhitelist($majistiIncubatorLibrary);
-//    PHPUnit_Util_Filter::addDirectoryToWhitelist($majistiStandardLibrary);
-//}
 
-unset($majistiRoot, $loader, $includePaths);
+/* instanciate a mock application */
+define('MAJISTI_FOLDER_NAME', dirname($majistiRoot));
+\Majisti\Application::setApplicationPath(
+    $majistiRoot . '/tests/library/Majisti/Application/_webroot');
+\Majisti\Application::getInstance();
 
 \Zend_Session::$_unitTestEnabled = true;
+
+unset($majistiRoot, $loader, $includePaths);
 
 /* be a little bit more verbose according to request param */
 $request = new \Zend_Controller_Request_Http();
