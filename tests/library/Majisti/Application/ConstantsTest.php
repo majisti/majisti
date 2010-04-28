@@ -25,10 +25,8 @@ class ConstantsTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function setUp()
     {
-        $this->applicationPath = dirname(__FILE__);
+        $this->applicationPath = dirname(__FILE__) . '/_webroot';
         \Zend_Registry::set('Majisti_Config', new \Zend_Config(array()));
-        @define('MAJISTI_FOLDER_NAME', 'majisti');
-        putenv('APPLICATION_ENVIRONMENT=development');
     }
 
     /**
@@ -55,7 +53,7 @@ class ConstantsTest extends \Majisti\Test\PHPUnit\TestCase
     {
         return array(
             'APPLICATION_PATH'          => $this->applicationPath,
-            'APPLICATION_ENVIRONMENT'   => 'development',
+            'APPLICATION_ENVIRONMENT'   => 'production',
         );
     }
 
@@ -74,13 +72,11 @@ class ConstantsTest extends \Majisti\Test\PHPUnit\TestCase
 
     public function testConstantsAreAllDefinedCorrectly()
     {
-        Constants::defineConstants($this->applicationPath);
         $this->_assertConstants($this->getExpectedConstants());
     }
 
     public function testConfigurableConstantsAreAllDefinedCorrectly()
     {
-        Constants::defineConfigurableConstants();
         $this->_assertConstants($this->getExpectedConfigurableConstants());
     }
 

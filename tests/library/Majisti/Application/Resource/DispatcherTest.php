@@ -20,11 +20,13 @@ class DispatcherTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function setUp()
     {
-        define('MAJISTI_FOLDER_NAME', 'void');
+//        define('MAJISTI_FOLDER_NAME', 'void');
+//        \Majisti\Application::setApplicationPath(dirname(dirname(__FILE__)) . '/_webroot');
         $this->dispatcher = new Dispatcher(array(
             'bootstrap' => new \Majisti\Application\Bootstrap(
-                new \Majisti\Application(dirname(dirname(__FILE__)) . '/_webroot'))
+                \Majisti\Application::getInstance())
         ));
+
     }
 
     /**

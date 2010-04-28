@@ -17,14 +17,17 @@ namespace Majisti;
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-class Application extends \Zend_Application
+class Application
 {
+    static protected $_application;
+    static protected $_applicationPath;
+
     /**
      * @desc Constructs the application based on merged configuration file
      *
      * @param $applicationPath The application's path
      */
-    public function __construct($applicationPath)
+    protected function __construct($applicationPath)
     {
         Application\Constants::defineConstants($applicationPath);
 
@@ -32,18 +35,20 @@ class Application extends \Zend_Application
         $config = $this->_loadConfiguration();
         \Zend_Registry::set('Majisti_Config', $config);
 
-        parent::__construct(APPLICATION_ENVIRONMENT, $config);
+        $application = new \Zend_Application(APPLICATION_ENVIRONMENT, $config);
 
         /* further config handling */
-        $bootstrap = $this->getBootstrap();
+        $bootstrap = $application->getBootstrap();
         if( $bootstrap->hasPluginResource('ConfigHandler') ) {
             $bootstrap->bootstrap('ConfigHandler');
-            $this->setOptions($config->toArray());
+            $application->setOptions($config->toArray());
         }
 
         /* declare yet more constants */
         Application\Constants::defineConfigurableConstants();
         Application\Constants::defineAliases();
+
+        static::$_application = $application;
     }
 
     /**
@@ -66,5 +71,40 @@ class Application extends \Zend_Application
 
         return $defaultConfig->merge(new \Zend_Config_Ini(
             $concreteConfigPath, APPLICATION_ENVIRONMENT, true));
+    }
+
+    /**
+     * @desc Returns the application path.
+     *
+     * @return string The application path
+     */
+    static public function getApplicationPath()
+    {
+        return static::$_applicationPath;
+    }
+
+    /**
+     * @desc Sets the application path
+     *
+     * @param string $applicationPath The application path
+     */
+    static public function setApplicationPath($applicationPath)
+    {
+        static::$_applicationPath = (string)$applicationPath;
+    }
+
+    /**
+     * @desc Returns the application, the application path must be set prior
+     * calling this function.
+     *
+     * @return \Majisti\Application the instance
+     */
+    static public function getInstance()
+    {
+        if( null === static::$_application ) {
+            new static(static::getApplicationPath());
+        }
+
+        return static::$_application;
     }
 }
