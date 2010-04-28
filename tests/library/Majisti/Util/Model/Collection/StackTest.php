@@ -172,6 +172,19 @@ class StackTest extends \Majisti\Test\PHPUnit\TestCase
 
         $this->assertEquals(0, ($stack->count()));
     }
+
+    /**
+     * @desc Tests for the search function
+     */
+    public function testSearch()
+    {
+        $stack = new Stack($this->_indexedElements);
+
+        $this->assertEquals(3, $stack->search('4'));
+        $this->assertEquals(2, $stack->search('3'));
+        $this->assertEquals(1, $stack->search('2'));
+        $this->assertEquals(0, $stack->search('1'));
+    }
 }
 
 StackTest::runAlone();
