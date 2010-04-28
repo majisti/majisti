@@ -119,9 +119,20 @@ class Stack implements \IteratorAggregate, \Countable
         $elements = array();
 
         foreach ($this as $element) {
-        	array_push($elements, $element);
+            array_push($elements, $element);
         }
 
-        return $elements;
+        return array_reverse($elements);
+    }
+
+    /**
+     * @desc Searches the array for a given value and returns the corresponding
+     * key if successful.
+     * @param The desired element
+     * @return The position of the element on the stack.
+     */
+    public function search($desired)
+    {
+        return array_search($desired, $this->_elements);
     }
 }

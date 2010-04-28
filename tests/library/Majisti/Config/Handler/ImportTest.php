@@ -6,7 +6,7 @@ require_once 'TestHelper.php';
 
 /**
  * @desc Import test case
- * @author Jean-Francois Hamelin, Steven Rosato
+ * @author Majisti
  * 
  * TODO: test xml and array configuration as well
  */
