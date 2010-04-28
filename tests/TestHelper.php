@@ -47,17 +47,17 @@ require_once 'Majisti/Loader/Autoloader.php';
 $loader->pushAutoloader(new \Majisti\Loader\Autoloader());
 
 PHPUnit_Util_Filter::addDirectoryToFilter($majistiRoot . '/externals');
-foreach (array('phtml') as $suffix) {
+foreach (array('php', 'phtml') as $suffix) {
     PHPUnit_Util_Filter::addDirectoryToFilter($majistiRoot . '/tests', ".$suffix");
 }
-
 
 /* instanciate a mock application */
 define('MAJISTI_FOLDER_NAME', dirname($majistiRoot));
 \Majisti\Application::setApplicationPath(
     $majistiRoot . '/tests/library/Majisti/Application/_webroot');
 \Majisti\Application::getInstance();
-
+PHPUnit_Util_Filter::addFileToFilter($majistiRoot .
+    '/library/Majisti/Application/Constants.php');
 \Zend_Session::$_unitTestEnabled = true;
 
 unset($majistiRoot, $loader, $includePaths);
