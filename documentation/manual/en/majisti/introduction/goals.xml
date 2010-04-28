@@ -28,7 +28,7 @@
     		</para>
     	    
     	    <para>
-    	        Actually, the library is separated as such:
+    	        Actually, the library is splitted as such:
     	        <segmentedlist>
     	            <segtitle>Majisti</segtitle>
     	            <segtitle>MajistiX</segtitle>
@@ -48,7 +48,7 @@
     	<listitem>
     		<para>Beforehand configurable through its set of configuration files or other
     			configuration storage for any official or non official modules and
-    			extendible.
+    			extendable.
     		</para>
     	</listitem>
         <listitem>
@@ -72,6 +72,6 @@
 	</itemizedlist>
 	
 	<para>To sum up, Majisti is simply a module engine where everything needed for a rich application should already be defined and ready to get
-	configured if any of the default behaviour is not wanted and extendible for even more specific needs without having to rewrite
+	configured if any of the default behaviour is not wanted and extendable for even more specific needs without having to rewrite
 	an entire module.</para>
 </section>

@@ -3,16 +3,12 @@
     xmlns="http://docbook.org/ns/docbook" 
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:xi="http://www.w3.org/2001/XInclude" 
-    xml:lang="en" xml:id="majisti.util.model" 
+    xml:lang="en" xml:id="majisti.util.model.aggregator.config" 
     version="5.0">
     
-    <title>Model</title>
+    <title>Config Aggregates</title>
 
     <para>
         Lorem ipsum dolor sit amer
     </para>
-    
-    <xi:include href="model/aggregator/config.xml" />
-    <xi:include href="model/aggregator/view.xml" />
-    <xi:include href="model/collection/stack.xml" />
 </section>

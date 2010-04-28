@@ -9,8 +9,8 @@
 
     <para>
         The import handler listens on the import attribute in order for a configuration file to request, in other
-        words import, another configuration file with the given path.  This will result in a configuration merge 
-        with all the entries found and overriding will take place if duplicates are found.
+        words import, another configuration file with the given path.  The handler will override the parent 
+        configuration values, if duplicates are found, with the children configuration files imported.
     </para>
     <para>
         It is important to know that the child configurations (the imported ones) will override the parents'

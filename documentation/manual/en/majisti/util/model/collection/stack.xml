@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section 
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" 
+    xml:lang="en" xml:id="majisti.util.model.collection.stack" 
+    version="5.0">
+    
+    <title>Stack Collection</title>
+    <para>
+        The Stack class represents a last-in-first-out (LIFO) stack of objects. It implements
+        classes IteratorAggregate and Countable  and provides the following operations : the usual
+        push and pop, a method to peek at the top item on the stack, a method to test for whether
+        the stack is empty, a method to search the stack for an item and discover how far it is from
+        the top, a method to clear the stack and also a method to transform the Stack into an array. 
+    </para>
+    <para>
+        Stack is quite easy in it's usage. You simply create a new instance of Stack, with one or more elements to fill the stack with. 
+        If you want to create a stack using an array, you would do something like:
+    </para>
+    <programlisting>
+		$array = array('foo', 'bar', 'baz');
+		$stack = new Stack($this->_indexedElements);
+	</programlisting>
+</section>
