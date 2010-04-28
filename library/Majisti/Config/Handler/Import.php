@@ -69,7 +69,8 @@ class Import implements IHandler
      *
      * @return \Zend_Config
      */
-    public function handle(\Zend_Config $config, Composite $compositeHandler = null, $params = array())
+    public function handle(\Zend_Config $config,
+                    Composite $compositeHandler = null, $params = array())
     {
         $this->clear();
         $this->_compositeHandler  = $compositeHandler;
@@ -118,8 +119,9 @@ class Import implements IHandler
                 $this->_importPaths[] = $path;
                 $resolvedConfig = $this->_getConfigFileByPath($path);
                 
-                if( null !== ($compositeHandler = $this->getCompositeHandler()) ) {
-                    $resolvedConfig = $compositeHandler->handle($resolvedConfig);
+                if( null !== ($compositeHandler =
+                              $this->getCompositeHandler()) ) {
+                    $resolvedConfig=$compositeHandler->handle($resolvedConfig);
                 }
                 
                 $this->_mergeImports($resolvedConfig);
@@ -184,14 +186,16 @@ class Import implements IHandler
             $isZendConfig   = 'Zend_Config' === $type;
             
             if( $isZendConfig && is_string($configPath) ) {
-                throw new Exception("Cannot instanciate a Zend_Config with a string");
+                throw new Exception("Cannot instanciate a Zend_Config with a
+                                    string");
             }
             
             $config = $isZendConfig
                     ? new $type($configPath, $this->_configSectionName, true)
                     : new $type($configPath, $this->_configSectionName, true);
         } catch (\Zend_Config_Exception $e) {
-            throw new Exception("Cannot instanciate {$type} with path {$configPath}.
+            throw new Exception("Cannot instanciate {$type} with
+                                path {$configPath}.
             Message was {$e->getMessage()}");
         }
         
