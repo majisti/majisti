@@ -146,8 +146,7 @@ final class Loader
 	static public function run()
 	{
 		/* Create application, bootstrap, and run */
-		$application = new \Majisti\Application(dirname(__FILE__));
-		$application->bootstrap()
-		            ->run();
+        \Majisti\Application::setApplicationPath($applicationPath);
+		\Majisti\Application::getInstance()->bootstrap()->run();
 	}
 }
