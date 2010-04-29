@@ -17,11 +17,11 @@ class LayoutSwitcher extends \Zend_Layout_Controller_Plugin_Layout
 
         if( $moduleName = $selector->find("{$confProp}.layout", false) ) {
             $layout->setLayout($moduleName);
-	    $layout->setLayoutPath(APPLICATION_PATH . "/modules/{$moduleName}/views/layouts");
+            $layout->setLayoutPath(APPLICATION_PATH . "/modules/{$moduleName}/views/layouts");
 
             if( $moduleLayoutPath = $selector->find("{$confProp}.layoutPath", false) ) {
                 $layout->setLayoutPath($moduleLayoutPath);
-	    }
+            }
         }
     }
 }
