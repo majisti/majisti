@@ -43,7 +43,9 @@ File B imports file A and C
 
 Result: File A, B and C will be merged into a single Zend_Config object as expected. As circular-importing is prohibited, the fact that file B wants to import file A will simply be ignored and not taken into account.
 </programlisting>
-        <emphasis> It is crucial to name the entries of your configuration files with appropriate
-            names so no undesirable overriding occurs. </emphasis>
+        <caution>
+            <para>It is crucial to name the entries of your configuration files with appropriate
+                names so no undesirable overriding occurs.</para>
+        </caution>
     </para>
 </section>

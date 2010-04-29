@@ -10,6 +10,7 @@
 
     <xi:include href="resource/configHandler.xml"></xi:include>
     <xi:include href="resource/dispatcher.xml"></xi:include>
-    <xi:include href="resource/modules.xml"></xi:include>
+<!--    <xi:include href="resource/modules.xml"></xi:include>-->
+    <xi:include href="resource/layout.xml"></xi:include>
     <xi:include href="resource/view.xml"></xi:include>
 </section>
