@@ -51,7 +51,7 @@ define('APPLICATION_NAME', 'Majisti_Test');
 
 \Majisti\Application::setApplicationPath(
     $majistiRoot . '/tests/library/Majisti/Application/_webroot');
-\Majisti\Application::getInstance();
+\Majisti\Application::getInstance()->bootstrap();
 
 /* code coverage filtering */
 PHPUnit_Util_Filter::addDirectoryToFilter($majistiRoot . '/externals');
