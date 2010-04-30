@@ -54,13 +54,15 @@ class ConstantsTest extends \Majisti\Test\PHPUnit\TestCase
         return array(
             'APPLICATION_PATH'          => $this->applicationPath,
             'APPLICATION_ENVIRONMENT'   => 'production',
-            'APPLICATION_LIBRARY'       => realpath(APPLICATION_PATH . '../library'),
+            'APPLICATION_LIBRARY'       => realpath(APPLICATION_PATH .
+                                           '../library'),
             /*
              * getcwd provides with /home/user/www/.... and we have to keep only
              * the chunk starting from /majisti.
              */
             'BASE_URL'                  => $_SERVER['SCRIPT_NAME'],
-            'MAJISTI_ROOT'              => realpath(dirname(dirname(dirname(__FILE__))) . '/../../library'),
+            'MAJISTI_ROOT'              => realpath(dirname(dirname(dirname
+                                           (__FILE__))) . '/../../library'),
             'MAJISTI_PATH'              => MAJISTI_ROOT . '/Majisti',
             'MAJISTIX_PATH'             => MAJISTI_ROOT . '/MajistiX',
             'MAJISTIX_MODULES'          => MAJISTIX_PATH . '/Modules',
@@ -70,7 +72,8 @@ class ConstantsTest extends \Majisti\Test\PHPUnit\TestCase
             /* going accordingly to the biased BASE_URL */
             'APPLICATION_URL_STYLES'    => $_SERVER['SCRIPT_NAME'] . '/styles',
             'APPLICATION_URL_SCRIPTS'   => $_SERVER['SCRIPT_NAME'] . '/scripts',
-            'APPLICATION_URL_IMAGES'    => $_SERVER['SCRIPT_NAME'] . '/images/common'
+            'APPLICATION_URL_IMAGES'    => $_SERVER['SCRIPT_NAME'] .
+                                           '/images/common'
         );
     }
 
@@ -80,9 +83,12 @@ class ConstantsTest extends \Majisti\Test\PHPUnit\TestCase
     public function getExpectedConfigurableConstants()
     {
         return array(
-            'MAJISTI_PUBLIC'                => 'http://' . $_SERVER['HTTP_HOST'] . MAJISTI_FOLDER_NAME . '/public',
-            'MAJISTI_URL'                   => 'http://' . $_SERVER['HTTP_HOST'] . MAJISTI_FOLDER_NAME . '/public/majisti',
-            'MAJISTIX_URL'                  => 'http://' . $_SERVER['HTTP_HOST'] . MAJISTI_FOLDER_NAME . '/public/majistix',
+            'MAJISTI_PUBLIC'                => 'http://' . $_SERVER['HTTP_HOST']
+                                              . MAJISTI_FOLDER_NAME . '/public',
+            'MAJISTI_URL'                   => 'http://' . $_SERVER['HTTP_HOST']
+                                      . MAJISTI_FOLDER_NAME . '/public/majisti',
+            'MAJISTIX_URL'                  => 'http://' . $_SERVER['HTTP_HOST']
+                                     . MAJISTI_FOLDER_NAME . '/public/majistix',
             'MAJISTI_URL_STYLES'            => MAJISTI_URL . '/styles',
             'MAJISTI_URL_SCRIPTS'           => MAJISTI_URL . '/scripts',
             'MAJISTI_URL_IMAGES'            => MAJISTI_URL . '/images/common',
@@ -115,9 +121,12 @@ class ConstantsTest extends \Majisti\Test\PHPUnit\TestCase
             'APP_SCRIPTS'   => $expectedConstants['APPLICATION_URL_SCRIPTS'],
             'APP_STYLES'    => $expectedConstants['APPLICATION_URL_STYLES'],
             'APP_IMG'       => $expectedConstants['APPLICATION_URL_IMAGES'],
-            'APP_IMG_LOC'   => $expectedConfigConstants['APPLICATION_URL_IMAGES_LOCALE'],
-            'APP_LANG'      => $expectedConfigConstants['APPLICATION_LOCALE_CURRENT'],
-            'APP_LANG_DEF'  => $expectedConfigConstants['APPLICATION_LOCALE_DEFAULT'],
+            'APP_IMG_LOC'   => $expectedConfigConstants[
+                                            'APPLICATION_URL_IMAGES_LOCALE'],
+            'APP_LANG'      => $expectedConfigConstants[
+                                            'APPLICATION_LOCALE_CURRENT'],
+            'APP_LANG_DEF'  => $expectedConfigConstants[
+                                            'APPLICATION_LOCALE_DEFAULT'],
             'MAJ_ROOT'      => $expectedConstants['MAJISTI_ROOT'],
             'MAJ_PATH'      => $expectedConstants['MAJISTI_PATH'],
             'MAJ_PUB'       => $expectedConfigConstants['MAJISTI_PUBLIC'],
@@ -129,7 +138,8 @@ class ConstantsTest extends \Majisti\Test\PHPUnit\TestCase
             'MAJ_STYLES'    => $expectedConfigConstants['MAJISTI_URL_STYLES'],
             'MAJ_SCRIPTS'   => $expectedConfigConstants['MAJISTI_URL_SCRIPTS'],
             'MAJ_IMG'       => $expectedConfigConstants['MAJISTI_URL_IMAGES'],
-            'MAJ_IMG_LOC'   => $expectedConfigConstants['MAJISTI_URL_IMAGES_LOCALE'],
+            'MAJ_IMG_LOC'   => $expectedConfigConstants[
+                                            'MAJISTI_URL_IMAGES_LOCALE'],
             'MAJX_STYLES'   => $expectedConfigConstants['MAJISTIX_URL_STYLES'],
             'MAJX_SCRIPTS'  => $expectedConfigConstants['MAJISTIX_URL_SCRIPTS'],
             'MAJX_IMG'      => $expectedConfigConstants['MAJISTIX_URL_IMAGES'],
