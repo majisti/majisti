@@ -92,7 +92,7 @@ class Constants
             define('MAJISTI_PUBLIC', $staticUrl);
         } else {
             define('MAJISTI_PUBLIC',
-                APPLICATION_URL_PREFIX . MAJISTI_FOLDER_NAME . '/public');
+                APPLICATION_URL_PREFIX . '/' . MAJISTI_FOLDER_NAME . '/public');
         }
 
         /*

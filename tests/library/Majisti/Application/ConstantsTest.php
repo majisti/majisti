@@ -84,11 +84,11 @@ class ConstantsTest extends \Majisti\Test\PHPUnit\TestCase
     {
         return array(
             'MAJISTI_PUBLIC'                => 'http://' . $_SERVER['HTTP_HOST']
-                                              . MAJISTI_FOLDER_NAME . '/public',
+                                        . '/' . MAJISTI_FOLDER_NAME . '/public',
             'MAJISTI_URL'                   => 'http://' . $_SERVER['HTTP_HOST']
-                                      . MAJISTI_FOLDER_NAME . '/public/majisti',
+                                . '/' . MAJISTI_FOLDER_NAME . '/public/majisti',
             'MAJISTIX_URL'                  => 'http://' . $_SERVER['HTTP_HOST']
-                                     . MAJISTI_FOLDER_NAME . '/public/majistix',
+                               . '/' . MAJISTI_FOLDER_NAME . '/public/majistix',
             'MAJISTI_URL_STYLES'            => MAJISTI_URL . '/styles',
             'MAJISTI_URL_SCRIPTS'           => MAJISTI_URL . '/scripts',
             'MAJISTI_URL_IMAGES'            => MAJISTI_URL . '/images/common',
