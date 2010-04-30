@@ -51,6 +51,8 @@ class BootstrapTest extends \Zend_Application_Bootstrap_BootstrapTest
      */
     public function testActionHelperInitialized()
     {
+        $this->majistiBootstrap->bootstrap();
+
         $paths = \Zend_Controller_Action_HelperBroker::getPluginLoader()->getPaths();
         $this->assertArrayHasKey('Majisti_Controller_ActionHelper_', $paths);
     }
