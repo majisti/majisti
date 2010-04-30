@@ -1,34 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<section 
-    xmlns="http://docbook.org/ns/docbook" 
+<section xmlns="http://docbook.org/ns/docbook"
     xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:xi="http://www.w3.org/2001/XInclude" 
-    xml:lang="en" xml:id="majisti.config.handlers.property" version="5.0">
-    
+    xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en"
+    xml:id="majisti.config.handlers.property" version="5.0">
+
     <title>Property</title>
 
-    <para>
-        The property handler listens on the property attribute
-        just like apache ant,
-        consider the following application.ini example:
-    </para>
-     <programlisting><![CDATA[
-[production]
+    <para xlink:href="http://en.wikibooks.org/wiki/Apache_Ant/Property"> The
+        property handler listens on the <link
+            xlink:href="http://en.wikibooks.org/wiki/Apache_Ant/Property"
+            >property</link> attribute just like Apache <link
+            xlink:href="http://en.wikipedia.org/wiki/Apache_Ant">Ant</link>,
+        consider the following application.ini example: </para>
+    <programlisting>[production]
 
-property.applicationUrl = APPLICATION_URL
-property.baseUrl = "#{applicationUrl}MyProject/public"
-property.imagesUrl = #{baseUrl}/images
-property.scriptsUrl = #{baseUrl}/scripts
-property.locale = en
+property.applicationUrl  = APPLICATION_URL
+property.baseUrl         = "my-project/public"
+property.imagesUrl       = #{baseUrl}/images
+property.scriptsUrl      = #{baseUrl}/scripts
+property.locale          = en
 
-images.thumbsUp = #{imagesUrl}/thumbsUp.png 
-]]></programlisting>
+images.thumbsUp = #{imagesUrl}/thumbs-up.png
+app.aLink       = #{baseUrl}/foo</programlisting>
 
-    <para>
-        Every occurences will get replaced with their proper properties.
-    </para>
-    
-    <para>
-        TODO: This documentation is far from complete yet.
-    </para>
+    <para>Every occurences will get replaced with their proper properties. You
+        can also use properties when defining other ones, as long as the
+        defining property uses a property before it. It cannot work on
+        succedent properties. Those are meant to allegiate repetitive content
+        throughout the entire config and will work with included configuration
+        using the <link xlink:href="majisti.config.handlers.import"
+            >Import</link> handler.</para>
+    <para>To disable the property handler, you can always disable it in your configuration:<programlisting>resources.configHandler.property = 0</programlisting><note>
+            <para>The <classname>Property</classname> and
+                    <classname>Import</classname> handlers are enabled by
+                default within Majisti. They must explicitely be disabled in
+                the configuration if you don't want to use them.</para>
+        </note></para>
+
 </section>
