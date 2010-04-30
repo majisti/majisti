@@ -21,4 +21,5 @@
     </section>
     
     <xi:include href="config/handlers.xml" />
+    <xi:include href="config/selector.xml" />
 </chapter>

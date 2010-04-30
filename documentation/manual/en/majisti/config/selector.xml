@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en"
+    xml:id="majisti.config.selector" version="5.0">
+    <title>Selector</title>
+    <para>Majisti comes with a configuration selector that will help
+        developpers finding values within config objects easily.</para>
+    <para>When making say a <classname>Zend_Config</classname> object with a
+        lot of configuration data, it may be tedious to sort out which keys
+        were added to the configuration and which not. Per example, if you have
+        a conguration object as
+        such:<programlisting>$array = array(
+    'foo' => array(
+        'bar' => array(
+            'baz' => 'value'
+        )
+    )
+);
+
+$config = new \Zend_Config($array);</programlisting></para>
+    <para>Now you, in your implementation, you don't know for sure that the key
+            <code>bar</code> was given. To resolve this you would normally
+        do:<programlisting>if( isset($config->foo) &amp;&amp; isset($config->foo->bar) {
+    ...
+}</programlisting></para>
+    <para>That is fine, but you obvisouly see that it can get pretty tedious.
+        The <classname>Selector</classname> uses a CSS-like attribute selection
+        to find your values. That means that you can specify an attribute
+        selector such as <code>foo.bar.baz</code> to retrieve
+            <code>value</code>.</para>
+    <para>You can even specify a default return value in case your value cannot
+        be found within the configuration. This makes way for shorter code as such:<programlisting>if( $value = $selector->find('foo.bar', false) ) {
+    ...
+}</programlisting><example>
+            <title>Using the selector</title>
+            <para>Still using the configuration below, the only thing you need
+                to do is instanciate the <classname>Selector</classname> class
+                with your config object like
+                this:<programlisting>$selector = new \Majist\Config\Selector($config); //$config is our Zend_Config object.
+
+print $selector->find('foo.bar.baz');         //prints 'value'
+print $selector->find('foo.bar.baz', 'foo');  //prints 'foo'</programlisting></para>
+        </example></para>
+    <note>
+        <para>If you don't specify a default return value and the value cannot
+            be found with the provided CSS-like selection, an exception will be
+            thrown.</para>
+    </note>
+    <para>If you find yourself trying to use short conditionals with
+            <code>false</code> as the default return value but still want to
+        skip the condition if the value was not found but you would want to
+        validate false values you can use the <code>FALSE</code> boolean. Per
+        example, say <code>value</code> is replaced with the value
+            <code>'0'</code> which would be false in the condition, you would
+        not know whether the key is missing in the configuration of if the
+        value is simply false. Therefore a workaround is to use the
+            <code>FALSE</code> statement in your
+        condition:<programlisting>if( !($value = $selector->find('foo.bar', FALSE))) { //will enter the condition only on false values, but not on not found keys.
+    ...
+}</programlisting></para>
+</section>
