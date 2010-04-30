@@ -4,6 +4,10 @@ namespace Majisti\Config\Handler;
 
 require_once 'TestHelper.php';
 
+/**
+ * @desc Tests the markup class.
+ * @author Majisti
+ */
 class MarkupTest extends \Majisti\Test\PHPUnit\TestCase
 {
     static protected $_class = __CLASS__;

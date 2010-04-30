@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en" xml:id="majisti.config.handlers.import"
-    version="5.0">
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en"
+    xml:id="majisti.config.handlers.import" version="5.0">
 
     <title>Import</title>
 
-    <para> The import handler listens on the import attribute in order for a configuration file to
-        request, in other words import, another configuration file with the given path. The handler
-        will override the parent configuration values, if duplicates are found, with the children
+    <para> The import handler listens on the import attribute in order for a
+        configuration file to request, in other words import, another
+        configuration file with the given path. The handler will override the
+        parent configuration values, if duplicates are found, with the children
         configuration files imported. </para>
     <programlisting><![CDATA[
 [production]
@@ -23,29 +25,34 @@ import.foo = #{configUrl}/secondLvlFirstImport.ini
 import.bar = #{configUrl}/secondLvlSecondImport.ini
 ]]></programlisting>
 
-    <para> The above file is a parent configuration importing two external configurations. Let's
-        look at the <filename>secondLvlFirstImport</filename> target the parent is requesting: </para>
+    <para> The above file is a parent configuration importing two external
+        configurations. Let's look at the
+            <filename>secondLvlFirstImport</filename> target the parent is
+        requesting: </para>
 
     <programlisting><![CDATA[
 app.dir.images = #{baseUrl}/images/OVERRIDEN
 app.dir.new = #{baseUrl}/newFolder
 ]]></programlisting>
 
-    <para> At the moment of merge, it is expected that the images directory will be overriden by the
-        one found in the 2nd level file. Also, a new entry in the Zend_Config object will be created
-        with the app.dir.new. </para>
+    <para> At the moment of merge, it is expected that the images directory
+        will be overriden by the one found in the 2nd level file. Also, a new
+        entry in the Zend_Config object will be created with the app.dir.new. </para>
 
-    <para> Please note that the importation process is a recursive one, meaning any amount of
-        imports can be made. By security measure, round-importing is prohibited. Here is an example
-        to make it clearer: <programlisting>
+    <para> Please note that the importation process is a recursive one, meaning
+        any amount of imports can be made. By security measure, round-importing
+        is prohibited. Here is an example to make it clearer: <programlisting>
 File A imports file B
 File B imports file A and C
 
-Result: File A, B and C will be merged into a single Zend_Config object as expected. As circular-importing is prohibited, the fact that file B wants to import file A will simply be ignored and not taken into account.
+Result: File A, B and C will be merged into a single Zend_Config object 
+as expected. As circular-importing is prohibited, the fact that file B 
+wants to import file A will simply be ignored and not taken into account.
 </programlisting>
         <caution>
-            <para>It is crucial to name the entries of your configuration files with appropriate
-                names so no undesirable overriding occurs.</para>
+            <para>It is crucial to name the entries of your configuration files
+                with appropriate names so no undesirable overriding
+                occurs.</para>
         </caution>
     </para>
 </section>

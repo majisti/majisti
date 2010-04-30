@@ -10,50 +10,58 @@
         may be used as is throughout the application. The view provided will be
         setup with the following: <itemizedlist mark="bullet">
             <listitem>
-                <para> Majisti's application library views scripts </para>
+                <para>Majisti's application library views scripts </para>
             </listitem>
             <listitem>
-                <para> Majisti and MajistiX view helpers added to the
+                <para>Majisti and MajistiX view helpers added to the
                     pluginloader </para>
             </listitem>
             <listitem>
-                <para> ZendX JQuery view helpers added to the pluginloader
+                <para>ZendX JQuery view helpers added to the pluginloader
                 </para>
             </listitem>
             <listitem>
-                <para> The Zend_View registry key will be setup with that view
+                <para>The application's library view helpers under
+                    APPLICATION_LIBRARY/views/helpers</para>
+            </listitem>
+            <listitem>
+                <para>The application's library scripts under
+                    APPLICATION_LIBRARY/views/scripts</para>
+            </listitem>
+            <listitem>
+                <para>The Zend_View registry key will be setup with that view
                 </para>
             </listitem>
             <listitem>
-                <para> The doctype will be set to XHTML1.0 STRICT. </para>
+                <para>The doctype will be set to XHTML1_STRICT. </para>
             </listitem>
-        </itemizedlist>
-    </para>
-    <para>
-        <literallayout>
-TODO: Review doc with current implementation.
-        </literallayout>
-    </para>
-    <para> When in development environment, the JQuery URL used by default will
-        be /majisti/public/jquery/jquery.js. The URL may be overriden in the
-            <code>resources</code> configuration file by setting the variable
-        below: <programlisting><![CDATA[
-resources.view.jquery.url = BASE_URL "/foo/bar"]]>
-        </programlisting>
-    </para>
-    <para> Once in production environment, the JQuery URL should be set to the
-            <link
-            xlink:href="http://code.google.com/intl/fr/apis/ajaxlibs/documentation/index.html#jquery"
-            >Google API's</link> ajax library for better loading time (you know
-        Google is in about the entire planet's cache don't you?). This provides
-        significant performance gain and increased end-user happiness. Since
-        Majisti strives to make developpers and end-users happy, the default
-        production JQuery URL is already set to Google's JQuery library. No
-        need to change anything. </para>
-    <para> If that does not make you happy enough, oh do not worry, you may
-        change it as many times as you like! Simply change JQuery's URL in the
-            <code>resources</code> config file: <programlisting><![CDATA[
-resources.view.jquery.url = "http://www.yourhappierdomain.com"]]>
-        </programlisting>
-    </para>
+            <listitem>
+                <para>JQuery loaded according to the configuration.
+                </para>
+            </listitem>
+        </itemizedlist></para>
+    <example>
+        <title>Using JQuery Basic Usage</title>
+        <para>When in development environment, the JQuery URL used by default
+            will be MAJISIT_JQUERY/jquery.js. The URL may be overriden in the
+                <code>resources</code> configuration file by setting the
+            variable below:
+            <programlisting>resources.view.jquery.localPath    = BASE_URL "/path/to/jquery.js"
+resources.view.jquery.ui.localPath = BASE_URL "/path/to/ui.js"</programlisting></para>
+        <para>When in production environment, the JQuery URL should be set to
+            the <link
+                xlink:href="http://code.google.com/intl/fr/apis/ajaxlibs/documentation/index.html#jquery"
+                >Google API's</link> ajax library for better loading time (you
+            know Google is in about the entire planet's cache don't you?). This
+            provides significant performance gain and increased end-user
+            happiness. Since Majisti strives to make developpers and end-users
+            happy, the default production JQuery URL is already set to Google's
+            JQuery library. No need to change anything. </para>
+        <para>If that does not make you happy enough, do not worry, you may
+            change it by simply adding the JQuery's URL in the
+                <code>resources</code> config file:
+            <programlisting>resources.view.jquery.localPath    = "http://www.example.com/jquery.js"
+resources.view.jquery.ui.localPath = "http://www.example.com/ui.js"</programlisting>
+        </para>
+    </example>
 </section>

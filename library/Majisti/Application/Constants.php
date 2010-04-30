@@ -19,10 +19,10 @@ class Constants
     /**
      * @desc Private constructor for no instanciation
      */
-	private function __construct()
-	{}
+    private function __construct()
+    {}
 
-	/**
+    /**
      * @desc Defines all the needed constants for an application.
      *
      * @param $applicationPath The application path
@@ -102,9 +102,9 @@ class Constants
          */
         if( $urls = $selector->find('urls', false) ) {
             foreach ($urls as $key => $url) {
-            	define(
-            	   strtoupper(APPLICATION_NAME) . '_URL_' .
-            	   strtoupper($key), $url);
+                define(
+                   strtoupper(APPLICATION_NAME) . '_URL_' .
+                   strtoupper($key), $url);
             }
         }
 

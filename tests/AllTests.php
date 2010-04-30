@@ -25,9 +25,6 @@ class AllTests extends \Majisti\Test\PHPUnit\TestSuite
         require_once 'library/AllTests.php';
         $suite->addTest(\Majisti\Test\Library\AllTests::suite());
         
-        require_once 'integration/AllTests.php';
-        $suite->addTest(\Majisti\Test\Integration\AllTests::suite());
-        
         return $suite;
     }
 }

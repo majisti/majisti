@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en"
+    xml:id="majisti.application.resource.modelContainer" version="5.0">
+    <title>Model Container</title>
+    
+    <para>The <classname>ModelContainer</classname> resource simply ensures
+        that an instance of <classname>Majisti\Model\Container</classname> is
+        available in the registry. This is enable controllers, views and models
+        an entry point access to that container, for business modeling
+        aggregation.</para>
+</section>

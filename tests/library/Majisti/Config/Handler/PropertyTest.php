@@ -26,7 +26,10 @@ class PropertyTest extends \Majisti\Test\PHPUnit\TestCase
      * @var Property
      */
     public $propertyHandler;
-    
+
+    /**
+     * @var string
+     */
     public $basePath;
     
     /**

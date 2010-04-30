@@ -28,4 +28,14 @@ class Bootstrap extends \Zend_Application_Bootstrap_Bootstrap
 
         return $libAutoloader;
     }
+
+    /**
+     * @desc Inits the action helper broker
+     */
+    protected function _initActionHelper()
+    {
+        \Zend_Controller_Action_HelperBroker::addPath(
+            'Majisti/Controller/ActionHelper',
+            'Majisti_Controller_ActionHelper');
+    }
 }

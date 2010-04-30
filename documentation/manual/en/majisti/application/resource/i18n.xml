@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en"
+    xml:id="majisti.application.resource.i18n" version="5.0">
+    <title>I18n</title>
+    
+    <para>The <classname>I18n</classname> resource will basically just initiate
+        a null translator. Every application should make use of a translation
+        adapter, even if they are unilingual. By ensuring that a null
+        translator is used, any time a given application needs to migrate to a
+        multilingual website, it needs not to upgrade its code base, just
+        switch to a concrete adapter (e.g: gettext), translate and be done with
+        it.</para>
+    <note>
+        <para>The null translator always returns the same string it was asked
+            to translate. When the application migrates into a multilingual
+            one, you only need to switch the adapter.</para>
+    </note>
+</section>

@@ -54,7 +54,7 @@ class Auth_Form_Login extends Zend_Form
             new Zend_Form_Element_Submit('submit', 'Submit'));
     }
 
-    public function render()
+    public function render(Zend_View_Interface $view = null)
     {
         /* use ajax for form submition */
         if( $this->isAjaxUsed() && !$this->_ajaxAttached ) {
@@ -62,7 +62,7 @@ class Auth_Form_Login extends Zend_Form
             $this->_ajaxAttached = true;
         }
 
-        return parent::render();
+        return parent::render($view);
     }
 
     protected function _attachAjax()

@@ -12,32 +12,21 @@ namespace Majisti\Application\Resource;
 class View extends \Zend_Application_Resource_View
 {
     /**
-     * @desc Inits the view
-     */
-    public function init()
-    {
-        //FIXME: does it have anything to do here?
-        \Zend_Controller_Action_HelperBroker::addPath(
-            'Majisti/Controller/ActionHelper',
-            'Majisti_Controller_ActionHelper');
-
-        return parent::init();
-    }
-
-    /**
      * @desc Returns the configured Majisti\View
      *
      * The view will be setup with the following:
      *
-     * - Majisti's Layout basebath is setup for abstract layouts
      * - Majisti's view helpers added to the pluginloader
-     * - Majisti's action helpers added to the Zend_Controller_Action HelperBroker
+     * - MajistiX' view helpers asdded to the pluginloader
      * - ZendX JQuery view helpers added to the pluginloader
      * - Zend's static helper viewRenderer will aggregate the created view
-     *
      * - The Zend_View registry key will be setup with that view
+     * - Default doctype: XHTML1_STRICT
+     * - JQuery loaded according to configuration
      *
-     * @return \Majisti\View
+     * For more details, see the reference manual
+     *
+     * @return \Zend_View
      */
     public function getView()
     {
@@ -46,34 +35,31 @@ class View extends \Zend_Application_Resource_View
         }
 
         $options = $this->getOptions();
+        $view = new \Majisti\View($options);
 
-        $view = new \Majisti\View();
-//        $view->addBasePath(MAJISTI_PATH . '/Layouts/');
-        $view->addScriptPath(APPLICATION_LIBRARY . '/views/scripts');
-
+        /* Majisti view helpers */
         $view->addHelperPath('Majisti/View/Helper/', 'Majisti_View_Helper');
         $view->addHelperPath('Majisti/View/Helper/', 'Majisti\View\Helper\\');
 
+        /* MajistiX view helpers */
         $view->addHelperPath('MajistiX/View/Helper/', 'MajistiX_View_Helper');
         $view->addHelperPath('MajistiX/View/Helper/', 'MajistiX\View\Helper\\');
 
-        $view->addHelperPath(APPLICATION_LIBRARY . '/views/helpers', APPLICATION_NAME . '_View_Helper');
-        $view->addHelperPath(APPLICATION_LIBRARY . '/views/helpers', APPLICATION_NAME . '\View\Helper\\');
+        /* add application's library view helpers and scripts */
+        $view->addHelperPath(APPLICATION_LIBRARY . '/views/helpers',
+                APPLICATION_NAME . '_View_Helper');
+        $view->addHelperPath(APPLICATION_LIBRARY . '/views/helpers',
+                APPLICATION_NAME . '\View\Helper\\'); /* namespaces */
+        $view->addScriptPath(APPLICATION_LIBRARY . '/views/scripts');
+
+        /* ZendX JQuery */
+        $view->addHelperPath(
+                'ZendX/JQuery/View/Helper',
+                'ZendX_JQuery_View_Helper');
 
         $view->doctype('XHTML1_STRICT');
 
-        $view->addHelperPath('ZendX/JQuery/View/Helper', 'ZendX_JQuery_View_Helper');
-
-        if( isset($options['google']) ) {
-            $this->loadGoogle($view, $options['google']);
-        }
-
-        $view->jQuery()->setLocalPath(JQUERY    . '/jquery.js');
-        $view->jQuery()->setUiLocalPath(JQUERY  . '/ui.js');
-
-        //TODO: enable according to config
-        $view->jQuery()->enable();
-        $view->jQuery()->uiEnable();
+        $this->resolveJQuery($view, $options);
 
         \Zend_Registry::set('Zend_View', $view);
 
@@ -82,27 +68,45 @@ class View extends \Zend_Application_Resource_View
         return $view;
     }
 
-    protected function loadGoogle($view, $google)
+    /**
+     * @desc Resolves if jQuery should be enabled according to the options
+     *
+     * @param View $view The view
+     * @param Array $options The options
+     */
+    protected function resolveJQuery($view, $options)
     {
-//        $key = $google['apikey'];
-//        $view->headScript()->prependFile("http://www.google.com/jsapi?key={$key}");
-//
-//        $load = '';
-//        foreach ($google['load'] as $key => $value) {
-//
-//            /* disable jquery and ui library loading */
-//            if( 'jquery' === strtolower($key) ) {
-//                $view->jQuery()->setRenderMode(30);
-//            }
-//
-//        	$script = 'google.load("' . $key . '"';
-//
-//        	foreach ($value as $val) {
-//        		$script .= ', ' . $val . '';
-//        	}
-//        	$load .= $script . ');' . PHP_EOL;
-//        }
-//
-//        $view->headScript()->appendScript($load);
+        $selector = new \Majisti\Config\Selector(new \Zend_Config($options));
+
+        /* jQuery and UI */
+        $view->jQuery()->setLocalPath(JQUERY    . '/jquery.js');
+        $view->jQuery()->setUiLocalPath(JQUERY  . '/ui.js');
+
+        /* paths given, enable and set paths */
+        $uiLocalPath = false;
+        if( $localPath = $selector->find('jquery.localPath', false) ) {
+            $view->jQuery()->setLocalPath($localPath);
+
+            if( $uiLocalPath = $selector->find('jquery.ui.localPath', false) ) {
+                $view->jQuery()->setUiLocalPath($uiLocalPath);
+            }
+        }
+
+        /*
+         * Enable when a local path is specified but jQuery is not explicitely
+         * enabled or enable when jQuery is explicitely enabled but no path was
+         * specified.
+         */
+        $enabled    = $selector->find('jquery.enable', FALSE);
+        $uiEnabled  = $selector->find('jquery.ui.enable', FALSE);
+
+        /* upper case FALSE means the selection was not found */
+        if( ($localPath && FALSE === $enabled) || $enabled) {
+            $view->jQuery()->enable();
+        }
+
+        if( ($uiLocalPath && FALSE === $uiEnabled) || $uiEnabled) {
+            $view->jQuery()->uiEnable();
+        }
     }
 }

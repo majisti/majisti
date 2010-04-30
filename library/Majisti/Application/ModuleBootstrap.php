@@ -3,7 +3,11 @@
 namespace Majisti\Application;
 
 /**
- * @desc Module Bootrap
+ * @desc Module Bootrap. This file should not be modified, this is an exact
+ * copy of Zend's ModuleBoostrap, but since \Majisti\Application\Bootstrap
+ * needed to get inherited, an entire copy was needed. DO NOT MODIFY,
+ * this file is untested.
+ *
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
