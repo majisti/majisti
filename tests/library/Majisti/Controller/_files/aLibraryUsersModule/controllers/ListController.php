@@ -1,6 +1,6 @@
 <?php
 
-namespace aLibrary\Controllers;
+#namespace aLibrary\Controllers;
 
 class Users_ListController extends \Zend_Controller_Action
 {
