@@ -14,19 +14,28 @@ class CompositeTest extends \Majisti\Test\PHPUnit\TestCase
     static protected $_class = __CLASS__;
     
     /**
+     * @var Property
+     */
+    public $propertyHandler;
+
+    /**
+     * @var Import
+     */
+    public $importHandler;
+
+    /**
      * @var Composite
      */
-    protected $_handler;
-
+    public $handler;
 
     /**
      * Setups the test case
      */
     public function setUp()
     {
-        $this->_propertyHandler = new Property();
-        $this->_importHandler   = new Import();
-        $this->_handler = new Composite();
+        $this->propertyHandler = new Property();
+        $this->importHandler   = new Import();
+        $this->handler         = new Composite();
     }
 
     /**
@@ -34,16 +43,16 @@ class CompositeTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function test__construct()
     {
-        $handler = $this->_handler;
-        $handler->push($this->_propertyHandler);
+        $handler = $this->handler;
+        $handler->push($this->propertyHandler);
         
         $this->assertNotNull($handler);
-        $this->assertContains($this->_propertyHandler, $handler, 
+        $this->assertContains($this->propertyHandler, $handler,
                 'Composite does not contain first element pushed.');
        
-        $handler->push($this->_importHandler);
+        $handler->push($this->importHandler);
         $this->assertEquals(2, $handler->count());
-        $this->assertEquals($this->_importHandler, $handler->peek(),
+        $this->assertEquals($this->importHandler, $handler->peek(),
                 'Composite does not contain second element pushed as top of
                  the stack.');
 
@@ -63,7 +72,7 @@ class CompositeTest extends \Majisti\Test\PHPUnit\TestCase
         $mockC = new Mock();
         $mockD = new Mock();
 
-        $handler = $this->_handler;
+        $handler = $this->handler;
         $handler->push($mockA);
         $handler->push($mockB);
         $handler->push($mockC);
@@ -86,7 +95,7 @@ class CompositeTest extends \Majisti\Test\PHPUnit\TestCase
     public function testException()
     {
         $invalidHandler = 'foo';
-        $handler = $this->_handler;
+        $handler = $this->handler;
         $this->assertEquals(0, $handler->count());
 
         $handler->push($invalidHandler);

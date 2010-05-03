@@ -19,6 +19,8 @@ class AllTests extends \Majisti\Test\PHPUnit\TestSuite
     {
         $suite = new self('Majisti - Config - All tests');
         $suite->addTest(Handler\AllTests::suite());
+
+        $suite->addTestSuite(__NAMESPACE__ . '\SelectorTest');
         
         return $suite;
     }

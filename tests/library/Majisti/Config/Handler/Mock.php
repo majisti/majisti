@@ -1,5 +1,7 @@
 <?php
+
 namespace Majisti\Config\Handler;
+
 /**
  * @desc Mock class used for testing purposes.
  * The handle function only triggers a boolean flag to indicate that
@@ -37,4 +39,3 @@ class Mock implements IHandler
         return $this->_wasHandled;
     }
 }
-?>

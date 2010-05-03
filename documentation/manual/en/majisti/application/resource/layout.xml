@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section 
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" 
+    xml:lang="en" xml:id="majisti.application.resource.layout" 
+    version="5.0">
+    
+    <title>Layout</title>
+    
+    <para>
+        <classname>Zend_Layout</classname> has a variety of configuration
+        options, it's true, but after struggling a couple of times over the
+        same recurrent problem, it occured to Majisti that this plugin needed
+        (at least) one more feature to bring the developpers to theming heaven.
+        That feature is to allow different layouts on different modules.</para>
+    <para>
+        The <classname>Layout</classname> resource, like stated above, grants the option to switch between
+        layouts attached to different modules. By extending <classname>Zend_Application_Resource_Layout</classname>,
+        the layout overrides the <code>getLayout()</code>, ensuring that the 
+        <classname>LayoutSwitcher</classname> is set as a pluginClass option.
+    </para>
+    <para>
+        Now, onto the <classname>LayoutSwitcher</classname>. This controller 
+        plugin will look for a folder, named based on what has been set in the 
+        modules configuration file, in the 'views' folder of any of your
+        application's module, provided you specified it in the <code>modules</code> 
+        configuration file. As that might seem a tad unclear, let's clarify what
+        has just been said with an example.
+    </para>
+    <example>
+        <title>Basic usage Layout controller plugin</title>
+        <para>
+            Below is a layout produced for moduleX.
+        </para>
+        <programlisting>/application/modules/moduleX/views/layouts/default.phtml</programlisting>
+        <para> In order for the new layout to override the library's default
+            layout, one needs to assign it to moduleX via the a configuration
+            file, usualyl in the modules.ini. </para>
+        <programlisting>moduleX.resources.layout.layout      = "default"
+moduleX.resources.layout.layoutPath  = APPLICATION_PATH "/modules/moduleX/views/layouts"</programlisting>
+        <para>With these settings, the layout switcher will look for a
+            default.phtml file where the layoutPath has been set. Layout
+            switching can be applied on any module. </para>
+        <para>You can also <emphasis role="bold">omit</emphasis> the
+            layoutPath, and Majisti will suppose a default layout path
+            of:<programlisting>APPLICATION_PATH "/modules/moduleX/views/layouts</programlisting></para>
+    </example>
+</section>

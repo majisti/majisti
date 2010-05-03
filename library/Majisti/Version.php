@@ -7,7 +7,7 @@ final class Version
     /**
      * Majisti Framework version identification - see compareVersion()
      */
-    const VERSION = '0.4.0alpha-dev';
+    const VERSION = '0.4.0dev';
 
     /**
      * Compare the specified Majisti Framework version string $version

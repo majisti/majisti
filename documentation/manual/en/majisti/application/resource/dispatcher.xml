@@ -1,14 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<section 
-    xmlns="http://docbook.org/ns/docbook" 
+<section xmlns="http://docbook.org/ns/docbook"
     xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:xi="http://www.w3.org/2001/XInclude" 
-    xml:lang="en" xml:id="majisti.application.resource.dispatcher" 
-    version="5.0">
-    
+    xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en"
+    xml:id="majisti.application.resource.dispatcher" version="5.0">
+
     <title>Dispatcher</title>
 
-    <para>
-        Lorem ipsum dolor sit amer
+    <para>Dispatching is the process of taking the request object,
+        Zend_Controller_Request_Abstract, extracting the module name,
+        controller name, action name, and optional parameters contained in it,
+        and then instantiating a controller and calling an action of that
+        controller. Source: <link
+            xlink:href="http://framework.zend.com/manual/en/zend.controller.dispatcher.html"
+            >Zend documentation</link>
     </para>
+    <para>Majisti aims for the extensibility quality attribute. With that in
+        mind, it is a pleasure to announce you that you can now break your
+        modules controllers into several directories and therefore the
+        dispatcher will automatically fallback to these directories. A list of
+        directories can be added to the fallback list using the
+            <code>resource</code> by using you ini configuration.  You may add
+        a module's controllers directory using the following (specify your own
+        path): </para>
+    <programlisting>resources.dispatcher.addFallback[moduleName] = MY_LIBRARY "/modules/moduleName/controllers"</programlisting>
+    <para>That way, you can always extend a given module if you believe that
+        it's missing a controller. But wait, what of the existing controllers?
+        What if an existing controller does not fit your needs? Are you
+        cornered and doomed? Fear not, you can always extend the original
+        controller, and the dispatcher will dispatch your child
+        controller.</para>
+    <example>
+        <title>Basic usage of the resource dispatcher</title>
+        <para>Let's say you created a custom controller named
+                <classname>FooController</classname> in order to cover a
+            missing feature in a certain module contained in MajistiX in a
+            module named <code>aModule</code>. You also extended the
+                <classname>IndexController</classname> of that same module
+            since you believe there is nothing to do with the original
+            one.</para>
+        <para>You put these controllers in the module folder of your
+            application located at:</para>
+        <programlisting>APPLICATION_PATH . '/modules/aModule/IndexController'
+APPLICATION_PATH . '/modules/aModule/FooController'</programlisting>
+        <para>Now, Majisti would have that module located under its modules
+            folder and therefore you fallback that directory. In a nutshell,
+            you basically just add two lines into your
+            configuration:<programlisting>resources.frontController.controllerDirectory[aModule]    = APPLICATION_PATH "/modules/aModule/controllers"
+resources.dispatcher.addFallback[aModule]                 = MAJISTIX_MODULES "/aModule/controllers"</programlisting></para>
+        <para>The result? Both your custom controllers and the ones from
+            MajistiX will be loaded and functionnal. Your custom
+                <classname>IndexController</classname> has extended the
+            original one and you now have a
+                <classname>FooController</classname> along with all the other
+            controllers, models, and view the original module provides. </para>
+    </example>
 </section>

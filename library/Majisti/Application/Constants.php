@@ -19,10 +19,10 @@ class Constants
     /**
      * @desc Private constructor for no instanciation
      */
-	private function __construct()
-	{}
+    private function __construct()
+    {}
 
-	/**
+    /**
      * @desc Defines all the needed constants for an application.
      *
      * @param $applicationPath The application path
@@ -102,9 +102,9 @@ class Constants
          */
         if( $urls = $selector->find('urls', false) ) {
             foreach ($urls as $key => $url) {
-            	define(
-            	   strtoupper(APPLICATION_NAME) . '_URL_' .
-            	   strtoupper($key), $url);
+                define(
+                   strtoupper(APPLICATION_NAME) . '_URL_' .
+                   strtoupper($key), $url);
             }
         }
 
@@ -201,13 +201,19 @@ class Constants
             define('MAJ_URL',  MAJISTI_URL);
             define('MAJX_URL', MAJISTIX_URL);
 
-            define('MAJ_STYLES', MAJISTI_URL_STYLES);
+            define('MAJ_STYLES' , MAJISTI_URL_STYLES);
             define('MAJ_SCRIPTS', MAJISTI_URL_SCRIPTS);
-            define('MAJ_IMAGES', MAJISTI_URL_IMAGES);
+            define('MAJ_IMG'    , MAJISTI_URL_IMAGES);
+            define('MAJ_IMG_LOC', MAJISTI_URL_IMAGES_LOCALE);
 
             define('MAJX_STYLES', MAJISTIX_URL_STYLES);
             define('MAJX_SCRIPTS', MAJISTIX_URL_SCRIPTS);
-            define('MAJX_IMAGES', MAJISTIX_URL_IMAGES);
+            define('MAJX_IMG', MAJISTIX_URL_IMAGES);
+
+            define('JQ', JQUERY);
+            define('JQ_STYLES', JQUERY_STYLES);
+            define('JQ_PLUGINS', JQUERY_PLUGINS);
+            define('JQ_THEMES', JQUERY_THEMES);
         }
     }
 }
