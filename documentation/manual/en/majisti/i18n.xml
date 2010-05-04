@@ -7,5 +7,5 @@
     
     <title>Majisti\I18n</title>
     
-    <xi:include href="i18n/localesContainer.xml" />
+    <xi:include href="i18n/localeSession.xml" />
 </chapter>

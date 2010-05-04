@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en"
+    xml:id="majisti.controller.plugins" version="5.0">
+    
+    <title>Plugins</title>
+    
+    <para>
+        Plugins are encapsulated code units that run when certain events occur.
+        Zend Framework's controller architecture grants it's users the
+        possibility to write code and make it happen when they want it.
+        
+        Majisti is continually developping plugins and modules that eases the 
+        task of producing rich and well designed applications.
+    </para>
+    
+    <xi:include href="plugins/layoutSwitcher.xml" />
+</section>
