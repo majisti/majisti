@@ -1,5 +1,7 @@
 <?php
 
+namespace Majisti\Controller\ActionHelper;
+
 require_once 'TestHelper.php';
 include_once 'Majisti/Controller/ActionHelper/Model.php';
 
@@ -23,8 +25,9 @@ class ModelTest extends \Majisti\Test\PHPUnit\TestCase
 
     public function setUp()
     {
-        $this->_modelContainerExpected = new \Majisti\Model\Container();
-        $this->_modelContainerActual = new Majisti_Controller_ActionHelper_Model();
+        $this->_modelContainerExpected  = new \Majisti\Model\Container();
+        $this->_modelContainerActual    
+            = new \Majisti_Controller_ActionHelper_Model();
     }
 
     /**
