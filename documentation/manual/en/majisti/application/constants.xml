@@ -96,10 +96,8 @@
                 </row>
 
                 <!-- APPLICATION_LIBRARY -->
-                <row/>
                 
                 <!-- APPLICATION_ENVIRONNEMENT -->
-                <row/>
                 
                 <!-- BASE_URL -->
                 <row>
@@ -162,34 +160,24 @@
                 </row>
 
                 <!-- MAJISTI_PATH-->
-                <row/>
 
                 <!-- MAJISTIX_PATH -->
-                <row/>
 
                 <!-- MAJISTIX_MODULES -->
-                <row/>
                 
                 <!-- MAJISTIX_EXTENSIONS -->
-                <row/>
                 
                 <!-- APPLICATION_URL_PREFIX -->
-                <row/>
                 
                 <!-- APPLICATION_URL -->
-                <row/>
                 
                 <!-- APPLICATION_URL_STYLES -->
-                <row/>
                 
                 <!-- APPLICATION_URL_SCRIPTS -->
-                <row/>
                 
                 <!-- APPLICATION_URL_IMAGES -->
-                <row/>
                 
                 <!-- MAJISTI_PUBLIC -->
-                <row/>
 
                 <!-- MAJISTI_URL -->
                 <row>
@@ -264,10 +252,8 @@
                 </row>
                 
                 <!-- MAJISTIX_URL_SCRIPTS -->
-                <row/>
                 
                 <!-- MAJISTIX_URL_IMAGES -->
-                <row/>
                 
             </tbody>
         </tgroup>
