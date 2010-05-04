@@ -59,6 +59,9 @@ class I18n extends AbstractPlugin
                     }
                 }
              }
+         } else {
+             throw new Exception("Request parameter is mandatory
+             in the configuration");
          }
     }
 }

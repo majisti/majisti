@@ -17,36 +17,44 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
 {
     static protected $_class = __CLASS__;
 
-    protected $_locales;
-    protected $_request;
-    protected $_i18n;
+    public $locales;
+    public $request;
+
+    /**
+     *
+     * @var I18n
+     */
+    public $i18n;
+    public $config;
     
     /**
      * Setups the test case
      */
     public function setUp()
     {
-        $this->_i18n = new I18n();
+        $this->i18n = new I18n();
 
         /* setting up request object */
-        $this->_request = new \Zend_Controller_Request_Http();
-        $this->_request->setActionName('fooAction');
-        $this->_request->setControllerName('barController');
-        $this->_request->setModuleName('bazModule');
+        $this->request = new \Zend_Controller_Request_Http();
+        $this->request->setActionName('fooAction');
+        $this->request->setControllerName('barController');
+        $this->request->setModuleName('bazModule');
 
         /* setting up locales */
-        $this->_locales = \Majisti\I18n\Locales::getInstance();
-        $this->_locales->addLocale(new \Zend_Locale('en'));
+        $this->locales = \Majisti\I18n\Locales::getInstance();
+        $this->locales->addLocale(new \Zend_Locale('en'));
+        $this->locales->addLocale(new \Zend_Locale('fr'));
+        $this->locales->switchLocale(new \Zend_Locale('en'));
 
         /* front controller */
         $front = \Zend_Controller_Front::getInstance();
-        $front->setRequest($this->_request);
+        $front->setRequest($this->request);
         $front->setResponse(new \Zend_Controller_Response_Http());
 
         /* stub redirector to cancel the redirection */
         $stub = $this->getMock('Zend_Controller_Action_Helper_Redirector');
         $stub->expects($this->once())
-             ->method('redirectAndExit');
+             ->method('goToSimpleAndExit');
         \Zend_Controller_Action_HelperBroker::getStack()->Redirector = $stub;
        
         /* add default route */
@@ -55,37 +63,43 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
             new \Zend_Controller_Router_Route_Module(
                 array(),
                 $front->getDispatcher(),
-                $this->_request
+                $this->request
             )
         );
+
+        /* request config */
+        $this->config = new \Zend_Config(array('plugins'      => array (
+                                                'i18n'        => array(
+                                                'requestParam'=> 'request'))));
+    }
+
+    public function tearDown()
+    {
+        $this->i18n->setConfig(new \Zend_Config(array()));
     }
 
     /**
-     * Tests that preDispatch() switches locale when supplying a request
+     * Tests that preDispatch() switches to a supported locale when
+     * supplying a request named accordingly to config settings.
      */
     public function testLocaleIsSwitchedOnPost()
     {
-        $config = new \Zend_Config(array('plugins'      => array (
-                                        'i18n'          => array(
-                                        'requestParam'  => 'request'))));
+        $this->request->setParam('request', 'fr');
+        $this->i18n->setConfig($this->config);
+        $this->i18n->preDispatch($this->request);
 
-        /* TODO: use setConfig($config) to set the request param */
-
-        $this->_request->setParam('request', 'fr');
-        $this->_i18n->setConfig($config);
-        $this->_i18n->preDispatch($this->_request);
-
-        /* TODO: assert that locale has been switched to 'fr' */
-        $this->markTestIncomplete();
+        $this->assertEquals(new \Zend_Locale('fr'), $this->locales->getCurrentLocale());
     }
 
     /**
      * Tests that preDispatch() throws an exception if requestParam is not
      * set.
+     *
+     * @expectedException Exception
      */
     public function testThatExceptionIsThrownIfRequestParamIsUnset()
     {
-        $this->markTestIncomplete();
+        $this->i18n->preDispatch($this->request);
     }
 
     /**
