@@ -12,6 +12,7 @@ class AllTests extends \Majisti\Test\PHPUnit\TestSuite
         
         $suite->addTest(Dispatcher\AllTests::suite());
         $suite->addTest(Plugin\AllTests::suite());
+        $suite->addTest(ActionHelper\AllTests::suite());
         
         return $suite;
     }

@@ -5,22 +5,92 @@ namespace Majisti\Controller\Plugin;
 require_once 'TestHelper.php';
 
 /**
- * @desc
- * @author 
+ * @desc Test case for the I18n controller plugin testing that locale switching
+ * occurs when a request with the previously set name is set to a supported
+ * locale. If no request param is set in the config, makes sure that an
+ * exception is thrown. Also verifies that the request param is unset and that
+ * a redirection using gotoSimpleAndExit() has been done.
+ *
+ * @author Majisti
  */
 class I18nTest extends \Majisti\Test\PHPUnit\TestCase
 {
     static protected $_class = __CLASS__;
+
+    protected $_localeSession;
+    protected $_request;
+    protected $_i18n;
     
     /**
      * Setups the test case
      */
     public function setUp()
     {
-        
+        /* setting up request object */
+        $this->_request = new \Zend_Controller_Request_HTTP();
+        $this->_request->setActionName('fooAction');
+        $this->_request->setControllerName('barController');
+        $this->_request->setModuleName('bazModule');
+
+        /* setting up locale session */
+        $this->_localeSession = \Majisti\I18n\LocaleSession::getInstance();
+
+        /* TODO: Refactor I18n class to provide addLocale(), removeLocale()
+         * and setConfig().
+         */
+        $this->_i18n = new I18n();
+        \Zend_Debug::dump($this->_localeSession->getSupportedLocales(), '<strong></strong>');
     }
-    
+
+    /**
+     * Tests that preDispatch() switches locale when supplying a request
+     */
     public function testLocaleIsSwitchedOnPost()
+    {
+        $config = new \Zend_Config(array('plugins'      => array (
+                                        'i18n'          => array(
+                                        'requestParam'  => 'request'))));
+
+        /* TODO: use setConfig($config) to set the request param */
+
+        $this->_request->setParam('request', 'fr');
+        $this->_i18n->preDispatch();
+
+        /* TODO: assert that locale has been switched to 'fr' */
+
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * Tests that preDispatch() throws an exception if requestParam is not
+     * set.
+     */
+    public function testThatExceptionIsThrownIfRequestParamIsUnset()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * Tests that preDispatch() unsets the request param after switching locale.
+     */
+    public function testThatRequestParamIsUnsetOnceLocaleHasBeenSwitched()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * Tests that preDispatch() redirects the user once locale has been switched
+     * and that the request is a regular one.
+     */
+    public function testThatPageRedirectionHasOccured()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * Tests that an AJAX response is sent if the request is an XmlHttpRequest.
+     */
+    public function testThatAjaxResponseIsSent()
     {
         $this->markTestIncomplete();
     }
