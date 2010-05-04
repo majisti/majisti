@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en"
+    xml:id="majisti.view.helpers.model" version="5.0">
+
+    <title>Model helper</title>
+
+    <para>The model helper is only another proxy to the bootstrap instance of
+        the ModelContainer. It provides the same sets of method as the
+            <methodname>getModel()</methodname> function. You can read more on
+        the ModelContainer <link xlink:href="majisti.model.container"
+            >here.</link></para>
+</section>

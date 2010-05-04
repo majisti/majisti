@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en"
+    xml:id="majisti.view.helpers.locale" version="5.0">
+
+    <title>Locale helper</title>
+
+    <para>The locale helper will let you retrieve the singleton instance of
+            the<classname>Majisit\I18n\LocaleSession</classname> controller. You
+        can read more on the Locale Session <link
+            xlink:href="majisti.i18n.localeSession"> here </link>.</para>
+</section>
