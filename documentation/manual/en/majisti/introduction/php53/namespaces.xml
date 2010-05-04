@@ -31,11 +31,11 @@
         </itemizedlist></para>
     <para>And the ones not supported by Majisti:<itemizedlist>
             <listitem>
-                <para>View helpers, controller plugins and autoloaded resources
-                    using the Module autoloader. They must use the Zend
-                    Standard. (e.g. To instanciate a model you would do the
-                    ApplicationName_Model_AModel convention to access it).
-                </para>
+                <para>View helpers, action helpers, controller plugins and
+                    autoloaded resources using the Module autoloader. They must
+                    use the Zend Standard. (e.g. To instanciate a model you
+                    would do the ApplicationName_Model_AModel convention to
+                    access it). </para>
             </listitem>
         </itemizedlist></para>
 </section>
