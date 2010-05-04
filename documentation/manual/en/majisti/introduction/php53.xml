@@ -8,10 +8,6 @@
     
     <title>PHP5.3 Support</title>
     
-    <para>
-        Lorem ipsum dolor sit amer
-    </para>
-    
-    <xi:include href="php53/namespaces.xml" />
     <xi:include href="php53/autoloader.xml" />
+    <xi:include href="php53/namespaces.xml" />
 </section>
