@@ -9,13 +9,20 @@ if( !defined('PHPUnit_MAIN_METHOD') ) {
 }
 
 /**
- * @desc
+ * @desc Test that the multiple dispatcher can dispatch multiple controller
+ * directories.
+ *
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class MultipleTest extends \Zend_Controller_Dispatcher_StandardTest
 {
     protected $_filesPath;
+
+    /**
+     * @var Multiple
+     */
+    protected $_dispatcher;
 
     public function __construct($name = null)
     {
@@ -44,22 +51,8 @@ class MultipleTest extends \Zend_Controller_Dispatcher_StandardTest
         );
 
         $dispatcher->addFallbackControllerDirectory($this->_filesPath . '/aLibraryUsersModule/controllers', 'users');
-        $dispatcher->addNamespace('\aLibrary\Controllers\\', 'users');
-        $dispatcher->addNamespace('\anApplication\Controllers\\', 'users');
 
         $this->_dispatcher = $dispatcher;
-    }
-
-    public function testDispatchNamespacedController()
-    {
-        $request = new \Zend_Controller_Request_Http();
-        $request->setModuleName('users')
-                ->setControllerName('manage');
-
-        $response = new \Zend_Controller_Response_Cli();
-
-        $this->_dispatcher->dispatch($request, $response);
-        $this->assertContains('anApplication\Controllers\Users_ManageController::index', $response->getBody());
     }
 
     public function testDispatchNonExistantControllerFallbacksToOtherDirectories()
@@ -113,35 +106,74 @@ class MultipleTest extends \Zend_Controller_Dispatcher_StandardTest
         $this->assertFalse($this->_dispatcher->isDispatchable($request, $response));
     }
 
-    public function testAddFallbackControllerDirectory()
+    public function testFallbackControllerDirectories()
     {
-        $this->markTestIncomplete();
+        $dispatcher = $this->_dispatcher;
+
+        /* assert single path */
+        $dir = '/foo/bar';
+        $dispatcher->addFallbackControllerDirectory($dir);
+        $dirs = $dispatcher->getFallbackControllerDirectory();
+        $this->assertEquals(1, count($dirs));
+        $this->assertEquals(array($dir), $dirs);
+
+        $dispatcher->addFallbackControllerDirectory('foo', 'blog');
+
+        /* check that they are available */
+        $this->assertTrue($dispatcher->hasFallbackControllerDirectory());
+        $this->assertTrue($dispatcher->hasFallbackControllerDirectory(
+                $dispatcher->getDefaultModule()));
+        $this->assertTrue($dispatcher->hasFallbackControllerDirectory('blog'));
+        $this->assertTrue($dispatcher->hasFallbackControllerDirectory('users'));
+        $this->assertFalse($dispatcher->hasFallbackControllerDirectory('foo'));
+
+        /* add two more directories */
+        $dirs = array('/foo/bar2', '/foo/bar3');
+        $dispatcher->addFallbackControllerDirectories($dirs);
+        $this->assertEquals(3, count($dispatcher->getFallbackControllerDirectory()));
+        $this->assertEquals(3, count($dispatcher->getFallbackControllerDirectory(
+                $dispatcher->getDefaultModule())));
+        $this->assertEquals(array_merge(array($dir), $dirs),
+                $dispatcher->getFallbackControllerDirectory());
+        $this->assertEquals(array_merge(array($dir), $dirs),
+                $dispatcher->getFallbackControllerDirectory(
+                    $dispatcher->getDefaultModule()));
+
+        $this->assertEquals(array('foo'),
+                $dispatcher->getFallbackControllerDirectory('blog'));
+
+        /* non existant controller directory */
+        $this->assertNull($dispatcher->getFallbackControllerDirectory('foo'));
+
+        /* reset */
+        $dispatcher->resetFallbackControllerDirectory();
+        $this->assertNull($dispatcher->getFallbackControllerDirectory());
+        $this->assertNull($dispatcher->getFallbackControllerDirectory(
+                $dispatcher->getDefaultModule()));
+        $this->assertNull($dispatcher->getFallbackControllerDirectory('users'));
+        $this->assertNull($dispatcher->getFallbackControllerDirectory('foo'));
     }
 
     public function testSetGetFallbackControllerDirectory()
     {
-        $this->markTestIncomplete();
-    }
+        $dispatcher = $this->_dispatcher;
 
-    public function testHasFallbackControllerDirectory()
-    {
-        $this->markTestIncomplete();
-    }
+        $fallbacks = array(
+            'users'     => 'foo',
+            'default'   => 'bar'
+        );
 
-    public function testResetFallbackControllerDirectory()
-    {
-        $this->markTestIncomplete();
+        $dispatcher->setFallbackControllerDirectories($fallbacks);
+        $this->assertEquals($fallbacks, $dispatcher->getFallbackControllerDirectories());
     }
 
     public function testSetGetControllerDirectory()
     {
-       $this->markTestIncomplete();
+        $this->_dispatcher->removeControllerDirectory('users');
+        parent::testSetGetControllerDirectory();
     }
 
-    public function testSanelyDiscardOutputBufferOnException()
-    {
-        $this->markTestSkipped();
-    }
+    public function testDisableOutputBuffering() {}
 }
 
 MultipleTest::runAlone();

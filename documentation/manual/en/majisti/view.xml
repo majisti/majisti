@@ -8,5 +8,7 @@
     
     <title>Majisti\View</title>
     
-    <para></para>
+    <para>Foo</para>
+    
+    <xi:include href="view/helpers.xml" />
 </chapter>

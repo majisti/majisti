@@ -22,7 +22,7 @@
             <code>resource</code> by using you ini configuration.  You may add
         a module's controllers directory using the following (specify your own
         path): </para>
-    <programlisting>resources.dispatcher.addFallback[moduleName] = MY_LIBRARY "/modules/moduleName/controllers"</programlisting>
+    <programlisting>resources.dispatcher.fallbackControllerDirectory[moduleName][] = MY_LIBRARY "/modules/moduleName/controllers"</programlisting>
     <para>That way, you can always extend a given module if you believe that
         it's missing a controller. But wait, what of the existing controllers?
         What if an existing controller does not fit your needs? Are you

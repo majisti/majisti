@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @desc Locale view helper to retrieve the singleton instance of
+ * \Majisti\I18n\LocaleSession to help control language switching.
+ *
+ * @author Majisti
+ */
 class Majisti_View_Helper_Locale extends Majisti_View_Helper_Abstract
 {
     /**
@@ -7,6 +13,10 @@ class Majisti_View_Helper_Locale extends Majisti_View_Helper_Abstract
      */
     protected $_locale;
 
+    /**
+     * @desc Returns the locale session instance for locale handling.
+     * @return \Majisti\I18n\LocaleSession
+     */
     public function locale()
     {
         return $this->getLocale();

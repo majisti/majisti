@@ -3,8 +3,7 @@
 namespace Majisti\Controller\Dispatcher;
 
 /**
- * @desc Dispatcher interface that adds fallback controller directories
- * and support PHP namespaces.
+ * @desc Dispatcher interface that adds fallback controller directories.
  * 
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
@@ -35,13 +34,21 @@ interface IDispatcher extends \Zend_Controller_Dispatcher_Interface
     public function hasFallbackControllerDirectory($module = null);
     
     /**
-     * @desc Sets the fallback controller directoriesm overriding any previous
-     * ones.
-     * @param $path The path
-     * @param $module [optional, default to the default module] The module name
-     * @return Standard this
+     * @desc Returns all the fallback controller directories
+     *
+     * @return Array the controller directories, key`value paired with
+     * the module name as the key and the paths as the values within another
+     * array.
      */
-    public function setFallbackControllerDirectory($path, $module = null);
+    public function getFallbackControllerDirectories();
+
+    /**
+     * @desc Sets the fallback controller directories overriding any previous
+     * ones.
+     * @param $controllerDirectories The controller directories
+     * @return Multiple this
+     */
+    public function setFallbackControllerDirectories($controllerDirectories);
     
     /**
      * @desc Resets the fallback controller directories.
@@ -50,27 +57,4 @@ interface IDispatcher extends \Zend_Controller_Dispatcher_Interface
      * @return Standard this
      */
     public function resetFallbackControllerDirectory($module = null);
-    
-    /**
-     * @desc Adds a supported PHP namespace for a module's controllers
-     * 
-     * @param $namespace The PHP namespace
-     * @param $module [optional, default to the default module] The module name
-     * @return Standard this
-     */
-    public function addNamespace($namespace, $module = null);
-    
-    /**
-     * @desc Returns whether a namespace is registered for a module
-     * @param $module [optional, default to the default module] The module name
-     * @return boolean True if the namespace is registered
-     */
-    public function hasNamespace($module = null);
-    
-     /**
-     * @desc Returns all the namespace registered for a module
-     * @param $module [optional, default to the default module] The module name
-     * @return Array With the namespaces, empty array if no namespaces were registered.
-     */
-    public function getNamespaces($module = null);
 }

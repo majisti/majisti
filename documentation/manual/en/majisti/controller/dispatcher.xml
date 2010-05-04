@@ -58,10 +58,7 @@ resources.dispatcher.fallbackControllerDirectory[blog][] = MAJISTIX_MODULES_PATH
         <para>Extending controllers would simply require that you extend the one
             you wish to redefine behaviour:</para>
 
-        <programlisting><![CDATA[
-namespace MyApplication\Modules\Blog; //wrapping in a namespace is optionnal
-
-require_once MAJISTIX_MODULES_PATH . '/blog/controllers/CommentsController.php';
+        <programlisting><![CDATA[require_once MAJISTIX_MODULES . '/blog/controllers/CommentsController.php';
 
 class CommentsController extends \Majisti\Modules\Blog\CommentsController  
 {
@@ -72,18 +69,4 @@ class CommentsController extends \Majisti\Modules\Blog\CommentsController
 }
 ]]></programlisting>
     </example>
-    
-    <para>Namespacing controllers is also a feature supported by the dispatcher.
-        Whenever you namespace you controllers be sure to add it to your config: 
-    </para>
-    
-    <programlisting><![CDATA[
-resources.dispatcher.namespace[] = "\MyApplication\Modules\Blog\"
-]]></programlisting>
-    
-    <para>Modules officially supported will have their namespace added whenever
-        a module is added in the configuration. Adding the blog module would then
-        add the <classname>\Majisti\Modules\Blog</classname> namespace to
-        the dispatcher.
-    </para>
 </section>
