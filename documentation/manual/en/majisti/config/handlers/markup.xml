@@ -7,5 +7,11 @@
     
     <title>Markup</title>
     
-    <para>foo</para>    
+    <para>The <classname>Markup</classname> handler class, like the <classname>Composite</classname>
+        handler, is a stack, thus allowing you to push any number of
+            <classname>Zend_Markup_Renderer_RendererAbstract</classname>.  If the markup stack is
+        empty, an exception will be thrown, stating that no markups were pushed in the stack.
+        Otherwise, the handle function will recursively dig into the
+            <classname>Zend_Config</classname> object and render every <code>$key => value</code>
+        using all of the markups.</para>    
 </section>

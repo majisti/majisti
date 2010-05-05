@@ -11,7 +11,7 @@ namespace Majisti\Model\Mail;
  *
  * @author Majisti
  */
-class Message extends \Zend_Mail
+class MessageMock extends \Zend_Mail
 {
     protected $_bodyObject;
 
@@ -61,7 +61,5 @@ class Message extends \Zend_Mail
                 $this->setBodyText($body->getBody());
             }
         }
-
-        parent::send($transport);
     }
 }

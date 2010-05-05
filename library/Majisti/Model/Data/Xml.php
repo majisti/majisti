@@ -22,7 +22,7 @@ class Xml
     /**
      * @var bool
      */
-    protected $_useBBCodeMarkup = true;
+    protected $_useBBCodeMarkup;
 
     /**
      * @var Stack
@@ -30,14 +30,23 @@ class Xml
     protected $_markupStack;
 
     /**
+     * @desc contructor
+     */
+    public function  __construct($xmlPath = null, $useBBCodeMarkup = true)
+    {
+        $this->_xmlPath         = $xmlPath;
+        $this->_useBBCodeMarkup = $useBBCodeMarkup;
+    }
+
+    /**
      * @desc Pushes a markup to the stack
      *
      * @param $parser The parser class
      * @param $renderer The renderer class
      */
-    public function pushMarkup($parser, $renderer)
+    public function pushMarkup($parser, $renderer = 'Html')
     {
-        $this->_markupStack->push(
+        $this->getMarkupStack()->push(
             \Zend_Markup::factory((string)$parser, (string)$renderer)
         );
     }
@@ -89,10 +98,35 @@ class Xml
     }
 
     /**
+     * @desc BBCodeMarkup setter
+     */
+    public function setBBCodeMarkupUsed($BBCodeMarkupUsed)
+    {
+        $this->_useBBCodeMarkup = $BBCodeMarkupUsed;
+    }
+
+    /**
+     * @desc Returns the xml file path
+     * @return String the xml file path
+     */
+    public function getXmlPath()
+    {
+       return $this->_xmlPath;
+    }
+
+    /**
+     * @desc Xml path file setter
+     */
+    public function setXmlPath($xmlPath)
+    {
+        $this->_xmlPath = $xmlPath;
+    }
+
+    /**
      * @desc Retrieve internal data according to current language,
      * assuming default language if the current language is not found.
      */
-    protected function getData()
+    public function getData()
     {
         if( null === $this->_data ) {
             $locale = LocaleSession::getInstance();
