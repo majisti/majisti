@@ -7,5 +7,23 @@
     
     <title>Composite</title>
     
-    <para>foo</para>
+    <para>The <classname>Composite</classname> handler class follows the GoF Composite pattern,
+        allowing the user to stack multiple handlers and make them act as one. The composite handler
+        extends Majisti's Stack class, allowing users to push as many handlers as they want. The
+        composite function, <code>handle()</code>, will loop over the stack and pop each handler it
+        contains, running their respective handle()  and merging the results in the returned
+            <classname>Zend_Config</classname> object.</para>
+    <para>This way, one can have Import, Markup and Property handlers all handling at once a
+        configuration file, by simply doing the
+        following:<programlisting>$config = new \Zend_Config_Ini('path/to/file', 'sectionName', true);
+
+$propertyHandler = new Property();
+$markupHandler   = new Markup();
+$importHandler   = new Import();
+
+$composite       = new Composite();
+$composite->push( array( $propertyHandler, $markupHandler, $importHandler ) );
+
+$composite->handle($config);</programlisting></para>
+    <para>The result: one handle call worth three. Bravissimo.</para>
 </section>
