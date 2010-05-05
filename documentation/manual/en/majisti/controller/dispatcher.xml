@@ -1,25 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en" xml:id="majisti.controller.dispatcher"
-    version="5.0">
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en"
+    xml:id="majisti.controller.dispatcher" version="5.0">
 
     <title>The Dispatcher</title>
 
-    <para>The dispatcher has been rewritten to comply to the modularity Majisti is trying to
-        accomplish. The only difference is that it is possible to have multiple controller
-        directories under the same module. When it is dispatched, it will use its list of controller
-        directories and fallback to the next one each time the directory does not exist. That way,
-        it is possible to extend entire modules in another library by adding or redefining
-        controllers, models, views in the application's or user's library without having to import
-        all the files of that actual module.</para>
-    
+    <para>The dispatcher has been rewritten to comply to the modularity Majisti
+        is trying to accomplish. The only difference is that it is possible to
+        have multiple controller directories under the same module. When it is
+        dispatched, it will use its list of controller directories and fallback
+        to the next one each time the directory does not exist. That way, it is
+        possible to extend entire modules in another library by adding or
+        redefining controllers, models, views in the application's or user's
+        library without having to import all the files of that actual module.
+        For this functionnality to work, PHP namespaces must be used for any
+        fallback controller directories. Any controllers within your
+        application must not be under a PHP namespace, as it is not supported
+        by Zend yet.</para>
+
     <example>
         <title>Multiple controller directories</title>
-        
+
         <para>Suppose you have dropped in a Blog module into MajistiC:</para>
-    
-        <programlisting><![CDATA[
-MajistiC
+
+        <programlisting><![CDATA[MajistiX
     Modules
         Blog
             controllers
@@ -33,11 +38,10 @@ MajistiC
         AnotherModule
             ...
 ]]></programlisting>
-    
+
         <para>And your application tree:</para>
-    
-        <programlisting><![CDATA[
-application
+
+        <programlisting><![CDATA[application
     modules
         default
             ...
@@ -47,16 +51,15 @@ application
                 NewControllerNotContainedInShippedModule.php
         ... //other modules
 ]]></programlisting>
-    
-        <para>For the fallback process you need to add in your config file the following:</para>
-    
-        <programlisting><![CDATA[
-resources.frontController.controllerDirectory[blog] = APPLICATION_PATH "/blog/controllers"
-resources.dispatcher.fallbackControllerDirectory[blog][] = MAJISTIX_MODULES_PATH "/blog/controllers"        
-]]></programlisting>
-    
-        <para>Extending controllers would simply require that you extend the one
-            you wish to redefine behaviour:</para>
+
+        <para>For the fallback process you need to add in your config file the
+            following:</para>
+
+        <programlisting><![CDATA[resources.frontController.controllerDirectory[blog]      = APPLICATION_PATH "/blog/controllers"
+resources.dispatcher.fallbackControllerDirectory[blog][] = MAJISTIX_MODULES "/blog/controllers"]]></programlisting>
+
+        <para>Extending controllers would simply require that you extend the
+            one you wish to redefine behaviour:</para>
 
         <programlisting><![CDATA[require_once MAJISTIX_MODULES . '/blog/controllers/CommentsController.php';
 
@@ -68,5 +71,11 @@ class CommentsController extends \Majisti\Modules\Blog\CommentsController
     }
 }
 ]]></programlisting>
+        <programlisting>You can always use the object oriented approach:</programlisting>
+        <programlisting>$dispatcher = \Zend_Controller_Front::getInstance()->getDispatcher();
+$dispatcher->addFallbackControllerDirectory('\MajistiX\Modules', 
+    MAJISTIX_MODULES . '/users/controllers', 'users');</programlisting>
+        <programlisting>If the third parameter is not specified, which is the module, 
+Majisti assumes the default controller</programlisting>
     </example>
 </section>

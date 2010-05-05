@@ -8,7 +8,24 @@
     
     <title>Majisti\View</title>
     
-    <para>Foo</para>
+    <para>The <classname>View</classname> class is basically the same as a
+            <classname>Zend_View</classname> class except that it adds two more
+        behaviours. <itemizedlist>
+            <listitem>
+                <para>It proxies the <methodname>translate</methodname>
+                    function from a translator with the 'underscore' function.
+                    That way, a controller can do
+                        <methodname>$this->view->_('messageToTranslate')</methodname>
+                    or a view can do the same with
+                        <methodname>$this->_('messageToTranslate')</methodname>.</para>
+            </listitem>
+            <listitem>
+                <para>It support multiple script directories working in
+                    concordance with the <link
+                        xlink:href="majisti.controller.dispatcher.html"
+                        >Multiple Dispatcher</link>.</para>
+            </listitem>
+        </itemizedlist></para>
     
     <xi:include href="view/helpers.xml" />
 </chapter>

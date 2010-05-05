@@ -117,8 +117,8 @@ class ViewTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function testInitWithJQueryPathsButDisabledInConfigStaysDisabled()
     {
-        $localPath = 'http://example.com/jquery.js';
-        $uiLocalPath = 'http://example.com/ui.js';
+        $localPath      = 'http://example.com/jquery.js';
+        $uiLocalPath    = 'http://example.com/ui.js';
 
         $jquery = array(
             'jquery' => array(

@@ -54,9 +54,8 @@ class Application
     /**
      * @desc Returns a merged Majisti's default configuration with
      * the application's configuration, the later overwriting the former.
-     * @return \Zend_Config
      *
-     * TODO: factory method for supporting Zend_Config_Xml AND Zend_Config_Ini?
+     * @return \Zend_Config
      */
     protected function _loadConfiguration()
     {

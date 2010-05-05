@@ -12,12 +12,13 @@ interface IDispatcher extends \Zend_Controller_Dispatcher_Interface
 {
     /**
      * @desc Adds a fallback controller directory.
-     * 
+     *
+     * @param $namespace The class' PHP namespace
      * @param $path The path to add
      * @param $module [optional, defaults to default module] The module name
      * @return Standard this
      */
-    public function addFallbackControllerDirectory($path, $module = null);
+    public function addFallbackControllerDirectory($namespace, $path, $module = null);
     
     /**
      * @desc Returns the fallback controller directories for a module.

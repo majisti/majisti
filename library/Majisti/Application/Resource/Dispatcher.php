@@ -35,7 +35,7 @@ class Dispatcher extends \Zend_Application_Resource_ResourceAbstract
         
         $dispatcher = new \Majisti\Controller\Dispatcher\Multiple();
         $dispatcher->setControllerDirectory($front->getControllerDirectory());
-        $dispatcher->addFallbackControllerDirectory(
+        $dispatcher->addFallbackControllerDirectory('\MajistiX\Modules',
            MAJISTIX_MODULES . '/default/controllers');
         $front->setDispatcher($dispatcher);
 

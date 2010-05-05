@@ -9,8 +9,10 @@ if( !defined('PHPUnit_MAIN_METHOD') ) {
 }
 
 /**
- * @desc
- * @author
+ * @desc Assert that the application was instanciated correctly.
+ * It was already instanciated in the TestHelper
+ *
+ * @author Majisti
  */
 class ApplicationTest extends \Zend_Application_ApplicationTest
 {
@@ -19,21 +21,25 @@ class ApplicationTest extends \Zend_Application_ApplicationTest
         \Majisti\Test\PHPUnit\TestCase::setClass(__CLASS__);
         \Majisti\Test\PHPUnit\TestCase::runAlone();
     }
-    
+
+    /**
+     * @desc Test that configuration
+     */
     public function testConfigurationMergedProperly()
     {
-        $this->markTestIncomplete();
+        $config     = \Zend_Registry::get('Majisti_Config');
+        $selector   = new \Majisti\Config\Selector($config);
+
+        /* majisti's config */
+        $this->assertEquals('Bootstrap', $selector->find('bootstrap.class'));
+        $this->assertEquals('UTF-8', $selector->find('resources.view.encoding'));
+
+        /* user defined config */
+        $this->assertEquals('baz', $selector->find('foo.bar', false));
     }
-    
-    public function testConfigHandlerResourceHandlesConfig()
-    {
-        $this->markTestIncomplete();
-    }
-    
-    public function testConstantsGotDefinedAfterConstruct()
-    {
-        $this->markTestIncomplete();
-    }
+
+    public function testPassingZfVersionAutoloaderInformationConfiguresAutoloader()
+    {}
 }
 
 ApplicationTest::runAlone();

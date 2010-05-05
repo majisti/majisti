@@ -7,5 +7,7 @@
     
     <title>Majisti\Controller</title>
     
+    <xi:include href="controller/actionHelpers.xml" />
     <xi:include href="controller/dispatcher.xml" />
+    <xi:include href="controller/plugins.xml" />
 </chapter>

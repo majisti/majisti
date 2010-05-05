@@ -6,7 +6,7 @@ namespace Majisti;
  * @desc The core view class adding more behaviour to the traditional
  * {@link \Zend_View} by providing the underscore function for traduction and
  * the support for multiple fallback directories for view scripts (according
- * to the standard dispatcher).
+ * to the multiple dispatcher).
  *
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
@@ -82,13 +82,17 @@ class View extends \Zend_View
 
             /* fallback to the dispatcher's controller directories */
             if( null !== $request &&
-                $dispatcher instanceof \Majisti\Controller\Dispatcher\IDispatcher ) {
-                $fallbacks = $dispatcher->getFallbackControllerDirectory($request->getModuleName());
-                
+                $dispatcher instanceof \Majisti\Controller\Dispatcher\IDispatcher )
+            {
+                $fallbacks = $dispatcher->getFallbackControllerDirectory(
+                    $request->getModuleName());
+
                 if( null !== $fallbacks ) {
                     foreach ($fallbacks as $fallback) {
-                        //FIXME: check if views/scripts should be the way to go
-                        $script = realpath($fallback . '/../views/scripts/' . $name);
+                        $path       = $fallback[1];
+
+                        $script = realpath($path
+                            . '/../views/scripts/' . $name);
                         if( is_readable($script) ) {
                             return $script;
                         }

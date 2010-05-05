@@ -19,7 +19,8 @@ class AllTests extends Test\PHPUnit\TestSuite
         $suite->addTest(Util\AllTests::suite());
         $suite->addTest(View\AllTests::suite());
 
-//        $suite->addTestSuite(__NAMESPACE__ . '\ViewTest');
+        $suite->addTestSuite(__NAMESPACE__ . '\ApplicationTest');
+        $suite->addTestSuite(__NAMESPACE__ . '\ViewTest');
 
         return $suite;
     }
