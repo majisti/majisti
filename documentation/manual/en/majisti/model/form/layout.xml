@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en"
+    xml:id="majisti.model.form.layout" version="5.0">
+    
+    <title>Layout</title>
+    
+    <para>
+        <classname>Layout</classname> provides a very flexible way of customizing the appearance of
+        forms. Clipped on a Majisti Form, a <classname>Layout</classname> object will redesign how a
+        form's elements are positionned. A concrete layout class needs to implement the ILayout
+        interface, defining the functions <code>visitForm</code> and <code>visitElement</code>. The
+            <code>visitForm</code> function customizes the appearance of every form elements and
+        receives a <classname>Zend_Form</classname> to visit, as opposed to
+            <code>visitElement</code> whom customizes a single form element, thus receiving a
+            <classname>Zend_Form_Element</classname>.</para>
+    
+    <xi:include href="layout/table.xml"/>
+</section>
