@@ -11,6 +11,15 @@ namespace Majisti\Util\Model\Aggregator;
  */
 interface IView
 {
+    /**
+     * @desc Returns the view.
+     * @return \Zend_View The view
+     */
     public function getView();
+
+    /**
+     * @desc Sets the view.
+     * @param Zend_View_Interface $view The view
+     */
     public function setView(\Zend_View_Interface $view);
 }
