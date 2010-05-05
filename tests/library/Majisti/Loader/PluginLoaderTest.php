@@ -21,11 +21,16 @@ class PluginLoaderTest extends \Majisti\Test\PHPUnit\TestCase
     public function setUp()
     {
         $pluginLoader = new PluginLoader();
-        $pluginLoader->addPrefixPath('Majisti\Loader', 'Majisti/Loader/_classes');
-        $pluginLoader->addPrefixPath('Majisti\Loader', 'Majisti/Loader/_classes2');
-        $pluginLoader->addPrefixPath('OutOfScopeNamespace\\', 'Majisti/Loader/_classes2');
-        $pluginLoader->addPrefixPath('Majisti\Application\Resource', 'Majisti/Application/Resource');
-        $pluginLoader->addPrefixPath('Zend_View_Helper', 'Zend/View/Helper');
+        $pluginLoader->addPrefixPath('Majisti\Loader',
+            'Majisti/Loader/_classes');
+        $pluginLoader->addPrefixPath('Majisti\Loader',
+            'Majisti/Loader/_classes2');
+        $pluginLoader->addPrefixPath('OutOfScopeNamespace\\',
+            'Majisti/Loader/_classes2');
+        $pluginLoader->addPrefixPath('Majisti\Application\Resource',
+            'Majisti/Application/Resource');
+        $pluginLoader->addPrefixPath('Zend_View_Helper',
+            'Zend/View/Helper');
         
         $this->_pluginLoader = $pluginLoader;
     }
