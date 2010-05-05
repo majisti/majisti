@@ -26,8 +26,10 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function setUp()
     {
+        $this->markTestIncomplete();
+
         /* setting up request object */
-        $this->_request = new \Zend_Controller_Request_HTTP();
+        $this->_request = new \Zend_Controller_Request_Http();
         $this->_request->setActionName('fooAction');
         $this->_request->setControllerName('barController');
         $this->_request->setModuleName('bazModule');
@@ -35,7 +37,8 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
         /* setting up locale session */
         $this->_localeSession = \Majisti\I18n\LocaleSession::getInstance();
 
-        /* TODO: Refactor I18n class to provide addLocale(), removeLocale()
+        /*
+         * TODO: Refactor I18n class to provide addLocale(), removeLocale()
          * and setConfig().
          */
         $this->_i18n = new I18n();
@@ -57,7 +60,6 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
         $this->_i18n->preDispatch();
 
         /* TODO: assert that locale has been switched to 'fr' */
-
         $this->markTestIncomplete();
     }
 
