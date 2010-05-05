@@ -8,6 +8,6 @@
     <para>Model is an action helper meant to supply controllers with Majisti's
         models container, wich is stored in the
             <classname>Zend_Registry</classname>. The return value is an object
-        of type &lt;<classname>ModelContainer</classname>.</para>
+        of type <classname>ModelContainer</classname>.</para>
 
 </section>
