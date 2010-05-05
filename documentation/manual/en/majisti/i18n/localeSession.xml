@@ -8,10 +8,10 @@
     
     <title>Locale Session</title>
 
-    <para>The &lt;<classname>LocaleSession</classname> class provides a variety
-        of functions meant to ease the management a multilingual application.
-        It allows automatic handling of the application's supported languages
-        with the help of a &lt;<classname>Zend_Session_Namespace</classname>. </para>
+    <para>The <classname>LocaleSession</classname> class provides a variety of functions meant to
+        ease the management of a multilingual application. It allows automatic handling of the
+        application's supported languages with the help of a
+            <classname>Zend_Session_Namespace</classname>. </para>
     <para>With a locale session object, it is possible to know the current
         locale of an application, the default locale, all the supported
         locales, if a locale is supported, etc. It also provides behaviours to
@@ -34,8 +34,8 @@ plugins.i18n.supportedLocales[] = ch</programlisting></para>
         default locale and the supported locales are two different concepts.
         The supported locales do not include the default one. Think of them as
         "other than the default one" supported locales.</para>
-    <para>To define the default locale of you application, the configuration
-        setting is quite similar to the one of defining the supported locales.
-        All there is to do is add the following line in the configuration
-        file:<programlisting>plugins.i18n.defaultLocale = fr</programlisting></para>
+    <para>To define the default locale of your application, the configuration setting is quite
+        similar to the one of defining the supported locales. All there is to do is put the
+        following line in the configuration
+        :<programlisting>plugins.i18n.defaultLocale = fr</programlisting></para>
 </section>
