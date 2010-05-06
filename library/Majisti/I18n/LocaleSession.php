@@ -219,13 +219,39 @@ class LocaleSession implements ILocale
 
     /**
      * @desc Returns whether the given local is supported by this application.
-     *
-     * @param String $locale The locale abbreviation following the
+     *t
+     * @param Sring $locale The locale abbreviation following the
      * configuration's syntax
      * @return bool True if this locale is supported.
      */
     public function isLocaleSupported($locale)
     {
     	return false !== array_search($locale, $this->getLocales());
+    }
+
+    /**
+     *
+     */
+    public function addSupportedLocale($locale)
+    {
+        if( !$this->isLocaleSupported($locale) ) {
+            $this->_session->locales[] = $locale;
+        }
+    }
+
+    /**
+     *
+     */
+    public function removeSupportedLocale($locale)
+    {
+        if( $this->isLocaleSupported($locale) ) {
+            if( $locale === $this->getCurrentLocale() ) {
+                $this->switchLocale($this->getDefaultLocale());
+            }
+
+            if( $key = array_search($locale) != false ) {
+               unset($this->_session->locales[$key]);
+            }
+        }
     }
 }
