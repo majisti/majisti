@@ -11,6 +11,11 @@ namespace Majisti\Application\Resource;
 class Dispatcher extends \Zend_Application_Resource_ResourceAbstract
 {
     /**
+     * @var \Majisti\Controller\Dispatcher\Multiple 
+     */
+    protected $_dispatcher;
+
+    /**
      * @desc Inits the standard dispatcher that supports multiple controller
      * directories for a single module and PHP namespaces.
      *
@@ -30,15 +35,42 @@ class Dispatcher extends \Zend_Application_Resource_ResourceAbstract
      */
     public function getDispatcher()
     {
-        $this->_bootstrap->bootstrap('FrontController');
-        $front = $this->_bootstrap->getResource('FrontController');
-        
-        $dispatcher = new \Majisti\Controller\Dispatcher\Multiple();
-        $dispatcher->setControllerDirectory($front->getControllerDirectory());
-        $dispatcher->addFallbackControllerDirectory('\MajistiX\Modules',
-           MAJISTIX_MODULES . '/default/controllers');
-        $front->setDispatcher($dispatcher);
+        if( null === $this->_dispatcher ) {
+            $this->_bootstrap->bootstrap('FrontController');
+            $front = $this->_bootstrap->getResource('FrontController');
 
-        return $dispatcher;
+            $dispatcher = new \Majisti\Controller\Dispatcher\Multiple();
+            $dispatcher->setControllerDirectory($front->getControllerDirectory());
+            $front->setDispatcher($dispatcher);
+
+            $this->_dispatcher = $dispatcher;
+
+            $this->resolveFallbacks();
+        }
+
+        return $this->_dispatcher;
+    }
+
+    /**
+     * @desc Resolves any fallback added in the configuration and adds it
+     * to the dispatcher.
+     */
+    protected function resolveFallbacks()
+    {
+        $dispatcher = $this->getDispatcher();
+        $selector   = new \Majisti\Config\Selector(
+            new \Zend_Config($this->getOptions()));
+
+        /* add the fallbacks */
+        if( $fallbacks = $selector->find('fallback', false) ) {
+            foreach ($fallbacks as $module => $fallback) {
+                $fallback = $fallback->toArray();
+                $namespace = current($fallback);
+                $path      = key($fallback);
+
+                $dispatcher->addFallbackControllerDirectory(
+                    $namespace, $path, $module);
+            }
+        }
     }
 }

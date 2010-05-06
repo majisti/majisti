@@ -10,13 +10,13 @@ class AllTests extends \Majisti\Test\PHPUnit\TestSuite
     {
         $suite = new self('Majisti Framework - Application - Resource - All tests');
         
-        $suite->addTestSuite(__NAMESPACE__ . '\ConfighandlerTest');
-        $suite->addTestSuite(__NAMESPACE__ . '\DispatcherTest');
-        $suite->addTestSuite(__NAMESPACE__ . '\ExtensionsTest');
-        $suite->addTestSuite(__NAMESPACE__ . '\I18nTest');
-        $suite->addTestSuite(__NAMESPACE__ . '\LayoutTest');
-        $suite->addTestSuite(__NAMESPACE__ . '\ModelcontainerTest');
-        $suite->addTestSuite(__NAMESPACE__ . '\ViewTest');
+        $suite->addTestCase(__NAMESPACE__ . '\ConfighandlerTest');
+        $suite->addTestCase(__NAMESPACE__ . '\DispatcherTest');
+        $suite->addTestCase(__NAMESPACE__ . '\ExtensionsTest');
+        $suite->addTestCase(__NAMESPACE__ . '\I18nTest');
+        $suite->addTestCase(__NAMESPACE__ . '\LayoutTest');
+        $suite->addTestCase(__NAMESPACE__ . '\ModelcontainerTest');
+        $suite->addTestCase(__NAMESPACE__ . '\ViewTest');
         
         return $suite;
     }
