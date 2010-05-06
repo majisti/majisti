@@ -48,7 +48,7 @@ class Message extends \Zend_Mail
     /**
      * @desc Overriding \Zend_Mail send function to set the body type
      * accordingly to the local body object.
-     * @param <type> $transport
+     * @param \Zend_Mail_Transport_Abstract $transport
      */
     public function send($transport = null)
     {
