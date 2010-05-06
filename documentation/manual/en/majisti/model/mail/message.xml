@@ -6,8 +6,43 @@
     
     <title>Message</title>
     
+    <para> Message model extending <classname>Zend_Mail</classname> to offer the developper a more
+        object-oriented way of populating a message's body. The body is now built with a body object
+        of type IBodyObject. This way, the message body becomes more flexible, only relying on the
+        getBody() function, wich can be called by numerous different objects to return multiple
+        message templates.  All you have to do to set a message's body is to call the
+            <code>setBodyObject()</code> function while providing any instance of
+            <classname>IBodyObject</classname>.</para>
     <para>
-        TODO
+        <example>
+            <title>Basic usage of the Message class</title>
+            <para> Here is a rather complete example of how you may use the
+                    <classname>Message</classname>
+                class:<programlisting>/* partial view */
+$this->view = new \Majisti\View();
+$this->view->addScriptPath(dirname(__FILE__) . '/_partials');
+
+/* model used in partial */                                                                   
+$this->model = new \StdClass();
+$this->model->name = 'Majisti';
+
+/* body partial used to populate message body */                                                                   
+$this->bodyPartial = new BodyPartial('simple.phtml', $this->view, $this->model);
+
+/* creating message object */
+$this->message = new Message();
+$this->message->setBodyObject($this->bodyPartial());
+
+/* sending mail */
+$this->message->send(new \Zend_Mail_Transport_Sendmail());</programlisting></para>
+            <para>When the <code>send()</code> function is called, the body is retrieved using
+                    <code>$this->getBodyObject()</code>. If the function detects that the body
+                object contains HTML tags, it will use it's parent function
+                    <code>setBodyHtml($object->getBody())</code>, else it will call
+                    <code>setBodyText($object->getBody())</code>. Finally, the static function
+                    <code>parrent::send()</code> is invoked and the message will be
+                delivered.</para>
+        </example>
     </para>
     
 </section>

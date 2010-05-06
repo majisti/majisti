@@ -16,22 +16,22 @@ class XmlTest extends \Majisti\Test\PHPUnit\TestCase
     /**
      * @var Xml
      */
-    public $xml;
+    protected $_xml;
 
     /**
      * @var string
      */
-    public $xmlPath;
+    protected $_xmlPath;
 
     /**
      * @var bool
      */
-    public $useBBCodeMarkup;
+    protected $_useBBCodeMarkup;
 
     /**
      * @var \Majisti\Util\Collection\Stack
      */
-    public $markupStack;
+    protected $_markupStack;
 
     /**
      * @desc Setups the test case
@@ -51,14 +51,14 @@ class XmlTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function testPushMarkup()
     {
-       $this->assertEquals(1, $this->markupStack->count());
-       $this->assertTrue($this->markupStack->peek()->getParser() instanceof
+       $this->assertEquals(1, $this->_markupStack->count());
+       $this->assertTrue($this->_markupStack->peek()->getParser() instanceof
                                                \Zend_Markup_Parser_Bbcode);
 
-       $this->xml->pushMarkup('Textile');
-       $this->assertEquals(2, $this->markupStack->count());
+       $this->_xml->pushMarkup('Textile');
+       $this->assertEquals(2, $this->_markupStack->count());
 
-       $renderer = $this->markupStack->peek();
+       $renderer = $this->_markupStack->peek();
        $this->assertTrue($renderer->getParser() instanceof
                                                 \Zend_Markup_Parser_Textile);
     }
@@ -68,8 +68,8 @@ class XmlTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function testClearMarkupStack()
     {
-        $this->xml->clearMarkups();
-        $this->assertEquals(0, $this->markupStack->count());
+        $this->_xml->clearMarkups();
+        $this->assertEquals(0, $this->_markupStack->count());
     }
 
     /**
@@ -78,10 +78,10 @@ class XmlTest extends \Majisti\Test\PHPUnit\TestCase
     public function testIfBBcodeMarkupValue()
     {
         /* Default and current one is true */
-       $this->assertTrue($this->xml->isBBCodeMarkupUsed());
+       $this->assertTrue($this->_xml->isBBCodeMarkupUsed());
 
-       $this->xml->setBBCodeMarkupUsed(false);
-       $this->assertFalse($this->xml->isBBCodeMarkupUsed());
+       $this->_xml->setBBCodeMarkupUsed(false);
+       $this->assertFalse($this->_xml->isBBCodeMarkupUsed());
     }
 
     /**
@@ -89,10 +89,10 @@ class XmlTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function testXmlPathGettersAndSetters()
     {
-        $this->assertEquals($this->xmlPath, $this->xml->getXmlPath());
+        $this->assertEquals($this->_xmlPath, $this->_xml->getXmlPath());
 
-        $this->xml->setXmlPath('XmlTesting');
-        $this->assertEquals('XmlTesting', $this->xml->getXmlPath());
+        $this->_xml->setXmlPath('XmlTesting');
+        $this->assertEquals('XmlTesting', $this->_xml->getXmlPath());
     }
 
     /**
@@ -101,18 +101,19 @@ class XmlTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function testThatGetDataWorksWithCurrentLocale()
     {
-        $data = $this->xml->getData();
-        $this->assertEquals('en', $data->getSectionName());
+        $locale = LocaleSession::getInstance();
+        $locale->switchLocale('en');
+
+        $data = $this->_xml->getData();
+        $this->assertTrue($data->getSectionName() == 'en');
         $this->assertTrue($data->readOnly());
 
-        $locale = LocaleSession::getInstance();
+        $locale->addSupportedLocale('fr');
+        $locale->switchLocale('fr');
 
-        /*
-         * TODO: Once LocaleSession is refactored and offers the possibility
-         * to manually add supported locale, add 'fr' as a supported locale
-         * and make it current. Assert that sectionName will be fr IN A NEW TEST.
-         *
-         */
+        $data = $this->_xml->getData();
+        $this->assertEquals('fr', $data->getSectionName());
+
         $this->markTestIncomplete('Waiting for LocaleSession refactor');
     }
 

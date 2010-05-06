@@ -28,13 +28,14 @@ class BodyPartial extends \Majisti\Util\Model\Aggregator\View
      * is provided, the registered Zend_View will be taken from
      * the Zend_Registry, if any.
      *
-     * @param $partialName The partial name, the view should be able too call
+     * @param $partialName The partial name, the view should be able to call
      *  the script.
      * @param $view The view
      * @param $model The model that will be given to the partial view
      * when {@link BodyPartial::getBody()} is called
      */
-    public function __construct($partialName, \Zend_View_Interface $view = null, $model = null)
+    public function __construct($partialName, \Zend_View_Interface $view = null,
+            $model = null)
     {
         $this->setPartialName($partialName);
 
