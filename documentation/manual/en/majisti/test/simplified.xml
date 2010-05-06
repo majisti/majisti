@@ -1,14 +1,144 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<section 
-    xmlns="http://docbook.org/ns/docbook" 
+<section xmlns="http://docbook.org/ns/docbook"
     xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:xi="http://www.w3.org/2001/XInclude" 
-    xml:lang="en" xml:id="majisti.test.simplified" 
-    version="5.0">
-    
-    <title>Running a Test In a Simplified Way</title>
+    xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en"
+    xml:id="majisti.test.simplified" version="5.0">
+    <title>Running Tests In a Simplified Way</title>
+    <para xlink:href="http://www.phpunit.de/">Majisti makes use of the well
+        known testing library PHPUnit from Sebastian Bergmann and uses it for
+        its entire library. Since testing is not only reserved for framework
+        developers, but should be used in website application as well, we
+        provide what we have minimally added to make runnable tests out of the fly.<example>
+            <title>Creating tests</title>
+            <para>Majisti makes use of PHP5.3 <link
+                    xlink:href="http://php.net/manual/en/language.oop5.late-static-bindings.php"
+                    >late static binding</link> to make sure test cases
+                creation are as minimalist as possible.</para>
+        </example><programlisting>&lt;?php
+namespace MyApplication\AComponent;
 
-    <para>
-        Lorem ipsum dolor sit amer
-    </para>
+require_once 'TestHelper.php';
+
+class ComponentXTest extends \Majisti\Test\PHPUnit\TestCase
+{
+    static protected $_class = __CLASS__;
+
+    //procede with setUp functions and tests
+}
+
+ComponentXTest::runAlone();</programlisting></para>
+    <para>The <methodname>runAlone</methodname> function lets you run the unit
+        test straight on, without having to boostrap anything. In the case
+        where the test case would be included in a test suite, you would do the
+        following:<programlisting>&lt;?php
+namespace MyApplication\AComponent;
+
+require_once 'TestHelper.php';
+
+class AllTests extends \Majisti\Test\PHPUnit\TestSuite
+{
+    public static function suite()
+    {
+        $suite = new self('My Application - AComponent - All tests');
+
+        $suite->addTestCase(__NAMESPACE__ . '\ComponentXTest');
+
+        //ComponentY and ComponentZ being two subspaces
+        $suite->addTestSuite(ComponentY\AllTests::suite());
+        $suite->addTestSuite(ComponentZ\AllTests::suite());        
+
+        return $suite;
+    }
+}
+
+AllTests::runAlone();
+</programlisting></para>
+    <para>The last thing you need is a test helper. One easy thing is to place
+        that test helper within the root of your tests. Every tests can just
+            <methodname>require_once 'TestHelper.php'</methodname> without
+        specifying a complete path. You just put a <filename>TestHelper.php
+        </filename>on every folder where there is a
+            <filename>AllTests.php</filename>.</para>
+    <programlisting>tests/
+  AllTests.php
+  TestHelper.php
+  MyApplication/
+    AllTests.php
+    ComponentXTest.php
+    TestHelper.php
+    ComponentX/
+  ...</programlisting>
+    <programlisting>Every subsequent test helpers can just fallback to the previous one contained in its
+parent directory like this:</programlisting>
+    <programlisting>&lt;?php
+
+/* fallsback to parent test helper */
+require_once dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'TestHelper.php';</programlisting>
+    <programlisting>Here is a recommended root test helper to help you init your tests using Majisti and Zend:</programlisting>
+    <programlisting>&lt;?php
+
+/**
+ * @desc This file should be included once with every TestCase.
+ *
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ */
+
+/* disable xdebug */
+if( extension_loaded('xdebug') ) {
+    xdebug_disable();
+}
+
+/* set error reporting to the level to which the code must comply. */
+error_reporting( E_ALL | E_STRICT );
+
+/* set include paths */
+$majistiRoot = /path/to/majisti
+$includePaths = array(
+    $majistiRoot,
+    "$majistiRoot/externals",
+    "$majistiRoot/library",
+    "$majistiRoot/tests",
+    "$majistiRoot/tests/externals",
+    "$majistiRoot/tests/library",
+    get_include_path()
+);
+
+set_include_path(implode(PATH_SEPARATOR, $includePaths));
+
+/* include PHPUnit dependencies */
+$dependencies = array('Framework', 'Framework/IncompleteTestError',
+                      'Framework/TestCase', 'Framework/TestSuite',
+                      'Runner/Version', 'TextUI/TestRunner', 'Util/Filter');
+
+foreach ($dependencies as $dependency) {
+    require_once 'PHPUnit/' . $dependency . '.php';
+}
+
+/* autoloaders */
+require_once 'Zend/Loader/Autoloader.php';
+$loader = Zend_Loader_Autoloader::getInstance();
+
+require_once 'Majisti/Loader/Autoloader.php';
+$loader->pushAutoloader(new \Majisti\Loader\Autoloader());
+
+/* code coverage filtering */
+PHPUnit_Util_Filter::addDirectoryToFilter(...); //if you are using code coverage
+
+foreach (array('php', 'phtml') as $suffix) {
+    PHPUnit_Util_Filter::addDirectoryToFilter(...); //filter any directory from coverage
+}
+
+/* be a little bit more verbose according to request param */
+$request = new \Zend_Controller_Request_Http();
+if( $request->has('verbose') || $request->has('v') ) {
+    \Majisti\Test\PHPUnit\Runner::setDefaultArguments(array(
+        'printer' => new \Majisti\Test\PHPUnit\Listener\Simple\Html(null, true)
+    ));
+}
+
+\Zend_Session::$_unitTestEnabled = true;
+
+unset($dependencies, $majistiRoot, $loader, $includePaths, $request);
+</programlisting>
 </section>
