@@ -4,6 +4,12 @@ namespace Majisti\Test\PHPUnit\Listener\Simple;
 
 use Majisti\Test\PHPUnit;
 
+/**
+ * @desc Html listener that outputs colors. This listener is used by default
+ * by Majisti when running test via the browser.
+ *
+ * @author Majisti
+ */
 class Html extends PHPUnit\DefaultListener
 {
     public function __construct($out = null, $verbose = false, $debug = false)

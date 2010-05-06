@@ -4,6 +4,10 @@ namespace Majisti\Test\PHPUnit\Listener\Simple;
 
 use Majisti\Test\PHPUnit;
 
+/**
+ * @desc Text listener. Used by default by Majisti when running
+ * a test within the console (CLI).
+ */
 class Text extends PHPUnit\DefaultListener
 {
     public function __construct($out = null, $verbose = false, $debug = false)

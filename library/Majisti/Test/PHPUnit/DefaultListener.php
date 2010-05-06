@@ -2,6 +2,11 @@
 
 namespace Majisti\Test\PHPUnit;
 
+/**
+ * @desc Default listener for Majisti. Writes timer with miliseconds.
+ *
+ * @author Majisti
+ */
 class DefaultListener extends \PHPUnit_TextUI_ResultPrinter
 {
     /**

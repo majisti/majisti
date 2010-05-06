@@ -2,6 +2,11 @@
 
 namespace Majisti\Test\PHPUnit\Util;
 
+/**
+ * @desc Outputs a better stack trace for unit tests.
+ *
+ * @author Majisti
+ */
 class Filter extends \PHPUnit_Util_Filter
 {
     /**

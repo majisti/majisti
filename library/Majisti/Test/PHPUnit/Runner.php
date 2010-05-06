@@ -2,10 +2,23 @@
 
 namespace Majisti\Test\PHPUnit;
 
+/**
+ * @desc Runner class for Majisti. Uses the Html listener within a browser
+ * and the Text listener within the CLI.
+ *
+ * @author Majisti
+ */
 class Runner extends \PHPUnit_TextUi_TestRunner
 {
     protected static $_defaultArguments;
-    
+
+    /**
+     * @desc Returns an array of arguments. The default listener will be
+     * set according to wheter the test is running within a browser of if
+     * it is running within the CLI.
+     *
+     * @return array The arguments
+     */
     static public function getDefaultArguments()
     {
         if( null === static::$_defaultArguments ) {
@@ -18,8 +31,13 @@ class Runner extends \PHPUnit_TextUi_TestRunner
         
         return self::$_defaultArguments; 
     }
-    
-    static public function setDefaultArguments($arguments)
+
+    /**
+     * @desc Sets the default arguments for the runner.
+     *
+     * @param array $arguments The arguments
+     */
+    static public function setDefaultArguments(array $arguments)
     {
         self::$_defaultArguments = $arguments;
     }
