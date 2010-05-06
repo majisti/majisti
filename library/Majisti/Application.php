@@ -32,7 +32,7 @@ class Application
         Application\Constants::defineConstants($applicationPath);
 
         /* setup config and call parent */
-        $config = $this->_loadConfiguration();
+        $config = $this->loadConfiguration();
         \Zend_Registry::set('Majisti_Config', $config);
 
         $application = new \Zend_Application(APPLICATION_ENVIRONMENT, $config);
@@ -57,7 +57,7 @@ class Application
      *
      * @return \Zend_Config
      */
-    protected function _loadConfiguration()
+    protected function loadConfiguration()
     {
         $defaultConfig = new \Zend_Config_Ini( dirname(__FILE__) .
             '/Application/Configs/core.ini', APPLICATION_ENVIRONMENT, true);

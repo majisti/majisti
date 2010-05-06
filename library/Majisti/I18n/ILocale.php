@@ -12,7 +12,7 @@ namespace Majisti\I18n;
 interface ILocale
 {
 	/**
-     * @desc Flushes all I18n persistence and puts back defaults.
+     * @desc Flushes all I18n persistence and puts back default locale.
      * @return \Majisti\I18n\ILocale this
      */
     public function reset();

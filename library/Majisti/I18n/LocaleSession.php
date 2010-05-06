@@ -16,8 +16,11 @@ class LocaleSession implements ILocale
 {
     /**
      * @var \Zend_Session_Namespace
+     * @param string defaultLocale The default locale
+     * @param string currentLocale The current locale
+     * @param array  availableLocales The supported locales
      */
-    protected $_session;
+    protected $_locales;
 
     /**
      * @var LocaleSession
@@ -27,14 +30,11 @@ class LocaleSession implements ILocale
     /**
      * @desc Constructs a new Internationalisation object which will handle
      * the locale through \Zend_Locale automatically using the session.
-     *
-     * Based on the application's configuration,
-     * it will populate the supported locales.
      */
     protected function __construct()
     {
-    	$this->_session = new \Zend_Session_Namespace('Majisti_I18n', true);
-    	$this->reset();
+    	$this->_locales = new \Zend_Session_Namespace('Majisti_Locale', true);
+        $this->init();
     }
 
     /**
@@ -51,83 +51,47 @@ class LocaleSession implements ILocale
         return static::$_instance;
     }
 
-	/**
-     * @desc Flushes all I18n persistence and puts back defaults.
-     * @return \Majisti\I18n\LocaleSession this
+    /**
+     * @desc Flushes the I18n persistence.
      */
     public function reset()
     {
-    	$session 	= $this->_session;
-    	$config 	= \Zend_Registry::get('Majisti_Config');
+        $this->setCurrentLocale($this->getDefaultLocale());
+    }
 
-    	if( !(isset($session->locales) && isset($session->defaultLocale)) ) {
-    	    $selector = new \Majisti\Config\Selector($config);
+    public function setCurrentLocale($locale)
+    {
+        $this->_locales->current = $locale;
+    }
 
-    	    $defaultLocale     = $selector->find('plugins.i18n.defaultLocale',
-                'en');
-            $currentLocale     = $selector->find('plugins.i18n.currentLocale',
-                $defaultLocale);
-            $supportedLocales  = $selector->find('plugins.i18n.supportedLocales',
-                new \Zend_Config(array()))->toArray();
-
-    	    $session->unlock();
-
-    	    $session->defaultLocale = $session->currentLocale = $defaultLocale;
-            $session->locales       = $supportedLocales;
-
-            $this->_registerLocales($config);
-            $this->_registerLocaleObject();
-
-            $session->lock();
-    	}
-
-        return $this;
+    protected function isSessionActive()
+    {
+        return isset($this->_locales->current);
     }
 
     /**
-     * @desc Registers the current locale within a Zend_Locale object.
-     *
-     * In any case, a \Zend_Locale will be available is the registry
-     * under the Zend_Locale key
+     * @desc
      */
-    protected function _registerLocaleObject()
+    protected function init()
     {
-    	$currentLocale = $this->getCurrentLocale();
-        \Zend_Locale::setDefault($currentLocale);
-        \Zend_Registry::set('Zend_Locale', new \Zend_Locale($currentLocale));
-    }
-
-    /**
-     * @desc Registers the default locale among with all the supported locales
-     * defined by the application's configuration. The default locale will
-     * always be the first element in the array returned by getLocales().
-     */
-    protected function _registerLocales(\Zend_Config $config)
-    {
-        $selector = new \Majisti\Config\Selector($config);
-
-        $defaultLocale = $selector->find('defaultLocale', 'en');
-
-    	$this->_session->defaultLocale = $defaultLocale;
-
-    	if( $supportedLocales = $selector->find('supportedLocales', false) ) {
-    		$this->_session->locales = $supportedLocales->toArray();
-    	}
-
-    	array_unshift($this->_session->locales, $defaultLocale);
+        if( $this->isSessionActive() ) {
+            if( !array_search($this->getCurrentLocale(), $this->getLocales()) ) {
+                $this->switchLocale($this->getDefaultLocale());
+            }
+        }
     }
 
     /**
      * @desc Returns the current locale.
      * The current locale persists through the session.
      *
-     * @return String The current locale
+     * @return \Zend_Locale The current locale
      *
      * @see switchLocale() To switch the current locale
      */
     public function getCurrentLocale()
     {
-        return $this->_session->currentLocale;
+        return $this->_locales->current;
     }
 
     /**
@@ -136,31 +100,20 @@ class LocaleSession implements ILocale
      */
     public function getDefaultLocale()
     {
-    	return $this->_session->defaultLocale;
+    	return $this->_locales->default;
     }
 
     /**
-     * @desc Returns all the supported locales including the default locale
-     * defined by the application's configuration. The default locale
-     * is always the first element of the array.
+     * @desc Returns all the available locales including the default locale
+     * supported by this application.
      *
-     * @return Array All the supported locales, exclusing the default locale
+     * TODO: support exclude default
+     *
+     * @return Array All the supported locales, including the default locale
      */
-    public function getLocales()
+    public function getLocales($excludeDefault = false)
     {
-    	return $this->_session->locales;
-    }
-
-    /**
-     * @desc Returns only the supported locale as an array, omitting
-     * the default locale
-     * @return Array All the supported locales, excluding the default locale
-     */
-    public function getSupportedLocales()
-    {
-    	$locales = $this->getLocales();
-    	array_shift($locales);
-    	return $locales;
+        return $this->_locales->available;
     }
 
     /**
@@ -171,50 +124,30 @@ class LocaleSession implements ILocale
      */
     public function isCurrentLocaleDefault()
     {
-        return $this->getCurrentLocale() === $this->getDefaultLocale();
+        return $this->getCurrentLocale()->equals($this->getDefaultLocale());
     }
 
     /**
      * @desc Toggles between the registered locales. Switching is circular,
      * meaning that switching between the languages will never come to an end.
      *
-     * @param String $locale (optionnal def=null) Directly switch to that locale
-     * and sets the pointer to that locale. An abbreviation must be passed
-     * (ex: fr, fr_CA) depending on what was setup in the configuration.
+     * @param \Zend_Locale $locale Directly switch to that locale
+     * and sets the pointer to that locale. 
      *
      * @throws Exception If the locale given is not supported by
      * this application.
      *
-     * @return The next locale or the given locale if it was passed
-     * as parameter.
+     * @return LocaleSession this
      */
-    public function switchLocale($locale = null)
+    public function switchLocale(\Zend_Locale $locale)
     {
-    	$session = $this->_session;
-    	$locales = $this->getLocales();
-
-    	$localeToSearch = null === $locale
-    		? $this->getCurrentLocale()
-    		: $locale;
-
-    	$key = array_search($localeToSearch, $locales);
-
-		if( false === $key ) {
-			throw new Exception("Locale {$localeToSearch} is
+        if( !$this->isLocaleSupported($locale) ) {
+			throw new Exception("Locale $locale is
 				not supported by this application");
-		}
+        }
 
-		if( null === $locale ) {
-			$key = $key + 1 >= count($locales)
-				? 0
-				: $key + 1;
-		}
-
-		$session->unlock();
-		$session->currentLocale = $locales[$key];
-		$session->lock();
-
-		return $session->currentLocale;
+        $this->setCurrentLocale($locale);
+        return $this;
     }
 
     /**
@@ -224,9 +157,15 @@ class LocaleSession implements ILocale
      * configuration's syntax
      * @return bool True if this locale is supported.
      */
-    public function isLocaleSupported($locale)
+    public function isLocaleSupported(\Zend_Locale $locale)
     {
-    	return false !== array_search($locale, $this->getLocales());
+        foreach ($this->getLocales() as $loc) {
+            if( $locale->equals($loc) ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -235,7 +174,7 @@ class LocaleSession implements ILocale
     public function addSupportedLocale($locale)
     {
         if( !$this->isLocaleSupported($locale) ) {
-            $this->_session->locales[] = $locale;
+            $this->_locales->locales[] = $locale;
         }
     }
 
@@ -249,9 +188,19 @@ class LocaleSession implements ILocale
                 $this->switchLocale($this->getDefaultLocale());
             }
 
-            if( $key = array_search($locale) != false ) {
-               unset($this->_session->locales[$key]);
+            if( !($key = array_search($locale, $this->getLocales())) ) {
+               unset($this->_locales->locales[$key]);
             }
         }
+    }
+
+    public function toString()
+    {
+        return $this->getCurrentLocale()->toString();
+    }
+
+    public function __toString()
+    {
+        return $this->toString();
     }
 }
