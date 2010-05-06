@@ -22,7 +22,7 @@ class AllTests extends \Majisti\Test\PHPUnit\TestSuite
     {
         $suite = new self('Majisti Framework - Controller - Plugin - All tests');
         
-        $suite->addTestSuite(__NAMESPACE__ . '\I18nTest');
+        $suite->addTestCase(__NAMESPACE__ . '\I18nTest');
         
         return $suite;
     }

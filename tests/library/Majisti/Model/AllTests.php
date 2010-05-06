@@ -9,11 +9,10 @@ class AllTests extends \Majisti\Test\PHPUnit\TestSuite
     {
         $suite = new self('Majisti Framework - Model - All tests');
 
-//        $suite->addTest(Application\AllTests::suite());
+        $suite->addTestSuite(Data\AllTests::suite());
+        $suite->addTestSuite(Mail\AllTests::suite());
 
-        $suite->addTest(Mail\AllTests::suite());
-
-        $suite->addTestSuite(__NAMESPACE__ . '\ContainerTest');
+        $suite->addTestCase(__NAMESPACE__ . '\ContainerTest');
 
         return $suite;
     }

@@ -9,8 +9,7 @@ class AllTests extends \Majisti\Test\PHPUnit\TestSuite
     {
         $suite = new self('Majisti Framework - Loader - All tests');
         
-        $suite->addTestSuite(__NAMESPACE__ . '\AutoloaderTest');
-//        $suite->addTestSuite(__NAMESPACE__ . '\PluginLoaderTest');
+        $suite->addTestCase(__NAMESPACE__ . '\AutoloaderTest');
         
         return $suite;
     }

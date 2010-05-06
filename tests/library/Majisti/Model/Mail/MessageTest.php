@@ -93,7 +93,7 @@ class MessageTest extends \Majisti\Test\PHPUnit\TestCase
             $this->message->setBodyObject($partial);
             $this->message->send();
 
-            if( $partial->getPartialName() != 'flat.phtml' ) {
+            if( 'flat.phtml' !== $partial->getPartialName() ) {
                 $this->assertEquals($partial->getBody(),
                         $this->message->getBodyHtml()->getContent());
                 $this->assertFalse($this->message->getBodyText());

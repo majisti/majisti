@@ -10,7 +10,7 @@ class AllTests extends \Majisti\Test\PHPUnit\TestSuite
     {
         $suite = new self('Majisti Framework - I18n - All tests');
         
-        $suite->addTestSuite(__NAMESPACE__ . '\LocaleSessionTest');
+        $suite->addTestCase(__NAMESPACE__ . '\LocaleSessionTest');
         
         return $suite;
     }

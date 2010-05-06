@@ -20,8 +20,8 @@ class AllTests extends \Majisti\Test\PHPUnit\TestSuite
     {
         $suite = new self('MajistiP - All tests');
 
-        $suite->addTestSuite(__NAMESPACE__ . '\BodyPartialTest');
-        $suite->addTestSuite(__NAMESPACE__ . '\MessageTest');
+        $suite->addTestCase(__NAMESPACE__ . '\BodyPartialTest');
+        $suite->addTestCase(__NAMESPACE__ . '\MessageTest');
 
         return $suite;
     }

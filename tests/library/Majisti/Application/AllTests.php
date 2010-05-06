@@ -12,9 +12,9 @@ class AllTests extends \Majisti\Test\PHPUnit\TestSuite
         
         $suite->addTest(Resource\AllTests::suite());
         
-        $suite->addTestSuite(__NAMESPACE__ . '\BootstrapTest');
-        $suite->addTestSuite(__NAMESPACE__ . '\ConstantsTest');
-        $suite->addTestSuite(__NAMESPACE__ . '\LoaderTest');
+        $suite->addTestCase(__NAMESPACE__ . '\BootstrapTest');
+        $suite->addTestCase(__NAMESPACE__ . '\ConstantsTest');
+        $suite->addTestCase(__NAMESPACE__ . '\LoaderTest');
         
         return $suite;
     }

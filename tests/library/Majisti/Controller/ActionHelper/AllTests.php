@@ -10,7 +10,7 @@ class AllTests extends \Majisti\Test\PHPUnit\TestSuite
     {
         $suite = new self('Majisti Framework - Controller - ActionHelper - All tests');
         
-        $suite->addTestSuite(__NAMESPACE__ . '\ModelTest');
+        $suite->addTestCase(__NAMESPACE__ . '\ModelTest');
         
         return $suite;
     }
