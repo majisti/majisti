@@ -99,18 +99,19 @@ class XmlTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function testThatGetDataWorksWithCurrentLocale()
     {
+        $locale = LocaleSession::getInstance();
+        $locale->switchLocale('en');
+
         $data = $this->_xml->getData();
         $this->assertTrue($data->getSectionName() == 'en');
         $this->assertTrue($data->readOnly());
 
-        $locale = LocaleSession::getInstance();
+        $locale->addSupportedLocale('fr');
+        $locale->switchLocale('fr');
 
-        /*
-         * TODO: Once LocaleSession is refactored and offers the possibility
-         * to manually add supported locale, add 'fr' as a supported locale
-         * and make it current. Assert that sectionName will be fr IN A NEW TEST.
-         *
-         */
+        $data = $this->_xml->getData();
+        $this->assertEquals('fr', $data->getSectionName());
+
         $this->markTestIncomplete('Waiting for LocaleSession refactor');
     }
 
