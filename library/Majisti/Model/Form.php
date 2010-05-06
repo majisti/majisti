@@ -14,6 +14,7 @@ class Form extends \Zend_Form
     /**
      * @desc Overriding \Zend_Form setLayout function to allow the use
      * of Majisti ILayout objects in the form layout setting process.
+     *
      * @param Form\Layout\ILayout $layout
      */
     public function setLayout(Form\Layout\ILayout $layout)
