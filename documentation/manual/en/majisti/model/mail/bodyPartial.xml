@@ -6,8 +6,65 @@
     
     <title>Body Partial</title>
     
-    <para>
-        TODO
+    <para>The <classname>BodyPartial</classname> class is an implementation of the
+            <classname>IBodyObject</classname> interface that returns the content of a partial
+        script called from a view. Body partial supports the use of models, so one may pass a model
+        when building the object and the model will be passed to the partial view.</para>
+    <para><emphasis role="bold"><emphasis role="underline">Building the body partial
+                object</emphasis></emphasis></para>
+    <para>The <classname>BodyPartial</classname> constructor takes up to three parameters wich are
+        the partial name, an optional <classname>Zend_View_Interface</classname> and an optional
+        model that will be passed to the view upon calling the <code>getBody()</code> function. If
+        no views are supplied to the constructor, the registered <classname>Zend_View</classname>
+        will be taken from the registry, if any. </para>
+    <para>Here are a few example showing how to instanciate a body
+        partial:<programlisting>/* instantiating view object */
+$this->view = new \Majisti\View();
+$this->view->addScriptPath(dirname(__FILE__) . '/_partials');
+
+/* instantiating dummy model */                                                              
+$this->model         = new \StdClass();
+$this->model->name   = 'Majisti';
+
+/* simple HTML body partial built with a specified view */
+$this->bodyPartial             = new BodyPartial('simple.phtml', $this->view);
+
+/* simple HTML body partial built without specifying a view */
+$this->bodyPartialWithoutView  = new BodyPartial('simple.phtml');
+
+/* HTML body partial making use of a model, hence including a model in the constructor */
+$this->bodyPartialWithModel    = new BodyPartial(
+'model.phtml', $this->view, $this->model)
+
+/* flat text body partial. No HTML tags at all. */
+$this->bodyPartialFlatText     = new BodyPartial('flat.phtml')</programlisting></para>
+    <para> Once the object is built, <classname>BodyPartial</classname> offers getters and setters
+        for both the model and the partial name for you to play with. (Using
+            <code>$this->bodyPartial</code> from the above
+        example):<programlisting>$this->bodyPartial->getModel();                //would return null in this context
+$this->bodyPartial->setModel(new \StdClass()); 
+
+$this->bodyPartial->getPartialName();
+$this->bodyPartial->setPartialName();          </programlisting>
     </para>
+    <para><emphasis role="underline"><emphasis role="bold">Fetching the partial's
+            content</emphasis></emphasis></para>
+    <para>Once the object is built and ready for operation, you can grab the partial's data using
+        the <code>getBody()</code> function. Using this function will call the partial from the view
+        provided and return the rendered content. Here is an example of
+        <code>getBody()</code>:</para>
+    <para>Contents of partial file 'model.phtml'
+        :<programlisting>&lt;div>&lt;p>Hello, &lt;?php echo $this->name ?>.&lt;/p>&lt;/div></programlisting></para>
+    <para/>
+    <para>Fetching the partial's rendered
+        data:<programlisting>/* Using the body partial built with a view and a model */
+$data = $this->bodyPartialWithModel->getBody();</programlisting></para>
+    <para> As a reminder, the model's name attribute had been set to 'Majisti' in the first code
+        example. Hence, the output of the file shall be "Hello, Majisti.". A look at
+            <code>$data</code> will confirm
+        this:<programlisting>echo $data;
+
+/* result */
+&lt;div>&lt;p>Hello, Majisti.&lt;/p>&lt;/div></programlisting></para>
     
 </section>
