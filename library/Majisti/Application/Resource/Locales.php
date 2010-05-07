@@ -9,7 +9,7 @@ use \Majisti\I18n\LocaleSession as LocaleSession;
  *
  * @author Majisti
  */
-class Locale extends \Zend_Application_Resource_ResourceAbstract
+class Locales extends \Zend_Application_Resource_ResourceAbstract
 {
     public function init()
     {

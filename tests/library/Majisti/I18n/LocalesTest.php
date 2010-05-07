@@ -11,13 +11,13 @@ require_once 'TestHelper.php';
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-class LocaleSessionTest extends \Majisti\Test\PHPUnit\TestCase
+class LocalesTest extends \Majisti\Test\PHPUnit\TestCase
 {
     static protected $_class = __CLASS__;
     
     /**
-     * @var LocaleSession
-     */ 
+     * @var Locales
+     */
     protected $locale;
     
     /**
@@ -81,8 +81,8 @@ class LocaleSessionTest extends \Majisti\Test\PHPUnit\TestCase
         $this->locales    = array($this->en, $this->fr, $this->es);
         $this->altLocales = array($this->de, $this->it, $this->ca);
 
-        $this->locale = LocaleSession::getInstance();
-        $this->locale->setLocales($locales);
+        $this->locale = Locales::getInstance();
+        $this->locale->setLocales($this->locales);
         $this->locale->reset();
     }
     
@@ -161,13 +161,13 @@ class LocaleSessionTest extends \Majisti\Test\PHPUnit\TestCase
     	
     	$this->_restartSession();
     	
-    	$locale = LocaleSession::getInstance();
+    	$locale = Locales::getInstance();
     	$this->assertEquals($this->fr, $locale->getCurrentLocale());
     	
     	$this->_restartSession();
     	
     	$locale->switchLocale($this->es);
-    	$locale = LocaleSession::getInstance();
+    	$locale = Locales::getInstance();
     	$this->assertEquals($this->es, $locale->getCurrentLocale());
     	
     	$this->_restartSession();
@@ -291,11 +291,11 @@ class LocaleSessionTest extends \Majisti\Test\PHPUnit\TestCase
         $fr     = $this->fr;
         $it     = $this->it;
 
-        $locale->setCurrentLocale($fr);
+        $locale->switchLocale($fr);
         $this->assertEquals($fr, $locale->getCurrentLocale());
 
         /* will throw exception */
-        $locale->setCurrentLocale($it);
+        $locale->switchLocale($it);
     }
 
     /**
@@ -308,13 +308,13 @@ class LocaleSessionTest extends \Majisti\Test\PHPUnit\TestCase
         $fr     = $this->fr;
         $en     = $this->en;
 
-        $locale->setCurrentLocale($fr);
+        $locale->switchLocale($fr);
         $locale->setDefaultLocale($fr);
         $this->assertTrue($locale->isCurrentLocaleDefault());
 
-        $locale->setCurrentLocale($en);
+        $locale->switchLocale($en);
         $this->assertFalse($locale->isCurrentLocaleDefault());
     }
 }
 
-LocaleSessionTest::runAlone();
+LocalesTest::runAlone();
