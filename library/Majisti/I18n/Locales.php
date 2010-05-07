@@ -105,17 +105,13 @@ class Locales
             return null;
         }
 
-        if( !isset($this->_session->current) ) {
+        $current = unserialize($this->_session->current);
+
+        if( !($current && $this->hasLocale($current)) ) {
             $this->_session->current = serialize($this->getDefaultLocale());
         }
 
-        $current = unserialize($this->_session->current);
-
-        if( !$this->hasLocale($current) ) {
-            return null;
-        }
-
-        return $current;
+        return unserialize($this->_session->current);
     }
 
     /**
@@ -143,6 +139,11 @@ class Locales
         return $this->_defaultLocale;
     }
 
+    /**
+     * @desc Returns whether there is any available locales.
+     *
+     * @return True is there is no available locales
+     */
     public function isEmpty()
     {
         return 0 === $this->count();
@@ -260,6 +261,21 @@ class Locales
     }
 
     /**
+     * @desc Adds a locale to this list of available locales.
+     *
+     * @param \Zend_Locale $locale The locale
+     * @return Locales this
+     */
+    public function addLocale(\Zend_Locale $locale)
+    {
+        if( !$this->hasLocale($locale) ) {
+            $this->_locales[] = $locale;
+        }
+
+        return $this;
+    }
+
+    /**
      * @desc Add multiple locales at once to the list of available locales.
      *
      * @param array $locales An array of \Zend_Locales
@@ -280,21 +296,6 @@ class Locales
     protected function clearLocales()
     {
         $this->_locales = array();
-    }
-
-    /**
-     * @desc Adds a locale to this list of available locales.
-     *
-     * @param \Zend_Locale $locale The locale
-     * @return Locales this
-     */
-    public function addLocale(\Zend_Locale $locale)
-    {
-        if( !$this->hasLocale($locale) ) {
-            $this->_locales[] = $locale;
-        }
-
-        return $this;
     }
 
     /**
@@ -323,7 +324,7 @@ class Locales
      */
     public function removeLocale(\Zend_Locale $locale)
     {
-        if( $key = $this->findLocale($locale) !== false) {
+        if( false !== $key = $this->findLocale($locale) ) {
             unset($this->_locales[$key]);
             return $this;
         }
