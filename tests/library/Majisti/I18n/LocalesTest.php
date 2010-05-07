@@ -86,7 +86,7 @@ class LocalesTest extends \Majisti\Test\PHPUnit\TestCase
         $this->locale->reset();
     }
     
-    protected function _restartSession()
+    protected function restartSession()
     {
         \Zend_Session::writeClose();
         \Zend_Session::start();
@@ -157,18 +157,18 @@ class LocalesTest extends \Majisti\Test\PHPUnit\TestCase
     	$locale = $this->locale;
     	$locale->switchLocale($this->fr);
     	
-    	$this->_restartSession();
+    	$this->restartSession();
     	
     	$locale = Locales::getInstance();
     	$this->assertEquals($this->fr, $locale->getCurrentLocale());
     	
-    	$this->_restartSession();
+    	$this->restartSession();
     	
     	$locale->switchLocale($this->es);
     	$locale = Locales::getInstance();
     	$this->assertEquals($this->es, $locale->getCurrentLocale());
     	
-    	$this->_restartSession();
+    	$this->restartSession();
     	
     	$locale->switchLocale($this->en);
     	$this->assertEquals($this->en, $locale->getCurrentLocale());
@@ -311,6 +311,17 @@ class LocalesTest extends \Majisti\Test\PHPUnit\TestCase
 
         $locale->switchLocale($en);
         $this->assertFalse($locale->isCurrentLocaleDefault());
+    }
+
+    /**
+     * Tests \Zend_Debug::dump() possible bug
+     */
+    public function testZDDumpPossibleBug()
+    {
+        for( $i = 0 ; $i < 300 ; ++$i ) {
+            $curLocale = $this->locale->getCurrentLocale()->toString();
+            \Zend_Debug::dump($curLocale, '<strong></strong>');
+        }
     }
 }
 

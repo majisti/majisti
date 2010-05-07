@@ -1,7 +1,7 @@
 <?php
 
 namespace Majisti\Model\Data;
-use Majisti\I18n\LocaleSession as LocaleSession;
+use Majisti\I18n\Locales as Locales;
 
 require_once 'TestHelper.php';
 
@@ -16,12 +16,17 @@ class XmlTest extends \Majisti\Test\PHPUnit\TestCase
     /**
      * @var Xml
      */
-    public $xml;
+    public $xmlWithFr;
 
     /**
      * @var string
      */
-    public $xmlPath;
+    public $fooPath;
+
+    /**
+     * @var string
+     */
+    public $barPath;
 
     /**
      * @var bool
@@ -34,20 +39,45 @@ class XmlTest extends \Majisti\Test\PHPUnit\TestCase
     public $markupStack;
 
     /**
+     * @var Locales
+     */
+    public $locales;
+
+    /**
+     * @var \Zend_Locale
+     */
+    public $en;
+
+    /**
+     * @var \Zend_Locale
+     */
+    public $fr;
+
+    /**
      * @desc Setups the test case
      */
     public function setUp()
     {
        $this->useBBCodeMarkup  = true;
-       $this->xmlPath          = dirname(__FILE__) . '/_files/foo.xml';
-       $this->xml              = new Xml($this->xmlPath);
-       $this->markupStack      = $this->xml->getMarkupStack();
 
-       LocaleSession::getInstance()->reset()->switchLocale('en');
+       $this->fooPath = dirname(__FILE__) . '/_files/foo.xml';
+       $this->barPath = dirname(__FILE__) . '/_files/bar.xml';
+
+       $this->xmlWithFr     = new Xml($this->fooPath);
+       $this->xmlWithoutFr  = new Xml($this->barPath);
+
+       $this->markupStack   = $this->xmlWithFr->getMarkupStack();
+
+       $this->en = new \Zend_Locale('en');
+       $this->fr = new \Zend_Locale('fr');
+
+       $this->locales = Locales::getInstance();
+       $this->locales->addLocales(array($this->en, $this->fr));
+       $this->locales->switchLocale($this->en);
     }
 
     /**
-     * @desc Tests the pushMarkup() behaviour
+     * @desc Tests that the pushMarkup() adds the markup to the stack.
      */
     public function testPushMarkup()
     {
@@ -55,7 +85,7 @@ class XmlTest extends \Majisti\Test\PHPUnit\TestCase
        $this->assertTrue($this->markupStack->peek()->getParser() instanceof
                                                \Zend_Markup_Parser_Bbcode);
 
-       $this->xml->pushMarkup('Textile');
+       $this->xmlWithFr->pushMarkup('Textile');
        $this->assertEquals(2, $this->markupStack->count());
 
        $renderer = $this->markupStack->peek();
@@ -68,7 +98,7 @@ class XmlTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function testClearMarkupStack()
     {
-        $this->xml->clearMarkups();
+        $this->xmlWithFr->clearMarkups();
         $this->assertEquals(0, $this->markupStack->count());
     }
 
@@ -78,10 +108,10 @@ class XmlTest extends \Majisti\Test\PHPUnit\TestCase
     public function testIfBBcodeMarkupValue()
     {
         /* Default and current one is true */
-       $this->assertTrue($this->xml->isBBCodeMarkupUsed());
+       $this->assertTrue($this->xmlWithFr->isBBCodeMarkupUsed());
 
-       $this->xml->setBBCodeMarkupUsed(false);
-       $this->assertFalse($this->xml->isBBCodeMarkupUsed());
+       $this->xmlWithFr->setBBCodeMarkupUsed(false);
+       $this->assertFalse($this->xmlWithFr->isBBCodeMarkupUsed());
     }
 
     /**
@@ -89,10 +119,10 @@ class XmlTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function testXmlPathGettersAndSetters()
     {
-        $this->assertEquals($this->xmlPath, $this->xml->getXmlPath());
+        $this->assertEquals($this->fooPath, $this->xmlWithFr->getXmlPath());
 
-        $this->xml->setXmlPath('XmlTesting');
-        $this->assertEquals('XmlTesting', $this->xml->getXmlPath());
+        $this->xmlWithFr->setXmlPath('XmlTesting');
+        $this->assertEquals('XmlTesting', $this->xmlWithFr->getXmlPath());
     }
 
     /**
@@ -101,20 +131,16 @@ class XmlTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function testThatGetDataWorksWithCurrentLocale()
     {
-        $locale = LocaleSession::getInstance();
-        $locale->switchLocale('en');
+        $locales = $this->locales;
 
-        $data = $this->xml->getData();
+        $data = $this->xmlWithFr->getData();
         $this->assertEquals('en', $data->getSectionName());
         $this->assertTrue($data->readOnly());
 
-        $locale->addSupportedLocale('fr');
-        $locale->switchLocale('fr');
+        $locales->switchLocale($this->fr);
 
-        $data = $this->xml->getData();
+        $data = $this->xmlWithFr->getData();
         $this->assertEquals('fr', $data->getSectionName());
-
-        $this->markTestIncomplete('Waiting for LocaleSession refactor');
     }
 
     /**
@@ -123,12 +149,12 @@ class XmlTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function testThatDataFallsBackToDefaultLocaleIfCurrentLocaleCannotBeFound()
     {
-        /**
-         * TODO: Make a second XML file without a 'fr' section. With the current
-         * locale set to 'fr', assert that it fallbacks on the default section,
-         * wich is 'en', IN A NEW TEST.
-         */
-        $this->markTestIncomplete();
+        $locales = $this->locales;
+        $fr      = $this->fr;
+
+        $locales->switchLocale($fr);
+        $data    = $this->xmlWithoutFr->getData();
+        $this->assertEquals('en', $data->getSectionName());
     }
 }
 XmlTest::runAlone();

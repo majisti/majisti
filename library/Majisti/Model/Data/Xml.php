@@ -5,7 +5,7 @@ namespace Majisti\Model\Data;
 use Majisti\Util\Model\Collection;
 
 use \Majisti\Util\Model\Collection\Stack    as Stack;
-use \Majisti\I18n\LocaleSession             as LocaleSession;
+use \Majisti\I18n\Locales                   as Locales;
 
 class Xml
 {
@@ -30,10 +30,16 @@ class Xml
     protected $_markupStack;
 
     /**
+     * @var string
+     */
+    protected $_locale;
+
+    /**
      * @desc contructor
      */
     public function  __construct($xmlPath = null, $useBBCodeMarkup = true)
     {
+        $this->_locale          = Locales::getInstance()->toString();
         $this->_xmlPath         = $xmlPath;
         $this->_useBBCodeMarkup = $useBBCodeMarkup;
     }
@@ -128,19 +134,21 @@ class Xml
      */
     public function getData()
     {
-        if( null === $this->_data ) {
-            $locale = LocaleSession::getInstance();
+        if( null === $this->_data ||
+            $this->_locale !== Locales::getInstance()->toString() )
+        {
+            $locale = Locales::getInstance();
 
             try {
                 $data = new \Zend_Config_Xml(
                     $this->_xmlPath,
-                    $locale->getCurrentLocale(),
+                    $locale->getCurrentLocale()->toString(),
                     array('allowModifications' => true)
                 );
             } catch( \Zend_Config_Exception $e ) {
                 $data = new \Zend_Config_Xml(
                     $this->_xmlPath,
-                    $locale->getDefaultLocale(),
+                    $locale->getDefaultLocale()->toString(),
                     array('allowModifications' => true)
                 );
             }
