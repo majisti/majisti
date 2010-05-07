@@ -111,11 +111,9 @@ class LocalesTest extends \Majisti\Test\PHPUnit\TestCase
     	$this->assertTrue($locale->hasLocale($this->es));
     	
     	/* test that the Zend_Locale was setup correctly in the registry */
-    	$locale = \Zend_Registry::get('Zend_Locale');
-    	$defaultLocale = $locale->getDefaultLocale();
-    	$this->assertNotNull($locale);
-    	$this->assertEquals('en', key($defaultLocale));
-    	$this->assertEquals('en', $locale->getLanguage());
+    	$localeSession = \Zend_Registry::get('Zend_Locale');
+    	$this->assertNotNull($localeSession);
+    	$this->assertEquals($this->en, $localeSession);
     }
 
     /**
@@ -217,7 +215,6 @@ class LocalesTest extends \Majisti\Test\PHPUnit\TestCase
 
        $this->assertFalse($locale->removeLocale($this->ca));
        $this->assertFalse($locale->hasLocale($this->ca));
-       $this->assertEquals($count, $locale->count());
 
        $locale->addLocales(array($this->de, $this->it, $this->ca));
        $count   = $locale->count();
