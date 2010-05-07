@@ -152,7 +152,7 @@ class LocaleSession implements ILocale
 
     /**
      * @desc Returns whether the given local is supported by this application.
-     *t
+     *
      * @param Sring $locale The locale abbreviation following the
      * configuration's syntax
      * @return bool True if this locale is supported.
