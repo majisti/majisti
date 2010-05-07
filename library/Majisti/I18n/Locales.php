@@ -105,17 +105,13 @@ class Locales
             return null;
         }
 
-        if( !isset($this->_session->current) ) {
+        $current = unserialize($this->_session->current);
+
+        if( !($current && $this->hasLocale($current)) ) {
             $this->_session->current = serialize($this->getDefaultLocale());
         }
 
-        $current = unserialize($this->_session->current);
-
-        if( !$this->hasLocale($current) ) {
-            return null;
-        }
-
-        return $current;
+        return unserialize($this->_session->current);
     }
 
     /**
@@ -143,6 +139,11 @@ class Locales
         return $this->_defaultLocale;
     }
 
+    /**
+     * @desc Returns whether there is any available locales.
+     *
+     * @return True is there is no available locales
+     */
     public function isEmpty()
     {
         return 0 === $this->count();
@@ -173,14 +174,15 @@ class Locales
     }
 
     /**
-     * @desc Toggles between the registered locales. Switching is circular,
-     * meaning that switching between the languages will never come to an end.
+     * @desc Toggles between the available locales, storing the current locale
+     * to the one provided.
      *
-     * @param \Zend_Locale $locale Directly switch to that locale
-     * and sets the pointer to that locale.
+     * Everytime the locale is switched, the Zend_Registry key Zend_Locale
+     * is updated with the new locale accordingly.
      *
-     * @throws Exception If the locale given is not supported by
-     * this application.
+     * @param \Zend_Locale $locale Directly switch to that locale.
+     *
+     * @throws Exception If the locale given is not available.
      *
      * @return Locales this
      */
@@ -259,6 +261,21 @@ class Locales
     }
 
     /**
+     * @desc Adds a locale to this list of available locales.
+     *
+     * @param \Zend_Locale $locale The locale
+     * @return Locales this
+     */
+    public function addLocale(\Zend_Locale $locale)
+    {
+        if( !$this->hasLocale($locale) ) {
+            $this->_locales[] = $locale;
+        }
+
+        return $this;
+    }
+
+    /**
      * @desc Add multiple locales at once to the list of available locales.
      *
      * @param array $locales An array of \Zend_Locales
@@ -279,21 +296,6 @@ class Locales
     protected function clearLocales()
     {
         $this->_locales = array();
-    }
-
-    /**
-     * @desc Adds a locale to this list of available locales.
-     *
-     * @param \Zend_Locale $locale The locale
-     * @return Locales this
-     */
-    public function addLocale(\Zend_Locale $locale)
-    {
-        if( !$this->hasLocale($locale) ) {
-            $this->_locales[] = $locale;
-        }
-
-        return $this;
     }
 
     /**
@@ -322,7 +324,7 @@ class Locales
      */
     public function removeLocale(\Zend_Locale $locale)
     {
-        if( $key = $this->findLocale($locale) !== false) {
+        if( false !== $key = $this->findLocale($locale) ) {
             unset($this->_locales[$key]);
             return $this;
         }

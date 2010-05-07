@@ -18,7 +18,7 @@ class LocalesTest extends \Majisti\Test\PHPUnit\TestCase
     /**
      * @var Locales
      */
-    protected $locale;
+    public $locale;
     
     /**
      *  @var \Zend_Locale
@@ -54,6 +54,11 @@ class LocalesTest extends \Majisti\Test\PHPUnit\TestCase
      * @var array
      */
     public $locales;
+    
+    /**
+     * @var array of \Zend_Locale
+     */
+    public $altLocales;
 
     /**
      * @desc Namespace cleanup since an application was already
