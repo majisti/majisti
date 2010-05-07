@@ -18,23 +18,50 @@ class LocaleSessionTest extends \Majisti\Test\PHPUnit\TestCase
     /**
      * @var LocaleSession
      */ 
-    protected $_i18n;
+    protected $locale;
     
-    /* default i18n configuration */
-    protected $_i18nConfig = array(
-       'plugins' => array('i18n' => array(
-       'requestParam'      => 'lang',
-       'defaultLocale'     => 'en',
-       'supportedLocales'  => array('fr', 'es')
-    )));
+    /**
+     *  @var \Zend_Locale
+     */
+    public $en;
+
+    /**
+     * @var \Zend_Locale
+     */
+    public $fr;
+
+    /**
+     * @var \Zend_Locale
+     */
+    public $es;
+
+    /**
+     * @var \Zend_Locale
+     */
+    public $de;
+
+    /**
+     * @var \Zend_Locale
+     */
+    public $it;
+
+    /**
+     * @var \Zend_Locale
+     */
+    public $ca;
+
+    /**
+     * @var array
+     */
+    public $locales;
 
     /**
      * @desc Namespace cleanup since an application was already
-     * instanciated in the test helper
+     * instantiated in the test helper
      */
     public function __construct()
     {
-        \Zend_Session::namespaceUnset('Majisti_I18n');
+        \Zend_Session::namespaceUnset('Majisti_Locale');
     }
     
     /**
@@ -43,12 +70,20 @@ class LocaleSessionTest extends \Majisti\Test\PHPUnit\TestCase
     public function setUp()
     {
         \Zend_Session::start();
-        
-        \Zend_Registry::set('Majisti_Config', new \Zend_Config(
-            $this->_i18nConfig, true));
-        
-        $this->_i18n = LocaleSession::getInstance();
-        $this->_i18n->reset();
+
+        $this->en = new \Zend_Locale('en');
+        $this->fr = new \Zend_Locale('fr');
+        $this->es = new \Zend_Locale('es');
+        $this->de = new \Zend_Locale('de');
+        $this->it = new \Zend_Locale('it');
+        $this->ca = new \Zend_Locale('ca');
+
+        $this->locales    = array($this->en, $this->fr, $this->es);
+        $this->altLocales = array($this->de, $this->it, $this->ca);
+
+        $this->locale = LocaleSession::getInstance();
+        $this->locale->setLocales($locales);
+        $this->locale->reset();
     }
     
     protected function _restartSession()
@@ -56,89 +91,229 @@ class LocaleSessionTest extends \Majisti\Test\PHPUnit\TestCase
         \Zend_Session::writeClose();
         \Zend_Session::start();
     }
-    
+
+    /**
+     * Tests that the object build with the \Zend_Locale array sets the
+     * current and default locale to the first array index.
+     *
+     * Tests that other locales are available.
+     */
     public function test__construct()
     {
-    	$i18n = $this->_i18n;
+    	$locale = $this->locale;
     	
-    	/* test that the I18n object behaves according to the configuration */
-    	$this->assertEquals('en', $i18n->getDefaultLocale());
-    	$this->assertEquals(array('en', 'fr', 'es'), $i18n->getLocales());
-    	$this->assertEquals(array('fr', 'es'), $i18n->getSupportedLocales());
-    	$this->assertTrue($i18n->isCurrentLocaleDefault());
-    	$this->assertTrue($i18n->isLocaleSupported('en'));
-    	$this->assertTrue($i18n->isLocaleSupported('fr'));
-    	$this->assertTrue($i18n->isLocaleSupported('es'));
+    	/* test that the locale object behaves according to the settings */
+    	$this->assertEquals($this->en, $locale->getDefaultLocale());
+    	$this->assertEquals($this->locales, $locale->getLocales());
+    	$this->assertTrue($locale->isCurrentLocaleDefault());
+    	$this->assertTrue($locale->hasLocale($this->en));
+    	$this->assertTrue($locale->hasLocale($this->fr));
+    	$this->assertTrue($locale->hasLocale($this->es));
     	
     	/* test that the Zend_Locale was setup correctly in the registry */
     	$locale = \Zend_Registry::get('Zend_Locale');
-    	$defaultLocale = $locale->getDefault();
+    	$defaultLocale = $locale->getDefaultLocale();
     	$this->assertNotNull($locale);
     	$this->assertEquals('en', key($defaultLocale));
     	$this->assertEquals('en', $locale->getLanguage());
     }
-    
-    public function testGetDefaultLocale()
+
+    /**
+     * Tests the getDefault() function behaviour when switching a locale.
+     */
+    public function testGetDefault()
     {
-    	$i18n = $this->_i18n;
+    	$locale = $this->locale;
     	
-    	$this->assertEquals('en', $i18n->getDefaultLocale());
+    	$this->assertEquals($this->en, $locale->getDefaultLocale());
     	
-    	$i18n->switchLocale();
-    	$this->assertEquals('en', $i18n->getDefaultLocale());
+    	$locale->switchLocale($this->fr);
+    	$this->assertEquals($this->en, $locale->getDefaultLocale());
     	
-    	$i18n->switchLocale('es');
-    	$this->assertEquals('en', $i18n->getDefaultLocale());
+    	$locale->switchLocale($this->es);
+    	$this->assertEquals($this->en, $locale->getDefaultLocale());
     }
     
     /**
+     * Tests that switchLocale modifies current locale.
      * @expectedException Exception
      */
 	public function testSwitchLocale()
     {
-    	$i18n = $this->_i18n;
-    	
-    	$locale = $i18n->switchLocale();
-    	$this->assertEquals('fr', $locale);
-    	$this->assertEquals('fr', $i18n->getCurrentLocale());
-    	
-    	$locale = $i18n->switchLocale();
-    	$this->assertEquals('es', $locale);
-    	$this->assertEquals('es', $i18n->getCurrentLocale());
-    	
-    	$locale = $i18n->switchLocale();
-    	$this->assertEquals('en', $locale);
-    	$this->assertEquals('en', $i18n->getCurrentLocale());
-    	
-    	$locale = $i18n->switchLocale('es');
-    	$this->assertEquals('es', $locale);
-    	$this->assertEquals('es', $i18n->getCurrentLocale());
+        foreach( $this->locales as $key => $locale ) {
+            $switch = $this->locale->switchLocale($locale);
+            $this->assertEquals($locale, $switch);
+            $this->assertEquals($this->locales[$key],
+                    $this->locale->getCurrentLocale());
+        }
     	
     	/* throws exception */
-    	$i18n->switchLocale('de');
+    	$this->locale->switchLocale($this->de);
     }
     
-    
+    /**
+     * Tests the current locale persistence in the session.
+     */
     public function testCurrentLocalePersistance()
     {
-    	$i18n = $this->_i18n;
-    	$i18n->switchLocale();
+    	$locale = $this->locale;
+    	$locale->switchLocale($this->fr);
     	
     	$this->_restartSession();
     	
-    	$i18n = LocaleSession::getInstance();
-    	$this->assertEquals('fr', $i18n->getCurrentLocale());
+    	$locale = LocaleSession::getInstance();
+    	$this->assertEquals($this->fr, $locale->getCurrentLocale());
     	
     	$this->_restartSession();
     	
-    	$i18n->switchLocale('es');
-    	$i18n = LocaleSession::getInstance();
-    	$this->assertEquals('es', $i18n->getCurrentLocale());
+    	$locale->switchLocale($this->es);
+    	$locale = LocaleSession::getInstance();
+    	$this->assertEquals($this->es, $locale->getCurrentLocale());
     	
     	$this->_restartSession();
     	
-    	$i18n->switchLocale();
-    	$this->assertEquals('en', $i18n->getCurrentLocale());
+    	$locale->switchLocale($this->en);
+    	$this->assertEquals($this->en, $locale->getCurrentLocale());
+    }
+
+    /**
+     * Tests that the reset function sets the current locale value to the
+     * default's one.
+     */
+    public function testThatResetWillSetCurrentLocaleToTheDefaultOne()
+    {
+        $this->locale->reset();
+        $this->assertEquals($this->locale->getCurrentLocale(),
+                $this->locale->getDefaultLocale());
+    }
+
+    /**
+     * Tests that adding a locale or multiple locales behaves like expected.
+     */
+    public function testAddLocale()
+    {
+        $locales = $this->locales;
+        $locale  = $this->locale;
+
+        $locale->addLocales(array($this->de, $this->it));
+        $this->assertTrue($locale->hasLocale($this->de));
+        $this->assertTrue($locale->hasLocale($this->it));
+
+        $locale->switchLocale($this->de);
+        $this->assertEquals($this->de, $locale->getCurrentLocale());
+        $this->assertEquals($this->en, $locale->getDefaultLocale());
+
+        $locale->addLocale($this->ca);
+        $this->assertTrue($locale->hasLocale($this->ca));
+    }
+
+    /**
+     * Tests that removing one or multiple locales behaves as expected.
+     */
+    public function testRemoveLocale()
+    {
+       $locales = $this->locales;
+       $locale  = $this->locale;
+
+       $this->assertFalse($locale->removeLocale($this->ca));
+       $this->assertFalse($locale->hasLocale($this->ca));
+       $this->assertEquals($count, $locale->count());
+
+       $locale->addLocales(array($this->de, $this->it, $this->ca));
+       $count   = $locale->count();
+
+       $locale->removeLocale($this->it);
+       $this->assertFalse($locale->hasLocale($this->it));
+       $this->assertEquals(--$count, $locale->count());
+
+       $locale->removeLocales(array($this->de, $this->ca));
+       $this->assertFalse($locale->hasLocale($this->de));
+       $this->assertFalse($locale->hasLocale($this->ca));
+       $this->assertEquals($count - 2, $locale->count());
+
+       $this->assertEquals($this->locales, $locales);
+    }
+
+    /**
+     * Tests that the setLocales function overrides all locales.
+     */
+    public function testThatSetLocalesOverwritesAllLocales()
+    {
+        $locales    = $this->locales;
+        $locale     = $this->locale;
+        $altLocales = $this->altLocales;
+
+        $locale->setLocales($altLocales);
+        $this->assertEquals($altLocales, $locale->getLocales());
+        $this->assertTrue($locale->hasLocales($altLocales));
+        $this->assertEquals(count($altLocales), $locale->count());
+        $this->assertEquals($this->de, $locale->getDefaultLocale());
+        $this->assertEquals($this->de, $locale->getCurrentLocale());
+
+        $locale->setLocales($locales);
+        $this->assertEquals($locales, $locale->getLocales());
+        $this->assertTrue($locale->hasLocales($locales));
+        $this->assertEquals(count($locales), $locale->count());
+        $this->assertEquals($this->en, $locale->getDefaultLocale());
+        $this->assertEquals($this->en, $locale->getCurrentLocale());
+
+        $locale->setLocales(array());
+        $this->assertTrue($locale->isEmpty());
+        $this->assertFalse($locale->hasLocales($locales));
+        $this->assertNull($locale->getDefaultLocale());
+        $this->assertNull($locale->getCurrentLocale());
+    }
+
+    /**
+     * Tests that the default locale setter behaves as expected.
+     * @expectedException Exception
+     */
+    public function testThatSetDefaultLocaleChangesDefaultLocale()
+    {
+        $locale = $this->locale;
+        $fr     = $this->fr;
+        $it     = $this->it;
+
+        $locale->setDefaultLocale($fr);
+        $this->assertEquals($fr, $locale->getDefaultLocale());
+
+        /* will throw exception */
+        $locale->setDefaultLocale($it);
+    }
+
+    /**
+     * Tests that the current locale setter behaves as expected.
+     * @expectedException Exception
+     */
+    public function testThatSetCurrentLocaleChangesCurrentLocale()
+    {
+        $locale = $this->locale;
+        $fr     = $this->fr;
+        $it     = $this->it;
+
+        $locale->setCurrentLocale($fr);
+        $this->assertEquals($fr, $locale->getCurrentLocale());
+
+        /* will throw exception */
+        $locale->setCurrentLocale($it);
+    }
+
+    /**
+     * Tests that the isCurrentLocaleDefault() function returns true
+     * only if the current locale is also the default one.
+     */
+    public function testIsCurrentDefaultFunction()
+    {
+        $locale = $this->locale;
+        $fr     = $this->fr;
+        $en     = $this->en;
+
+        $locale->setCurrentLocale($fr);
+        $locale->setDefaultLocale($fr);
+        $this->assertTrue($locale->isCurrentLocaleDefault());
+
+        $locale->setCurrentLocale($en);
+        $this->assertFalse($locale->isCurrentLocaleDefault());
     }
 }
 
