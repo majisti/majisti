@@ -192,7 +192,7 @@ class Locales
 
 //        $this->getStorageModel()->current = serialize($locale);
         $this->_session->current = serialize($locale);
-        \Zend_Registry::set('Zend_Locale', $this->_session->current);
+        \Zend_Registry::set('Zend_Locale', $locale);
 
         return $this;
     }
