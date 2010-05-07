@@ -3,7 +3,7 @@
 namespace Majisti\Application\Resource;
 
 /**
- * @desc The I18n resource will basically just initiate a null translator.
+ * @desc The translator resource will basically just initiate a null translator.
  * Even if an application is supported in one language it should always make
  * use of a translator for extensibility. That way, at any given time, a real
  * translator can be put in the registry and the application therefore translated
@@ -11,7 +11,7 @@ namespace Majisti\Application\Resource;
  *
  * @author Majisti
  */
-class I18n extends \Zend_Application_Resource_ResourceAbstract
+class Translator extends \Zend_Application_Resource_ResourceAbstract
 {
     /**
      * @desc Inits a null translator.
