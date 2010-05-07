@@ -173,14 +173,15 @@ class Locales
     }
 
     /**
-     * @desc Toggles between the registered locales. Switching is circular,
-     * meaning that switching between the languages will never come to an end.
+     * @desc Toggles between the available locales, storing the current locale
+     * to the one provided.
      *
-     * @param \Zend_Locale $locale Directly switch to that locale
-     * and sets the pointer to that locale.
+     * Everytime the locale is switched, the Zend_Registry key Zend_Locale
+     * is updated with the new locale accordingly.
      *
-     * @throws Exception If the locale given is not supported by
-     * this application.
+     * @param \Zend_Locale $locale Directly switch to that locale.
+     *
+     * @throws Exception If the locale given is not available.
      *
      * @return Locales this
      */
