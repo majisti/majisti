@@ -2,9 +2,7 @@
 namespace Majisti\Application\Resource;
 
 /**
- * @desc This resource will register a LayoutSwitcher plugin
- * that will enable modules with their own layout views.
- *
+ * @desc
  * @author Majisti
  */
 class Locales extends \Zend_Application_Resource_ResourceAbstract
