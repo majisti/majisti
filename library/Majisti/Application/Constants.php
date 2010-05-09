@@ -120,8 +120,8 @@ class Constants
         define('MAJISTI_URL_IMAGES',  MAJISTI_URL . '/images/common');
 
         $locales        = \Majisti\I18n\Locales::getInstance();
-//        $currentLocale  = strtolower($locales->getCurrentLocale()->toString());
-//        $defaultLocale  = strtolower($locales->getDefaultLocale()->toString());
+        $currentLocale  = strtolower($locales->getCurrentLocale()->toString());
+        $defaultLocale  = strtolower($locales->getDefaultLocale()->toString());
 
         define('MAJISTI_URL_IMAGES_LOCALE', MAJISTI_URL .
             "/images/{$currentLocale}");
