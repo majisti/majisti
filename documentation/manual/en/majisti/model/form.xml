@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en"
+    xml:id="majisti.model.form" version="5.0">
+    
+    <title>Form</title>
+    
+    <para>Majisti forms are extended versions of <classname>Zend_Form</classname>. While
+            <classname>Zend_Form</classname> simplifies form creation and handling in a web
+        application, customizing the way it renders itself is quite a pain.
+            <classname>Form</classname> overrides <classname>Zend_Form</classname>'s
+            <code>setLayout</code> function to make it accept an <classname>ILayout</classname>
+        object as a parameter. The layout object then calls it's visit function (Visitor pattern
+        [GoF]) on the form and it's possible subforms.</para>
+    
+    <xi:include href="form/layout.xml"/>
+</section>

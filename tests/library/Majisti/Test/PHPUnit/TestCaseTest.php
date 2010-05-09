@@ -5,8 +5,10 @@ namespace Majisti\Test\PHPUnit;
 require_once 'TestHelper.php';
 
 /**
- * @desc
- * @author 
+ * @desc Test case for the TestCase. Which one came first,
+ * the egg or the chicken?
+ *
+ * @author Majisti
  */
 class TestCaseTest extends \Majisti\Test\PHPUnit\TestCase
 {
@@ -29,7 +31,14 @@ class TestCaseTest extends \Majisti\Test\PHPUnit\TestCase
     {
         self::$_class = null;
         self::getClass();
-        self::$_class = __CLASS__;
+    }
+
+    /**
+     * @desc Assets that getClass returns the correct class value.
+     */
+    public function testGetClass()
+    {
+        $this->assertEquals(__CLASS__, self::getClass());
     }
 }
 

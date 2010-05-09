@@ -50,7 +50,9 @@ class MultipleTest extends \Zend_Controller_Dispatcher_StandardTest
             'users'
         );
 
-        $dispatcher->addFallbackControllerDirectory($this->_filesPath . '/aLibraryUsersModule/controllers', 'users');
+        $dispatcher->addFallbackControllerDirectory(
+            '\aLibrary\Controllers',
+            $this->_filesPath . '/aLibraryUsersModule/controllers', 'users');
 
         $this->_dispatcher = $dispatcher;
     }
@@ -64,7 +66,8 @@ class MultipleTest extends \Zend_Controller_Dispatcher_StandardTest
         $response = new \Zend_Controller_Response_Cli();
 
         $this->_dispatcher->dispatch($request, $response);
-        $this->assertContains('aLibrary\Controllers\Users_ListController::index', $response->getBody());
+        $this->assertContains('aLibrary\Controllers\Users_ListController::index',
+            $response->getBody());
     }
 
     /**
@@ -111,13 +114,15 @@ class MultipleTest extends \Zend_Controller_Dispatcher_StandardTest
         $dispatcher = $this->_dispatcher;
 
         /* assert single path */
-        $dir = '/foo/bar';
-        $dispatcher->addFallbackControllerDirectory($dir);
+        $namespace  = '\Foo';
+        $path        = '/foo/bar';
+
+        $dispatcher->addFallbackControllerDirectory($namespace, $path);
         $dirs = $dispatcher->getFallbackControllerDirectory();
         $this->assertEquals(1, count($dirs));
-        $this->assertEquals(array($dir), $dirs);
+        $this->assertEquals(array(array($namespace, $path)), $dirs);
 
-        $dispatcher->addFallbackControllerDirectory('foo', 'blog');
+        $dispatcher->addFallbackControllerDirectory($namespace, 'foo', 'blog');
 
         /* check that they are available */
         $this->assertTrue($dispatcher->hasFallbackControllerDirectory());
@@ -128,18 +133,20 @@ class MultipleTest extends \Zend_Controller_Dispatcher_StandardTest
         $this->assertFalse($dispatcher->hasFallbackControllerDirectory('foo'));
 
         /* add two more directories */
-        $dirs = array('/foo/bar2', '/foo/bar3');
+        $dirs = array(array('\Foo\Bar', '/foo/bar2'), array('\Bar' ,'/foo/bar3'));
         $dispatcher->addFallbackControllerDirectories($dirs);
         $this->assertEquals(3, count($dispatcher->getFallbackControllerDirectory()));
         $this->assertEquals(3, count($dispatcher->getFallbackControllerDirectory(
                 $dispatcher->getDefaultModule())));
-        $this->assertEquals(array_merge(array($dir), $dirs),
+
+        $expectedDirs = array(array($namespace, $path), $dirs[0], $dirs[1]);
+        $this->assertEquals($expectedDirs,
                 $dispatcher->getFallbackControllerDirectory());
-        $this->assertEquals(array_merge(array($dir), $dirs),
+        $this->assertEquals($expectedDirs,
                 $dispatcher->getFallbackControllerDirectory(
                     $dispatcher->getDefaultModule()));
 
-        $this->assertEquals(array('foo'),
+        $this->assertEquals(array(array($namespace, 'foo')),
                 $dispatcher->getFallbackControllerDirectory('blog'));
 
         /* non existant controller directory */
@@ -159,12 +166,13 @@ class MultipleTest extends \Zend_Controller_Dispatcher_StandardTest
         $dispatcher = $this->_dispatcher;
 
         $fallbacks = array(
-            'users'     => 'foo',
-            'default'   => 'bar'
+            'users'     => array('\Foo'     => 'foo'),
+            'default'   => array('\Default' => 'bar')
         );
 
         $dispatcher->setFallbackControllerDirectories($fallbacks);
-        $this->assertEquals($fallbacks, $dispatcher->getFallbackControllerDirectories());
+        $this->assertEquals($fallbacks,
+            $dispatcher->getFallbackControllerDirectories());
     }
 
     public function testSetGetControllerDirectory()

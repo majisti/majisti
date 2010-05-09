@@ -7,14 +7,12 @@
     
     <title>Handlers</title>
 
- <para>
-     Since Majisti Application is built solely on configuration,
-     some more config handling was needed. Reading configuration is the
-     responsability of Zend_Config and therefore no other tasks should be
-     defined on how that read config is interpreted. Therefore, with config
-     handlers, it is possible to parse specific configuration syntax.
-     The following are the default configuration handlers shipped with Majisti.
- </para>
+ <para>Since Majisti Application is built solely on configuration, some more
+        config handling was needed. Reading configuration is the responsability
+        of Zend_Config and therefore no other tasks should be defined on how
+        that read config is interpreted. Therefore, with config handlers, it is
+        possible to parse specific configuration syntax. The following are the
+        default configuration handlers shipped with Majisti. </para>
  
  <xi:include href="handlers/composite.xml" />
  <xi:include href="handlers/import.xml" />

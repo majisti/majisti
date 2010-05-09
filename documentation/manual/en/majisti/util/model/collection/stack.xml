@@ -6,20 +6,29 @@
     xml:lang="en" xml:id="majisti.util.model.collection.stack" 
     version="5.0">
     
-    <title>Stack Collection</title>
-    <para>
-        The Stack class represents a last-in-first-out (LIFO) stack of objects. It implements
-        classes IteratorAggregate and Countable  and provides the following operations : the usual
-        push and pop, a method to peek at the top item on the stack, a method to test for whether
-        the stack is empty, a method to search the stack for an item and discover how far it is from
-        the top, a method to clear the stack and also a method to transform the Stack into an array. 
-    </para>
-    <para>
-        Stack is quite easy in it's usage. You simply create a new instance of Stack, with one or more elements to fill the stack with. 
-        If you want to create a stack using an array, you would do something like:
-    </para>
-    <programlisting>
-		$array = array('foo', 'bar', 'baz');
-		$stack = new Stack($this->_indexedElements);
-	</programlisting>
+    <title>Stack</title>
+    <para>The <classname>Stack</classname> class represents a last-in-first-out
+        (LIFO) stack of objects. It implements classes IteratorAggregate and
+        Countable and provides the following operations : the usual
+            <methodname>push</methodname> and <methodname>pop</methodname>, a
+        method to <methodname>peek</methodname> at the top item on the stack, a
+        method to test for whether the stack is <methodname>empty</methodname>,
+        a method to search the stack for an item and discover how far it is
+        from the top, a method to clear the stack and also a method to
+        transform the Stack into an array. </para>
+    <para>The <classname>Stack</classname> is quite easy in it's usage. You
+        simply create a new instance of <classname>Stack</classname>, with one
+        or more elements to fill the stack with. If you want to create a stack
+        using an array, you would do something like: </para>
+    <programlisting>$array = array('foo', 'bar', 'baz');
+$stack = new Stack($this->_indexedElements);</programlisting>
+    <para>Not much is needed to be said here. It behaves pretty much as a
+            <classname>Stack</classname> in Java. Of course, all those could be
+        used using the PHP functions such as
+            <methodname>array_push()</methodname>,
+            <methodname>array_pop()</methodname>, etc., but Majisti wanted to
+        provide a little object oriented collection that can be used by it's
+        core components, such as the <link
+            xlink:href="majisti.config.handler.composite">Config Handler
+            Composite</link>.</para>
 </section>

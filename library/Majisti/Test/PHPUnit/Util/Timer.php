@@ -2,10 +2,15 @@
 
 namespace Majisti\Test\PHPUnit\Util;
 
+/**
+ * @desc Gives the same timer as PHPUnit, but with milliseconds as well.
+ *
+ * @author Majisti
+ */
 class Timer extends \PHPUnit_Util_Timer
 {
     /**
-     * Formats elapsed time (in milliseconds) to a string.
+     * @desc Formats elapsed time (in milliseconds) to a string.
      *
      * @param  float $time
      * @return float
@@ -14,10 +19,15 @@ class Timer extends \PHPUnit_Util_Timer
     {
         $buffer = '';
         
-        $hours           = sprintf('%02d', ($time >= 3600) ? floor($time / 3600) : 0);
-        $minutes         = sprintf('%02d', ($time >= 60)   ? floor($time /   60) - 60 * $hours : 0);
-        $seconds         = sprintf('%02d', $time - 60 * 60 * $hours - 60 * $minutes);
-        $milliseconds     = sprintf('%f', ($time - $seconds) * 1000); 
+        $hours = sprintf('%02d',
+                        ($time >= 3600) ? floor($time / 3600) : 0);
+        $minutes = sprintf('%02d',
+                          ($time >= 60)   ? floor($time /   60)
+                          - 60 * $hours : 0);
+        $seconds = sprintf('%02d',
+                          $time - 60 * 60 * $hours - 60 * $minutes);
+        $milliseconds = sprintf('%f',
+                               ($time - $seconds) * 1000);
         
         if ($hours == 0 && $minutes == 0) {
             $seconds = sprintf('%1d', $seconds);

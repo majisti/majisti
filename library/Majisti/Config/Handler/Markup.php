@@ -26,24 +26,24 @@ class Markup extends \Majisti\Util\Model\Collection\Stack implements IHandler
     public function handle(\Zend_Config $config)
     {
         if( $this->isEmpty() ) {
-            throw new Exception('No markup was pushed to the stack');
+            throw new Exception('No markup was pushed in the stack');
         }
 
-        return $this->_parseConfig(clone $config);
+        return $this->parseConfig(clone $config);
     }
 
     /**
      * @desc Parses the configuration, applying the Markup stack
      * on every values.
      *
-     * @throws Exception if Markup provided in not an instance of
+     * @throws Exception if Markup provided is not an instance of
      *  \Zend_Markup_RendererAbstract
      */
-    protected function _parseConfig(\Zend_Config $config)
+    protected function parseConfig(\Zend_Config $config)
     {
         foreach ($config as $key => $value) {
             if( $value instanceof \Zend_Config ) {
-                $config->{$key}->merge($this->_parseConfig($value));
+                $config->{$key}->merge($this->parseConfig($value));
             } else {
                 foreach ($this as $markup) {
                     if( !($markup instanceof \Zend_Markup_Renderer_RendererAbstract) ) {

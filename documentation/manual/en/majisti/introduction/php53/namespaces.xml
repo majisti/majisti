@@ -8,7 +8,34 @@
     
     <title>Namespaces</title>
 
-    <para>
-        Lorem ipsum dolor sit amer
-    </para>
+    <para>Majisti is entirely written with PHP5.3. Meaning that it makes use of
+        the new features such as lamba functions, late static binding and
+        namespaces. Those new features provide maximum flexibility and Majisti
+        strives to make the best use of them. However, since Majisti uses Zend
+        as its backbone framework, which is using a namespacing mechanism of
+        its own, it cannot use PHP5.3 namespace everywhere. Trying to extend
+        all the components to assure that every single one is PHP5.3 namespace
+        compatible is not within Majisti's scope. Therefore, Majisti will rely
+        and wait on Zend 2.0 to consider whether full PHP5.3 namespace would be
+        needed. Currently, Majisti support PHP namespaces for those components:<itemizedlist>
+            <listitem>
+                <para>All core classes (e.g \Majisti\Config\Handler)</para>
+            </listitem>
+            <listitem>
+                <para>Application Resources, provided you add the "pluginsPath"
+                    in the configuration. See <link
+                        xlink:href="majisti.application.resources">Majisti
+                        Application Resources</link> for more
+                    information.</para>
+            </listitem>
+        </itemizedlist></para>
+    <para>And the ones not supported by Majisti:<itemizedlist>
+            <listitem>
+                <para>View helpers, action helpers, controller plugins and
+                    autoloaded resources using the Module autoloader. They must
+                    use the Zend Standard. (e.g. To instanciate a model you
+                    would do the ApplicationName_Model_AModel convention to
+                    access it). </para>
+            </listitem>
+        </itemizedlist></para>
 </section>

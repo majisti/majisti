@@ -22,23 +22,27 @@ class Multiple extends \Zend_Controller_Dispatcher_Standard implements IDispatch
     /**
      * @desc Adds a fallback controller directory for a given module.
      *
+     * @param namespace The class' PHP namespace
      * @param string $path The path to add
      * @param $module [optional, defaults to default module] The module name
      * @return Multiple this
      */
-    public function addFallbackControllerDirectory($path, $module = null)
+    public function addFallbackControllerDirectory($namespace, $path, $module = null)
     {
-        $path = (string) $path;
+        $namespace  = (string) $namespace;
+        $path       = (string) $path;
+        $fallDirs   = $this->_controllerFallbackDirectories;
 
         if( null === $module ) {
             $module = $this->getDefaultModule();
         }
 
-        if( array_key_exists($module, $this->_controllerFallbackDirectories) ) {
-            $this->_controllerFallbackDirectories[$module][] = $path;
-        } else {
-            $this->_controllerFallbackDirectories[$module] = array($path);
+        if( !array_key_exists($module, $fallDirs) ) {
+            $fallDirs[$module] = array();
         }
+
+        $fallDirs[$module][] = array($namespace, $path);
+        $this->_controllerFallbackDirectories = $fallDirs;
 
         return $this;
     }
@@ -56,20 +60,24 @@ class Multiple extends \Zend_Controller_Dispatcher_Standard implements IDispatch
     }
 
     /**
-     * @desc Adds multiple fallback controlle rdirectories at once. If a path
+     * @desc Adds multiple fallback controller directories at once. If a path
      * is not keyed with a module name within the array, it will assume
      * the default module.
-     * @param Array $dirs module/path array
+     *
+     * @param Array $dirs array(module => array(namespace => array(path))) array
      * @return Multiple this
      */
     public function addFallbackControllerDirectories($dirs)
     {
-        foreach ( $dirs as $module => $path ) {
+        foreach ( $dirs as $module => $paths ) {
+            $namespace = $paths[0];
+            $path      = $paths[1];
+
             if( !is_string($module) ) {
                 $module = $this->getDefaultModule();
             }
 
-            $this->addFallbackControllerDirectory($path, $module);
+            $this->addFallbackControllerDirectory($namespace, $path, $module);
         }
 
         return $this;
@@ -77,6 +85,7 @@ class Multiple extends \Zend_Controller_Dispatcher_Standard implements IDispatch
 
     /**
      * @desc Returns the fallback controller directories for a given module.
+     *
      * @param $module [optional, default to default module] The module name
      * @return Array|null The fallback directories
      */
@@ -86,8 +95,10 @@ class Multiple extends \Zend_Controller_Dispatcher_Standard implements IDispatch
             $module = $this->getDefaultModule();
         }
 
-        if( array_key_exists($module, $this->_controllerFallbackDirectories) ) {
-            return $this->_controllerFallbackDirectories[$module];
+        $fallDirs = $this->_controllerFallbackDirectories;
+
+        if( array_key_exists($module, $fallDirs) ) {
+            return $fallDirs[$module];
         }
 
         return null;
@@ -147,15 +158,49 @@ class Multiple extends \Zend_Controller_Dispatcher_Standard implements IDispatch
     public function loadClass($className)
     {
         $fileName = $this->classToFilename($className);
-        $loadFile = $this->getDispatchDirectory() . DIRECTORY_SEPARATOR . $fileName;
+        $loadFile = $this->getDispatchDirectory()
+            . DIRECTORY_SEPARATOR . $fileName;
 
         if( !\Zend_Loader::isReadable($loadFile) ) {
-            foreach( $this->getFallbackControllerDirectory($this->_curModule) as $dir ) {
-                if( !\Zend_Loader::isReadable($dir . DIRECTORY_SEPARATOR . $fileName) ) {
+            $fallbackDirs = $this->getFallbackControllerDirectory(
+                $this->_curModule);
+            foreach( $fallbackDirs as $fallbackDir ) {
+                $namespace  = rtrim($fallbackDir[0], '\\') . '\\';
+                $path       = $fallbackDir[1];
+
+                if( !\Zend_Loader::isReadable(
+                        $path . DIRECTORY_SEPARATOR . $fileName) )
+                {
                     continue;
                 }
-                $this->_curDirectory = $dir;
-                return parent::loadClass($className);
+                $this->_curDirectory = $path;
+
+                $finalClass  = $namespace . $className;
+                if (($this->_defaultModule != $this->_curModule)
+                    || $this->getParam('prefixDefaultModule'))
+                {
+                    $finalClass = $namespace . $this->formatClassName($this->_curModule, $className);
+                }
+                if (class_exists($finalClass, false)) {
+                    return $finalClass;
+                }
+
+                $dispatchDir = $this->getDispatchDirectory();
+                $loadFile    = $dispatchDir . DIRECTORY_SEPARATOR . $this->classToFilename($className);
+
+                if (\Zend_Loader::isReadable($loadFile)) {
+                    include_once $loadFile;
+                } else {
+                    require_once 'Zend/Controller/Dispatcher/Exception.php';
+                    throw new \Zend_Controller_Dispatcher_Exception('Cannot load controller class "' . $className . '" from file "' . $loadFile . "'");
+                }
+
+                if (!class_exists($finalClass, false)) {
+                    require_once 'Zend/Controller/Dispatcher/Exception.php';
+                    throw new \Zend_Controller_Dispatcher_Exception('Invalid controller class ("' . $finalClass . '")');
+                }
+
+                return $finalClass;
             }
         }
 
@@ -164,8 +209,8 @@ class Multiple extends \Zend_Controller_Dispatcher_Standard implements IDispatch
 
     /**
      * @desc Returns whether a request is dipatchable based on the parent's
-     * behaviour and if it is not dispatchable, it will try the fallback controller
-     * directories to check whether it is dispatchable or not.
+     * behaviour and if it is not dispatchable, it will try the fallback
+     * controller directories to check whether it is dispatchable or not.
      *
      * @param \Zend_Controller_Request_Abstract $request The request object
      * @return boolean If the request is dispatchable based on additionnal
@@ -192,7 +237,7 @@ class Multiple extends \Zend_Controller_Dispatcher_Standard implements IDispatch
             }
 
             foreach ($fallbackDirs as $fallbackDir) {
-                $filePath = $fallbackDir . DIRECTORY_SEPARATOR . $fileSpec;
+                $filePath = $fallbackDir[1] . DIRECTORY_SEPARATOR . $fileSpec;
                 if( \Zend_Loader::isReadable($filePath) ) {
                     return true;
                 }

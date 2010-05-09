@@ -9,17 +9,18 @@ class AllTests extends Test\PHPUnit\TestSuite
     {
         $suite = new self('Majisti Framework - All tests');
 
-        $suite->addTest(Application\AllTests::suite());
-        $suite->addTest(Config\AllTests::suite());
-        $suite->addTest(Controller\AllTests::suite());
-        $suite->addTest(I18n\AllTests::suite());
-        $suite->addTest(Loader\AllTests::suite());
-        $suite->addTest(Model\AllTests::suite());
-        $suite->addTest(Test\AllTests::suite());
-        $suite->addTest(Util\AllTests::suite());
-        $suite->addTest(View\AllTests::suite());
+        $suite->addTestSuite(Application\AllTests::suite());
+        $suite->addTestSuite(Config\AllTests::suite());
+        $suite->addTestSuite(Controller\AllTests::suite());
+        $suite->addTestSuite(I18n\AllTests::suite());
+        $suite->addTestSuite(Loader\AllTests::suite());
+        $suite->addTestSuite(Model\AllTests::suite());
+        $suite->addTestSuite(Test\AllTests::suite());
+        $suite->addTestSuite(Util\AllTests::suite());
+        $suite->addTestSuite(View\AllTests::suite());
 
-//        $suite->addTestSuite(__NAMESPACE__ . '\ViewTest');
+        $suite->addTestCase(__NAMESPACE__ . '\ApplicationTest');
+        $suite->addTestCase(__NAMESPACE__ . '\ViewTest');
 
         return $suite;
     }

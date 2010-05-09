@@ -144,4 +144,6 @@ login.phtml
         <classname>Majisti\Model\Container</classname> so that interacting or using
         common models is simplified.</para>
     </example>
+    
+    <xi:include href="model/data.xml" />
 </chapter>

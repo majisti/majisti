@@ -65,7 +65,7 @@ PHPUnit_Util_Filter::addFileToFilter($majistiRoot .
 
 /* be a little bit more verbose according to request param */
 $request = new \Zend_Controller_Request_Http();
-if( $request->has('verbose') ) {
+if( $request->has('verbose') || $request->has('v') ) {
     \Majisti\Test\PHPUnit\Runner::setDefaultArguments(array(
         'printer' => new \Majisti\Test\PHPUnit\Listener\Simple\Html(null, true)
     ));

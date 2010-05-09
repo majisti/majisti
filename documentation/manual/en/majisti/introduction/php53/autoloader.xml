@@ -8,7 +8,10 @@
     
     <title>Autoloader</title>
 
-    <para>
-        Lorem ipsum dolor sit amer
-    </para>
+    <para>Along with the Zend's autoloader, Majisti adds up to the autoloading
+        stack with its implementation of an autoloader PHP5.3 namespaced class.
+        A class located under /Path/To/Class would be instanciable without
+        using <methodname>require_once</methodname> with the namespace syntax,
+        which in this case would be \Path\To\Class provided it is retrievable
+        from the include_path.</para>
 </section>

@@ -22,7 +22,7 @@ class ExtensionsTest extends \Majisti\Test\PHPUnit\TestCase
 
     public function testFoo()
     {
-        $this->markTestIncomplete();
+        $this->markTestIncomplete('Waiting for pair programming design');
     }
 }
 

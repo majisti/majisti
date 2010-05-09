@@ -8,7 +8,19 @@
     
     <title>Exceptions</title>
 
-    <para>
-        Lorem ipsum dolor sit amer
-    </para>
+    <para>Again used by the core components, the exceptions can still be used
+        from the library. Currently, Majisti provides those kind of exceptions:<itemizedlist>
+            <listitem>
+                <para><methodname>NotImplementedException</methodname> When
+                    something is not implemented yet.</para>
+            </listitem>
+            <listitem>
+                <para><methodname>UnsupportedOperationException</methodname>
+                    For unsupported operations. Use carefully as it is argued
+                    that throwing more exceptions in descending classes
+                    inheritence is prohibited by some practitionners. The
+                    exception to this is often the unsupported operation
+                    exception, hence its presence.</para>
+            </listitem>
+        </itemizedlist></para>
 </section>

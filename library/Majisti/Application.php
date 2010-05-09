@@ -32,17 +32,25 @@ class Application
         Application\Constants::defineConstants($applicationPath);
 
         /* setup config and call parent */
-        $config = $this->_loadConfiguration();
+        $config = $this->loadConfiguration();
         \Zend_Registry::set('Majisti_Config', $config);
 
         $application = new \Zend_Application(APPLICATION_ENVIRONMENT, $config);
 
+//        \Zend_Debug::dump($config, '<strong>object 1</strong>');
         /* further config handling */
         $bootstrap = $application->getBootstrap();
         if( $bootstrap->hasPluginResource('ConfigHandler') ) {
             $bootstrap->bootstrap('ConfigHandler');
-            $application->setOptions($config->toArray());
+//            \Zend_Debug::dump(\Zend_Registry::get('Majisti_Config'), 'object 2');
+//            exit;
+            $application->setOptions(
+                \Zend_Registry::get('Majisti_Config')->toArray());
+//            $application->setOptions($config->toArray());
         }
+
+        /* add locales to the application */
+//        $bootstrap->bootstrap('Locales');
 
         /* declare yet more constants */
         Application\Constants::defineConfigurableConstants();
@@ -54,11 +62,10 @@ class Application
     /**
      * @desc Returns a merged Majisti's default configuration with
      * the application's configuration, the later overwriting the former.
-     * @return \Zend_Config
      *
-     * TODO: factory method for supporting Zend_Config_Xml AND Zend_Config_Ini?
+     * @return \Zend_Config
      */
-    protected function _loadConfiguration()
+    protected function loadConfiguration()
     {
         $defaultConfig = new \Zend_Config_Ini( dirname(__FILE__) .
             '/Application/Configs/core.ini', APPLICATION_ENVIRONMENT, true);

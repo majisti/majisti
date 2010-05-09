@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section 
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" 
+    xml:lang="en" xml:id="majisti.model.data.xml" 
+    version="5.0">
+    
+    <title>Xml</title>
+    <para>
+        The XML model class eases the manipulation XML files serving as data models. Xml provides a variety of functions manage the xml file path, the markups used
+        with it, to set whether BBCode markups are enabled and also to get data in the current locale without hassles.
+    </para>
+    <para> When building a Xml object, the constructor accepts two parameters: <code>xmlPath</code>
+        and <code>useBBCodeMarkup</code>. The xml path parameter reffers to the XML file this model
+        is representing, while the second parameter is a flag indicating if BBCode markups should be
+        parsed or not.</para>
+    <para>Speaking of markups, <classname>Xml</classname> makes use of a stack to store it's
+        markups. To add a markup to the stack, simply call the <code>pushMarkup</code> function. The
+        function's signature is the
+        following:<programlisting>pushMarkup($parser, $renderer = 'Html')</programlisting></para>
+    <para>The first paramater expected is the name of any class implementing
+            <classname>Zend_Markup_Parser_ParserInterface</classname> in a string format. The second
+        paramater, optional, is the name of any renderer class extending
+            <classname>Zend_Markup_Renderer_RendererAbstract</classname>. If no renderer is
+        specified, the default one is <classname>Zend_Markup_Renderer_Html</classname>, just like in
+        the <classname>Zend_Markup</classname> factory method.</para>
+    <para>Once a markup is pushed, the stack may be retrieved
+        using:<programlisting>getMarkupStack()</programlisting></para>
+    <para>The object returned is a <classname>Stack</classname>, part of Majisti's collections util
+        classes. <link xlink:href="majisti.util.model.html#majisti.util.model.collection.stack">See more details about the
+            Stack</link>. To clear all of the markups pushed in the stack, Xml has the
+            <code>clearMarkups()</code> function.
+    </para>
+    <note>
+        <para> When BBCodeMarkupIsUsed value is set to true, Xml automatically pushes the 'BBcode'
+            parser in the stack. The renderer is the default one, 'Html'.</para>
+    </note>
+    <para> To fetch the data contained in a XML file, simply use the following
+        function:<programlisting>getData()</programlisting></para>
+    <para>The above function looks at the LocaleSession instance and fetches data from the XML file
+        according to the current language, returning a <code>Zend_Config_Xml</code> object. If no
+        section corresponding to the current locale is found in the XML file, the function
+        instanciates the <code>Zend_Config_Xml</code> object with using the default locale for
+        section name. At this point, if there are no section named with the default locale
+        abbreviation, you will receive a <code>Zend_Config_Exception</code> with the message
+            <code>"Section '$sectionName' cannot be found in '$xml'"</code>.</para>
+    <para>
+        <example>
+            <title>Basic usage of the Xml class</title>
+            <para>Context: we have 2 XML files, named <emphasis role="bold">file1.xml</emphasis> and
+                    <emphasis role="bold">file2.xml</emphasis>. The current locale is '<emphasis
+                    role="bold">fr</emphasis>' and the default one is '<emphasis role="bold"
+                    >en</emphasis>'.</para>
+            <para>Contents of <emphasis role="bold"
+                >file1.xml</emphasis>:<programlisting>&lt;data>
+    &lt;fr>
+        Bonjour le monde!
+    &lt;/fr>
+    &lt;en>
+        Hello world!
+    &lt;/en>
+&lt;/data></programlisting></para>
+            <para>Contents of <emphasis role="bold"
+                >file2.xml</emphasis>:<programlisting>&lt;data>
+    &lt;en>
+        Hello world!
+    &lt;/en>
+&lt;/data></programlisting></para>
+            <para>Let's say all we want is the BBCodeMarkup, it is set to true by default, all there
+                is to do is instanciate the Xml objects with the file's path
+                parameter.<programlisting>$xmlMultiLocale  = new Xml('file1.xml');
+$xmlEnLocaleOnly = new Xml('file2.xml');</programlisting></para>
+            <para><code>$xmlMultiLocale->getData()</code> will return a <code>Zend_Config_Xml</code>
+                object containing the 'fr' locale data since the current locale is 'fr';</para>
+            <para><code>$xmlEnLocaleOnly->getData()</code> will returl a
+                    <code>Zend_Config_Xml</code> object filled with the default locale data, 'en',
+                since 'fr' cannot be found in the XML file.</para>
+        </example>
+    </para>
+    <para> Of course, just like <classname>Zend_Form</classname>, you can (and probably should)
+        extend this model class in order to make a concrete model of your own. This is always
+        something that should be done in projects.</para>
+</section>

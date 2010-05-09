@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en"
+    xml:id="majisti.controller.actionHelpers" version="5.0">
+
+    <title>Action Helpers</title>
+
+    <para> Action Helpers allow developers to inject runtime and/or on-demand
+        functionality into any Action Controllers that extend
+        Zend_Controller_Action. Action Helpers aim to minimize the necessity to
+        extend the abstract Action Controller in order to inject common Action
+        Controller functionality. Source: <link
+            xlink:href="http://framework.zend.com/manual/en/zend.controller.actionhelpers.html"
+            >Zend documentation</link>
+    </para>
+
+    <xi:include href="actionHelpers/model.xml"/>
+</section>

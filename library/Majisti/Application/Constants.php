@@ -119,14 +119,17 @@ class Constants
         define('MAJISTI_URL_SCRIPTS', MAJISTI_URL . '/scripts');
         define('MAJISTI_URL_IMAGES',  MAJISTI_URL . '/images/common');
 
-        $locale = \Majisti\I18n\LocaleSession::getInstance();
-        define('MAJISTI_URL_IMAGES_LOCALE', MAJISTI_URL .
-            "/images/{$locale->getCurrentLocale()}");
-        define('APPLICATION_URL_IMAGES_LOCALE', BASE_URL .
-            "/images/{$locale->getCurrentLocale()}");
+        $locales        = \Majisti\I18n\Locales::getInstance();
+//        $currentLocale  = strtolower($locales->getCurrentLocale()->toString());
+//        $defaultLocale  = strtolower($locales->getDefaultLocale()->toString());
 
-        define('APPLICATION_LOCALE_CURRENT', $locale->getCurrentLocale());
-        define('APPLICATION_LOCALE_DEFAULT', $locale->getDefaultLocale());
+        define('MAJISTI_URL_IMAGES_LOCALE', MAJISTI_URL .
+            "/images/{$currentLocale}");
+        define('APPLICATION_URL_IMAGES_LOCALE', BASE_URL .
+            "/images/{$currentLocale}");
+
+        define('APPLICATION_LOCALE_CURRENT', $currentLocale);
+        define('APPLICATION_LOCALE_DEFAULT', $defaultLocale);
 
         define('MAJISTIX_URL_STYLES',  MAJISTIX_URL . '/styles');
         define('MAJISTIX_URL_SCRIPTS', MAJISTIX_URL . '/scripts');
