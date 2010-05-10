@@ -134,15 +134,16 @@ class Xml
      */
     public function getData()
     {
-        if( null === $this->_data ||
-            $this->_locale !== Locales::getInstance()->toString() )
-        {
-            $locale = Locales::getInstance();
+        $locale = Locales::getInstance();
 
+        if( null === $this->_data ||
+                $this->_locale !== $locale->toString() ) {
+
+            $this->_locale = $locale->toString();
             try {
                 $data = new \Zend_Config_Xml(
                     $this->_xmlPath,
-                    $locale->getCurrentLocale()->toString(),
+                    $locale->toString(),
                     array('allowModifications' => true)
                 );
             } catch( \Zend_Config_Exception $e ) {

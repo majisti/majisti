@@ -317,17 +317,6 @@ class LocalesTest extends \Majisti\Test\PHPUnit\TestCase
         $locale->switchLocale($en);
         $this->assertFalse($locale->isCurrentLocaleDefault());
     }
-
-    /**
-     * Tests \Zend_Debug::dump() possible bug
-     */
-    public function testZDDumpPossibleBug()
-    {
-        for( $i = 0 ; $i < 300 ; ++$i ) {
-            $curLocale = $this->locale->getCurrentLocale()->toString();
-            \Zend_Debug::dump($curLocale, '<strong></strong>');
-        }
-    }
 }
 
 LocalesTest::runAlone();
