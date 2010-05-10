@@ -8,7 +8,7 @@ require_once 'TestHelper.php';
  * @desc Test the I18n resource.
  * @author Majisti
  */
-class I18nTest extends \Majisti\Test\PHPUnit\TestCase
+class TranslateTest extends \Majisti\Test\PHPUnit\TestCase
 {
     static protected $_class = __CLASS__;
 
@@ -36,4 +36,4 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
     }
 }
 
-I18nTest::runAlone();
+TranslateTest::runAlone();

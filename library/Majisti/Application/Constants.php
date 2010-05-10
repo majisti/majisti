@@ -120,7 +120,6 @@ class Constants
         define('MAJISTI_URL_IMAGES',  MAJISTI_URL . '/images/common');
 
         $locales        = \Majisti\I18n\Locales::getInstance();
-        $locales->addLocale(new \Zend_Locale('en'));
         $currentLocale  = strtolower($locales->getCurrentLocale()->toString());
         $defaultLocale  = strtolower($locales->getDefaultLocale()->toString());
 

@@ -1,36 +1,40 @@
 <?php
 namespace Majisti\Application\Resource;
 
-use \Majisti\I18n\LocaleSession as LocaleSession;
-
 /**
- * @desc This resource will register a LayoutSwitcher plugin
- * that will enable modules with their own layout views.
- *
+ * @desc
  * @author Majisti
  */
 class Locales extends \Zend_Application_Resource_ResourceAbstract
 {
+    /**
+     * @desc Inits the resource.
+     *
+     * @return \Majisti\I18n\Locales the locales
+     */
     public function init()
     {
-
+        $this->prepareLocales();
+        return \Majisti\I18n\Locales::getInstance();
     }
 
-    protected function prepareLocaleSession()
+    /**
+     * @desc Prepares the locales according to the options
+     */
+    protected function prepareLocales()
     {
-        $localeSession = LocaleSession::getInstance();
-        $selector      = new \Majisti\Config\Selector($this->getOptions());
+        $locales    = \Majisti\I18n\Locales::getInstance();
+        $selector   = new \Majisti\Config\Selector(
+            new \Zend_Config($this->getOptions()));
 
-        if( $availLocales = $selector->find(
-                'majisti.app.locale.available', false) )
-        {
-//            $localeSession->setLocales($availLocales);
-
-            if( $defaultLocale = $selector->find(
-                'majisti.app.locale.default', false) )
-            {
-//                $localeSession->setDefaultLocale($defaultLocale);
+        /* add all available locales */
+        if( $availLocales = $selector->find('available', false) ) {
+            if( !is_array($availLocales) ) {
+                $availLocales = array($availLocales);
             }
+            $localeSession->setLocales($availLocales);
+        } else { /* library's default language */
+            $locales->addLocale(new \Zend_Locale('en'));
         }
     }
 }

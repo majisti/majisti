@@ -48,6 +48,7 @@ $loader->pushAutoloader(new \Majisti\Loader\Autoloader());
 /* instanciate a mock application */
 define('MAJISTI_FOLDER_NAME', dirname($majistiRoot));
 define('APPLICATION_NAME', 'Majisti_Test');
+define('APPLICATION_ENVIRONMENT', 'development');
 
 \Majisti\Application::setApplicationPath(
     $majistiRoot . '/tests/library/Majisti/Application/_webroot');

@@ -37,12 +37,16 @@ class Application
 
         $application = new \Zend_Application(APPLICATION_ENVIRONMENT, $config);
 
-        /* further config handling */
+        /* further config handling using the ConfigHandler resource */
         $bootstrap = $application->getBootstrap();
-        if( $bootstrap->hasPluginResource('ConfigHandler') ) {
-            $bootstrap->bootstrap('ConfigHandler');
-            $application->setOptions($config->toArray());
-        }
+        $bootstrap->bootstrap('ConfigHandler');
+        $config = \Zend_Registry::get('Majisti_Config')->toArray();
+
+        $application->setOptions($config);
+        $bootstrap->setOptions($config);
+
+        /* add locales to the application */
+        $bootstrap->bootstrap('Locales');
 
         /* declare yet more constants */
         Application\Constants::defineConfigurableConstants();

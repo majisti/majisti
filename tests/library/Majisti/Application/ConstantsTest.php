@@ -21,12 +21,18 @@ class ConstantsTest extends \Majisti\Test\PHPUnit\TestCase
     public $applicationPath;
 
     /**
+     * @var \Zend_Controller_Request_Http
+     */
+    public $request;
+
+    /**
      * Setups the test case
      */
     public function setUp()
     {
         $this->applicationPath = dirname(__FILE__) . '/_webroot';
         \Zend_Registry::set('Majisti_Config', new \Zend_Config(array()));
+        $this->request = new \Zend_Controller_Request_Http();
     }
 
     /**
@@ -36,7 +42,7 @@ class ConstantsTest extends \Majisti\Test\PHPUnit\TestCase
      * @param array $constants Constants to assert
      * as an array of name => value pairs
      */
-    protected function _assertConstants(array $constants)
+    protected function assertConstants(array $constants)
     {
         foreach ($constants as $name => $value) {
             $this->assertTrue(defined($name),
@@ -51,6 +57,8 @@ class ConstantsTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function getExpectedConstants()
     {
+        $req = $this->request;
+
         return array(
             'APPLICATION_PATH'          => $this->applicationPath,
             'APPLICATION_ENVIRONMENT'   => 'production',
@@ -60,19 +68,20 @@ class ConstantsTest extends \Majisti\Test\PHPUnit\TestCase
              * getcwd provides with /home/user/www/.... and we have to keep only
              * the chunk starting from /majisti.
              */
-            'BASE_URL'                  => $_SERVER['SCRIPT_NAME'],
+            'BASE_URL'                  => $req->getBaseUrl(),
             'MAJISTI_ROOT'              => realpath(dirname(dirname(dirname
                                            (__FILE__))) . '/../../library'),
             'MAJISTI_PATH'              => MAJISTI_ROOT . '/Majisti',
             'MAJISTIX_PATH'             => MAJISTI_ROOT . '/MajistiX',
             'MAJISTIX_MODULES'          => MAJISTIX_PATH . '/Modules',
             'MAJISTIX_EXTENSIONS'       => MAJISTIX_PATH . '/Extensions',
-            'APPLICATION_URL_PREFIX'    => 'http://' . $_SERVER['HTTP_HOST'] ,
+            'APPLICATION_URL_PREFIX'    => $req->getScheme() . '://' .
+                                           $req->getHttpHost() ,
             'APPLICATION_URL'           => APPLICATION_URL_PREFIX . BASE_URL,
             /* going accordingly to the biased BASE_URL */
-            'APPLICATION_URL_STYLES'    => $_SERVER['SCRIPT_NAME'] . '/styles',
-            'APPLICATION_URL_SCRIPTS'   => $_SERVER['SCRIPT_NAME'] . '/scripts',
-            'APPLICATION_URL_IMAGES'    => $_SERVER['SCRIPT_NAME'] .
+            'APPLICATION_URL_STYLES'    => $req->getBaseUrl() . '/styles',
+            'APPLICATION_URL_SCRIPTS'   => $req->getBaseUrl() . '/scripts',
+            'APPLICATION_URL_IMAGES'    => $req->getBaseUrl() .
                                            '/images/common'
         );
     }
@@ -82,13 +91,18 @@ class ConstantsTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function getExpectedConfigurableConstants()
     {
+        $req = $this->request;
+
         return array(
-            'MAJISTI_PUBLIC'                => 'http://' . $_SERVER['HTTP_HOST']
-                                        . '/' . MAJISTI_FOLDER_NAME . '/public',
-            'MAJISTI_URL'                   => 'http://' . $_SERVER['HTTP_HOST']
-                                . '/' . MAJISTI_FOLDER_NAME . '/public/majisti',
-            'MAJISTIX_URL'                  => 'http://' . $_SERVER['HTTP_HOST']
-                               . '/' . MAJISTI_FOLDER_NAME . '/public/majistix',
+            'MAJISTI_PUBLIC'                => $req->getScheme() . '://' .
+                                               $req->getHttpHost() . '/' .
+                                               MAJISTI_FOLDER_NAME . '/public',
+            'MAJISTI_URL'                   => $req->getScheme() . '://' .
+                                               $req->getHttpHost() . '/' .
+                                               MAJISTI_FOLDER_NAME . '/public/majisti',
+            'MAJISTIX_URL'                  => $req->getScheme() . '://' .
+                                               $req->getHttpHost() . '/' .
+                                               MAJISTI_FOLDER_NAME . '/public/majistix',
             'MAJISTI_URL_STYLES'            => MAJISTI_URL . '/styles',
             'MAJISTI_URL_SCRIPTS'           => MAJISTI_URL . '/scripts',
             'MAJISTI_URL_IMAGES'            => MAJISTI_URL . '/images/common',
@@ -110,8 +124,9 @@ class ConstantsTest extends \Majisti\Test\PHPUnit\TestCase
 
     public function getExpectedAliases()
     {
-        $expectedConstants = $this->getExpectedConstants();
-        $expectedConfigConstants = $this->getExpectedConfigurableConstants();
+        $expectedConstants          = $this->getExpectedConstants();
+        $expectedConfigConstants    = $this->getExpectedConfigurableConstants();
+
         return array(
             'APP_PATH'      => $expectedConstants['APPLICATION_PATH'],
             'APP_LIB'       => $expectedConstants['APPLICATION_LIBRARY'],
@@ -152,17 +167,17 @@ class ConstantsTest extends \Majisti\Test\PHPUnit\TestCase
 
     public function testConstantsAreAllDefinedCorrectly()
     {
-        $this->_assertConstants($this->getExpectedConstants());
+        $this->assertConstants($this->getExpectedConstants());
     }
 
     public function testConfigurableConstantsAreAllDefinedCorrectly()
     {
-        $this->_assertConstants($this->getExpectedConfigurableConstants());
+        $this->assertConstants($this->getExpectedConfigurableConstants());
     }
 
     public function testAliasesAreAllDefinedCorrectly()
     {
-        $this->_assertConstants($this->getExpectedAliases());
+        $this->assertConstants($this->getExpectedAliases());
     }
 
     public function testAliasesDisabled()
