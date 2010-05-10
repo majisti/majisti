@@ -26,12 +26,12 @@
                installed under /usr/share/docbook-xsl or you can edit
                ${dir.build.manual}/build/html/html.xsl to use a chunk from the web
                or different path (symbolic links recommended)
-           - Docbook (tested with 5.0)
+           - Docbook installed under /usr/share/docbook (tested with 5.0)
        
        Unit testing and code coverage:
            - PHP Packages must be 5.3.0 and higher.
            - PHPUnit 3.4.1 in include path (Does not seem to work with 3.4.2 to current)
-           - XDebug extension for apache 2.1.0 and above (for code coverage)
+           - XDebug 2.0.5 extension and above (for code coverage)
     
     General Usage:
         ant all
