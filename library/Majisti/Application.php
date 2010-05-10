@@ -46,7 +46,7 @@ class Application
         $bootstrap->setOptions($config);
 
         /* add locales to the application */
-        $bootstrap->bootstrap('Locales');
+        $bootstrap->bootstrap('Locale');
 
         /* declare yet more constants */
         Application\Constants::defineConfigurableConstants();

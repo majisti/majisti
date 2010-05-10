@@ -11,7 +11,7 @@
 if( extension_loaded('xdebug') ) {
     $params = array(
         'xdebug.collect_params'             => 3,
-        'xdebug.var_display_max_data'       => 3,
+        'xdebug.var_display_max_data'       => 30,
         'xdebug.var_display_max_children'   => 3,
         'xdebug.var_display_max_depth'      => 3,
     );

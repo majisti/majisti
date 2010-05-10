@@ -139,6 +139,7 @@ class Xml
         if( null === $this->_data ||
                 $this->_locale !== $locale->toString() ) {
 
+            /* load current locale section */
             $this->_locale = $locale->toString();
             try {
                 $data = new \Zend_Config_Xml(
@@ -146,6 +147,7 @@ class Xml
                     $locale->toString(),
                     array('allowModifications' => true)
                 );
+            /* section could not be found, fallback to default locale */
             } catch( \Zend_Config_Exception $e ) {
                 $data = new \Zend_Config_Xml(
                     $this->_xmlPath,
@@ -154,6 +156,7 @@ class Xml
                 );
             }
 
+            /* apply markup stack */
             $stack = $this->getMarkupStack();
             if( !$stack->isEmpty() ) {
                 $markup = new \Majisti\Config\Handler\Markup(
