@@ -61,7 +61,7 @@ class ConstantsTest extends \Majisti\Test\PHPUnit\TestCase
 
         return array(
             'APPLICATION_PATH'          => $this->applicationPath,
-            'APPLICATION_ENVIRONMENT'   => 'production',
+            'APPLICATION_ENVIRONMENT'   => 'development',
             'APPLICATION_LIBRARY'       => realpath(APPLICATION_PATH .
                                            '../library'),
             /*

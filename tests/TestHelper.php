@@ -7,9 +7,18 @@
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 
-/* disable xdebug */
+/* configure xdebug for performance, if the module is enabled */
 if( extension_loaded('xdebug') ) {
-    xdebug_disable();
+    $params = array(
+        'xdebug.collect_params'             => 3,
+        'xdebug.var_display_max_data'       => 3,
+        'xdebug.var_display_max_children'   => 3,
+        'xdebug.var_display_max_depth'      => 3,
+    );
+
+    foreach ($params as $key => $value) {
+       ini_set($key, $value);
+    }
 }
 
 /* set error reporting to the level to which the code must comply. */

@@ -13,7 +13,7 @@ class TranslateTest extends \Majisti\Test\PHPUnit\TestCase
     static protected $_class = __CLASS__;
 
     /**
-     * @var \Majisti\Application\Resource\I18n
+     * @var \Majisti\Application\Resource\Translate
      */
     public $resource;
 
@@ -22,12 +22,12 @@ class TranslateTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function setUp()
     {
-        $this->resource = new I18n();
+        $this->resource = new Translate();
     }
 
     public function testNullTranslatorIsRegistered()
     {
-        $translator = $this->resource->getTranslator();
+        $translator = $this->resource->getTranslate();
         $options    = $translator->getOptions();
 
         $this->assertTrue($options['disableNotices']);
