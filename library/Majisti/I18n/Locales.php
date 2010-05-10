@@ -291,9 +291,9 @@ class Locales
     }
 
     /**
-     * @desc Clears all the locales
+     * @desc Clears all the available locales
      */
-    protected function clearLocales()
+    public function clearLocales()
     {
         $this->_locales = array();
     }

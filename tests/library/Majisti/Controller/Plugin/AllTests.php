@@ -23,6 +23,7 @@ class AllTests extends \Majisti\Test\PHPUnit\TestSuite
         $suite = new self('Majisti Framework - Controller - Plugin - All tests');
         
         $suite->addTestCase(__NAMESPACE__ . '\I18nTest');
+        $suite->addTestCase(__NAMESPACE__ . '\LayoutSwitcherTest');
         
         return $suite;
     }
