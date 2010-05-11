@@ -29,14 +29,18 @@ class I18n extends AbstractPlugin
                     in the configuration");
              }
 
-             $localeSession = \Majisti\I18n\LocaleSession::getInstance();
+             $locales = \Majisti\I18n\Locales::getInstance();
 
              /* retrieve locale and switch if it is supported */
              if( $locale = $request->getParam($config->requestParam, false) ) {
-                if( $localeSession->isLocaleSupported($locale)
-                    && $locale !== $localeSession->getCurrentLocale()
-                ) {
-                    $localeSession->switchLocale($locale);
+
+                 $locale = new \Zend_Locale($locale);
+
+                if( $locales->hasLocale($locale)
+                    && $locale !== $locales->getCurrentLocale()) {
+
+                    $locales->switchLocale($locale);
+
 
                     /* remove requestParam parameter */
                     $params = $request->getParams();

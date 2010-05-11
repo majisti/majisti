@@ -26,7 +26,6 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function setUp()
     {
-        $this->markTestIncomplete();
 
         /* setting up request object */
         $this->_request = new \Zend_Controller_Request_Http();
@@ -35,14 +34,21 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
         $this->_request->setModuleName('bazModule');
 
         /* setting up locale session */
-        $this->_localeSession = \Majisti\I18n\LocaleSession::getInstance();
+        $this->_localeSession = \Majisti\I18n\Locales::getInstance();
+        $this->_localeSession->addLocale(new \Zend_Locale('fr'));
 
-        /*
-         * TODO: Refactor I18n class to provide addLocale(), removeLocale()
-         * and setConfig().
-         */
+        \Zend_Controller_Front::getInstance()->setRequest($this->_request);
+        $route = new Zend_Controller_Router_Route(
+        ":module/:id",
+        array(
+                "controller" => "index",
+                "action" => "index"
+                ),
+        array("id" => "\d+")
+        );
+        /** FIXME: Fix from here. **/
+        \Zend_Controller_Front::getInstance()->getRouter()->addRoute('foo1',$route);
         $this->_i18n = new I18n();
-        \Zend_Debug::dump($this->_localeSession->getSupportedLocales(), '<strong></strong>');
     }
 
     /**
@@ -57,7 +63,8 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
         /* TODO: use setConfig($config) to set the request param */
 
         $this->_request->setParam('request', 'fr');
-        $this->_i18n->preDispatch();
+        $this->_i18n->setConfig($config);
+        $this->_i18n->preDispatch($this->_request);
 
         /* TODO: assert that locale has been switched to 'fr' */
         $this->markTestIncomplete();
