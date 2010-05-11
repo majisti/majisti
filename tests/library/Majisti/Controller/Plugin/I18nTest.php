@@ -76,7 +76,7 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
         $this->_i18n->preDispatch($this->_request);
 
         /* TODO: assert that locale has been switched to 'fr' */
-//        $this->markTestIncomplete();
+        $this->markTestIncomplete();
     }
 
     /**
