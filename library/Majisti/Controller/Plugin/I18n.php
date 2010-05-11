@@ -34,13 +34,12 @@ class I18n extends AbstractPlugin
              /* retrieve locale and switch if it is supported */
              if( $locale = $request->getParam($config->requestParam, false) ) {
 
-                 $locale = new \Zend_Locale($locale);
+                $locale = new \Zend_Locale($locale);
 
                 if( $locales->hasLocale($locale)
-                    && $locale !== $locales->getCurrentLocale()) {
+                    && !$locale->equals($locales->getCurrentLocale())) {
 
                     $locales->switchLocale($locale);
-
 
                     /* remove requestParam parameter */
                     $params = $request->getParams();

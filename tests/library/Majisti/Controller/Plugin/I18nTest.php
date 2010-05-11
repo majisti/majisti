@@ -17,7 +17,7 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
 {
     static protected $_class = __CLASS__;
 
-    protected $_localeSession;
+    protected $_locales;
     protected $_request;
     protected $_i18n;
     
@@ -26,6 +26,7 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function setUp()
     {
+        $this->_i18n = new I18n();
 
         /* setting up request object */
         $this->_request = new \Zend_Controller_Request_Http();
@@ -33,22 +34,30 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
         $this->_request->setControllerName('barController');
         $this->_request->setModuleName('bazModule');
 
-        /* setting up locale session */
-        $this->_localeSession = \Majisti\I18n\Locales::getInstance();
-        $this->_localeSession->addLocale(new \Zend_Locale('fr'));
+        /* setting up locales */
+        $this->_locales = \Majisti\I18n\Locales::getInstance();
+        $this->_locales->addLocale(new \Zend_Locale('en'));
 
-        \Zend_Controller_Front::getInstance()->setRequest($this->_request);
-        $route = new Zend_Controller_Router_Route(
-        ":module/:id",
-        array(
-                "controller" => "index",
-                "action" => "index"
-                ),
-        array("id" => "\d+")
+        /* front controller */
+        $front = \Zend_Controller_Front::getInstance();
+        $front->setRequest($this->_request);
+        $front->setResponse(new \Zend_Controller_Response_Http());
+
+        /* stub redirector to cancel the redirection */
+        $stub = $this->getMock('Zend_Controller_Action_Helper_Redirector');
+        $stub->expects($this->once())
+             ->method('redirectAndExit');
+        \Zend_Controller_Action_HelperBroker::getStack()->Redirector = $stub;
+       
+        /* add default route */
+        \Zend_Controller_Front::getInstance()->getRouter()->addRoute(
+            'default',
+            new \Zend_Controller_Router_Route_Module(
+                array(),
+                $front->getDispatcher(),
+                $this->_request
+            )
         );
-        /** FIXME: Fix from here. **/
-        \Zend_Controller_Front::getInstance()->getRouter()->addRoute('foo1',$route);
-        $this->_i18n = new I18n();
     }
 
     /**
@@ -67,7 +76,7 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
         $this->_i18n->preDispatch($this->_request);
 
         /* TODO: assert that locale has been switched to 'fr' */
-        $this->markTestIncomplete();
+//        $this->markTestIncomplete();
     }
 
     /**
