@@ -11,43 +11,48 @@ namespace Majisti\I18n;
  */
 interface ILocale
 {
-	/**
-     * @desc Flushes all I18n persistence and puts back default locale.
-     * @return \Majisti\I18n\ILocale this
+    /**
+     * @desc Flushes the current locale persistence and reset
+     * the current locale to the default one.
      */
     public function reset();
 
     /**
-     * @desc Returns the current locale.
-     * The current locale persists through the session.
+     * @desc Returns the current locale. If there is no longer any
+     * available locales, it will return null, but will still keep
+     * the current locale until there are available locales added.
      *
-     * @return String The current locale
+     * If the current locale was never set or if the current locale is
+     * no longer amongst the available locale, it will reset itself to the
+     * default locale.
      *
-     * @see switchLocale() To switch the current locale
+     * @return \Zend_Locale|null The current locale
      */
     public function getCurrentLocale();
 
     /**
-     * @desc Returns the default locale
-     * @return string The default locale
+     * @desc Returns the default locale. If there is no longer any
+     * available locales, it will return null, but will still keep
+     * the default locale until there are available locales added.
+     *
+     * If the default locale was never set or if the default locale is
+     * no longer amongst the available locale, it will reset itself to the
+     * first added locale.
+     *
+     * @return \Zend_Locale|null The default locale
      */
     public function getDefaultLocale();
 
     /**
-     * @desc Returns all the supported locales including the default locale
-     * defined by the application's configuration. The default locale
-     * is always the first element of the array.
+     * @desc Returns all the available locales including the default locale
+     * supported by this application.
      *
-     * @return Array All the supported locales, exclusing the default locale
+     * @param bool $excludeDefault Excludes the default locale from the
+     * returned locales
+     *
+     * @return Array All the supported locales, including the default locale
      */
-    public function getLocales();
-
-    /**
-     * @desc Returns only the supported locale as an array, omitting
-     * the default locale
-     * @return Array All the supported locales, excluding the default locale
-     */
-    public function getSupportedLocales();
+    public function getLocales($excludeDefault = false);
 
     /**
      * @desc Returns whether the current application's locale is also the
@@ -58,27 +63,102 @@ interface ILocale
     public function isCurrentLocaleDefault();
 
     /**
-     * @desc Toggles between the registered locales. Switching is circular,
-     * meaning that switching between the languages will never come to an end.
+     * @desc Returns whether there is any available locales.
      *
-     * @param String $locale (optionnal def=null) Directly switch to that locale
-     * and sets the pointer to that locale. An abbreviation must be passed
-     * (ex: fr, fr_CA) depending on what was setup in the configuration.
-     *
-     * @throws Exception If the locale given is not supported by
-     * this application.
-     *
-     * @return The next locale or the given locale if it was passed
-     * as parameter.
+     * @return True is there is no available locales
      */
-    public function switchLocale($locale = null);
+    public function isEmpty();
 
     /**
-     * @desc Returns whether the given local is supported by this application.
+     * @desc Returns the number of available locales supported by
+     * this application.
+     */
+    public function count();
+
+    /**
+     * @desc Returns whether the given locale is supported by this application.
      *
-     * @param String $locale The locale abbreviation following the
+     * @param Sring $locale The locale abbreviation following the
      * configuration's syntax
      * @return bool True if this locale is supported.
      */
-    public function isLocaleSupported($locale);
+    public function hasLocale(\Zend_Locale $locale);
+
+    /**
+     * @desc Returns whether the given locales are all available.
+     *
+     * @param array $locales Array of \Zend_Locale
+     * @return bool True is and only if all the locales are available
+     */
+    public function hasLocales(array $locales);
+
+    /**
+     * @desc Clears all the available locales and adds the ones provided.
+     *
+     * @param array $locales An array of \Zend_Locale
+     * @param \Zend_Locale $default [optionnal] Directly switch
+     * the default locale to the one provided
+     */
+    public function setLocales(array $locales, $default = null);
+
+    /**
+     * @desc Toggles between the available locales, storing the current locale
+     * to the one provided.
+     *
+     * Everytime the locale is switched, the Zend_Registry key Zend_Locale
+     * is updated with the new locale accordingly.
+     *
+     * @param \Zend_Locale $locale Directly switch to that locale.
+     *
+     * @throws Exception If the locale given is not available.
+     *
+     * @return Locales this
+     */
+    public function switchLocale(\Zend_Locale $locale);
+
+    /**
+     * @desc Sets the default locale
+     *
+     * @param Zend_Locale $locale The locale
+     * @throws Exeption if the default locale is not an available locale
+     */
+    public function setDefaultLocale(\Zend_Locale $locale);
+
+    /**
+     * @desc Adds a locale to this list of available locales.
+     *
+     * @param \Zend_Locale $locale The locale
+     * @return Locales this
+     */
+    public function addLocale(\Zend_Locale $locale);
+
+    /**
+     * @desc Add multiple locales at once to the list of available locales.
+     *
+     * @param array $locales An array of \Zend_Locales
+     * @return Locales this
+     */
+    public function addLocales(array $locales);
+
+    /**
+     * @desc Clears all the available locales
+     */
+    public function clearLocales();
+
+    /**
+     * @desc Removes a locale to the list of available locales
+     *
+     * @param \Zend_Locale $locale The locale
+     * @return Locales|false This or false if the locale was not found
+     * and therefore not removed.
+     */
+    public function removeLocale(\Zend_Locale $locale);
+
+    /**
+     * @desc Removes multiple locales at once from the list of available locales
+     *
+     * @param array $locales An array of locales
+     * @return Locales this
+     */
+    public function removeLocales(array $locales);
 }

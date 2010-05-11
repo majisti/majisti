@@ -51,12 +51,6 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
         $front->setRequest($this->request);
         $front->setResponse(new \Zend_Controller_Response_Http());
 
-        /* stub redirector to cancel the redirection */
-        $stub = $this->getMock('Zend_Controller_Action_Helper_Redirector');
-        $stub->expects($this->once())
-             ->method('goToSimpleAndExit');
-        \Zend_Controller_Action_HelperBroker::getStack()->Redirector = $stub;
-       
         /* add default route */
         \Zend_Controller_Front::getInstance()->getRouter()->addRoute(
             'default',
@@ -69,13 +63,20 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
 
         /* request config */
         $this->config = new \Zend_Config(array('plugins'      => array (
-                                                'i18n'        => array(
-                                                'requestParam'=> 'request'))));
+                                               'i18n'        => array(
+                                               'requestParam'=> 'request'))));
     }
 
-    public function tearDown()
+    /**
+     * @desc Prepares a mock redirector
+     */
+    public function prepareMockRedirector()
     {
-        $this->i18n->setConfig(new \Zend_Config(array()));
+        /* stub redirector to cancel the redirection */
+        $stub = $this->getMock('Zend_Controller_Action_Helper_Redirector');
+        $stub->expects($this->once())
+             ->method('goToSimpleAndExit');
+        \Zend_Controller_Action_HelperBroker::getStack()->Redirector = $stub;
     }
 
     /**
@@ -84,6 +85,8 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function testLocaleIsSwitchedOnPost()
     {
+        $this->prepareMockRedirector();
+
         $this->request->setParam('request', 'fr');
         $this->i18n->setConfig($this->config);
         $this->i18n->preDispatch($this->request);
@@ -99,6 +102,7 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function testThatExceptionIsThrownIfRequestParamIsUnset()
     {
+        $this->i18n->setConfig(new \Zend_Config(array()));
         $this->i18n->preDispatch($this->request);
     }
 

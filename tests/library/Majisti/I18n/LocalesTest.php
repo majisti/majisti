@@ -18,7 +18,7 @@ class LocalesTest extends \Majisti\Test\PHPUnit\TestCase
     /**
      * @var Locales
      */
-    public $locale;
+    public $locales;
     
     /**
      *  @var \Zend_Locale
@@ -53,7 +53,7 @@ class LocalesTest extends \Majisti\Test\PHPUnit\TestCase
     /**
      * @var array
      */
-    public $locales;
+    public $mainLocales;
     
     /**
      * @var array of \Zend_Locale
@@ -83,12 +83,12 @@ class LocalesTest extends \Majisti\Test\PHPUnit\TestCase
         $this->it = new \Zend_Locale('it');
         $this->ca = new \Zend_Locale('ca');
 
-        $this->locales    = array($this->en, $this->fr, $this->es);
-        $this->altLocales = array($this->de, $this->it, $this->ca);
+        $this->mainLocales  = array($this->en, $this->fr, $this->es);
+        $this->altLocales   = array($this->de, $this->it, $this->ca);
 
-        $this->locale = Locales::getInstance();
-        $this->locale->setLocales($this->locales);
-        $this->locale->reset();
+        $this->locales = Locales::getInstance();
+        $this->locales->setLocales($this->mainLocales);
+        $this->locales->reset();
     }
     
     protected function restartSession()
@@ -105,11 +105,11 @@ class LocalesTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function test__construct()
     {
-    	$locale = $this->locale;
+    	$locale = $this->locales;
     	
     	/* test that the locale object behaves according to the settings */
     	$this->assertEquals($this->en, $locale->getDefaultLocale());
-    	$this->assertEquals($this->locales, $locale->getLocales());
+    	$this->assertEquals($this->mainLocales, $locale->getLocales());
     	$this->assertTrue($locale->isCurrentLocaleDefault());
     	$this->assertTrue($locale->hasLocale($this->en));
     	$this->assertTrue($locale->hasLocale($this->fr));
@@ -126,7 +126,7 @@ class LocalesTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function testGetDefault()
     {
-    	$locale = $this->locale;
+    	$locale = $this->locales;
     	
     	$this->assertEquals($this->en, $locale->getDefaultLocale());
     	
@@ -143,15 +143,15 @@ class LocalesTest extends \Majisti\Test\PHPUnit\TestCase
      */
 	public function testSwitchLocale()
     {
-        foreach( $this->locales as $key => $locale ) {
-            $switch = $this->locale->switchLocale($locale);
+        foreach( $this->mainLocales as $key => $locale ) {
+            $switch = $this->locales->switchLocale($locale);
             $this->assertEquals($locale, $switch);
-            $this->assertEquals($this->locales[$key],
-                    $this->locale->getCurrentLocale());
+            $this->assertEquals($this->mainLocales[$key],
+                    $this->locales->getCurrentLocale());
         }
     	
     	/* throws exception */
-    	$this->locale->switchLocale($this->de);
+    	$this->locales->switchLocale($this->de);
     }
     
     /**
@@ -159,7 +159,7 @@ class LocalesTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function testCurrentLocalePersistance()
     {
-    	$locale = $this->locale;
+    	$locale = $this->locales;
     	$locale->switchLocale($this->fr);
     	
     	$this->restartSession();
@@ -185,9 +185,25 @@ class LocalesTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function testThatResetWillSetCurrentLocaleToTheDefaultOne()
     {
-        $this->locale->reset();
-        $this->assertEquals($this->locale->getCurrentLocale(),
-                $this->locale->getDefaultLocale());
+        $this->locales->reset();
+        $this->assertEquals($this->locales->getCurrentLocale(),
+                $this->locales->getDefaultLocale());
+    }
+
+    /**
+     * Tests that get locales works with exclude default
+     */
+    public function testGetLocales()
+    {
+        $locales    = $this->locales;
+        $allLocales = $locales->getLocales();
+
+        $this->assertEquals($this->locales, $locales);
+
+        $locales->setDefaultLocale($this->en);
+        unset($allLocales[0]); //remove en
+
+        $this->assertEquals($allLocales, $locales->getLocales(true));
     }
 
     /**
@@ -195,8 +211,8 @@ class LocalesTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function testAddLocale()
     {
-        $locales = $this->locales;
-        $locale  = $this->locale;
+        $locales = $this->mainLocales;
+        $locale  = $this->locales;
 
         $locale->addLocales(array($this->de, $this->it));
         $this->assertTrue($locale->hasLocale($this->de));
@@ -215,8 +231,8 @@ class LocalesTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function testRemoveLocale()
     {
-       $locales = $this->locales;
-       $locale  = $this->locale;
+       $locales = $this->mainLocales;
+       $locale  = $this->locales;
 
        $this->assertFalse($locale->removeLocale($this->ca));
        $this->assertFalse($locale->hasLocale($this->ca));
@@ -233,7 +249,7 @@ class LocalesTest extends \Majisti\Test\PHPUnit\TestCase
        $this->assertFalse($locale->hasLocale($this->ca));
        $this->assertEquals($count - 2, $locale->count());
 
-       $this->assertEquals($this->locales, $locales);
+       $this->assertEquals($this->mainLocales, $locales);
     }
 
     /**
@@ -241,8 +257,8 @@ class LocalesTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function testThatSetLocalesOverwritesAllLocales()
     {
-        $locales    = $this->locales;
-        $locale     = $this->locale;
+        $locales    = $this->mainLocales;
+        $locale     = $this->locales;
         $altLocales = $this->altLocales;
 
         $locale->setLocales($altLocales);
@@ -272,7 +288,7 @@ class LocalesTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function testThatSetDefaultLocaleChangesDefaultLocale()
     {
-        $locale = $this->locale;
+        $locale = $this->locales;
         $fr     = $this->fr;
         $it     = $this->it;
 
@@ -289,7 +305,7 @@ class LocalesTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function testThatSetCurrentLocaleChangesCurrentLocale()
     {
-        $locale = $this->locale;
+        $locale = $this->locales;
         $fr     = $this->fr;
         $it     = $this->it;
 
@@ -306,7 +322,7 @@ class LocalesTest extends \Majisti\Test\PHPUnit\TestCase
      */
     public function testIsCurrentDefaultFunction()
     {
-        $locale = $this->locale;
+        $locale = $this->locales;
         $fr     = $this->fr;
         $en     = $this->en;
 

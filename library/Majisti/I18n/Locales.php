@@ -14,7 +14,7 @@ namespace Majisti\I18n;
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-class Locales
+class Locales implements ILocale
 {
     /**
      * @var \Zend_Session_Namespace
@@ -153,13 +153,23 @@ class Locales
      * @desc Returns all the available locales including the default locale
      * supported by this application.
      *
+     * @param bool $excludeDefault Excludes the default locale from the
+     * returned locales
+     *
      * TODO: support exclude default
      *
      * @return Array All the supported locales, including the default locale
      */
     public function getLocales($excludeDefault = false)
     {
-        return $this->_locales;
+        $locales = $this->_locales;
+
+        if( $excludeDefault ) {
+            $pos = $this->findLocale($this->getDefaultLocale());
+            unset($locales[$pos]);
+        }
+
+        return $locales;
     }
 
     /**
