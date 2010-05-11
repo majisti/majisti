@@ -31,7 +31,7 @@ class I18n extends AbstractPlugin
 
              $locales = \Majisti\I18n\Locales::getInstance();
 
-             /* retrieve locale and switch if it is supported */
+             /* retrieve locale and switch if it is supported and not current */
              if( $locale = $request->getParam($config->requestParam, false) ) {
 
                 $locale = new \Zend_Locale($locale);
@@ -45,17 +45,19 @@ class I18n extends AbstractPlugin
                     $params = $request->getParams();
                     unset($params[$config->requestParam]);
 
-                    /* redirect */
-                    if( !$request->isXmlHttpRequest() ) {
-                        \Zend_Controller_Action_HelperBroker
-                            ::getStaticHelper('redirector')->gotoSimpleAndExit(
+                    /* send result as json encoded response */
+                    if( $request->isXmlHttpRequest() ) {
+                        $helper = \Zend_Controller_Action_HelperBroker::getStaticHelper('json');
+                        /* @var $helper \Zend_Controller_Action_Helper_Json */
+                        $helper->sendJson(array('switched' => true));
+                    } else { /* redirect */
+                        \Zend_Controller_Action_HelperBroker ::getStaticHelper('redirector')
+                            ->gotoSimpleAndExit(
                                 $request->getActionName(),
                                 $request->getControllerName(),
                                 $request->getModuleName(),
                                 $params
-                        );
-                    } else {
-                        //TODO: send response
+                            );
                     }
                 }
              }

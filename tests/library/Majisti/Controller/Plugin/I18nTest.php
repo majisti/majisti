@@ -17,14 +17,24 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
 {
     static protected $_class = __CLASS__;
 
+    /**
+     * @var \Majisti\I18n\Locales
+     */
     public $locales;
+
+    /**
+     * @var \Zend_Controller_Request_Http
+     */
     public $request;
 
     /**
-     *
      * @var I18n
      */
     public $i18n;
+
+    /**
+     * @var \Zend_Config
+     */
     public $config;
     
     /**
@@ -62,9 +72,13 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
         );
 
         /* request config */
-        $this->config = new \Zend_Config(array('plugins'      => array (
-                                               'i18n'        => array(
-                                               'requestParam'=> 'request'))));
+        $this->config = new \Zend_Config(array(
+            'plugins' => array(
+                'i18n' => array(
+                    'requestParam' => 'lang'
+                )
+             )
+        ));
     }
 
     /**
@@ -75,23 +89,32 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
         /* stub redirector to cancel the redirection */
         $stub = $this->getMock('Zend_Controller_Action_Helper_Redirector');
         $stub->expects($this->once())
-             ->method('goToSimpleAndExit');
+             ->method('goToSimpleAndExit')
+             ->with($this->equalTo('fooAction'), 
+                    $this->equalTo('barController'),
+                    $this->equalTo('bazModule')
+             )
+        ;
         \Zend_Controller_Action_HelperBroker::getStack()->Redirector = $stub;
     }
 
     /**
      * Tests that preDispatch() switches to a supported locale when
      * supplying a request named accordingly to config settings.
+     * Also, tests that it redirects the user once the locale has been switched
+     * and that the request is a regular one.
      */
     public function testLocaleIsSwitchedOnPost()
     {
+        /* assures that a redirection occured */
         $this->prepareMockRedirector();
 
-        $this->request->setParam('request', 'fr');
+        $this->request->setParam('lang', 'fr');
         $this->i18n->setConfig($this->config);
         $this->i18n->preDispatch($this->request);
 
-        $this->assertEquals(new \Zend_Locale('fr'), $this->locales->getCurrentLocale());
+        $this->assertEquals(new \Zend_Locale('fr'),
+                $this->locales->getCurrentLocale());
     }
 
     /**
@@ -107,28 +130,44 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
     }
 
     /**
-     * Tests that preDispatch() unsets the request param after switching locale.
-     */
-    public function testThatRequestParamIsUnsetOnceLocaleHasBeenSwitched()
-    {
-        $this->markTestIncomplete();
-    }
-
-    /**
-     * Tests that preDispatch() redirects the user once locale has been switched
-     * and that the request is a regular one.
-     */
-    public function testThatPageRedirectionHasOccured()
-    {
-        $this->markTestIncomplete();
-    }
-
-    /**
      * Tests that an AJAX response is sent if the request is an XmlHttpRequest.
      */
     public function testThatAjaxResponseIsSent()
     {
-        $this->markTestIncomplete();
+        $this->i18n->setConfig($this->config);
+
+        /*
+         * request stub for fooling the i18n object into thinking were using
+         * X_REQUEST_WITH XmlHttpRequest
+         */
+
+        /* @var $requestStub \Zend_Controller_Request_Http */
+        $requestStub = $this->getMock('Zend_Controller_Request_Http',
+                array('isXmlHttpRequest'));
+
+        $requestStub->expects($this->once())
+                    ->method('isXmlHttpRequest')
+                    ->will($this->returnValue(true));
+
+        /*
+         * json stub for fooling the i18n object into thinking that it sent
+         * its data to the action helper. We verify that the output is sent
+         * correctly
+         */
+        $jsonStub = $this->getMock('Zend_Controller_Action_Helper_Json');
+        $jsonStub->expects($this->once())
+                 ->method('sendJson')
+                 ->with($this->equalTo(array(
+                     'switched' => true
+                 )))
+        ;
+        \Zend_Controller_Action_HelperBroker::getStack()->Json = $jsonStub;
+
+        $requestStub->setParam('lang', 'fr');
+        $this->i18n->preDispatch($requestStub);
+
+        $this->assertEquals(new \Zend_Locale('fr'),
+                $this->locales->getCurrentLocale());
     }
 }
 
