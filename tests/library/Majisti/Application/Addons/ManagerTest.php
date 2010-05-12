@@ -168,7 +168,7 @@ class ManagerTest extends \Majisti\Test\TestCase
      * will throw an exception.
      * @expectedException Exception
      */
-    public function testThatLoadingAnExtensionWithoutABootstrapClassWillThrowException()
+    public function testThatLoadingAnExtensionWOABootstrapClassWillThrowException()
     {
         $manager = $this->manager;
         $manager->registerAddonsPath($this->testMajistiXPath, 'MajistiX');
