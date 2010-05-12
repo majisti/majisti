@@ -7,22 +7,22 @@
     <title>Import</title>
 
     <para> The import handler listens on the import attribute in order for a
-        configuration file to request, in other words import, another
-        configuration file with the given path. The handler will override the
+        configuration file to request, in other words import and merge, another
+        configuration file with any given path. The handler will override the
         parent configuration values, if duplicates are found, with the children
         configuration files imported. </para>
     <programlisting><![CDATA[
 [production]
-property.applicationPath = /var/www
-property.baseUrl = #{applicationPath}/someProject/public
-property.configUrl = ../_files/imports
+majisti.property.applicationPath = /var/www
+majisti.property.baseUrl = #{applicationPath}/someProject/public
+majisti.property.configUrl = ../_files/imports
 
 app.dir.applicationPath = #{applicationPath}
 app.dir.images = #{baseUrl}/images
 app.dir.root = /
 
-import.foo = #{configUrl}/secondLvlFirstImport.ini
-import.bar = #{configUrl}/secondLvlSecondImport.ini
+majisti.import.foo = #{configUrl}/secondLvlFirstImport.ini
+majisti.import.bar = #{configUrl}/secondLvlSecondImport.ini
 ]]></programlisting>
 
     <para> The above file is a parent configuration importing two external
@@ -47,7 +47,7 @@ File B imports file A and C
 
 Result: File A, B and C will be merged into a single Zend_Config object 
 as expected. As circular-importing is prohibited, the fact that file B 
-wants to import file A will simply be ignored and not taken into account.
+wants to import file A will simply be ignored.
 </programlisting>
         <caution>
             <para>It is crucial to name the entries of your configuration files

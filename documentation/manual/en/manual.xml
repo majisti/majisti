@@ -36,7 +36,6 @@
     <xi:include href="majisti/application.xml" />
     <xi:include href="majisti/config.xml" />
     <xi:include href="majisti/controller.xml" />
-    <xi:include href="majisti/i18n.xml" />
     <xi:include href="majisti/model.xml" />
     <xi:include href="majisti/test.xml" />
     <xi:include href="majisti/util.xml" />
