@@ -2,5 +2,7 @@
 
 interface ICompressor
 {
-    public function compress($content);
+    public function compressJs($content);
+
+    public function compressCss($content);
 }

@@ -23,7 +23,7 @@ namespace Majisti\Util\Compression;
  *
  * @author Stephen Clay <steve@mrclay.org>
  */
-class Yui
+class Yui extends AbstractCompressor
 {
     /**
      * Filepath of the YUI Compressor jar file. This must be set before

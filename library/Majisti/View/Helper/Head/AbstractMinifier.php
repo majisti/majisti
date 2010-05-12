@@ -2,6 +2,8 @@
 
 namespace Majisti\View\Helper\Head;
 
+use \Majisti\Util\Compression as Compression;
+
 /**
  * @desc The abstract minifier provides minify abstraction for
  * concrete minifiers.
@@ -13,7 +15,12 @@ abstract class AbstractMinifier implements IMinifier
     /**
      * @var bool
      */
-    protected $_enabled  = null;
+    protected $_enabled;
+
+    /**
+     * @var Compression\ICompressor
+     */
+    protected $_compressor;
 
     /**
      * FIXME: wrong path!
@@ -85,19 +92,11 @@ abstract class AbstractMinifier implements IMinifier
     }
 
     /**
-     * @desc Compresses all the stylesheets contained in the master file.
+     * @desc Compresses the given content
      *
-     * @param string $path The path to the file that will be compressed
-     * @param ICompressor $compressor [optionnal] The compressor
+     * @param string $content The content to compress
      */
-    protected function compress($path, Head\ICompressor $compressor = null)
-    {
-        if( null === $compressor ) {
-            $compressor = $this->getCompressor();
-        }
-
-        $compressor->compress($masterFile, $path);
-    }
+    abstract protected function compress($content);
 
     /**
      * @desc Remaps a given uri found within the headlink while minifying.
@@ -113,6 +112,21 @@ abstract class AbstractMinifier implements IMinifier
      * @param string $uri The internal uri, accessible with a path
      * @param string $path The path to the stylesheet
      */
+
+    public function getCompressor()
+    {
+        if ( null === $this->_compressor ) {
+            $this->_compressor = new Compression\Yui();
+        }
+
+        return $this->_compressor;
+    }
+
+    public function setCompressor(Compression\ICompressor $compressor)
+    {
+        $this->_compressor = $compressor;
+    }
+
     public function uriRemap($uri, $path)
     {
         $this->_remappedUris[$uri] = $path;
