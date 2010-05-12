@@ -1,5 +1,7 @@
 <?php
 
+namespace Majisti\Application\Addons;
+
 /**
  * @desc
  * @author Majisti
