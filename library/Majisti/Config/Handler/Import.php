@@ -75,26 +75,25 @@ class Import implements IHandler
         $this->clear();
         $this->_compositeHandler  = $compositeHandler;
         $this->_configSectionName = $config->getSectionName();
-        $this->_finalConfig       = new \Zend_Config(array(), true);
+        $this->_finalConfig       = new \Zend_Config($config->toArray(), true);
         
         if( !empty($params) ) {
             $this->_loadParams($params);
         }
 
-        $selector = new \Majisti\Config\Selector($config);
-        $imports  = $selector->find('majisti.import', false);
+        $this->setConfigType($config);
 
-        if( false !== $imports ) {
-            $this->setConfigType($config);
-            
-            if( null !== ($compositeHandler = $this->getCompositeHandler()) ) {
-                $this->_finalConfig = $compositeHandler->handle($imports);
-            }
+        if( null !== ($compositeHandler = $this->getCompositeHandler()) ) {
+            $this->_finalConfig = $compositeHandler->handle($this->_finalConfig);
+        }
 
+        $selector = new \Majisti\Config\Selector($this->_finalConfig);
+        if( $imports = $selector->find('majisti.import', false) ) {
             $this->_resolveImports($imports);
             $majistiNamespace = $this->_finalConfig->majisti;
             unset($majistiNamespace->import);
         }
+
         return $this->_finalConfig;
     }
     

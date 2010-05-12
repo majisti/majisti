@@ -27,6 +27,8 @@ class Composite extends \Majisti\Util\Model\Collection\Stack implements IHandler
      */
     public function handle(\Zend_Config $config)
     {
+//        $config = new \Zend_Config($config->toArray(), true);
+
         foreach ($this as $handler) {
             if( !($handler instanceof IHandler) ) {
                 throw new Exception(get_class($handler) .
@@ -34,6 +36,7 @@ class Composite extends \Majisti\Util\Model\Collection\Stack implements IHandler
             }
            $config->merge($handler->handle($config));
         }
+
         return $config;
     }
 }

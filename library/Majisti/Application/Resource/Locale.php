@@ -6,7 +6,7 @@ namespace Majisti\Application\Resource;
  * constraints the application to the locales specified. The current locale
  * is remembered through a storage model.
  *
- * @see \Majisti\I18n\Locales
+ * @see \Majisti\Application\Locales
  * @author Majisti
  */
 class Locale extends \Zend_Application_Resource_Locale
@@ -16,7 +16,7 @@ class Locale extends \Zend_Application_Resource_Locale
      */
     public function getLocale()
     {
-        $locales    = \Majisti\I18n\Locales::getInstance();
+        $locales    = \Majisti\Application\Locales::getInstance();
         $selector   = new \Majisti\Config\Selector(
             new \Zend_Config($this->getOptions()));
 

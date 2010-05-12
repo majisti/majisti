@@ -60,26 +60,33 @@ class ImportTest extends \Majisti\Test\PHPUnit\TestCase
     public function testHandle()
     {
         $handler = $this->_importHandler;
-        $params = array("parent" => "Config/_files/import/validImports.ini");
+        $params  = array("parent" => "Config/_files/import/validImports.ini");
         
-        /* Parsing first for the properties then importing the external ini files. */
-        $config = $handler->handle($this->_validImport, new Composite($this->_propertyHandler), $params);
+        /*
+         * parsing first for the properties then importing
+         * the external ini files.
+         */
+        $config = $handler->handle($this->_validImport,
+                new Composite($this->_propertyHandler), $params);
         
-        /* Config content should have been replaced if common keys are found, else new entries are appended. */
+        /*
+         * config content should have been replaced if common keys are found,
+         * else new entries are appended.
+         */
         $this->assertSame('/var/www', $config->app->dir->applicationPath);
         $this->assertSame('/', $config->app->dir->root);
         $this->assertSame('dir/baz', $config->app->dir->baz);
-        $this->assertSame('/var/www/someProject/public/newFolder', 
+        $this->assertSame('/var/www/someProject/public/newFolder',
                           $config->app->dir->new);
                           
-        /* Param "parent" prevents round import */
+        /* param "parent" prevents round import */
         $this->assertSame('/var/www/someProject/public/images/OVERRIDEN',
                           $config->app->dir->images);
         
-        /* Appended as new entry then also overriden */
+        /* appended as new entry then also overriden */
         $this->assertSame('foo/OVERRIDEN', $config->app->dir->foo);
         
-        /* Unexistant key */
+        /* unexistant key */
         $this->assertNull($config->app->dir->nonExistantNode);
     }
     

@@ -29,7 +29,7 @@ class I18n extends AbstractPlugin
                     in the configuration");
              }
 
-             $locales = \Majisti\I18n\Locales::getInstance();
+             $locales = \Majisti\Application\Locales::getInstance();
 
              /* retrieve locale and switch if it is supported and not current */
              if( $locale = $request->getParam($config->requestParam, false) ) {

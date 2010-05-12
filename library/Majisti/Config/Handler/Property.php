@@ -45,12 +45,14 @@ class Property implements IHandler
      * and therefore the detected one in the new config will get replaced.
      *
      * @see clear() For clearing the properties
-     * @param \Zend_Config $config
+     * @param \Zend_Config $config The config object, it won't be modified
      * @param boolean $clearFirst clear properties before parsing
-     * @return \Zend_Config
+     * @return \Zend_Config The handled config
      */
     public function handle(\Zend_Config $config, $clearFirst = false)
     {
+        $config = new \Zend_Config($config->toArray(), true);
+
         if( $clearFirst ) {
             $this->clear();
         }
@@ -60,7 +62,9 @@ class Property implements IHandler
         if( $this->hasProperties() ) {
             $config->merge($this->parseConfigWithProperties($config,
                 $this->getProperties()));
-            unset($config->property);
+
+            $majisti = $config->majisti;
+            unset($majisti->property);
         }
         
         return $config;

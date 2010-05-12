@@ -14,11 +14,11 @@
         consider the following application.ini example: </para>
     <programlisting>[production]
 
-property.applicationUrl  = APPLICATION_URL
-property.baseUrl         = "my-project/public"
-property.imagesUrl       = #{baseUrl}/images
-property.scriptsUrl      = #{baseUrl}/scripts
-property.locale          = en
+majisti.property.applicationUrl  = APPLICATION_URL
+majisti.property.baseUrl         = "my-project/public"
+majisti.property.imagesUrl       = #{baseUrl}/images
+majisti.property.scriptsUrl      = #{baseUrl}/scripts
+majisti.property.locale          = en
 
 images.thumbsUp = #{imagesUrl}/thumbs-up.png
 app.aLink       = #{baseUrl}/foo</programlisting>
@@ -33,8 +33,10 @@ app.aLink       = #{baseUrl}/foo</programlisting>
     <para>To disable the property handler, you can always disable it in your configuration:<programlisting>resources.configHandler.property = 0</programlisting><note>
             <para>The <classname>Property</classname> and
                     <classname>Import</classname> handlers are enabled by
-                default within Majisti. They must explicitely be disabled in
-                the configuration if you don't want to use them.</para>
+                default within Majisti. They must explicitely be disabled in the
+                configuration if you don't want to use them. Moreover, they make
+                use of the namespace <emphasis>majisti</emphasis> to keep from
+                interfering with your custom keys.</para>
         </note></para>
 
 </section>

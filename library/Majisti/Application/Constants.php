@@ -119,7 +119,7 @@ class Constants
         define('MAJISTI_URL_SCRIPTS', MAJISTI_URL . '/scripts');
         define('MAJISTI_URL_IMAGES',  MAJISTI_URL . '/images/common');
 
-        $locales        = \Majisti\I18n\Locales::getInstance();
+        $locales        = \Majisti\Application\Locales::getInstance();
         $currentLocale  = strtolower($locales->getCurrentLocale()->toString());
         $defaultLocale  = strtolower($locales->getDefaultLocale()->toString());
 
