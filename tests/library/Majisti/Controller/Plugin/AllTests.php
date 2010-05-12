@@ -9,14 +9,14 @@ require_once 'TestHelper.php';
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-class AllTests extends \Majisti\Test\PHPUnit\TestSuite
+class AllTests extends \Majisti\Test\TestSuite
 {
     /**
      * @desc Runs all the tests for this directory, running all
      * tests cases and AllTest classes under the first level
      * of directories.
      * 
-     * @return \Majisti\Test\PHPUnit\TestSuite
+     * @return \Majisti\Test\TestSuite
      */
     public static function suite()
     {

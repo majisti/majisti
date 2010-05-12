@@ -13,7 +13,7 @@ require_once 'TestHelper.php';
  * @author Majisti
  * @license
  */
-class LayoutSwitcherTest extends \Majisti\Test\PHPUnit\TestCase
+class LayoutSwitcherTest extends \Majisti\Test\TestCase
 {
     static protected $_class = __CLASS__;
 

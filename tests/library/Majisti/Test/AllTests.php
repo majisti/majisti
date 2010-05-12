@@ -5,22 +5,23 @@ require_once 'TestHelper.php';
 
 /**
  * @desc 
- * @author
+ * @author Majisti
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-class AllTests extends \Majisti\Test\PHPUnit\TestSuite
+class AllTests extends \Majisti\Test\TestSuite
 {
     /**
      * @desc Runs all the tests for this directory, running all
      * tests cases and AllTest classes under the first level
      * of directories.
      * 
-     * @return \Majisti\Test\PHPUnit\TestSuite
+     * @return \Majisti\Test\TestSuite
      */
     public static function suite()
     {
-        $suite = new self('Majisti Framework - Test - All tests');
+        $suite = new self('Majisti Framework - Test - PHPUnit - All tests');
         
-        $suite->addTestSuite(PHPUnit\AllTests::suite());
+        $suite->addTestCase(__NAMESPACE__ . '\TestCaseTest');
         
         return $suite;
     }

@@ -11,7 +11,7 @@ require_once 'TestHelper.php';
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-class ConstantsTest extends \Majisti\Test\PHPUnit\TestCase
+class ConstantsTest extends \Majisti\Test\TestCase
 {
     static protected $_class = __CLASS__;
 

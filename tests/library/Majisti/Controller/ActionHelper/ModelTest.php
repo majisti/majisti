@@ -9,7 +9,7 @@ include_once 'Majisti/Controller/ActionHelper/Model.php';
  * @desc Test class for Controller action helper model class.
  * @author Majisti
  */
-class ModelTest extends \Majisti\Test\PHPUnit\TestCase
+class ModelTest extends \Majisti\Test\TestCase
 {
     static protected $_class = __CLASS__;
 

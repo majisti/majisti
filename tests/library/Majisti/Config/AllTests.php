@@ -9,7 +9,7 @@ require_once 'TestHelper.php';
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-class AllTests extends \Majisti\Test\PHPUnit\TestSuite
+class AllTests extends \Majisti\Test\TestSuite
 {
     /**
      * @desc Executes the suite

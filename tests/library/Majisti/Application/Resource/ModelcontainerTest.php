@@ -8,7 +8,7 @@ require_once 'TestHelper.php';
  * @desc Test for ModelContainer resource
  * @author Majisti
  */
-class ModelContainerTest extends \Majisti\Test\PHPUnit\TestCase
+class ModelContainerTest extends \Majisti\Test\TestCase
 {
     static protected $_class = __CLASS__;
 

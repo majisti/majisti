@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\Test\PHPUnit;
+namespace Majisti\Test;
 
 class Exception extends \Majisti\Exception
 {

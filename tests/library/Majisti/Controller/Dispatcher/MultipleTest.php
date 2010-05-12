@@ -32,8 +32,8 @@ class MultipleTest extends \Zend_Controller_Dispatcher_StandardTest
 
     static public function runAlone()
     {
-        \Majisti\Test\PHPUnit\TestCase::setClass(__CLASS__);
-        \Majisti\Test\PHPUnit\TestCase::runAlone();
+        \Majisti\Test\TestCase::setClass(__CLASS__);
+        \Majisti\Test\TestCase::runAlone();
     }
 
     /**

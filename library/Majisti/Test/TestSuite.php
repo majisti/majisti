@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\Test\PHPUnit;
+namespace Majisti\Test;
 
 if( !defined('PHPUNIT_TESTCASE_RUNNING') ) {
     define('PHPUNIT_TESTCASE_RUNNING', 1);
@@ -42,10 +42,10 @@ class TestSuite extends \PHPUnit_Framework_TestSuite
 
             /* runner's arguments */
             if( !count($arguments) ) {
-                $arguments = \Majisti\Test\PHPUnit\Runner::getDefaultArguments();
+                $arguments = \Majisti\Test\Runner::getDefaultArguments();
             }
             
-            \Majisti\Test\PHPUnit\Runner::run($suite, $arguments);
+            \Majisti\Test\Runner::run($suite, $arguments);
         }
     }
 

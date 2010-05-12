@@ -8,7 +8,7 @@ require_once 'TestHelper.php';
  * @desc
  * @author Majisti
  */
-class ExtensionsTest extends \Majisti\Test\PHPUnit\TestCase
+class ExtensionsTest extends \Majisti\Test\TestCase
 {
     static protected $_class = __CLASS__;
 

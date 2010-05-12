@@ -8,7 +8,7 @@ require_once 'TestHelper.php';
  * @desc
  * @author
  */
-class EnvironmentDeployerTest extends \Majisti\Test\PHPUnit\TestCase
+class EnvironmentDeployerTest extends \Majisti\Test\TestCase
 {
     static protected $_class = __CLASS__;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\Test\PHPUnit\Util;
+namespace Majisti\Test\Util;
 
 /**
  * @desc Gives the same timer as PHPUnit, but with milliseconds as well.

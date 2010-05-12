@@ -10,7 +10,7 @@ require_once 'TestHelper.php';
  * 
  * TODO: test xml and array configuration as well
  */
-class ImportTest extends \Majisti\Test\PHPUnit\TestCase 
+class ImportTest extends \Majisti\Test\TestCase 
 {
     static protected $_class = __CLASS__;
     

@@ -12,14 +12,14 @@
             <title>Creating tests</title>
             <para>Majisti makes use of PHP5.3 <link
                     xlink:href="http://php.net/manual/en/language.oop5.late-static-bindings.php"
-                    >late static binding</link> to make sure test cases
-                creation are as minimalist as possible.</para>
+                    >late static binding</link> to make sure test cases creation
+                are as minimalist as possible.</para>
         </example><programlisting>&lt;?php
 namespace MyApplication\AComponent;
 
 require_once 'TestHelper.php';
 
-class ComponentXTest extends \Majisti\Test\PHPUnit\TestCase
+class ComponentXTest extends \Majisti\Test\TestCase
 {
     static protected $_class = __CLASS__;
 
@@ -28,14 +28,14 @@ class ComponentXTest extends \Majisti\Test\PHPUnit\TestCase
 
 ComponentXTest::runAlone();</programlisting></para>
     <para>The <methodname>runAlone</methodname> function lets you run the unit
-        test straight on, without having to boostrap anything. In the case
-        where the test case would be included in a test suite, you would do the
+        test straight on, without having to boostrap anything. In the case where
+        the test case would be included in a test suite, you would do the
         following:<programlisting>&lt;?php
 namespace MyApplication\AComponent;
 
 require_once 'TestHelper.php';
 
-class AllTests extends \Majisti\Test\PHPUnit\TestSuite
+class AllTests extends \Majisti\Test\TestSuite
 {
     public static function suite()
     {
@@ -132,8 +132,8 @@ foreach (array('php', 'phtml') as $suffix) {
 /* be a little bit more verbose according to request param */
 $request = new \Zend_Controller_Request_Http();
 if( $request->has('verbose') || $request->has('v') ) {
-    \Majisti\Test\PHPUnit\Runner::setDefaultArguments(array(
-        'printer' => new \Majisti\Test\PHPUnit\Listener\Simple\Html(null, true)
+    \Majisti\Test\Runner::setDefaultArguments(array(
+        'printer' => new \Majisti\Test\Listener\Simple\Html(null, true)
     ));
 }
 
