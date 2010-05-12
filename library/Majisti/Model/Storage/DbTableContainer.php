@@ -2,7 +2,7 @@
 
 namespace Majisti\Model\Storage;
 
-class DbTableContainer extends \Majisti\Util\Pattern\SingletonAbstract
+class DbTableContainer 
 {
     protected $_tables = array();
     
@@ -35,5 +35,14 @@ class DbTableContainer extends \Majisti\Util\Pattern\SingletonAbstract
     public function addTable($table)
     {
         
+    }
+
+    static public function getInstance()
+    {
+        if( null === static::$_instance ) {
+            static::$_instance = new static();
+        }
+
+        return static::$_instance;
     }
 }

@@ -2,7 +2,7 @@
 
 //namespace Majisti\View\Helper;
 
-abstract class Majisti_View_Helper_Abstract extends \Zend_View_Helper_Abstract
+abstract class Majisti_View_Helper_Abstract extends Zend_View_Helper_Abstract
     implements \Majisti\Util\Model\Aggregator\IConfig
 {
     protected $_config;

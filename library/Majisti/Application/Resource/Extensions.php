@@ -21,7 +21,7 @@ class Extensions extends \Zend_Application_Resource_ResourceAbstract
      */
     public function init()
     {
-        return $this->_getExtensions();
+        return $this->getExtensions();
     }
 
     /**
@@ -32,7 +32,7 @@ class Extensions extends \Zend_Application_Resource_ResourceAbstract
      *
      * @return Array the loaded extensions
      */
-    protected function _getExtensions()
+    protected function getExtensions()
     {
         $handle = opendir(MAJISTIX_EXTENSIONS);
 
@@ -59,7 +59,7 @@ class Extensions extends \Zend_Application_Resource_ResourceAbstract
                 . '/Helper', 'MajistiX_View_Helper');
 
             /* add controller plugins */
-            $plugins = $this->_getControllerPlugins(MAJISTIX_EXTENSIONS
+            $plugins = $this->getControllerPlugins(MAJISTIX_EXTENSIONS
                 . '/' . $extension . '/Plugin');
             foreach ($plugins as $plugin) {
             	$bootstrap ->getResource('frontController')
@@ -78,7 +78,7 @@ class Extensions extends \Zend_Application_Resource_ResourceAbstract
      *
      * @param $dir The directory that contains controller plugins only
      */
-    private function _getControllerPlugins($dir)
+    private function getControllerPlugins($dir)
     {
         $plugins = array();
 
