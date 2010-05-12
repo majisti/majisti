@@ -81,15 +81,19 @@ class Import implements IHandler
             $this->_loadParams($params);
         }
 
-        if( isset( $config->import ) ) {
+        $selector = new \Majisti\Config\Selector($config);
+        $imports  = $selector->find('majisti.import', false);
+
+        if( false !== $imports ) {
             $this->setConfigType($config);
             
             if( null !== ($compositeHandler = $this->getCompositeHandler()) ) {
-                $this->_finalConfig = $compositeHandler->handle($config);
+                $this->_finalConfig = $compositeHandler->handle($imports);
             }
 
-            $this->_resolveImports($config->import);
-            unset($this->_finalConfig->import);
+            $this->_resolveImports($imports);
+            $majistiNamespace = $this->_finalConfig->majisti;
+            unset($majistiNamespace->import);
         }
         return $this->_finalConfig;
     }
@@ -125,9 +129,10 @@ class Import implements IHandler
                 }
                 
                 $this->_mergeImports($resolvedConfig);
-                
-                if( isset( $resolvedConfig->import ) ) {
-                    $this->_resolveImports($resolvedConfig->import);
+                $selector = new \Majisti\Config\Selector($resolvedConfig);
+                $imports  = $selector->find('majisti.import', false);
+                if( false !== $imports ) {
+                    $this->_resolveImports($imports);
                 }
             }
         }
