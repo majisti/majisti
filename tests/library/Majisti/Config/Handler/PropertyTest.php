@@ -5,11 +5,9 @@ namespace Majisti\Config\Handler;
 require_once 'TestHelper.php';
 
 /**
- * @desc Property test case
+ * @desc Property test case. Currently working only for INI config files.
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
- * 
- * TODO: test xml and array configuration as well for the syntax.
  */
 class PropertyTest extends \Majisti\Test\PHPUnit\TestCase 
 {
@@ -165,8 +163,6 @@ class PropertyTest extends \Majisti\Test\PHPUnit\TestCase
      * an exception is thrown when an invalid nested
      * property is declared.
      * 
-     * TODO: multiple config type testing
-     * 
      * @expectedException Majisti\Config\Handler\Exception
      */
     public function testHandleWithInvalidNestedProperty()
@@ -177,8 +173,6 @@ class PropertyTest extends \Majisti\Test\PHPUnit\TestCase
     /**
      * @desc Asserts that the config is loaded correctly and that an
      * exception is thrown when an invalid property is called.
-     * 
-     * TODO: multiple config type testing
      * 
      * @expectedException Majisti\Config\Handler\Exception
      */
@@ -226,13 +220,23 @@ class PropertyTest extends \Majisti\Test\PHPUnit\TestCase
         $handler->setSyntax('#{', '}');
         
         $this->assertSame($expectedSyntax, $handler->getSyntax());
-        
-        /* test that no properties get resolved with a different syntax */
+    }
+
+    /**
+     * @desc Test that no properties get resolved with a different syntax
+     */
+    public function testWrongSyntaxWillNotLoadProperties()
+    {
+        $handler = $this->propertyHandler;
+
         $handler->setSyntax('${', '}');
         $handler->clear();
         $handler->handle($this->_validProperties);
-        
-        $this->assertEquals(array(), $handler->getProperties());
+
+        $this->assertEquals(array(
+            'applicationPath'   => '/var/www',
+            'baseUrl'           => '#{applicationPath}/someProject/public'
+        ), $handler->getProperties());
     }
 }
 

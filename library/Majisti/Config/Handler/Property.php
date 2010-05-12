@@ -55,10 +55,10 @@ class Property implements IHandler
             $this->clear();
         }
         
-        $this->_loadProperties($config);
+        $this->loadProperties($config);
         
         if( $this->hasProperties() ) {
-            $config->merge($this->_parseConfigWithProperties($config,
+            $config->merge($this->parseConfigWithProperties($config,
                 $this->getProperties()));
             unset($config->property);
         }
@@ -164,15 +164,16 @@ class Property implements IHandler
      * @param \Zend_Config $properties A \Zend_Config loaded only with the
      * properties
      */
-    protected function _loadProperties(\Zend_Config $config)
+    protected function loadProperties(\Zend_Config $config)
     {
         $properties = $this->getProperties();
-        
-        if( isset($config->property) ) {
-            $properties = array_merge($properties, $config->property->toArray());
+        $selector   = new \Majisti\Config\Selector($config);
+
+        if( $props = $selector->find('majisti.property', false) ) {
+            $properties = array_merge($properties, $props->toArray());
         }
             
-        $this->setProperties($this->_resolveProperties($properties));
+        $this->setProperties($this->resolveProperties($properties));
     }
     
     /**
@@ -181,16 +182,16 @@ class Property implements IHandler
      * @param array $properties The properties
      * @return array The parsed (resolved) properties
      */
-    protected function _resolveProperties(array $properties)
+    protected function resolveProperties(array $properties)
     {
         $resolvedProperties = array();
         
         foreach ($properties as $key => $value) {
-            $matches = $this->_findPropertiesWithinValue($value);
+            $matches = $this->findPropertiesWithinValue($value);
             
             if( count($matches) ) {
                 try {
-                    $resolvedProperties[$key] = $this->_replaceValueFromProperties(
+                    $resolvedProperties[$key] = $this->replaceValueFromProperties(
                         $value, $resolvedProperties);
                 } catch (Exception $e) {
                     throw new Exception("Tried to replace value [{$value}]
@@ -214,7 +215,7 @@ class Property implements IHandler
      * @param \Zend_Config $config The configuration to parse
      * @return \Zend_Config The parsed config
      */
-    protected function _parseConfigWithProperties(\Zend_Config $config, array $properties)
+    protected function parseConfigWithProperties(\Zend_Config $config, array $properties)
     {
         if( empty($this->_passedKeys) ) {
             $this->_passedKeys = array();
@@ -223,15 +224,15 @@ class Property implements IHandler
         foreach ($config as $key => $value) {
             if( $value instanceof \Zend_Config ) {
                 $this->_passedKeys[] = $key;
-                $value->merge($this->_parseConfigWithProperties($value,
+                $value->merge($this->parseConfigWithProperties($value,
                     $properties));
             } else {
                 try {
-                    $config->{$key} = $this->_replaceValueFromProperties($value,
+                    $config->{$key} = $this->replaceValueFromProperties($value,
                         $properties);
                 } catch(Exception $e) {
                     $nodeNamespace = implode('.', $this->_passedKeys);
-                    $property = $this->_findPropertiesWithinValue($value);
+                    $property = $this->findPropertiesWithinValue($value);
                     throw new Exception("Tried to call non declared property
                         [{$property[1][0]}] on node [{$nodeNamespace}.{$key}]");
                 }
@@ -248,10 +249,9 @@ class Property implements IHandler
      * except that if there was no matches an empty array is returned
      * (and not an array with two empty arrays)
      */
-    protected function _findPropertiesWithinValue($value)
+    protected function findPropertiesWithinValue($value)
     {
         $syntax = $this->getSyntax();
-        
 
         $syntaxPrefix  = preg_quote($syntax['prefix']);
         $syntaxPostfix = preg_quote($syntax['postfix']);
@@ -271,9 +271,9 @@ class Property implements IHandler
      * @param $properties The properties declared
      * @return The replaced value with the property's value
      */
-    protected function _replaceValueFromProperties($value, array $properties)
+    protected function replaceValueFromProperties($value, array $properties)
     {
-        $matches = $this->_findPropertiesWithinValue($value);
+        $matches = $this->findPropertiesWithinValue($value);
         
         if( count($matches) ) {
             foreach ($matches[1] as $i => $match) {
