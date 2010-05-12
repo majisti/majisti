@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\Test\PHPUnit;
+namespace Majisti\Test;
 
 /**
  * @desc Runner class for Majisti. Uses the Html listener within a browser

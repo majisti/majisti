@@ -48,8 +48,8 @@ class ViewTest extends \Zend_ViewTest
     
     static public function runAlone()
     {
-        \Majisti\Test\PHPUnit\TestCase::setClass(__CLASS__);
-        \Majisti\Test\PHPUnit\TestCase::runAlone();
+        \Majisti\Test\TestCase::setClass(__CLASS__);
+        \Majisti\Test\TestCase::runAlone();
     }
     
     /**

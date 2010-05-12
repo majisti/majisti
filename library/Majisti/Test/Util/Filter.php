@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\Test\PHPUnit\Util;
+namespace Majisti\Test\Util;
 
 /**
  * @desc Outputs a better stack trace for unit tests.

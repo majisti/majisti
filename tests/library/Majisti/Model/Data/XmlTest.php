@@ -9,7 +9,7 @@ require_once 'TestHelper.php';
  * @desc Test case for Xml class
  * @author Majisti
  */
-class XmlTest extends \Majisti\Test\PHPUnit\TestCase
+class XmlTest extends \Majisti\Test\TestCase
 {
     static protected $_class = __CLASS__;
 

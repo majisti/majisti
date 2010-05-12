@@ -8,7 +8,7 @@ require_once 'TestHelper.php';
  * @desc
  * @author
  */
-class StylesheetMinifierTest extends \Majisti\Test\PHPUnit\TestCase
+class StylesheetMinifierTest extends \Majisti\Test\TestCase
 {
     static protected $_class = __CLASS__;
 

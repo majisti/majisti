@@ -10,7 +10,7 @@ require_once 'TestHelper.php';
  *
  * @author Majisti
  */
-class ViewTest extends \Majisti\Test\PHPUnit\TestCase
+class ViewTest extends \Majisti\Test\TestCase
 {
     static protected $_class = __CLASS__;
 

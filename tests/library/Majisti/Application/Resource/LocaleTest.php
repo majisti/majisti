@@ -49,8 +49,8 @@ class LocaleTest extends \Zend_Application_Resource_LocaleTest
 
     static public function runAlone()
     {
-        \Majisti\Test\PHPUnit\TestCase::setClass(__CLASS__);
-        \Majisti\Test\PHPUnit\TestCase::runAlone();
+        \Majisti\Test\TestCase::setClass(__CLASS__);
+        \Majisti\Test\TestCase::runAlone();
     }
 
     public function testOnlyOneAvailableLocale()

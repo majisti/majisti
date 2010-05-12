@@ -3,7 +3,7 @@ namespace Majisti;
 
 require_once 'TestHelper.php';
 
-class AllTests extends Test\PHPUnit\TestSuite
+class AllTests extends Test\TestSuite
 {
     public static function suite()
     {

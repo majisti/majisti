@@ -8,7 +8,7 @@ require_once 'TestHelper.php';
  * @desc Test the config class.
  * @author Majisti
  */
-class ConfigTest extends \Majisti\Test\PHPUnit\TestCase
+class ConfigTest extends \Majisti\Test\TestCase
 {
     static protected $_class = __CLASS__;
 

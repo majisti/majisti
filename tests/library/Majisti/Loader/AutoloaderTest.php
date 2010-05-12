@@ -10,7 +10,7 @@ require_once 'TestHelper.php';
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-class AutoloaderTest extends \Majisti\Test\PHPUnit\TestCase
+class AutoloaderTest extends \Majisti\Test\TestCase
 {
     protected static $_class = __CLASS__;
 
@@ -66,7 +66,7 @@ class AutoloaderTest extends \Majisti\Test\PHPUnit\TestCase
     {
         $this->_autoloader->autoload("Config\Handler\PropertyTest");
         $this->_autoloader->autoload("Majisti\Loader\AutoloaderTest");
-        $this->_autoloader->autoload("Majisti\Test\PHPUnit\TestCase");
+        $this->_autoloader->autoload("Majisti\Test\TestCase");
     }
 }
 

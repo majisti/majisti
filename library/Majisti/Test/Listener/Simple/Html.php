@@ -1,8 +1,6 @@
 <?php
 
-namespace Majisti\Test\PHPUnit\Listener\Simple;
-
-use Majisti\Test\PHPUnit;
+namespace Majisti\Test\Listener\Simple;
 
 /**
  * @desc Html listener that outputs colors. This listener is used by default
@@ -10,7 +8,7 @@ use Majisti\Test\PHPUnit;
  *
  * @author Majisti
  */
-class Html extends PHPUnit\DefaultListener
+class Html extends \Majisti\Test\DefaultListener
 {
     public function __construct($out = null, $verbose = false, $debug = false)
     {
@@ -56,7 +54,7 @@ class Html extends PHPUnit\DefaultListener
         
         $this->write(
           htmlspecialchars($defect->getExceptionAsString()) .
-          \Majisti\Test\PHPUnit\Util\Filter::getFilteredStacktrace(
+          \Majisti\Test\Util\Filter::getFilteredStacktrace(
             $defect->thrownException(),
             false,
             true,

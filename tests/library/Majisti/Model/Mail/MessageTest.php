@@ -8,7 +8,7 @@ require_once 'TestHelper.php';
  * @desc Tests the Message class.
  * @author Majisti
  */
-class MessageTest extends \Majisti\Test\PHPUnit\TestCase
+class MessageTest extends \Majisti\Test\TestCase
 {
     static protected $_class = __CLASS__;
 

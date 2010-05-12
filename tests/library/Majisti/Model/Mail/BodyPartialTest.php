@@ -9,7 +9,7 @@ require_once 'TestHelper.php';
  *
  * @author Steven Rosato
  */
-class BodyPartialTest extends \Majisti\Test\PHPUnit\TestCase
+class BodyPartialTest extends \Majisti\Test\TestCase
 {
     static protected $_class = __CLASS__;
 

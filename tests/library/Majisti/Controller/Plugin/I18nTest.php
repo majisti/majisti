@@ -13,7 +13,7 @@ require_once 'TestHelper.php';
  *
  * @author Majisti
  */
-class I18nTest extends \Majisti\Test\PHPUnit\TestCase
+class I18nTest extends \Majisti\Test\TestCase
 {
     static protected $_class = __CLASS__;
 

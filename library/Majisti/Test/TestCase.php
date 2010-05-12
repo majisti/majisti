@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\Test\PHPUnit;
+namespace Majisti\Test;
 
 /**
  * @desc The test case serves as a simplified manner to extend PHPUnit TestCases.
@@ -58,10 +58,10 @@ class TestCase extends \PHPUnit_Framework_TestCase
                 && 'cli' !== PHP_SAPI )
         {
             if( !count($arguments) ) {
-                $arguments = \Majisti\Test\PHPUnit\Runner::getDefaultArguments();
+                $arguments = \Majisti\Test\Runner::getDefaultArguments();
             }
             
-            \Majisti\Test\PHPUnit\Runner::run(
+            \Majisti\Test\Runner::run(
                 new TestSuite(static::getClass()), $arguments);
         }
     }

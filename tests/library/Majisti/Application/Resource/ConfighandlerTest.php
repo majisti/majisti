@@ -15,7 +15,7 @@ require_once dirname(__FILE__) . '/_configHandler/CustomNamespace.php';
  *
  * @author Majisti
  */
-class ConfighandlerTest extends \Majisti\Test\PHPUnit\TestCase
+class ConfighandlerTest extends \Majisti\Test\TestCase
 {
     static protected $_class = __CLASS__;
 

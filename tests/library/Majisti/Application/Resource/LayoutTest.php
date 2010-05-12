@@ -8,7 +8,7 @@ require_once 'TestHelper.php';
  * @desc Test for the Layout resource
  * @author Majisti
  */
-class LayoutTest extends \Majisti\Test\PHPUnit\TestCase
+class LayoutTest extends \Majisti\Test\TestCase
 {
     static protected $_class = __CLASS__;
 

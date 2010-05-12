@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\Test\PHPUnit;
+namespace Majisti\Test;
 
 require_once 'TestHelper.php';
 
@@ -10,7 +10,7 @@ require_once 'TestHelper.php';
  *
  * @author Majisti
  */
-class TestCaseTest extends \Majisti\Test\PHPUnit\TestCase
+class TestCaseTest extends \Majisti\Test\TestCase
 {
     static protected $_class = __CLASS__;
     
