@@ -68,7 +68,7 @@ class StylesheetMinifier extends AbstractMinifier
 
         if( !empty($content) ) {
             /* store bundled css content */
-            file_put_contents($path, $content);
+            file_put_contents($path, $this->compress($content));
 
             /* append version */
             $url .= '?v=' . filemtime($path);
@@ -76,6 +76,13 @@ class StylesheetMinifier extends AbstractMinifier
             /* remove merged stylesheets from HeadLink and push the merged one */
             $header->exchangeArray($links);
             $header->appendStylesheet($url);
+
+            /* TODO: write file */
         }
+    }
+
+    protected function compress($content)
+    {
+        return $this->getCompressor()->compressCss($content);
     }
 }
