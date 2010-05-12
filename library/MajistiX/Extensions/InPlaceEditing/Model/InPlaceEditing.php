@@ -117,9 +117,9 @@ class InPlaceEditing extends \Majisti\Model\Storage\StorableModel
     protected function _getLocale($locale)
     {
         if( null === $locale ) {
-            $locale = \Majisti\I18n\LocaleSession::getInstance()->getCurrentLocale();
+            $locale = \Majisti\I18n\Locales::getInstance()->getCurrentLocale();
         }
 
-        return (string) $locale;
+        return $locale->toString();
     }
 }

@@ -11,7 +11,7 @@
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-class MajistiX_Extensions_View_Helper_InPlaceEditing extends \Majisti\View\Helper\HelperAbstract
+class MajistiX_View_Helper_InPlaceEditing extends Majisti_View_Helper_Abstract
 {
     protected $_inPlaceEditingModel;
 
