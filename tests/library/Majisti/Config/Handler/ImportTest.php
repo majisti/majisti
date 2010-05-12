@@ -7,17 +7,29 @@ require_once 'TestHelper.php';
 /**
  * @desc Import test case
  * @author Majisti
- * 
- * TODO: test xml and array configuration as well
  */
 class ImportTest extends \Majisti\Test\PHPUnit\TestCase 
 {
     static protected $_class = __CLASS__;
-    
+
+    /**
+     * @var String
+     */
     public $basePath;
+
+    /**
+     * @var String
+     */
     public $serverDir;
-    
+
+    /**
+     * @var \Zend_Config_Ini
+     */
     protected $_validImport;
+
+    /**
+     * @var \Zend_Config_Ini
+     */
     protected $_invalidImport;
     
     /**
@@ -31,7 +43,7 @@ class ImportTest extends \Majisti\Test\PHPUnit\TestCase
     protected $_propertyHandler;
     
     /**
-     * Setups
+     * @desc Setups
      */
     public function setUp()
     {
@@ -48,14 +60,19 @@ class ImportTest extends \Majisti\Test\PHPUnit\TestCase
         $this->_propertyHandler = new Property();
         $this->_importHandler   = new Import();
     }
-    
+
+    /**
+     * @desc Tears down tests
+     */
     public function tearDown()
     {
         chdir($this->serverDir);
     }
     
     /**
-     * TODO: Doc.
+     * @desc Tests that the handle function digs recursively, imports external
+     * config files and merges everything to return a one-size-fits-all config
+     * object.
      */
     public function testHandle()
     {
@@ -96,7 +113,11 @@ class ImportTest extends \Majisti\Test\PHPUnit\TestCase
         
         $this->assertEquals(0, count($config->toArray()));
     }
-    
+
+    /**
+     * @desc Tests that the ImportHandler's getters and setters get/set data
+     * as expected.
+     */
     public function testGettersAndSetters()
     {
         $handler = $this->_importHandler;
