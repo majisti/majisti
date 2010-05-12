@@ -16,4 +16,5 @@
     <xi:include href="application/constants.xml" />
     <xi:include href="application/resource.xml" />
     <xi:include href="application/locales.xml" />
+    <xi:include href="application/addons.xml" />
 </chapter>

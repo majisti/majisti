@@ -181,7 +181,7 @@ class Manager
                     "existant for namespace $namespace");
         }
 
-        /* @var $dispatcher \Majisti\Controller\Dispatcher\Multiple */
+        /** @var $dispatcher \Majisti\Controller\Dispatcher\Multiple */
         $dispatcher->addFallbackControllerDirectory($namespace, $path, $name);
     }
 }
