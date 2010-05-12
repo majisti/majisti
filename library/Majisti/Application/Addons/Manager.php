@@ -3,11 +3,11 @@
 namespace Majisti\Application\Addons;
 
 /**
- * @desc Addons manager that provided control for loading addons.
+ * @desc Addons manager that provides control for loading addons.
  * Addons consists of two different concepts: the Extensions and
  * the Modules. Extensions are simply code addition to the library
  * that may contain controller plugins, view helpers, models, controllers,
- * etc. whereas Modules are simply standard Zend Modules that can be
+ * etc. whereas Modules are simply standard Zend modules that can be
  * dispatched. Any added modules are considered a fallback module dispatchable
  * by Majisti's Multiple Dispatcher.
  *
@@ -118,11 +118,13 @@ class Manager
     }
 
     /**
-     * @desc Loads an extension, calling the respective addon's bootstrap.
+     * @desc Loads an extension, calling its respective bootstrap.
      *
      * @param string $name The extension name
-     * @param string $namespace The namespace is operates under
+     * @param string $namespace The namespace it operates under
      * @return undetermined yet
+     * @throws Exception If the bootstrap file is not readable, non existant,
+     * has wrong namespaced class name or is not implementing IAddonsBoostrapper
      */
     public function loadExtension($name, $namespace)
     {
@@ -164,6 +166,8 @@ class Manager
      * @param string $name The module name
      * @param string $namespace The namespace it operates under
      * @return undetermined yet
+     * @throws Exception If the modules's controllers directory is not
+     * readable or existant.
      */
     public function loadModule($name, $namespace)
     {
