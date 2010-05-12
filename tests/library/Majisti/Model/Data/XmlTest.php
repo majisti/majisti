@@ -1,7 +1,7 @@
 <?php
 
 namespace Majisti\Model\Data;
-use Majisti\I18n\Locales as Locales;
+use Majisti\Application\Locales as Locales;
 
 require_once 'TestHelper.php';
 

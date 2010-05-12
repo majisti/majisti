@@ -63,11 +63,17 @@ class PropertyTest extends \Majisti\Test\PHPUnit\TestCase
     public function testHandle()
     {
         $handler = $this->propertyHandler;
+        $handler->handle($this->_validProperties);
+
+        /* should not have made modifications on original object */
+        $this->assertNotSame('/var/www/someProject/public',
+                $this->_validProperties->majisti->property->applicationPath);
+
         $config = $handler->handle($this->_validProperties);
-        
+
         /* properties should have been loaded correctly */
         $this->assertNotEquals(array(), $handler->getProperties());
-        $this->assertNull($config->property);
+        $this->assertNull($config->majisti->property);
         
         /* properties loaded */
         $this->assertEquals(2, count($handler->getProperties()));

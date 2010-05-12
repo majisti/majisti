@@ -22,7 +22,7 @@ class LocaleTest extends \Zend_Application_Resource_LocaleTest
     public $resource;
 
     /**
-     * @var \Majisti\I18n\Locales
+     * @var \Majisti\Application\Locales
      */
     public $locales;
 
@@ -34,7 +34,7 @@ class LocaleTest extends \Zend_Application_Resource_LocaleTest
     public function setUp()
     {
         $this->resource = new Locale();
-        $this->locales  = \Majisti\I18n\Locales::getInstance();
+        $this->locales  = \Majisti\Application\Locales::getInstance();
         $this->locales->setLocales(array(new \Zend_Locale('en')));
         $this->locales->reset();
         $this->locales->clearLocales();

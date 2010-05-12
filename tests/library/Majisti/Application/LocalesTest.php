@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\I18n;
+namespace Majisti\Application;
 
 require_once 'TestHelper.php';
 

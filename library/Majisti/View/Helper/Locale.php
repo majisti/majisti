@@ -2,20 +2,20 @@
 
 /**
  * @desc Locale view helper to retrieve the singleton instance of
- * \Majisti\I18n\Locales to help control language switching.
+ * \Majisti\Application\Locales to help control language switching.
  *
  * @author Majisti
  */
 class Majisti_View_Helper_Locale extends Majisti_View_Helper_Abstract
 {
     /**
-     * @var \Majisti\I18n\Locales
+     * @var \Majisti\Application\Locales
      */
     protected $_locale;
 
     /**
      * @desc Returns the locale session instance for locale handling.
-     * @return \Majisti\I18n\Locales
+     * @return \Majisti\Application\Locales
      */
     public function locale()
     {
@@ -25,12 +25,12 @@ class Majisti_View_Helper_Locale extends Majisti_View_Helper_Abstract
     /**
      * @desc Returns the locale object.
      *
-     * @return \Majisti\I18n\Locales
+     * @return \Majisti\Application\Locales
      */
     public function getLocale()
     {
         if( null === $this->_locale ) {
-            $this->_locale =  \Majisti\I18n\Locales::getInstance();
+            $this->_locale =  \Majisti\Application\Locales::getInstance();
         }
 
         return $this->_locale;

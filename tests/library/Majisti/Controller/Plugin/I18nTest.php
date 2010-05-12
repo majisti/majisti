@@ -18,7 +18,7 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
     static protected $_class = __CLASS__;
 
     /**
-     * @var \Majisti\I18n\Locales
+     * @var \Majisti\Application\Locales
      */
     public $locales;
 
@@ -51,7 +51,7 @@ class I18nTest extends \Majisti\Test\PHPUnit\TestCase
         $this->request->setModuleName('bazModule');
 
         /* setting up locales */
-        $this->locales = \Majisti\I18n\Locales::getInstance();
+        $this->locales = \Majisti\Application\Locales::getInstance();
         $this->locales->addLocale(new \Zend_Locale('en'));
         $this->locales->addLocale(new \Zend_Locale('fr'));
         $this->locales->switchLocale(new \Zend_Locale('en'));

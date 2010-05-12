@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\I18n;
+namespace Majisti\Application;
 
 /**
  * @desc The Locales class aggregates a set of \Zend_Locale objects, called
@@ -14,7 +14,7 @@ namespace Majisti\I18n;
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-class Locales implements ILocale
+class Locales 
 {
     /**
      * @var \Zend_Session_Namespace

@@ -15,6 +15,7 @@ class AllTests extends \Majisti\Test\PHPUnit\TestSuite
         $suite->addTestCase(__NAMESPACE__ . '\BootstrapTest');
         $suite->addTestCase(__NAMESPACE__ . '\ConstantsTest');
         $suite->addTestCase(__NAMESPACE__ . '\LoaderTest');
+        $suite->addTestCase(__NAMESPACE__ . '\LocalesTest');
         
         return $suite;
     }
