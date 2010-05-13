@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en"
+    xml:id="majisti.i18n.localeSession" version="5.0">
+    <title>Locales</title>
+    <para>The <classname>Locales</classname> class provides a variety of
+        functions meant to ease the management a multilingual application. It
+        allows automatic handling of the application's supported languages with
+        the help of a <classname>Zend_Session_Namespace</classname>.
+            <classname>Locales</classname> works strictly with
+            <classname>Zend_Locale</classname> objects, meaning that (almost)
+        all functions need to receive either a
+            <classname>Zend_Locale</classname> object or an array filled with
+            <classname>Zend_Locale</classname> objects.</para>
+    <para>With a locale session object, it is possible to know the current
+        locale of an application, the default locale, all of the available
+        locales, if a locale is supported, etc. It also provides behaviours to
+        add locales, switch between locales, clear the locales, reset the
+        current locale to the default one, override all of the available
+        locales with a given array, etc.</para>
+    <para>In order to supply supported languages to the
+            <classname>Locales</classname> singleton, simply list all of the
+        supported languages in the configuration using the following
+        syntax:<programlisting>resources.locale.available[] = es
+resources.locale.available[] = fr
+resources.locale.available[] = ch</programlisting></para>
+    <para>As you may notice in the above example, there is no explicitly
+        defined default language. In that case, Majisti sets the default locale
+        to the first locale made available, in this case 'es'.</para>
+    <para>To explicitly define the default locale of you application, the
+        configuration setting is quite similar to the one used to define the
+        supported locales. All there is to do is add the following line in the
+        configuration:<programlisting>resources.locale.default = fr</programlisting></para>
+    <para>You can always use the object-oriented way, using
+            <methodname>addLocale()</methodname>,
+            <code>addLocales()</code>,<methodname>setLocales()</methodname> and
+            <methodname>setDefaultLocale()</methodname> to reach similar
+        goals.</para>
+    <para>Now, if you want to switch your current language to any of your
+        available ones, simply
+        do:<programlisting>$i18n = \Majisti\I18n\Locales::getInstance();
+$i18n->switchLocale(new \Zend_Locale('fr'));</programlisting>This
+        will directly switch to the locale passed as a parameter: If the given
+        locale is not an available one, an exception will be thrown with the
+        message "Locale yourLocale  is not available." This function is
+        particularly useful on applications that must switch locales with
+        request parameters, such as ones making use of the <link
+            xlink:href="majisti.controller.plugin.i18n">I18n</link> controller
+        plugin.</para>
+        <note><para>Please note that the current locale's
+                <classname>Zend_Locale</classname> object is persistent, i.e it
+            is stored in a <classname>Zend_Session_Namespace</classname> named
+            Majisti_Locale. While being in the session namespace, the
+                <classname>Zend_Locale</classname> object is serialized. Upon
+            calling <code>getCurrentLocale()</code>, the function unserializes
+            the object stored in the session and returns it to you.</para></note>
+</section>
