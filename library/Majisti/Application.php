@@ -118,7 +118,7 @@ class Application
 
     /**
      * @desc Returns the addons manager.
-     * @return Application\AddonsManager the addons manager
+     * @return Application\Addons\Manager The addons manager
      */
     public function getAddonsManager()
     {
@@ -131,13 +131,27 @@ class Application
         return $this->_addonsManager;
     }
 
+    /**
+     * @desc Loads an extension for this application.
+     *
+     * @param string $name The extension name
+     * @param string $namespace[opt; def=MajistiX] The namespace it operates under
+     * @return undertermined yet
+     */
     public function loadExtension($name, $namespace = 'MajistiX')
     {
-        $this->getAddonsManager()->loadExtension($name, $namespace);
+        return $this->getAddonsManager()->loadExtension($name, $namespace);
     }
 
+    /**
+     * @desc Loads a fallback module for this application.
+     *
+     * @param string $name The module name
+     * @param string $namespace[opt; def=MajistiX] The namespace it operates under
+     * @return undetermined yet
+     */
     public function loadModule($name, $namespace = 'MajistiX')
     {
-        $this->getAddonsManager()->loadModule($name, $namespace);
+        return $this->getAddonsManager()->loadModule($name, $namespace);
     }
 }

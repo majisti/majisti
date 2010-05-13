@@ -4,18 +4,15 @@ namespace Majisti\Application\Resource;
 
 /**
  * @desc Addons resource that will load any dropped extensions
- * under the MajistiX/Extensions namespace.
- *
- * TODO: check this class integrity, should it load Majisti/Extensions ?
- * MajistiC/Extensions? application's library extensions?
- * Should it automatically register controller plugins or should extensions
- * contain boostraping?
+ * and modules under the supported addons path provided.
  *
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class Addons extends \Zend_Application_Resource_ResourceAbstract
 {
+    const DEFAULT_NAMESPACE = 'MajistiX';
+
     /**
      * @desc Inits the extensions resource
      */
@@ -25,12 +22,10 @@ class Addons extends \Zend_Application_Resource_ResourceAbstract
     }
 
     /**
-     * @desc Loads the extensions and return them.
+     * @desc Loads the extensions and modules (addons) and
+     * returns the addons manager.
      *
-     * An extension can have controller plugins and view helpers which
-     * will be automatically loaded.
-     *
-     * @return Array the loaded extensions
+     * @return Array the loaded addons
      */
     protected function getAddons()
     {
@@ -42,81 +37,20 @@ class Addons extends \Zend_Application_Resource_ResourceAbstract
 
         /* load extensions */
         foreach( $options->ext as $namespace => $name ) {
+            if( is_int($namespace) ) {
+                $namespace = static::DEFAULT_NAMESPACE;
+            }
             $addons->loadExtension($name, $namespace);
         }
 
         /* load modules */
         foreach( $options->module as $namespace => $name ) {
+            if( is_int($namespace) ) {
+                $namespace = static::DEFAULT_NAMESPACE;
+            }
             $addons->loadModule($name, $namespace);
         }
 
         return $addons;
-
-//        /* @var $app \Majisti\Application */
-//        $app->loadExtension($name, $namespace);
-//
-//        $handle = opendir(MAJISTIX_EXTENSIONS);
-//
-//        $loadedExtensions = array();
-//
-//        /* walk directory for extensions and add the extension structure */
-//        while( false !== ($extension = readdir($handle)) ) {
-//            /*
-//             * skip non-directories, hidden files, current and parent directories
-//             * and non activated extensions
-//             */
-//            if( !is_dir(MAJISTIX_EXTENSIONS . '/' . $extension) || '.' == $extension{0}
-//                || !array_key_exists($extension, $this->getOptions()) ) {
-//                continue;
-//            }
-//
-//            /* bootstrap */
-//            $bootstrap = $this->getBootstrap();
-//            $bootstrap->bootstrap('view');
-//
-//            /* add helpers */
-//            $view = $bootstrap->getResource('view');
-//            $view->addHelperPath('MajistiX/Extensions/' . $extension
-//                . '/Helper', 'MajistiX_View_Helper');
-//
-//            /* add controller plugins */
-//            $plugins = $this->getControllerPlugins(MAJISTIX_EXTENSIONS
-//                . '/' . $extension . '/Plugin');
-//            foreach ($plugins as $plugin) {
-//            	$bootstrap ->getResource('frontController')
-//            	           ->registerPlugin($plugin);
-//            }
-//
-//            array_push($loadedExtensions, $extension);
-//        }
-
-        return $loadedExtensions;
-    }
-
-    /**
-     * @desc Returns the controller plugin instanciated classes for a given
-     * directory.
-     *
-     * @param $dir The directory that contains controller plugins only
-     */
-    private function getControllerPlugins($dir)
-    {
-        $plugins = array();
-
-        if( false !== ($handle = @opendir($dir)) ) {
-            while( false != ($file = readdir($handle)) ) {
-                if( is_file($dir . '/' . $file) ) {
-                    $classPrefix = 'MajistiX\Controller\Plugin\\';
-
-                    if ( \Zend_Loader::loadFile($file, $dir, true) ) {
-                        $class = $classPrefix . trim($file, '.php');
-
-                        array_push($plugins, new $class());
-                    }
-                }
-            }
-        }
-
-        return $plugins;
     }
 }
