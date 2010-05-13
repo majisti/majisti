@@ -277,29 +277,60 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
       */
      public function testUriRemappingGettersAndSetters()
      {
-         $this->markTestSkipped('implementation changed');
-
          $optimizer = $this->optimizer;
-         $uris      = array('uri1' => 'pathA',
-                            'uri2' => 'pathB',
-                            'uri3' => 'pathC',
-                            'uri4' => 'pathD'
+         $uris      = array('http://www.foo.com/uri1'   => 'path/to/file/A',
+                            'http://www.foo.com/uri2'   => 'path/to/file/B',
+                            'http://www.majisti.com/testing/foo/uri3' => 'path/to/file/C',
+                            'http://www.majisti.com/testing/bar/uri4' => 'path/to/file/D'
          );
 
          foreach( $uris as $uri => $path) {
              $optimizer->uriRemap($uri, $path);
          }
 
-         $this->assertEquals($uris, $optimizer->getRemappedUris());
+         $default = $optimizer->getDefaultOptions();
+         $this->assertEquals(array_merge($uris, $default['remappedUris']),
+                 $optimizer->getRemappedUris());
 
-         $optimizer->removeUriRemap('uri2');
+         $optimizer->removeUriRemap('http://www.foo.com/uri2');
 
-         $this->assertEquals(3, count($optimizer->getRemappedUris()));
-         $this->assertArrayNotHasKey('uri2', $optimizer->getRemappedUris());
+         $this->assertEquals(6, count($optimizer->getRemappedUris()));
+         $this->assertArrayNotHasKey('http://www.foo.com/uri2',
+                 $optimizer->getRemappedUris());
 
          $optimizer->clearUriRemaps();
 
          $this->assertEquals(0, count($optimizer->getRemappedUris()));
+     }
+
+     /**
+      * @desc Tests that adding an uri remapping while providing an unexistant
+      * path will throw an exception.
+      *
+      * @expectedException Exception
+      */
+     public function testThatGivingAnInvalidPathToUriRemapWillThrowException()
+     {
+         $optimizer = $this->optimizer;
+         $url = "http://www.somedomain.com/foo/bar";
+         $path = "/public/tests/invalid/file.ext";
+
+         $optimizer->uriRemap($url, $path);
+     }
+
+     /**
+      * @desc Tests that adding an url remapping when providing a file path will
+      * throw an exception.
+      *
+      * @expectedException Exception
+      */
+     public function testThatProvidingAFilePathToUriRemappingWillThrowException()
+     {
+         $optimizer = $this->optimizer;
+         $url = "http://www.somedomain.com/foo/bar";
+         $path = $this->filesPath . "all.bundled.expected.css";
+
+         $optimizer->uriRemap($url, $path);
      }
 
      /**
