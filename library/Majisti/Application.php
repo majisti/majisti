@@ -137,6 +137,8 @@ class Application
      * @param string $name The extension name
      * @param string $namespace[opt; def=MajistiX] The namespace it operates under
      * @return undertermined yet
+     * @throws Exception If the bootstrap file is not readable, non existant,
+     * has wrong namespaced class name or is not implementing IAddonsBoostrapper
      */
     public function loadExtension($name, $namespace = 'MajistiX')
     {
@@ -149,6 +151,8 @@ class Application
      * @param string $name The module name
      * @param string $namespace[opt; def=MajistiX] The namespace it operates under
      * @return undetermined yet
+     * @throws Exception If the modules's controllers directory is not
+     * readable or existant.
      */
     public function loadModule($name, $namespace = 'MajistiX')
     {
