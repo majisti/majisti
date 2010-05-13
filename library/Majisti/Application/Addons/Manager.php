@@ -2,6 +2,10 @@
 
 namespace Majisti\Application\Addons;
 
+/**
+ * @desc
+ * @author Majisti
+ */
 class Manager
 {
     /** @var Array */
@@ -24,6 +28,11 @@ class Manager
         }
     }
 
+    public function getAddonsPath($namespace)
+    {
+        return $this->_paths[$namespace];
+    }
+
     public function getAddonsPaths()
     {
         return $this->_paths;
@@ -34,21 +43,27 @@ class Manager
         $this->_paths = $paths;
     }
 
+    protected function getBootstrapClass($extName, $namespace)
+    {
+        return "\\$namespace\\Extensions\\$extName\\Bootstrap";
+    }
+
     public function loadExtension($name, $namespace)
     {
-        $extPath        = $this->getBasePath() . DIRECTORY_SEPARATOR . $name;
-        $bootstrapFile  = $extPath . '/Bootstrap.php';
+        $path           = $this->getAddonsPath($namespace) . "/Extensions/$name";
+        $bootstrapFile  = $path . '/Bootstrap.php';
 
         if( !\Zend_Loader::isReadable($bootstrapFile) ) {
-            throw new Exception("Bootstrap cannot be found for extension $name");
+            throw new Exception("Bootstrap cannot be found for extension $name" .
+                    ", used path $path with namespace $namespace");
         }
 
         require_once $bootstrapFile;
-        $className = $this->getNamespace() . "\\$name";
+        $className = $this->getBootstrapClass($name, $namespace);
 
         if( !class_exists($className, false) ) {
             throw new Exception("Bootstrap class $className cannot be found" .
-                    " for extension $name");
+                    " for extension $name in namespace $namespace");
         }
 
         /** @var $bootstrap IAddonsBootstrapper */
@@ -57,7 +72,7 @@ class Manager
         if ( !($bootstrap instanceof IAddonsBootstrapper) ) {
             throw new Exception("Bootstrap class not an instance of " .
                     "\Majisti\Application\Addons\IAddonsBoostrapper " .
-                    "for extension $name");
+                    "for extension $name in namespace $namespace");
         }
 
         $bootstrap->load();
@@ -65,6 +80,15 @@ class Manager
 
     public function loadModule($name, $namespace)
     {
+        $dispatcher = \Zend_Controller_Front::getInstance()->getDispatcher();
+        $path       = $this->getAddonsPath($namespace) .
+                      "/Modules/$name/controllers";
 
+        if( !\Zend_Loader::isReadable($path) ) {
+            throw new Exception("Module $name is not " .
+                    "existant for namespace $namespace");
+        }
+        /* @var $dispatcher \Majisti\Controller\Dispatcher\Multiple */
+        $dispatcher->addFallbackControllerDirectory( $namespace, $path, $name);
     }
 }

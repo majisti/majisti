@@ -21,7 +21,7 @@ class Addons extends \Zend_Application_Resource_ResourceAbstract
      */
     public function init()
     {
-        return $this->getExtensions();
+        return $this->getAddons();
     }
 
     /**
@@ -32,7 +32,7 @@ class Addons extends \Zend_Application_Resource_ResourceAbstract
      *
      * @return Array the loaded extensions
      */
-    protected function getExtensions()
+    protected function getAddons()
     {
         $app        = $this->getBootstrap()->getApplication();
         $addons     = $app->getAddonsManager();
@@ -50,43 +50,45 @@ class Addons extends \Zend_Application_Resource_ResourceAbstract
             $addons->loadModule($name, $namespace);
         }
 
-        /* @var $app \Majisti\Application */
-        $app->loadExtension($name, $namespace);
+        return $addons;
 
-        $handle = opendir(MAJISTIX_EXTENSIONS);
-
-        $loadedExtensions = array();
-
-        /* walk directory for extensions and add the extension structure */
-        while( false !== ($extension = readdir($handle)) ) {
-            /*
-             * skip non-directories, hidden files, current and parent directories
-             * and non activated extensions
-             */
-            if( !is_dir(MAJISTIX_EXTENSIONS . '/' . $extension) || '.' == $extension{0}
-                || !array_key_exists($extension, $this->getOptions()) ) {
-                continue;
-            }
-
-            /* bootstrap */
-            $bootstrap = $this->getBootstrap();
-            $bootstrap->bootstrap('view');
-
-            /* add helpers */
-            $view = $bootstrap->getResource('view');
-            $view->addHelperPath('MajistiX/Extensions/' . $extension
-                . '/Helper', 'MajistiX_View_Helper');
-
-            /* add controller plugins */
-            $plugins = $this->getControllerPlugins(MAJISTIX_EXTENSIONS
-                . '/' . $extension . '/Plugin');
-            foreach ($plugins as $plugin) {
-            	$bootstrap ->getResource('frontController')
-            	           ->registerPlugin($plugin);
-            }
-
-            array_push($loadedExtensions, $extension);
-        }
+//        /* @var $app \Majisti\Application */
+//        $app->loadExtension($name, $namespace);
+//
+//        $handle = opendir(MAJISTIX_EXTENSIONS);
+//
+//        $loadedExtensions = array();
+//
+//        /* walk directory for extensions and add the extension structure */
+//        while( false !== ($extension = readdir($handle)) ) {
+//            /*
+//             * skip non-directories, hidden files, current and parent directories
+//             * and non activated extensions
+//             */
+//            if( !is_dir(MAJISTIX_EXTENSIONS . '/' . $extension) || '.' == $extension{0}
+//                || !array_key_exists($extension, $this->getOptions()) ) {
+//                continue;
+//            }
+//
+//            /* bootstrap */
+//            $bootstrap = $this->getBootstrap();
+//            $bootstrap->bootstrap('view');
+//
+//            /* add helpers */
+//            $view = $bootstrap->getResource('view');
+//            $view->addHelperPath('MajistiX/Extensions/' . $extension
+//                . '/Helper', 'MajistiX_View_Helper');
+//
+//            /* add controller plugins */
+//            $plugins = $this->getControllerPlugins(MAJISTIX_EXTENSIONS
+//                . '/' . $extension . '/Plugin');
+//            foreach ($plugins as $plugin) {
+//            	$bootstrap ->getResource('frontController')
+//            	           ->registerPlugin($plugin);
+//            }
+//
+//            array_push($loadedExtensions, $extension);
+//        }
 
         return $loadedExtensions;
     }

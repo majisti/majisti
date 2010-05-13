@@ -131,8 +131,13 @@ class Application
         return $this->_addonsManager;
     }
 
-    public function loadExtension($name, $namespace = 'majistix')
+    public function loadExtension($name, $namespace = 'MajistiX')
     {
         $this->getAddonsManager()->loadExtension($name, $namespace);
+    }
+
+    public function loadModule($name, $namespace = 'MajistiX')
+    {
+        $this->getAddonsManager()->loadModule($name, $namespace);
     }
 }
