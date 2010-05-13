@@ -92,7 +92,31 @@ class HeadScriptOptimizerTest extends AbstractHeadOptimizerTest
      */
     public function testThatInlineScriptGetsOptimized()
     {
-        $this->markTestIncomplete("Not yet implemented.");
+        $headObj   = $this->headObject;
+        $optimizer = $this->optimizer;
+        $url       = $this->filesUrl;
+        $ext       = $this->extension;
+        $path      = $this->filesPath;
+
+        /* setting minifying and bundling on */
+        $optimizer->setOptimizationEnabled();
+
+        $this->appendFilesToHead($this->files);
+
+        $script = "function helloWorld() {
+                        window.print('Hello World!');
+                   }";
+        $headObj->appendScript($script);
+
+        $urlOptimize = $optimizer->optimize(
+                $path . "/all{$ext}",
+                $url  . "/all{$ext}"
+        );
+
+        $this->assertEquals(
+                file_get_contents($path . "/all.optimized.inc.script.expected{$ext}"),
+                file_get_contents($path . "/all{$ext}")
+        );
     }
 
     /**
