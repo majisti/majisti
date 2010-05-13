@@ -3,7 +3,7 @@
 namespace Majisti\Application\Resource;
 
 /**
- * @desc Extension resource that will load any dropped extensions
+ * @desc Addons resource that will load any dropped extensions
  * under the MajistiX/Extensions namespace.
  *
  * TODO: check this class integrity, should it load Majisti/Extensions ?
@@ -14,7 +14,7 @@ namespace Majisti\Application\Resource;
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-class Extensions extends \Zend_Application_Resource_ResourceAbstract
+class Addons extends \Zend_Application_Resource_ResourceAbstract
 {
     /**
      * @desc Inits the extensions resource
@@ -34,6 +34,25 @@ class Extensions extends \Zend_Application_Resource_ResourceAbstract
      */
     protected function getExtensions()
     {
+        $app        = $this->getBootstrap()->getApplication();
+        $addons     = $app->getAddonsManager();
+        $options    = new \Zend_Config($this->getOptions());
+
+        $addons->setAddonsPaths($options->paths->toArray());
+
+        /* load extensions */
+        foreach( $options->ext as $namespace => $name ) {
+            $addons->loadExtension($name, $namespace);
+        }
+
+        /* load modules */
+        foreach( $options->module as $namespace => $name ) {
+            $addons->loadModule($name, $namespace);
+        }
+
+        /* @var $app \Majisti\Application */
+        $app->loadExtension($name, $namespace);
+
         $handle = opendir(MAJISTIX_EXTENSIONS);
 
         $loadedExtensions = array();
