@@ -23,6 +23,11 @@ class Application
     static protected $_applicationPath;
 
     /**
+     * @var Application\AddonsManager
+     */
+    protected $_addonsManager;
+
+    /**
      * @desc Constructs the application based on merged configuration file
      *
      * @param $applicationPath The application's path
@@ -109,5 +114,25 @@ class Application
         }
 
         return static::$_application;
+    }
+
+    /**
+     * @desc Returns the addons manager.
+     * @return Application\AddonsManager the addons manager
+     */
+    public function getAddonsManager()
+    {
+        if( null === $this->_addonsManager ) {
+            $addonsManager = new Application\Addons\Manager();
+            $addonsManager->registerAddonsPath(MAJISTIX_PATH, 'majistix');
+            $this->_addonsManager = $addonsManager;
+        }
+
+        return $this->_addonsManager;
+    }
+
+    public function loadExtension($name, $namespace = 'majistix')
+    {
+        $this->getAddonsManager()->loadExtension($name, $namespace);
     }
 }

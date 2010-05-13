@@ -49,7 +49,7 @@ class Locales
     /**
      * @desc Returns the single instance of this class
      *
-     * @return \Majisti\I18n\Locales
+     * @return \Majisti\Application\Locales
      */
     static public function getInstance()
     {
