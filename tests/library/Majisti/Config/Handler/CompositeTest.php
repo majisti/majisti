@@ -67,25 +67,25 @@ class CompositeTest extends \Majisti\Test\TestCase
      */
     public function testHandle()
     {
-        $mockA = new Mock();
-        $mockB = new Mock();
-        $mockC = new Mock();
-        $mockD = new Mock();
+        $class      = '\Majisti\Config\Handler\Property';
+        $handlers   = $this->handler;
 
-        $handler = $this->handler;
-        $handler->push($mockA);
-        $handler->push($mockB);
-        $handler->push($mockC);
-        $handler->push($mockD);
+        for ($i = 0; $i < 4; $i++) {
+            $handlers->push($this->getMock($class));
+        }
 
-        $handler->handle(new \Zend_Config(array()));
+        $config = new \Zend_Config(array());
 
-        $this->assertTrue($mockA->hasBeenHandled());
-        $this->assertTrue($mockB->hasBeenHandled());
-        $this->assertTrue($mockC->hasBeenHandled());
-        $this->assertTrue($mockD->hasBeenHandled());
+        foreach ($handlers as $handler) {
+            $handler->expects($this->once())
+                    ->method('handle')
+                    ->with($config)
+                    ->will($this->returnArgument(0));
+        }
 
-        $handler->clear();
+        $handlers->handle($config);
+
+        $handlers->clear();
     }
 
     /**
