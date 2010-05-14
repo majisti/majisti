@@ -79,7 +79,7 @@ PHPUnit_Util_Filter::addFileToFilter($majistiRoot .
     '/library/Majisti/Application/Constants.php');
 
 /* be a little bit more verbose according to request param */
-if( $request->has('verbose') || $request->has('v') ) {
+if( $request->has('v') ) {
     \Majisti\Test\Runner::setDefaultArguments(array(
         'printer' => new \Majisti\Test\Listener\Simple\Html(null, true)
     ));
