@@ -7,20 +7,6 @@
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 
-/* configure xdebug for performance, if the module is enabled */
-if( extension_loaded('xdebug') ) {
-    $params = array(
-        'xdebug.collect_params'             => 3,
-        'xdebug.var_display_max_data'       => 300,
-        'xdebug.var_display_max_children'   => 300,
-        'xdebug.var_display_max_depth'      => 300,
-    );
-
-    foreach ($params as $key => $value) {
-       ini_set($key, $value);
-    }
-}
-
 /* set error reporting to the level to which the code must comply. */
 error_reporting( E_ALL | E_STRICT );
 
@@ -54,6 +40,25 @@ $loader = Zend_Loader_Autoloader::getInstance();
 require_once 'Majisti/Loader/Autoloader.php';
 $loader->pushAutoloader(new \Majisti\Loader\Autoloader());
 
+/* configure xdebug for performance, if the module is enabled */
+$request = new \Zend_Controller_Request_Http();
+if( extension_loaded('xdebug') ) {
+    if( !$request->has('d') ) {
+        xdebug_disable();
+    } else {
+        $params = array(
+            'xdebug.collect_params'             => 300,
+            'xdebug.var_display_max_data'       => 300,
+            'xdebug.var_display_max_children'   => 300,
+            'xdebug.var_display_max_depth'      => 300,
+        );
+
+        foreach ($params as $key => $value) {
+           ini_set($key, $value);
+        }
+    }
+}
+
 /* instanciate a mock application */
 define('MAJISTI_FOLDER_NAME', dirname($majistiRoot));
 define('APPLICATION_NAME', 'Majisti_Test');
@@ -74,7 +79,6 @@ PHPUnit_Util_Filter::addFileToFilter($majistiRoot .
     '/library/Majisti/Application/Constants.php');
 
 /* be a little bit more verbose according to request param */
-$request = new \Zend_Controller_Request_Http();
 if( $request->has('verbose') || $request->has('v') ) {
     \Majisti\Test\Runner::setDefaultArguments(array(
         'printer' => new \Majisti\Test\Listener\Simple\Html(null, true)
