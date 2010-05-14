@@ -10,9 +10,9 @@ class AllTests extends \Majisti\Test\TestSuite
     {
         $suite = new self('Majisti Framework - Application - All tests');
         
+        $suite->addTest(Addons\AllTests::suite());
         $suite->addTest(Resource\AllTests::suite());
         
-        $suite->addTestCase(__NAMESPACE__ . '\AddonsManagerTest');
         $suite->addTestCase(__NAMESPACE__ . '\BootstrapTest');
         $suite->addTestCase(__NAMESPACE__ . '\ConstantsTest');
         $suite->addTestCase(__NAMESPACE__ . '\LoaderTest');
