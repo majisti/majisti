@@ -5,7 +5,7 @@ namespace Majisti\Model\Data;
 use Majisti\Util\Model\Collection;
 
 use \Majisti\Util\Model\Collection\Stack    as Stack;
-use \Majisti\Application\Locales                   as Locales;
+use \Majisti\Application\Locales            as Locales;
 
 class Xml
 {
