@@ -65,7 +65,7 @@ define('APPLICATION_NAME', 'Majisti_Test');
 define('APPLICATION_ENVIRONMENT', 'development');
 
 \Majisti\Application::setApplicationPath(
-    $majistiRoot . '/tests/library/Majisti/Application/_webroot');
+    $majistiRoot . '/tests/library/Majisti/Application/_project/application');
 \Majisti\Application::getInstance()->bootstrap();
 
 /* code coverage filtering */

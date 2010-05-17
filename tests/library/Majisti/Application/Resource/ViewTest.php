@@ -40,6 +40,13 @@ class ViewTest extends \Majisti\Test\TestCase
     {
         $config = \Zend_Registry::get('Majisti_Config');
         $this->resource = new View($config->resources->view);
+
+        /* prepend library paths to those keys */
+        $keys = array('Majisti_Test_View_Helper_', 'Majisti_Test\View\Helper\\');
+        foreach( $keys as $key ) {
+            $this->expectedPaths[$key][0] =
+                    APPLICATION_LIBRARY . $this->expectedPaths[$key][0];
+        }
     }
 
     /**
