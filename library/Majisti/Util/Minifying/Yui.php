@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\Util\Compression;
+namespace Majisti\Util\Minifying;
 
 /**
  * @desc Compress Javascript/CSS using the YUI Compressor
@@ -23,7 +23,7 @@ namespace Majisti\Util\Compression;
  *
  * @author Stephen Clay <steve@mrclay.org>
  */
-class Yui extends AbstractCompressor
+class Yui extends AbstractMinifier
 {
     /**
      * Filepath of the YUI Compressor jar file. This must be set before
@@ -59,7 +59,7 @@ class Yui extends AbstractCompressor
      *
      * @return string
      */
-    public static function minifyJs($js, $options = array())
+    public function minifyJs($js, $options = array())
     {
         return self::_minify('js', $js, $options);
     }
@@ -75,7 +75,7 @@ class Yui extends AbstractCompressor
      *
      * @return string
      */
-    public static function minifyCss($css, $options = array())
+    public function minifyCss($css, $options = array())
     {
         return self::_minify('css', $css, $options);
     }
@@ -126,9 +126,9 @@ class Yui extends AbstractCompressor
 
     private static function _prepare()
     {
-        if (! is_file(self::$jarFile)
-            || ! is_dir(self::$tempDir)
-            || ! is_writable(self::$tempDir)
+        if (    ! is_file(self::$jarFile)
+            ||  ! is_dir(self::$tempDir)
+            ||  ! is_writable(self::$tempDir)
         ) {
             throw new Exception('Minify_YUICompressor :
                 $jarFile and $tempDir must be set.');

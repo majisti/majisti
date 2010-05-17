@@ -2,7 +2,7 @@
 
 namespace Majisti\View\Helper\Head;
 
-use \Majisti\Util\Compression as Compression;
+use \Majisti\Util\Minifying as Minifying;
 
 /**
  * @desc The abstract minifier provides minify abstraction for
@@ -10,12 +10,12 @@ use \Majisti\Util\Compression as Compression;
  *
  * @author Majisti
  */
-abstract class AbstractMinifier implements IMinifier
+abstract class AbstractCompressor implements ICompressor
 {
     /**
      * @var bool
      */
-    protected $_enabled;
+    protected $_bundlingEnabled;
 
     /**
      * @var Compression\ICompressor
@@ -26,7 +26,8 @@ abstract class AbstractMinifier implements IMinifier
      * FIXME: wrong path!
      * @var <type>
      */
-    protected $_stylesheetsPath = '/home/ratius/www/majisti/tests/library/Majisti/View/Helper/_files';
+    protected $_stylesheetsPath =
+        '/home/ratius/www/majisti/tests/library/Majisti/View/Helper/_files';
 
     protected $_cacheFile = '.cached-stylesheets';
 
@@ -41,19 +42,19 @@ abstract class AbstractMinifier implements IMinifier
      *
      * @return bool Whether bundling is enabled or not
      */
-    public function isEnabled()
+    public function isBundlingEnabled()
     {
         /*
          * production and staging are enabled by default when function it is
          * lazily called
          */
-        if( null == $this->_enabled ) {
-            $this->_enabled = defined('APPLICATION_ENVIRONMENT')
+        if( null == $this->_bundlingEnabled ) {
+            $this->_bundlingEnabled = defined('APPLICATION_ENVIRONMENT')
                     && 'production' === APPLICATION_ENVIRONMENT
                     || 'staging' === APPLICATION_ENVIRONMENT;
         }
 
-        return $this->_enabled;
+        return $this->_bundlingEnabled;
     }
 
     public function isCached()
@@ -63,24 +64,28 @@ abstract class AbstractMinifier implements IMinifier
 
     /**
      * @desc Enables bundling for appended stylesheets when
-     * {@link HeadLink::bundle()} is called.
+     * {@link AbstractCompressor::bundle()} is called.
      *
      * @param bool $flag True will enable bundling.
      */
-    public function setEnabled($flag = true)
+    public function setBundlingEnabled($flag = true)
     {
-        $this->_enabled = (bool) $flag;
+        $this->_bundlingEnabled = (bool) $flag;
     }
 
     protected function flushCache()
     {
-        @unlink($this->_stylesheetsPath . '/' . $this->_cacheFile);
+        @unlink($this->getCacheFilePath());
+    }
+
+    public function getCacheFilePath()
+    {
+        return $this->_stylesheetsPath . '/' . $this->_cacheFile;
     }
 
     protected function cache($path)
     {
-        $cssDir = $this->_stylesheetsPath;
-        $cacheFile = $cssDir . '/' . $this->_cacheFile;
+        $cacheFile = $this->getCacheFilePath();
 
         if( !file_exists($cacheFile) ) {
             touch($cacheFile);
@@ -91,12 +96,11 @@ abstract class AbstractMinifier implements IMinifier
         fclose($handle);
     }
 
-    /**
-     * @desc Compresses the given content
-     *
-     * @param string $content The content to compress
-     */
-    abstract protected function compress($content);
+    public function compress($header, $path, $url)
+    {
+        $this->bundle($header, $path, $url);
+        $this->minify($header, $path, $url);
+    }
 
     /**
      * @desc Remaps a given uri found within the headlink while minifying.
@@ -116,7 +120,7 @@ abstract class AbstractMinifier implements IMinifier
     public function getCompressor()
     {
         if ( null === $this->_compressor ) {
-            $this->_compressor = new Compression\Yui();
+            $this->_compressor = new Minifying\Yui();
         }
 
         return $this->_compressor;

@@ -1,5 +1,6 @@
 <?php
-namespace Majisti;
+
+namespace Majisti\View\Helper\Head;
 
 require_once 'TestHelper.php';
 
@@ -20,8 +21,7 @@ class AllTests extends \Majisti\Test\TestSuite
     {
         $suite = new self('Majisti Framework - All tests');
 
-        $suite->addTest(Folder\AllTests::suite());
-        $suite->addTestSuite(__NAMESPACE__ . '\FooTest');
+        $suite->addTestCase(__NAMESPACE__ . '\StylesheetCompressorTest');
 
         return $suite;
     }

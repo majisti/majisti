@@ -3,11 +3,22 @@
 namespace Majisti\View\Helper\Head;
 
 /**
- * @desc Defines an interface for compressable meta
+ * @desc The ICompressor interface specifies whether bundling should be enabled
+ * and used for a header tag (such as link and script files). This is
+ * particularly useful in production when files can be packed up in one
+ * master file.
  *
  * @author Majisti
  */
 interface ICompressor
 {
-    public function compress($path, $header = null);
+    /**
+     * @desc Bundle the files together
+     */
+    public function bundle($header, $path, $url);
+
+    /*
+     * @desc Minifies the files
+     */
+    public function minify($header, $path, $url);
 }
