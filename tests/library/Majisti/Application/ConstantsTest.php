@@ -30,7 +30,7 @@ class ConstantsTest extends \Majisti\Test\TestCase
      */
     public function setUp()
     {
-        $this->applicationPath = dirname(__FILE__) . '/_webroot';
+        $this->applicationPath = dirname(__FILE__) . '/_project/application';
         \Zend_Registry::set('Majisti_Config', new \Zend_Config(array()));
         $this->request = new \Zend_Controller_Request_Http();
     }
@@ -62,8 +62,8 @@ class ConstantsTest extends \Majisti\Test\TestCase
         return array(
             'APPLICATION_PATH'          => $this->applicationPath,
             'APPLICATION_ENVIRONMENT'   => 'development',
-            'APPLICATION_LIBRARY'       => realpath(APPLICATION_PATH .
-                                           '../library'),
+            'APPLICATION_LIBRARY'       => APPLICATION_LIBRARY,
+
             /*
              * getcwd provides with /home/user/www/.... and we have to keep only
              * the chunk starting from /majisti.
