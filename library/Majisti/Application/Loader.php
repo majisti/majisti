@@ -3,7 +3,9 @@
 namespace Majisti\Application;
 
 /**
- * @desc Deploy anywhere Majisti's concrete loader.
+ * TODO: documentation
+ *
+ * @desc Deploy anywhere Majisti's concrete loader
  *
  * @author Steven Rosato
  * @version 1.0.0
@@ -48,16 +50,13 @@ final class Loader
 
     /**
      * @desc Includes Majisti's library and its external libraries
-     * such as Zend and ZendX. You can prepend any addtionnal libraries
-     * here. Note that the more include path you have, the slower the
-     * application.
+     * such as Zend and ZendX.
      */
     private function setIncludePaths()
     {
-        $majisti = $this->getMajistiTopLevelPath(self::MAX_DEPTH) ;
         set_include_path(implode(PATH_SEPARATOR, array(
-            realpath($majisti . '/library'),
-            realpath($majisti . '/externals'),
+            realpath($this->getMajistiTopLevelPath(self::MAX_DEPTH) . '/library'),
+            realpath($this->getMajistiTopLevelPath(self::MAX_DEPTH) . '/externals'),
             get_include_path(),
         )));
     }
