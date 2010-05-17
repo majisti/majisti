@@ -13,18 +13,18 @@ use Majisti\View\Helper\Head as Head;
 class Majisti_View_Helper_HeadLink extends \Zend_View_Helper_HeadLink
 {
     /**
-     * @desc Bundles all the stylesheets contained in this HeadLink.
+     * @desc Bundles and minifies all the stylesheets contained in this HeadLink.
      *
      * @param string $path The path for the master file
      * @param string $url The url for the master file
-     * @param IMinifier $minifier [optionnal] The bundler
+     * @param IMinifier $compressor [optionnal] The bundler
      */
-    public function minify($path, $url, Head\IMinifier $minifier = null)
+    public function compress($path, $url, Head\ICompressor $compressor = null)
     {
-        if( null == $minifier ) {
-            $minifier = new Head\StylesheetBundler();
+        if( null == $compressor ) {
+            $compressor = new Head\StylesheetCompressor();
         }
 
-        $minifier->minify($this, $path, $url);
+        $compressor->compress($this, $path, $url);
     }
 }

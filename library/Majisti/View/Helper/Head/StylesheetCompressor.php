@@ -3,14 +3,14 @@
 namespace Majisti\View\Helper\Head;
 
 /**
- * @desc This StylesheetMinifier can bundle all currently appended
+ * @desc This StylesheetCompressor can bundle and minify all currently appended
  * stylesheets from a given HeadLink to a new file using url versioning
- * for browser cache flush. The merged file will not be generated until
- * a new version is given to it.
+ * for browser cache flushing. The merged file will not be generated until
+ * at least one of the given stylsheets gets modified.
  *
  * @author Majisti
  */
-class StylesheetMinifier extends AbstractMinifier
+class StylesheetCompressor extends AbstractCompressor
 {
     /**
      * @desc Bundles the currently appended stylesheets into a new stylesheet
@@ -19,9 +19,9 @@ class StylesheetMinifier extends AbstractMinifier
      * @param string $path The path to the bundled file
      * @param string $url The url to the bundled file
      */
-    public function minify($header, $path, $url)
+    public function bundle($header, $path, $url)
     {
-        if( !$this->isEnabled() || $this->isCached() ) {
+        if( !$this->isBundlingEnabled() || $this->isCached() ) {
             return;
         }
 
@@ -68,7 +68,7 @@ class StylesheetMinifier extends AbstractMinifier
 
         if( !empty($content) ) {
             /* store bundled css content */
-            file_put_contents($path, $this->compress($content));
+            file_put_contents($path, $content);
 
             /* append version */
             $url .= '?v=' . filemtime($path);
@@ -81,8 +81,8 @@ class StylesheetMinifier extends AbstractMinifier
         }
     }
 
-    protected function compress($content)
+    public function minify($header, $path, $url)
     {
-        return $this->getCompressor()->compressCss($content);
+
     }
 }
