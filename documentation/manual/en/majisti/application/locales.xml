@@ -46,7 +46,7 @@ $i18n->switchLocale(new \Zend_Locale('fr'));</programlisting>This
         message "Locale yourLocale  is not available." This function is
         particularly useful on applications that must switch locales with
         request parameters, such as ones making use of the <link
-            xlink:href="majisti.controller.plugin.i18n">I18n</link> controller
+            xlink:href="majisti.controller.plugins.i18n">I18n</link> controller
         plugin.</para>
         <note><para>Please note that the current locale's
                 <classname>Zend_Locale</classname> object is persistent, i.e it

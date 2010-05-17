@@ -7,6 +7,7 @@
     version="5.0">
     
     <title>Addons</title>
-    
+    <subtitle>A better way to design rich applications with a small team, while
+        having programming partnership with the entire world.</subtitle>
     <xi:include href="addons/manager.xml"></xi:include>
  </section>
