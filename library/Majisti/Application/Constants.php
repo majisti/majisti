@@ -35,7 +35,7 @@ class Constants
 
         /*
          * retrieve environment variable that should have been defined in
-         * a .htaccess. If APPLICATION_ENVIRONMENT can't be retrieved,
+         * a .htaccess or index.php. If APPLICATION_ENVIRONMENT can't be retrieved,
          * it will try the fastcgi REDIRECT_APPLICATION_ENVIRONMENT and if
          * there is still no defined constants, it will use production as default
          */
