@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en"
+    xml:id="majisti.application.resource.addons" version="5.0">
+    
+    <title>Addons</title>
+    
+    <para> The addons resource will automatically attempt to load any modules
+        or extensions under the specified path(s) using the <link
+            xlink:href="majisti.application.addons">addons
+            manager</link> .</para>
+    <para> Here's how to specify an addons path in a configuration
+        file:<programlisting>resources.addons.paths[YourNamespace] = APPLICATION_PATH "/addons"</programlisting></para>
+    <para>Anything specified in the brackets will be used as the namespace
+        under wich the addons path is. The default namespace is
+        MajistiX.</para>
+    <para>
+        <example>
+            <title>Loading a module</title>
+            <para> In order to load a module into your application, simply use
+                the following syntax in your configuration
+                file:<programlisting>resources.addons.module[Namespace] = "yourModuleName"
+resources.addons.module[] = "yourSecondModuleName" //uses MajistiX namespace by default</programlisting></para>
+            <para>The first line would load a module operating under your given
+                namespace, while the second one loads the second module using
+                Majisti's default modules and extensions namespace,
+                MajistiX.</para>
+            <para/>
+        </example>
+        <example>
+            <title>Loading an extension</title>
+            <para> In order to load an extension into your application, simply
+                use the following syntax in your configuration
+                file:<programlisting>resources.addons.extension[Namespace] = "yourExtensionName"
+resources.addons.extension[] = "yourSecondExtensionName" //uses MajistiX namespace by default</programlisting></para>
+            <para>The first line would load an extension operating under your
+                given namespace, while the second one loads the second
+                extension using Majisti's default modules and extensions
+                namespace, MajistiX.</para>
+        </example>
+    </para>
+</section>
