@@ -202,7 +202,7 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
      * @desc Asserts that core, theme1 and theme2 CSS have been minified and
      * that the cachedFilePaths array has been set with the right files.
      */
-    protected function assertMinified($fileName)
+    protected function assertMinified($filename)
     {
         $headlink   = $this->view->headlink();
         $url        = $this->url;
