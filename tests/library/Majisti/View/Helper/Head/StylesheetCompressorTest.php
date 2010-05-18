@@ -159,8 +159,6 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
      */
     public function testMinify()
     {
-        $this->markTestIncomplete('Waiting for Steven\'s implementation of minify');
-
         /* @var $headlink \Majisti_View_Helper_HeadLink */
         $headlink   = $this->view->headLink();
         $compressor = $this->compressor;
@@ -168,7 +166,7 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
 
         /* setting minify on */
         $compressor->setBundlingEnabled();
-        $compressor->setMinifyEnabled();
+        $compressor->setMinifyingEnabled();
 
         $cachedFilesPaths = array(
                 "{$url}/styles/core.css",
@@ -178,7 +176,7 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
 
         /* append and bundle stylesheets */
         foreach( $cachedFilesPaths as $path) {
-            $headlink->appendStyleSheet($path);
+            $headlink->appendStylesheet($path);
         }
 
         $compressor->compress(
