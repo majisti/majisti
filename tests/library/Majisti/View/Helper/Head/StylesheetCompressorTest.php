@@ -192,7 +192,7 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
                 "{$this->files}/styles/theme1.css",
                 "{$this->files}/styles/theme2.css"
         );
-        $this->assertEquals($cssFilesUrls, $compressor->getCachedFilePaths());
+        $this->assertEquals($cachedFilesPaths, $compressor->getCachedFilePaths());
         $this->assertTrue($compressor->isBundlingEnabled());
         $this->assertTrue($compressor->isMinifyingEnabled());
         $this->assertMinified('all');
