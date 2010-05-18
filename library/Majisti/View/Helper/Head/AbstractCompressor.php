@@ -43,6 +43,11 @@ abstract class AbstractCompressor implements ICompressor
     protected $_cache;
 
     /**
+     * @var bool If the cache mecanism is enabled
+     */
+    protected $_cacheEnabled;
+
+    /**
      * @var array The default options
      */
     protected $_defaultOptions;
@@ -63,6 +68,7 @@ abstract class AbstractCompressor implements ICompressor
             $this->_defaultOptions = array(
                 'stylesheetsPath'   => APPLICATION_URL_STYLES,
                 'cacheFile'         => '.cached-stylesheets',
+                'cacheEnabled'      => true
             );
         }
 
@@ -74,8 +80,9 @@ abstract class AbstractCompressor implements ICompressor
         $options    = array_merge($this->getDefaultOptions(), $options);
         $selector   = new \Majisti\Config\Selector(new \Zend_Config($options));
 
-        $this->_stylesheetsPath = (string)$selector->find('stylesheetsPath');
-        $this->_cacheFilePath   = (string)$selector->find('cacheFile');
+        $this->_stylesheetsPath = (string) $selector->find('stylesheetsPath');
+        $this->_cacheFilePath   = (string) $selector->find('cacheFile');
+        $this->_cacheEnabled    = (bool)   $selector->find('cacheEnabled');
         $this->_remappedUris    = $selector->find('remappedUris', array());
 
         $minifier = $selector->find('minifier', false);
@@ -175,6 +182,16 @@ abstract class AbstractCompressor implements ICompressor
         return $this->_stylesheetsPath . '/' . $this->_cacheFilePath;
     }
 
+    public function isCacheEnabled()
+    {
+        return $this->_cacheEnabled;
+    }
+
+    public function setCacheEnabled($flag = true)
+    {
+        $this->_cacheEnabled = (bool) $flag;
+    }
+
     protected function cache()
     {
         $filePaths = $this->getCachedFilePaths();
@@ -200,16 +217,21 @@ abstract class AbstractCompressor implements ICompressor
     {
         $url = $this->bundle($header, $path, $url);
 
+        /* keep last uris */
         $uris = $this->getRemappedUris();
         $this->clearUriRemaps();
         $this->uriRemap($url, $path);
 
+        $this->setCacheEnabled(false);
         $this->minify($header, $path, $url);
+        $this->setCacheEnabled(true);
 
         $this->setUriRemaps($uris);
 
-        unlink($path);
         $this->cache();
+        unlink($path);
+
+        return $url;
     }
 
     /**
@@ -259,5 +281,12 @@ abstract class AbstractCompressor implements ICompressor
     public function getRemappedUris()
     {
         return $this->_remappedUris;
+    }
+
+    public function setUriRemaps(array $uriRemaps)
+    {
+        foreach( $uriRemaps as $uri => $path ) {
+            $this->uriRemap($uri, $path);
+        }
     }
 }
