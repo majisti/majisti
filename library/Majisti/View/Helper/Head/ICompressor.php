@@ -18,7 +18,7 @@ interface ICompressor
     public function bundle($header, $path, $url);
 
     /*
-     * @desc Minifies the files
+     * @desc Minifies the files contained in the header
      */
-    public function minify($header, $path, $url);
+    public function minify($header);
 }

@@ -37,7 +37,7 @@ class StylesheetCompressor extends AbstractCompressor
             $content .= file_get_contents($filepath);
         };
 
-        $this->parseHeader($header, $path, $url, $callback);
+        $this->parseHeader($header, $callback);
 
         if( empty($content) ) {
             throw new Exception('No content to bundle');
@@ -56,7 +56,7 @@ class StylesheetCompressor extends AbstractCompressor
         return $url;
     }
 
-    protected function parseHeader($header, $path, $url, $callback)
+    protected function parseHeader($header, $callback)
     {
         if( !($header instanceof \Zend_View_Helper_HeadLink) ) {
             throw new Exception("Given header must be an instance of
@@ -98,18 +98,22 @@ class StylesheetCompressor extends AbstractCompressor
         }
     }
 
-    public function minify($header, $path, $url)
+    public function minify($header)
     {
         if( !$this->isMinifyingEnabled() || $this->isCached() ) {
-            return $url;
+            return;
         }
 
         $minifier = $this->getMinifier();
         $callback = function($filepath) use($minifier) {
-            file_put_contents($filepath . '.min',
+            /* insert min before extension */
+            $pathinfo = pathinfo($filepath);
+            $ext      = $pathinfo['extension'];
+
+            file_put_contents(rtrim($filepath, $ext) . "min.{$ext}",
                 $minifier->minifyCss(file_get_contents($filepath)));
         };
 
-        $this->parseHeader($header, $path, $url, $callback);
+        $this->parseHeader($header, $callback);
     }
 }
