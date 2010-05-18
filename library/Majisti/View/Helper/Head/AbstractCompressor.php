@@ -142,7 +142,27 @@ abstract class AbstractCompressor implements ICompressor
 
     public function isCached()
     {
-        return false;
+        if( !is_file($this->getCacheFilePath()) ) {
+            return false;
+        }
+
+        $lines = file($this->getCacheFilePath());
+
+        if( empty($lines) ) {
+            return false;
+        }
+
+        foreach( $lines as $line ) {
+            list($filepath, $timestamp) = explode(' ', $line);
+
+            if( !(file_exists($filepath) &&
+                (int)$timestamp === filemtime($filepath)) )
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -161,7 +181,7 @@ abstract class AbstractCompressor implements ICompressor
         $this->_minifyingEnabled = (bool) $flag;
     }
 
-    protected function clearCache()
+    public function clearCache()
     {
         @unlink($this->getCacheFilePath());
     }
