@@ -26,7 +26,7 @@ class StylesheetCompressor extends AbstractCompressor
     public function bundle($header, $path, $url)
     {
         if( !$this->isBundlingEnabled() || $this->isCached() ) {
-            return;
+            return $url;
         }
 
         /* content */
@@ -68,7 +68,8 @@ class StylesheetCompressor extends AbstractCompressor
             if( !('stylesheet' === $head->rel && 'screen' === $head->media) ) {
                 $links[] = $head;
             } else {
-                $filepath = $head->href;
+                /* unversionize href */
+                $filepath = preg_replace('/\?.*/', '', $head->href);
                 if( \Zend_Uri::check($filepath) ) {
                     $remappedUris = $this->getRemappedUris();
                     if( array_key_exists($filepath, $remappedUris) ) {
@@ -80,8 +81,8 @@ class StylesheetCompressor extends AbstractCompressor
                 }
 
                 if( !file_exists($filepath) ) {
-                    $filepath = rtrim($_SERVER['DOCUMENT_ROOT'], '/')
-                              . '/' . ltrim($filepath, '/');
+                    $filepath = realpath(rtrim($_SERVER['DOCUMENT_ROOT'], '/')
+                              . '/' . ltrim($filepath, '/'));
                 }
 
                 if( !file_exists($filepath) ) {
@@ -89,7 +90,10 @@ class StylesheetCompressor extends AbstractCompressor
                 }
 
                 $callback($filepath);
-                $this->addToCache($filepath);
+
+                if( $this->isCacheEnabled() ) {
+                    $this->addToCache($filepath);
+                }
             }
         }
     }
@@ -97,12 +101,13 @@ class StylesheetCompressor extends AbstractCompressor
     public function minify($header, $path, $url)
     {
         if( !$this->isMinifyingEnabled() || $this->isCached() ) {
-            return;
+            return $url;
         }
 
-        $callback = function($filepath) {
+        $minifier = $this->getMinifier();
+        $callback = function($filepath) use($minifier) {
             file_put_contents($filepath . '.min',
-                $this->getMinifier()->minify($content));
+                $minifier->minifyCss(file_get_contents($filepath)));
         };
 
         $this->parseHeader($header, $path, $url, $callback);
