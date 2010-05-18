@@ -51,6 +51,7 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
             'stylesheetsPath' => $this->files . '/styles',
         );
         $this->compressor = new StylesheetCompressor($options);
+        $this->compressor->clearCache();
 
         \Zend_Controller_Front::getInstance()->setRequest(
             new \Zend_Controller_Request_Http());
@@ -282,12 +283,13 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
      }
 
      /**
-      * @desc Tests that bundling will not overwrite CSS master file if
-      * cache is enabled and no modifications were found in the master content.
+      * @desc Tests that bundling will not overwrite the CSS master file if
+      * cache is enabled and no modifications were found in the original files.
       */
-     public function testThatCacheIsNotOverridenIfMasterFileHasNoChanges()
+     public function testThatMasterIsNotOverridenIfOrigFilesHaveNoChanges()
      {
          $this->markTestIncomplete('Cache support not yet implemented!');
+
          /* @var $headlink \Majisti_View_Helper_HeadLink */
          $headlink   = $this->view->headLink();
          $compressor = $this->compressor;
@@ -320,7 +322,8 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
                     $url. '/all.css'
          );
 
-        $this->assertEquals($url1, $url2); }
+        $this->assertEquals($url1, $url2);
+    }
 
      /**
       * @desc Making sure that every file we give to the minifier will output
