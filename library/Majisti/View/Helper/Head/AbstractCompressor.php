@@ -38,29 +38,47 @@ abstract class AbstractCompressor implements ICompressor
     protected $_cacheFilePath;
 
     /**
+     * @var array The cached files
+     */
+    protected $_cache;
+
+    /**
+     * @var array The default options
+     */
+    protected $_defaultOptions;
+
+    /**
      * @var array The remapped uris
      */
     protected $_remappedUris;
 
     public function __construct(array $options = array())
     {
-        $defaultOptions = array(
-            'stylesheetsPath'   => APPLICATION_STYLES,
-            'cacheFile'         => '.cached-stylesheets',
-        );
+        $this->setOptions($options);
+    }
 
-        $this->setOptions(array_merge($defaultOptions, $options));
+    public function getDefaultOptions()
+    {
+        if( null === $this->_defaultOptions ) {
+            $this->_defaultOptions = array(
+                'stylesheetsPath'   => APPLICATION_URL_STYLES,
+                'cacheFile'         => '.cached-stylesheets',
+            );
+        }
+
+        return $this->_defaultOptions;
     }
 
     public function setOptions(array $options)
     {
-        $selector = new \Majisti\Config\Selector(new \Zend_Config($options));
+        $options    = array_merge($this->getDefaultOptions(), $options);
+        $selector   = new \Majisti\Config\Selector(new \Zend_Config($options));
 
         $this->_stylesheetsPath = (string)$selector->find('stylesheetsPath');
         $this->_cacheFilePath   = (string)$selector->find('cacheFile');
         $this->_remappedUris    = $selector->find('remappedUris', array());
 
-        $minifier = $selector->find('minifier', null);
+        $minifier = $selector->find('minifier', false);
 
         if( is_string($minifier) ) {
             $this->setMinifier(new $minifier());
@@ -80,22 +98,39 @@ abstract class AbstractCompressor implements ICompressor
      */
     public function isBundlingEnabled()
     {
-        /*
-         * production and staging are enabled by default when function it is
-         * lazily called
-         */
         if( null == $this->_bundlingEnabled ) {
-            $this->_bundlingEnabled = defined('APPLICATION_ENVIRONMENT')
-                    && 'production' === APPLICATION_ENVIRONMENT
-                    || 'staging' === APPLICATION_ENVIRONMENT;
+            $this->_bundlingEnabled = $this->isDevelEnvironment(
+                $this->_bundlingEnabled);
         }
 
         return $this->_bundlingEnabled;
     }
 
+    public function isCompressionEnabled()
+    {
+        return $this->isBundlingEnabled() && $this->isMinifyingEnabled();
+    }
+
+    private function isDevelEnvironment($var)
+    {
+        /*
+         * production and staging are enabled by default
+         */
+        $var = defined('APPLICATION_ENVIRONMENT')
+                && 'production' === APPLICATION_ENVIRONMENT
+                || 'staging' === APPLICATION_ENVIRONMENT;
+
+        return $var;
+    }
+
     public function isMinifyingEnabled()
     {
+        if( null === $this->_minifyingEnabled ) {
+            $this->_minifyingEnabled = $this->isDevelEnvironment(
+                $this->_minifyingEnabled);
+        }
 
+        return $this->_minifyingEnabled;
     }
 
     public function isCached()
@@ -132,7 +167,7 @@ abstract class AbstractCompressor implements ICompressor
 
     public function getCachedFilePaths()
     {
-
+        return $this->_cache;
     }
 
     public function getCacheFilePath()
