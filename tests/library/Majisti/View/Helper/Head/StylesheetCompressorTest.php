@@ -166,7 +166,7 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
 
         /* setting minify on */
         $compressor->setBundlingEnabled();
-        $compressor->setMinifyEnabled();
+        $compressor->setMinifyingEnabled();
 
         /* URLs */
         $cssFilesUrls = array(
@@ -177,7 +177,7 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
 
         /* append and bundle stylesheets */
         foreach( $cssFilesUrls as $path) {
-            $headlink->appendStyleSheet($path);
+            $headlink->appendStylesheet($path);
         }
 
         $compressor->compress(
@@ -195,14 +195,14 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
         $this->assertEquals($cachedFilesPaths, $compressor->getCachedFilePaths());
         $this->assertTrue($compressor->isBundlingEnabled());
         $this->assertTrue($compressor->isMinifyingEnabled());
-        $this->assertMinified('all');
+        $this->assertCompressed('all');
     }
 
     /**
      * @desc Asserts that core, theme1 and theme2 CSS have been minified and
      * that the cachedFilePaths array has been set with the right files.
      */
-    protected function assertCompressed($fileName)
+    protected function assertCompressed($filename)
     {
         $headlink   = $this->view->headlink();
         $url        = $this->url;
@@ -321,4 +321,5 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
         $this->assertEquals($url1, $url2);
      }
 }
+
 StylesheetCompressorTest::runAlone();
