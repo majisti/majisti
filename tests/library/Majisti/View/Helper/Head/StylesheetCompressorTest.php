@@ -154,10 +154,10 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
     }
 
     /**
-     * Tests the minify() function and asserts that the core, theme1 and theme2
-     * css files have been minified via the compress function.
+     * Tests the compress function and asserts that the core, theme1 and theme2
+     * css files have been minified and bundled.
      */
-    public function testMinify()
+    public function testCompress()
     {
         /* @var $headlink \Majisti_View_Helper_HeadLink */
         $headlink   = $this->view->headLink();
@@ -202,24 +202,16 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
      * @desc Asserts that core, theme1 and theme2 CSS have been minified and
      * that the cachedFilePaths array has been set with the right files.
      */
-    protected function assertMinified($fileName)
+    protected function assertCompressed($fileName)
     {
         $headlink   = $this->view->headlink();
         $url        = $this->url;
 
-        /* file link should contain only the bundled and minified file */
-        $this->assertEquals(
-                '<link href="' . $url .
-                "/{$filename}.css?v=". filemtime($this->files . "/{$filename}.css") .
-                '" media="screen" rel="stylesheet" type="text/css" />',
-                $headlink->__toString()
-        );
-
         /* files should contain the correct content */
-        $this->assertTrue(file_exists($this->files . "/{$filename}.css"));
+        $this->assertTrue(file_exists($this->files . "/{$filename}.min.css"));
         $this->assertEquals(
                 file_get_contents($this->files . "/{$filename}.minified.expected.css"),
-                file_get_contents($this->files . "/{$filename}.css")
+                file_get_contents($this->files . "/{$filename}.min.css")
         );
      }
 
@@ -271,7 +263,7 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
      /**
       * @desc Tests that the enabling/disabling behaves as expected
       */
-     public function testEnablingAndDisabling()
+     public function testEnablingAndDisablingBundlingAndMinifying()
      {
          $compressor = $this->compressor;
          $compressor->setBundlingEnabled();
