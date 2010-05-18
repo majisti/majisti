@@ -61,17 +61,24 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
     }
 
     /**
-     * @desc Unit test tear down, removing the bundle() and minify() output
-     * files.
+     * @desc Unit test tear down: removing the bundle() and minify() output
+     * files and clearing the headlink object.
      */
     public function tearDown()
     {
-        $files = array('themes.css', 'all.css', 'all.min.css', 'core.min.css',
-                       'theme1.min.css', 'theme2.min.css', '.cache-stylesheets');
+        $files = array('themes.css', 'all.css', 'all.min.css',
+            '.cache-stylesheets');
+
+        $minified = array('theme1.min.css', 'theme2.min.css', 'core.min.css');
 
         foreach($files as $file) {
             @unlink($this->files . "/{$file}");
         }
+
+        foreach($minified as $file) {
+            @unlink($this->files . "/styles/{$file}");
+        }
+
         $this->view->headLink()->exchangeArray(array());
     }
 
@@ -187,10 +194,19 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
 
         /* setting minify on */
         $compressor->setBundlingEnabled();
-        $compressor->setMinifyEnabled();
+        $compressor->setMinifyingEnabled();
 
-        $headling = $this->appendHeadlinkStylesheets($headlink,
-                array('core', 'theme1', 'theme2'));
+        /* URLs */
+        $cssFilesUrls = array(
+                "{$url}/styles/core.css",
+                "{$url}/styles/theme1.css",
+                "{$url}/styles/theme2.css"
+        );
+
+        /* append and bundle stylesheets */
+        foreach( $cssFilesUrls as $path) {
+            $headlink->appendStylesheet($path);
+        }
 
         $compressor->compress(
                 $headlink,
@@ -207,14 +223,14 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
         $this->assertEquals($cachedFilesPaths, $compressor->getCachedFilePaths());
         $this->assertTrue($compressor->isBundlingEnabled());
         $this->assertTrue($compressor->isMinifyingEnabled());
-        $this->assertMinified('all');
+        $this->assertCompressed('all');
     }
 
     /**
      * @desc Asserts that core, theme1 and theme2 CSS have been minified and
      * that the cachedFilePaths array has been set with the right files.
      */
-    protected function assertCompressed($fileName)
+    protected function assertCompressed($filename)
     {
         $headlink   = $this->view->headlink();
         $url        = $this->url;
@@ -297,7 +313,7 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
       */
      public function testThatCacheIsNotOverridenIfMasterFileHasNoChanges()
      {
-         $this->markTestIncomplete('Cache support not yet implemented!');
+         $this->markTestIncomplete();
          /* @var $headlink \Majisti_View_Helper_HeadLink */
          $headlink   = $this->view->headLink();
          $compressor = $this->compressor;
@@ -305,7 +321,7 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
 
          /* setting minify on */
          $compressor->setBundlingEnabled();
-         $compressor->setMinifyEnabled();
+         $compressor->setMinifyingEnabled();
 
          $this->appendHeadlinkStylesheets($headlink,
                  array('core', 'theme1', 'theme2'));
@@ -322,7 +338,8 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
                     $url. '/all.css'
          );
 
-        $this->assertEquals($url1, $url2); }
+        $this->assertEquals($url1, $url2);
+    }
 
      /**
       * @desc Making sure that every file we give to the minifier will output
@@ -337,7 +354,7 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
 
          /* setting minifying and bundling on */
          $compressor->setBundlingEnabled();
-         $compressor->setMinifyEnabled();
+         $compressor->setMinifyingEnabled();
 
          $this->appendHeadlinkStylesheets($headlink,
                  array('core', 'theme1', 'theme2'));
@@ -349,4 +366,5 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
          $this->assertTrue(file_exists($this->files . '/styles/theme2.min.css'));
      }
 }
+
 StylesheetCompressorTest::runAlone();
