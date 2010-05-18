@@ -50,7 +50,8 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
         $options = array(
             'stylesheetsPath' => $this->files . '/styles',
         );
-        $this->compressor = new StylesheetCompressor($options);
+        $this->compressor = new StylesheetCompressor($this->view->headLink(),
+            $options);
         $this->compressor->clearCache();
 
         \Zend_Controller_Front::getInstance()->setRequest(
@@ -97,6 +98,7 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
                 $headlink->appendStylesheet("{$url}/styles/{$sheet}.css");
             }
         }
+
         return $headlink;
     }
 
@@ -117,7 +119,6 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
                 array('theme1', 'theme2'));
 
         $compressor->bundle(
-                $headlink,
                 $this->files. '/themes.css',
                 $url . '/themes.css'
         );
@@ -149,7 +150,7 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
        $compressor->uriRemap($uri . '/styles/theme1.css',
                $this->files  . '/styles/theme1.css');
 
-       $compressor->bundle($headlink, $this->files . '/themes.css',
+       $compressor->bundle($this->files . '/themes.css',
                $url . '/themes.css');
 
        $this->assertBundled('themes');
@@ -210,7 +211,6 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
         }
 
         $compressor->compress(
-                $headlink,
                 $this->files. '/all.css',
                 $url. '/all.css'
         );
@@ -314,8 +314,6 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
       */
      public function testThatMasterIsNotOverridenIfOrigFilesHaveNoChanges()
      {
-         $this->markTestIncomplete();
-
          /* @var $headlink \Majisti_View_Helper_HeadLink */
          $headlink   = $this->view->headLink();
          $compressor = $this->compressor;
@@ -329,13 +327,11 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
                  array('core', 'theme1', 'theme2'));
 
          $url1 = $compressor->compress(
-                    $headlink,
                     $this->files. '/all.css',
                     $url. '/all.css'
          );
 
          $url2 = $compressor->compress(
-                    $headlink,
                     $this->files. '/all.css',
                     $url. '/all.css'
          );
@@ -361,7 +357,7 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
          $this->appendHeadlinkStylesheets($headlink,
                  array('core', 'theme1', 'theme2'));
 
-         $compressor->minify($headlink);
+         $compressor->minify();
 
          $this->assertTrue(file_exists($this->files . '/styles/core.min.css'));
          $this->assertTrue(file_exists($this->files . '/styles/theme1.min.css'));

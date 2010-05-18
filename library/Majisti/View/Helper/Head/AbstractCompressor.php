@@ -57,9 +57,17 @@ abstract class AbstractCompressor implements ICompressor
      */
     protected $_remappedUris;
 
-    public function __construct(array $options = array())
+    protected $_header;
+
+    public function __construct($header, array $options = array())
     {
+        $this->_header = $header;
         $this->setOptions($options);
+    }
+
+    public function getHeader()
+    {
+        return $this->_header;
     }
 
     public function getDefaultOptions()
@@ -146,7 +154,11 @@ abstract class AbstractCompressor implements ICompressor
             return false;
         }
 
-        $lines = file($this->getCacheFilePath());
+        if( null === $this->_cache ) {
+            $this->_cache = file($this->getCacheFilePath());
+        }
+
+        $lines = $this->_cache;
 
         if( empty($lines) ) {
             return false;
@@ -197,6 +209,17 @@ abstract class AbstractCompressor implements ICompressor
         return $this->_cache;
     }
 
+    protected function getCachedTimestamp($path)
+    {
+        $filepaths = $this->getCachedFilePaths();
+
+        if( array_key_exists($path, $filepaths) ) {
+            return $filepaths[$path];
+        }
+
+        return false;
+    }
+
     public function getCacheFilePath()
     {
         return $this->_stylesheetsPath . '/' . $this->_cacheFilePath;
@@ -217,7 +240,7 @@ abstract class AbstractCompressor implements ICompressor
         $filePaths = $this->getCachedFilePaths();
 
         if( empty($filePaths) ) {
-            throw new Exception('No cache files found');
+            throw new Exception('No cache file found');
         }
 
         $cacheFile = $this->getCacheFilePath();
@@ -233,23 +256,32 @@ abstract class AbstractCompressor implements ICompressor
         fclose($handle);
     }
 
-    public function compress($header, $path, $url)
+    public function compress($path, $url)
     {
-        $url = $this->bundle($header, $path, $url);
+        if( !$this->isCompressionEnabled() ) {
+            return false;
+        }
 
-        /* keep last uris */
-        $uris = $this->getRemappedUris();
-        $this->clearUriRemaps();
-        $this->uriRemap($url, $path);
+        if( $url = $this->bundle($path, $url) ) {
+            /* keep last uris */
+            $uris = $this->getRemappedUris();
+            $this->clearUriRemaps();
+            $this->uriRemap($url, $path);
 
-        $this->setCacheEnabled(false);
-        $this->minify($header, $path, $url);
-        $this->setCacheEnabled(true);
+            $this->setCacheEnabled(false);
+            $this->minify($path, $url);
+            $this->setCacheEnabled(true);
 
-        $this->setUriRemaps($uris);
+            $this->setUriRemaps($uris);
 
-        $this->cache();
-        unlink($path);
+            $this->cache();
+
+            if( is_file($path) ) {
+                unlink($path);
+            }
+        } else {
+
+        }
 
         return $url;
     }
@@ -308,5 +340,18 @@ abstract class AbstractCompressor implements ICompressor
         foreach( $uriRemaps as $uri => $path ) {
             $this->uriRemap($uri, $path);
         }
+    }
+
+    protected function getVersionRequest($filepath)
+    {
+        return '?v=' . filemtime($filepath);
+    }
+
+    protected function prependMinToExtension($filepath)
+    {
+        $pathinfo = pathinfo($filepath);
+        $ext      = $pathinfo['extension'];
+
+        return rtrim($filepath, $ext) . "min.{$ext}";
     }
 }
