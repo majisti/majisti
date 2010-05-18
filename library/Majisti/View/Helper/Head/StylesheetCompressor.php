@@ -29,17 +29,40 @@ class StylesheetCompressor extends AbstractCompressor
             return;
         }
 
+        /* content */
+        $content = '';
+        $links   = array();
+
+        $callback = function($filepath) use (&$content) {
+            $content .= file_get_contents($filepath);
+        };
+
+        $this->parseHeader($header, $path, $url, $callback);
+
+        if( empty($content) ) {
+            throw new Exception('No content to bundle');
+        }
+
+        /* store bundled css content */
+        file_put_contents($path, $content);
+
+        /* append version */
+        $url .= '?v=' . filemtime($path);
+
+        /* remove merged stylesheets from HeadLink and push the merged one */
+        $header->exchangeArray($links);
+        $header->appendStylesheet($url);
+
+        return $url;
+    }
+
+    protected function parseHeader($header, $path, $url, $callback)
+    {
         if( !($header instanceof \Zend_View_Helper_HeadLink) ) {
             throw new Exception("Given header must be an instance of
                     Zend_View_Helper_HeadLink, " . get_class($header)
                     . " given");
         }
-
-        /* content */
-        $content    = '';
-        $links      = array();
-
-        $this->clearCache();
 
         foreach ($header as $head) {
             if( !('stylesheet' === $head->rel && 'screen' === $head->media) ) {
@@ -65,57 +88,23 @@ class StylesheetCompressor extends AbstractCompressor
                     throw new Exception("File {$filepath} does not exist");
                 }
 
-                $content .= file_get_contents($filepath);
+                $callback($filepath);
                 $this->addToCache($filepath);
             }
         }
-
-        if( empty($content) ) {
-            throw new Exception('No content to bundle');
-        }
-
-        /* store bundled css content */
-        file_put_contents($path, $content);
-
-        /* append version */
-        $url .= '?v=' . filemtime($path);
-
-        /* remove merged stylesheets from HeadLink and push the merged one */
-        $header->exchangeArray($links);
-        $header->appendStylesheet($url);
-
-        return $url;
     }
 
-    public function minify($header, $path)
+    public function minify($header, $path, $url)
     {
-        foreach( $header as $head ) {
-            if( !('stylesheet' === $head->rel && 'screen' === $head->media) ) {
-                $links[] = $head;
-            } else {
-                $filepath = $head->href;
-                if( \Zend_Uri::check($filepath) ) {
-                    $remappedUris = $this->getRemappedUris();
-                    if( array_key_exists($filepath, $remappedUris) ) {
-                        $filepath = $remappedUris[$filepath];
-                    } else {
-                        $links[] = $head;
-                        continue;
-                    }
-                }
-
-                if( !file_exists($filepath) ) {
-                    $filepath = rtrim($_SERVER['DOCUMENT_ROOT'], '/')
-                              . '/' . ltrim($filepath, '/');
-                }
-
-                if( !file_exists($filepath) ) {
-                    throw new Exception("File {$filepath} does not exist");
-                }
-
-                $content .= file_get_contents($filepath);
-                $this->addToCache($filepath);
-            }
+        if( !$this->isMinifyingEnabled() || $this->isCached() ) {
+            return;
         }
+
+        $callback = function($filepath) {
+            file_put_contents($filepath . '.min',
+                $this->getMinifier()->minify($content));
+        };
+
+        $this->parseHeader($header, $path, $url, $callback);
     }
 }

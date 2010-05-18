@@ -39,7 +39,7 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
      */
     public function setUp()
     {
-        $this->files = dirname(__FILE__) . '/../_files';
+        $this->files = realpath(dirname(__FILE__) . '/../_files');
 
         $this->view = new \Zend_View();
         $this->view->addHelperPath(
@@ -50,7 +50,7 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
         $options = array(
             'stylesheetsPath' => $this->files . '/styles',
         );
-        $this->compressor = new \Majisti\View\Helper\Head\StylesheetCompressor($options);
+        $this->compressor = new StylesheetCompressor($options);
 
         \Zend_Controller_Front::getInstance()->setRequest(
             new \Zend_Controller_Request_Http());
@@ -225,9 +225,12 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
      public function testSettingNewCacheFileName()
      {
          $compressor = $this->compressor;
-         $compressor->setOptions(array('cacheFile' => '.foo-cache'));
+         $compressor->setOptions(array(
+             'cacheFile'        => '.foo-cache',
+             'stylesheetsPath'  => $this->files . '/styles'
+         ));
 
-         $this->assertEquals($this->files . '.foo-cache',
+         $this->assertEquals($this->files . '/styles/.foo-cache',
                              $compressor->getCacheFilePath());
      }
 
@@ -279,4 +282,5 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
          $this->assertFalse($compressor->isMinifyingEnabled());
      }
  }
-CompressorTest::runeAlone();
+
+StylesheetCompressorTest::runAlone();
