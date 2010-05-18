@@ -81,8 +81,8 @@ class StylesheetCompressor extends AbstractCompressor
                 }
 
                 if( !file_exists($filepath) ) {
-                    $filepath = rtrim($_SERVER['DOCUMENT_ROOT'], '/')
-                              . '/' . ltrim($filepath, '/');
+                    $filepath = realpath(rtrim($_SERVER['DOCUMENT_ROOT'], '/')
+                              . '/' . ltrim($filepath, '/'));
                 }
 
                 if( !file_exists($filepath) ) {
