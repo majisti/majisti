@@ -181,6 +181,7 @@ class ManagerTest extends \Majisti\Test\TestCase
      * @desc Tests that attempting to load an invalid extension, in this case
      * an extension with a bootstrap file holding a bootstrap class not
      * implementing IAddonsBootstrapper interface, will throw an exception.
+     *
      * @expectedException Exception
      */
     public function testThatLoadingAnExtensionWithABootstrapClassNotImplementingInterfaceWillThrowException()

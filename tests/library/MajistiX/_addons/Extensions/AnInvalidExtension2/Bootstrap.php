@@ -1,6 +1,6 @@
 <?php
 
-namespace MajistiX\Extensions\AValidExtension2;
+namespace MajistiX\Extensions\AnInvalidExtension2;
 
 class NotABootstrap
 {

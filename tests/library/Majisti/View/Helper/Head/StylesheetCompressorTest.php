@@ -47,7 +47,10 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
             'Majisti_View_Helper'
         );
 
-        $this->compressor = new \Majisti\View\Helper\Head\StylesheetCompressor();
+        $options = array(
+            'stylesheetsPath' => $this->files . '/styles',
+        );
+        $this->compressor = new \Majisti\View\Helper\Head\StylesheetCompressor($options);
 
         \Zend_Controller_Front::getInstance()->setRequest(
             new \Zend_Controller_Request_Http());
@@ -57,6 +60,9 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
         \Majisti\Util\Minifying\Yui::$tempDir = '/tmp';
     }
 
+    /**
+     * @desc Unit test tear down.
+     */
     public function tearDown()
     {
         @unlink($this->files . '/themes.css');
@@ -120,6 +126,12 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
        $this->assertBundled('themes');
     }
 
+    /**
+     * @desc Asserts that the headlink contains only the master CSS file
+     * and that the master file in question contains all the CSS files bundled.
+     *
+     * @param string $filename
+     */
     protected function assertBundled($filename)
     {
         $headlink   = $this->view->headlink();
@@ -136,10 +148,135 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
         /* files should contain the correct content */
         $this->assertTrue(file_exists($this->files . "/{$filename}.css"));
         $this->assertEquals(
-                file_get_contents($this->files . "/{$filename}.expected.css"),
+                file_get_contents($this->files . "/{$filename}.bundled.expected.css"),
                 file_get_contents($this->files . "/{$filename}.css")
         );
     }
-}
 
-StylesheetCompressorTest::runAlone();
+    /**
+     * Tests the minify() function and asserts that the core, theme1 and theme2
+     * css files have been minified via the compress function.
+     */
+    public function testMinify()
+    {
+        $this->markTestIncomplete('Waiting for Steven\'s implementation of minify');
+
+        /* @var $headlink \Majisti_View_Helper_HeadLink */
+        $headlink   = $this->view->headLink();
+        $compressor = $this->compressor;
+        $url        = $this->url;
+
+        /* setting minify on */
+        $compressor->setBundlingEnabled();
+        $compressor->setMinifyEnabled();
+
+        $cachedFilesPaths = array(
+                "{$url}/styles/core.css",
+                "{$url}/styles/theme1.css",
+                "{$url}/styles/theme2.css"
+        );
+
+        /* append and bundle stylesheets */
+        foreach( $cachedFilesPaths as $path) {
+            $headlink->appendStyleSheet($path);
+        }
+
+        $compressor->compress(
+                $headlink,
+                $this->files. '/all.css',
+                $url. '/all.css'
+        );
+
+        $this->assertEquals($cachedFilesPaths, $compressor->getCachedFilePaths());
+        $this->assertTrue($compressor->isBundlingEnabled());
+        $this->assertTrue($compressor->isMinifyingEnabled());
+        $this->assertMinified('all');
+    }
+
+    /**
+     * @desc Asserts that core, theme1 and theme2 CSS have been minified and
+     * that the cachedFilePaths array has been set with the right files.
+     */
+    protected function assertMinified($fileName)
+    {
+        $headlink   = $this->view->headlink();
+        $url        = $this->url;
+
+        /* file link should contain only the bundled and minified file */
+        $this->assertEquals(
+                '<link href="' . $url .
+                "/{$filename}.css?v=". filemtime($this->files . "/{$filename}.css") .
+                '" media="screen" rel="stylesheet" type="text/css" />',
+                $headlink->__toString()
+        );
+
+        /* files should contain the correct content */
+        $this->assertTrue(file_exists($this->files . "/{$filename}.css"));
+        $this->assertEquals(
+                file_get_contents($this->files . "/{$filename}.minified.expected.css"),
+                file_get_contents($this->files . "/{$filename}.css")
+        );
+     }
+
+     /**
+      * Tests that setting a new cache file name will change the cache file
+      * path.
+      */
+     public function testSettingNewCacheFileName()
+     {
+         $compressor = $this->compressor;
+         $compressor->setOptions(array('cacheFile' => '.foo-cache'));
+
+         $this->assertEquals($this->files . '.foo-cache',
+                             $compressor->getCacheFilePath());
+     }
+
+     /**
+      * @desc Tests that uri remaps setters and getters behave as expected.
+      */
+     public function testUriRemappingGettersAndSetters()
+     {
+         $compressor  = $this->compressor;
+
+         $uris        = array('uri1' => 'pathA',
+                              'uri2' => 'pathB',
+                              'uri3' => 'pathC',
+                              'uri4' => 'pathD'
+                        );
+
+         foreach( $uris as $uri => $path) {
+             $compressor->uriRemap($uri, $path);
+         }
+
+         $this->assertEquals($uris, $compressor->getRemappedUris());
+
+         $compressor->removeUriRemap('uri2');
+
+         $this->assertEquals(3, count($compressor->getRemappedUris()));
+         $this->assertArrayNotHasKey('uri2', $compressor->getRemappedUris());
+
+         $compressor->clearUriRemaps();
+
+         $this->assertEquals(0, count($compressor->getRemappedUris()));
+     }
+
+     /**
+      * @desc Tests that the enabling/disabling behaves as expected
+      */
+     public function testEnablingAndDisabling()
+     {
+         $compressor = $this->compressor;
+         $compressor->setBundlingEnabled();
+         $compressor->setMinifyingEnabled();
+
+         $this->assertTrue($compressor->isBundlingEnabled());
+         $this->assertTrue($compressor->isMinifyingEnabled());
+
+         $compressor->setBundlingEnabled(false);
+         $compressor->setMinifyingEnabled(false);
+
+         $this->assertFalse($compressor->isBundlingEnabled());
+         $this->assertFalse($compressor->isMinifyingEnabled());
+     }
+ }
+CompressorTest::runeAlone();

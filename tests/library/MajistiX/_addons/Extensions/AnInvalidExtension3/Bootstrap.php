@@ -1,6 +1,6 @@
 <?php
 
-namespace MajistiX\Extensions\AValidExtension3;
+namespace MajistiX\Extensions\AnInvalidExtension3;
 
 class Bootstrap
 {
