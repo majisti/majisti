@@ -16,8 +16,12 @@ class StylesheetCompressor extends AbstractCompressor
      * @desc Bundles the currently appended stylesheets into a new stylesheet
      * provided with the path. Currently only works on screen media types.
      *
+     * @param \Zend_View_Helper_Headlink $header The header object
      * @param string $path The path to the bundled file
      * @param string $url The url to the bundled file
+     *
+     * @throws Exception If given header is not an headlink or if any
+     * given css path is not valid
      */
     public function bundle($header, $path, $url)
     {
@@ -35,7 +39,7 @@ class StylesheetCompressor extends AbstractCompressor
         $content    = '';
         $links      = array();
 
-        $this->flushCache();
+        $this->clearCache();
 
         foreach ($header as $head) {
             if( !('stylesheet' === $head->rel && 'screen' === $head->media) ) {
@@ -62,27 +66,56 @@ class StylesheetCompressor extends AbstractCompressor
                 }
 
                 $content .= file_get_contents($filepath);
-                $this->cache($filepath);
+                $this->addToCache($filepath);
             }
         }
 
-        if( !empty($content) ) {
-            /* store bundled css content */
-            file_put_contents($path, $content);
-
-            /* append version */
-            $url .= '?v=' . filemtime($path);
-
-            /* remove merged stylesheets from HeadLink and push the merged one */
-            $header->exchangeArray($links);
-            $header->appendStylesheet($url);
-
-            /* TODO: write file */
+        if( empty($content) ) {
+            throw new Exception('No content to bundle');
         }
+
+        /* store bundled css content */
+        file_put_contents($path, $content);
+
+        /* append version */
+        $url .= '?v=' . filemtime($path);
+
+        /* remove merged stylesheets from HeadLink and push the merged one */
+        $header->exchangeArray($links);
+        $header->appendStylesheet($url);
+
+        return $url;
     }
 
-    public function minify($header, $path, $url)
+    public function minify($header, $path)
     {
+        foreach( $header as $head ) {
+            if( !('stylesheet' === $head->rel && 'screen' === $head->media) ) {
+                $links[] = $head;
+            } else {
+                $filepath = $head->href;
+                if( \Zend_Uri::check($filepath) ) {
+                    $remappedUris = $this->getRemappedUris();
+                    if( array_key_exists($filepath, $remappedUris) ) {
+                        $filepath = $remappedUris[$filepath];
+                    } else {
+                        $links[] = $head;
+                        continue;
+                    }
+                }
 
+                if( !file_exists($filepath) ) {
+                    $filepath = rtrim($_SERVER['DOCUMENT_ROOT'], '/')
+                              . '/' . ltrim($filepath, '/');
+                }
+
+                if( !file_exists($filepath) ) {
+                    throw new Exception("File {$filepath} does not exist");
+                }
+
+                $content .= file_get_contents($filepath);
+                $this->addToCache($filepath);
+            }
+        }
     }
 }
