@@ -15,10 +15,10 @@ interface ICompressor
     /**
      * @desc Bundle the files together
      */
-    public function bundle($header, $path, $url);
+    public function bundle($path, $url);
 
     /*
      * @desc Minifies the files contained in the header
      */
-    public function minify($header);
+    public function minify();
 }

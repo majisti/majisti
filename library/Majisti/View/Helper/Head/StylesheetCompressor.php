@@ -23,31 +23,38 @@ class StylesheetCompressor extends AbstractCompressor
      * @throws Exception If given header is not an headlink or if any
      * given css path is not valid
      */
-    public function bundle($header, $path, $url)
+    public function bundle($path, $url)
     {
-        if( !$this->isBundlingEnabled() || $this->isCached() ) {
-            return $url;
+        if( !$this->isBundlingEnabled() ) {
+            return false;
         }
 
         /* content */
-        $content = '';
-        $links   = array();
+        $content    = '';
+        $callback   = null;
+        $header     = $this->getHeader();
 
-        $callback = function($filepath) use (&$content) {
-            $content .= file_get_contents($filepath);
-        };
-
-        $this->parseHeader($header, $callback);
-
-        if( empty($content) ) {
-            throw new Exception('No content to bundle');
+        if( !$this->isCached() ) {
+            $callback = function($filepath) use (&$content) {
+                $content .= file_get_contents($filepath);
+            };
         }
 
-        /* store bundled css content */
-        file_put_contents($path, $content);
+        $links = $this->parseHeader($header, $callback)->links;
 
-        /* append version */
-        $url .= '?v=' . filemtime($path);
+        if( null !== $callback ) {
+            if( empty($content) ) {
+                throw new Exception('No content to bundle');
+            }
+            /* store bundled css content */
+            file_put_contents($path, $content);
+
+            /* append version */
+            $url .= $this->getVersionRequest($path);
+        } else {
+            $url .= $this->getCachedTimestamp($path);
+        }
+
 
         /* remove merged stylesheets from HeadLink and push the merged one */
         $header->exchangeArray($links);
@@ -56,7 +63,7 @@ class StylesheetCompressor extends AbstractCompressor
         return $url;
     }
 
-    protected function parseHeader($header, $callback)
+    protected function parseHeader($header, $callback = null)
     {
         if( !($header instanceof \Zend_View_Helper_HeadLink) ) {
             throw new Exception("Given header must be an instance of
@@ -64,12 +71,16 @@ class StylesheetCompressor extends AbstractCompressor
                     . " given");
         }
 
+        $links = array();
+        $urls  = array();
+
         foreach ($header as $head) {
             if( !('stylesheet' === $head->rel && 'screen' === $head->media) ) {
                 $links[] = $head;
             } else {
                 /* unversionize href */
                 $filepath = preg_replace('/\?.*/', '', $head->href);
+                $urls[]   = $filepath;
                 if( \Zend_Uri::check($filepath) ) {
                     $remappedUris = $this->getRemappedUris();
                     if( array_key_exists($filepath, $remappedUris) ) {
@@ -89,31 +100,55 @@ class StylesheetCompressor extends AbstractCompressor
                     throw new Exception("File {$filepath} does not exist");
                 }
 
-                $callback($filepath);
+                if( null !== $callback ) {
+                    $callback($filepath);
 
-                if( $this->isCacheEnabled() ) {
-                    $this->addToCache($filepath);
+                    if( $this->isCacheEnabled() ) {
+                        $this->addToCache($filepath);
+                    }
                 }
             }
         }
+
+        $obj = new \stdClass();
+        $obj->links = $links;
+        $obj->urls  = $urls;
+
+        return $obj;
     }
 
-    public function minify($header)
+    public function minify()
     {
-        if( !$this->isMinifyingEnabled() || $this->isCached() ) {
-            return;
+        if( !$this->isMinifyingEnabled() ) {
+            return false;
         }
 
-        $minifier = $this->getMinifier();
-        $callback = function($filepath) use($minifier) {
-            /* insert min before extension */
-            $pathinfo = pathinfo($filepath);
-            $ext      = $pathinfo['extension'];
+        $callback = null;
+        $header   = $this->getHeader();
 
-            file_put_contents(rtrim($filepath, $ext) . "min.{$ext}",
-                $minifier->minifyCss(file_get_contents($filepath)));
-        };
+        if( !$this->isCached() ) {
+            $minifier = $this->getMinifier();
+            $callback = function($filepath) use($minifier) {
+                $pathinfo = pathinfo($filepath);
+                $ext      = $pathinfo['extension'];
 
-        $this->parseHeader($header, $callback);
+                file_put_contents(rtrim($filepath, $ext) . "min.{$ext}",
+                    $minifier->minifyCss(file_get_contents($filepath)));
+            };
+        }
+
+        $obj = $this->parseHeader($header, $callback);
+
+        foreach( $obj->urls as &$url ) {
+            $url = $this->prependMinToExtension($url);
+        }
+
+        $header->exchangeArray($obj->links);
+
+        foreach( $obj->urls as $url ) {
+            $header->appendStylesheet($url);
+        }
+
+        return $obj->urls;
     }
 }
