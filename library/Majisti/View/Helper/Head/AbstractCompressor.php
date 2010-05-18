@@ -5,8 +5,8 @@ namespace Majisti\View\Helper\Head;
 use \Majisti\Util\Minifying as Minifying;
 
 /**
- * @desc The abstract minifier provides minify abstraction for
- * concrete minifiers.
+ * @desc The abstract compressor provides compression abstraction for
+ * concrete compressors.
  *
  * @author Majisti
  */
@@ -18,20 +18,56 @@ abstract class AbstractCompressor implements ICompressor
     protected $_bundlingEnabled;
 
     /**
-     * @var Compression\ICompressor
+     * @var bool
      */
-    protected $_compressor;
+    protected $_minifyingEnabled;
 
     /**
-     * FIXME: wrong path!
-     * @var <type>
+     * @var Compression\ICompressor
      */
-    protected $_stylesheetsPath =
-        '/home/ratius/www/majisti/tests/library/Majisti/View/Helper/_files';
+    protected $_minifier;
 
-    protected $_cacheFile = '.cached-stylesheets';
+    /**
+     * @var string The directory that hold the stylesheets
+     */
+    protected $_stylesheetsPath;
 
-    protected $_remappedUris = array();
+    /**
+     * @var The cache file path
+     */
+    protected $_cacheFilePath;
+
+    /**
+     * @var array The remapped uris
+     */
+    protected $_remappedUris;
+
+    public function __construct(array $options = array())
+    {
+        $defaultOptions = array(
+            'stylesheetsPath'   => APPLICATION_STYLES,
+            'cacheFile'         => '.cached-stylesheets',
+        );
+
+        $this->setOptions(array_merge($defaultOptions, $options));
+    }
+
+    public function setOptions(array $options)
+    {
+        $selector = new \Majisti\Config\Selector(new \Zend_Config($options));
+
+        $this->_stylesheetsPath = (string)$selector->find('stylesheetsPath');
+        $this->_cacheFilePath   = (string)$selector->find('cacheFile');
+        $this->_remappedUris    = $selector->find('remappedUris', array());
+
+        $minifier = $selector->find('minifier', null);
+
+        if( is_string($minifier) ) {
+            $this->setMinifier(new $minifier());
+        } elseif( is_object($minifier) ) {
+            $this->setMinifier($minifier);
+        }
+    }
 
     /**
      * @desc Returns whether bundling is enabled. By default, when this
@@ -57,6 +93,11 @@ abstract class AbstractCompressor implements ICompressor
         return $this->_bundlingEnabled;
     }
 
+    public function isMinifyingEnabled()
+    {
+
+    }
+
     public function isCached()
     {
         return false;
@@ -73,18 +114,40 @@ abstract class AbstractCompressor implements ICompressor
         $this->_bundlingEnabled = (bool) $flag;
     }
 
-    protected function flushCache()
+    public function setMinifyingEnabled($flag = true)
+    {
+        $this->_minifyingEnabled = (bool) $flag;
+    }
+
+    protected function clearCache()
     {
         @unlink($this->getCacheFilePath());
     }
 
-    public function getCacheFilePath()
+    protected function addToCache($filepath)
     {
-        return $this->_stylesheetsPath . '/' . $this->_cacheFile;
+        $this->_cache[] = $filepath;
+        array_unique($this->_cache);
     }
 
-    protected function cache($path)
+    public function getCachedFilePaths()
     {
+
+    }
+
+    public function getCacheFilePath()
+    {
+        return $this->_stylesheetsPath . '/' . $this->_cacheFilePath;
+    }
+
+    protected function cache()
+    {
+        $filePaths = $this->getCachedFilePaths();
+
+        if( empty($filePaths) ) {
+            throw new Exception('No cache files found');
+        }
+
         $cacheFile = $this->getCacheFilePath();
 
         if( !file_exists($cacheFile) ) {
@@ -92,20 +155,32 @@ abstract class AbstractCompressor implements ICompressor
         }
 
         $handle = fopen($cacheFile, 'a');
-        fwrite($handle, $path . ' ' . filectime($path) . PHP_EOL);
+        foreach( $filePaths as $path ) {
+            fwrite($handle, $path . ' ' . filemtime($path) . PHP_EOL);
+        }
         fclose($handle);
     }
 
     public function compress($header, $path, $url)
     {
-        $this->bundle($header, $path, $url);
+        $url = $this->bundle($header, $path, $url);
+
+        $uris = $this->getRemappedUris();
+        $this->clearUriRemaps();
+        $this->uriRemap($url, $path);
+
         $this->minify($header, $path, $url);
+
+        $this->setUriRemaps($uris);
+
+        unlink($path);
+        $this->cache();
     }
 
     /**
      * @desc Remaps a given uri found within the headlink while minifying.
      * The file must be accessible through the path provided, meaning that
-     * internet uris cannot be mapped.<br><br>
+     * internet uris cannot be mapped.
      *
      * Ex: You have http://static.mydomain.com/foo.css in the headlink
      * and you can access it with /path/to/foo.css. When minifying to
@@ -117,23 +192,33 @@ abstract class AbstractCompressor implements ICompressor
      * @param string $path The path to the stylesheet
      */
 
-    public function getCompressor()
+    public function getMinifier()
     {
-        if ( null === $this->_compressor ) {
-            $this->_compressor = new Minifying\Yui();
+        if ( null === $this->_minifier ) {
+            $this->_minifier = new Minifying\Yui();
         }
 
-        return $this->_compressor;
+        return $this->_minifier;
     }
 
-    public function setCompressor(Compression\ICompressor $compressor)
+    public function setMinifier(Minifying\IMinifier $minifier)
     {
-        $this->_compressor = $compressor;
+        $this->_minifier = $minifier;
     }
 
     public function uriRemap($uri, $path)
     {
         $this->_remappedUris[$uri] = $path;
+    }
+
+    public function removeUriRemap($uri)
+    {
+        unset($this->_remappedUris[$uri]);
+    }
+
+    public function clearUriRemaps()
+    {
+        $this->_remappedUris = array();
     }
 
     public function getRemappedUris()
