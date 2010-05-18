@@ -62,16 +62,42 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
     }
 
     /**
-     * @desc Unit test tear down, removing the bundle() and minify() output
-     * files.
+     * @desc Unit test tear down: removing the bundle() and minify() output
+     * files and clearing the headlink object.
      */
     public function tearDown()
     {
-        @unlink($this->files . '/themes.css');
-        @unlink($this->files . '/all.css');
-        @unlink($this->files . '/all.min.css');
-        @unlink($this->files . '/.cached-stylesheets');
+        $files = array('themes.css', 'all.css', 'all.min.css',
+            '.cache-stylesheets');
+
+        $minified = array('theme1.min.css', 'theme2.min.css', 'core.min.css');
+
+        foreach($files as $file) {
+            @unlink($this->files . "/{$file}");
+        }
+
+        foreach($minified as $file) {
+            @unlink($this->files . "/styles/{$file}");
+        }
+
         $this->view->headLink()->exchangeArray(array());
+    }
+
+    /**
+     *
+     * @param \Majisti_View_Helper_Headlink $headlink
+     * @param array $sheets an array of stylesheets name located in _files/styles
+     * @return \Majisti_View_Helper_Headlink headlink with appenend stylesheets
+     */
+    protected function appendHeadlinkStylesheets($headlink, $sheets = array())
+    {
+        $url = $this->url;
+        if( !empty ( $sheets) ) {
+            foreach($sheets as $sheet) {
+                $headlink->appendStylesheet("{$url}/styles/{$sheet}.css");
+            }
+        }
+        return $headlink;
     }
 
     /**
@@ -87,8 +113,8 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
         $compressor->setBundlingEnabled();
 
         /* append and bundle stylesheets */
-        $headlink->appendStylesheet("{$url}/styles/theme1.css");
-        $headlink->appendStylesheet("{$url}/styles/theme2.css");
+        $headlink = $this->appendHeadlinkStylesheets($headlink,
+                array('theme1', 'theme2'));
 
         $compressor->bundle(
                 $headlink,
@@ -288,7 +314,7 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
       */
      public function testThatMasterIsNotOverridenIfOrigFilesHaveNoChanges()
      {
-         $this->markTestIncomplete('Cache support not yet implemented!');
+         $this->markTestIncomplete();
 
          /* @var $headlink \Majisti_View_Helper_HeadLink */
          $headlink   = $this->view->headLink();
@@ -299,16 +325,8 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
          $compressor->setBundlingEnabled();
          $compressor->setMinifyingEnabled();
 
-         $cssFiles = array(
-             "{$url}/styles/core.css",
-             "{$url}/styles/theme1.css",
-             "{$url}/styles/theme2.css"
-         );
-
-         /* append and bundle stylesheets */
-         foreach( $cssFiles as $path) {
-             $headlink->appendStyleSheet($path);
-         }
+         $this->appendHeadlinkStylesheets($headlink,
+                 array('core', 'theme1', 'theme2'));
 
          $url1 = $compressor->compress(
                     $headlink,
@@ -340,17 +358,9 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
          $compressor->setBundlingEnabled();
          $compressor->setMinifyingEnabled();
 
-         /* original files */
-         $cssFiles = array(
-             "{$url}/styles/core.css",
-             "{$url}/styles/theme1.css",
-             "{$url}/styles/theme2.css"
-         );
+         $this->appendHeadlinkStylesheets($headlink,
+                 array('core', 'theme1', 'theme2'));
 
-         /* append and bundle stylesheets */
-         foreach( $cssFiles as $path) {
-             $headlink->appendStylesheet($path);
-         }
          $compressor->minify($headlink);
 
          $this->assertTrue(file_exists($this->files . '/styles/core.min.css'));
