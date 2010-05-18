@@ -295,7 +295,7 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
 
          /* setting minify on */
          $compressor->setBundlingEnabled();
-         $compressor->setMinifyEnabled();
+         $compressor->setMinifyingEnabled();
 
          $cssFiles = array(
              "{$url}/styles/core.css",
@@ -335,7 +335,7 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
 
          /* setting minifying and bundling on */
          $compressor->setBundlingEnabled();
-         $compressor->setMinifyEnabled();
+         $compressor->setMinifyingEnabled();
 
          /* original files */
          $cssFiles = array(
@@ -346,7 +346,7 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
 
          /* append and bundle stylesheets */
          foreach( $cssFiles as $path) {
-             $headlink->appendStyleSheet($path);
+             $headlink->appendStylesheet($path);
          }
          $compressor->minify($headlink);
 
