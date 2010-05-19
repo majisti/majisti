@@ -10,7 +10,7 @@ use \Majisti\Util\Minifying as Minifying;
  *
  * @author Majisti
  */
-abstract class AbstractCompressor implements ICompressor
+abstract class AbstractOptimizer implements IOptimizer
 {
     /**
      * @var bool
@@ -74,7 +74,7 @@ abstract class AbstractCompressor implements ICompressor
     {
         if( null === $this->_defaultOptions ) {
             $this->_defaultOptions = array(
-                'stylesheetsPath'   => APPLICATION_URL_STYLES,
+                'stylesheetsPath'   => APPLICATION_PATH . '/../public/styles',
                 'cacheFile'         => '.cached-stylesheets',
                 'cacheEnabled'      => true
             );
@@ -94,7 +94,6 @@ abstract class AbstractCompressor implements ICompressor
         $this->_remappedUris    = $selector->find('remappedUris', array());
 
         $minifier = $selector->find('minifier', false);
-
         if( is_string($minifier) ) {
             $this->setMinifier(new $minifier());
         } elseif( is_object($minifier) ) {
@@ -121,9 +120,17 @@ abstract class AbstractCompressor implements ICompressor
         return $this->_bundlingEnabled;
     }
 
-    public function isCompressionEnabled()
+    public function isOptimizationEnabled()
     {
         return $this->isBundlingEnabled() && $this->isMinifyingEnabled();
+    }
+
+    public function setOptimizationEnabled($flag = true)
+    {
+        $flag = (bool) $flag;
+
+        $this->setBundlingEnabled($flag);
+        $this->setMinifyingEnabled($flag);
     }
 
     private function isDevelEnvironment($var)
@@ -164,9 +171,7 @@ abstract class AbstractCompressor implements ICompressor
             return false;
         }
 
-        foreach( $lines as $line ) {
-            list($filepath, $timestamp) = explode(' ', $line);
-
+        foreach( $lines as $filepath => $timestamp ) {
             if( !(file_exists($filepath) &&
                 (int)$timestamp === filemtime($filepath)) )
             {
@@ -193,20 +198,31 @@ abstract class AbstractCompressor implements ICompressor
         $this->_minifyingEnabled = (bool) $flag;
     }
 
+    protected function getCache()
+    {
+        return $this->_cache;
+    }
+
     public function clearCache()
     {
+        $this->_cache = null;
         @unlink($this->getCacheFilePath());
     }
 
     protected function addToCache($filepath)
     {
-        $this->_cache[] = $filepath;
-        array_unique($this->_cache);
+        if( null === $this->_cache ) {
+            $this->_cache = array();
+        }
+
+        if( $this->isCacheEnabled() ) {
+            $this->_cache[$filepath] = filemtime($filepath);
+        }
     }
 
     public function getCachedFilePaths()
     {
-        return $this->_cache;
+        return array_keys($this->_cache);
     }
 
     protected function getCachedTimestamp($path)
@@ -237,9 +253,9 @@ abstract class AbstractCompressor implements ICompressor
 
     protected function cache()
     {
-        $filePaths = $this->getCachedFilePaths();
+        $cache = $this->getCache();
 
-        if( empty($filePaths) ) {
+        if( empty($cache) ) {
             throw new Exception('No cache file found');
         }
 
@@ -250,15 +266,15 @@ abstract class AbstractCompressor implements ICompressor
         }
 
         $handle = fopen($cacheFile, 'a');
-        foreach( $filePaths as $path ) {
-            fwrite($handle, $path . ' ' . filemtime($path) . PHP_EOL);
+        foreach( $cache as $path => $timestamp ) {
+            fwrite($handle, "{$path} {$timestamp}" . PHP_EOL);
         }
         fclose($handle);
     }
 
-    public function compress($path, $url)
+    public function optimize($path, $url)
     {
-        if( !$this->isCompressionEnabled() ) {
+        if( !$this->isOptimizationEnabled() ) {
             return false;
         }
 
@@ -279,9 +295,7 @@ abstract class AbstractCompressor implements ICompressor
             if( is_file($path) ) {
                 unlink($path);
             }
-        } else {
-
-        }
+        } 
 
         return $url;
     }
@@ -305,6 +319,10 @@ abstract class AbstractCompressor implements ICompressor
     {
         if ( null === $this->_minifier ) {
             $this->_minifier = new Minifying\Yui();
+
+            Minifying\Yui::$jarFile = MAJISTI_ROOT .
+                '/../externals/yuicompressor-2.4.2.jar';
+            Minifying\Yui::$tempDir = '/tmp';
         }
 
         return $this->_minifier;

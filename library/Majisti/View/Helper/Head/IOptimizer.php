@@ -10,8 +10,10 @@ namespace Majisti\View\Helper\Head;
  *
  * @author Majisti
  */
-interface ICompressor
+interface IOptimizer
 {
+    public function optimize($path, $url);
+
     /**
      * @desc Bundle the files together
      */

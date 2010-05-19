@@ -5,12 +5,12 @@ namespace Majisti\View\Helper\Head;
 require_once 'TestHelper.php';
 
 /**
- * @desc Tests that the stylesheet compressor can bundle and minify
+ * @desc Tests that the stylesheet optimizer can bundle and minify
  * css stylesheets correctly.
  *
  * @author Majisti
  */
-class StylesheetCompressorTest extends \Majisti\Test\TestCase
+class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
 {
     static protected $_class = __CLASS__;
 
@@ -25,9 +25,9 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
     public $view;
 
     /**
-     * @var StylesheetCompressor
+     * @var HeadLinkOptimizer
      */
-    public $compressor;
+    public $optimizer;
 
     /**
      * @var string
@@ -50,9 +50,9 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
         $options = array(
             'stylesheetsPath' => $this->files . '/styles',
         );
-        $this->compressor = new StylesheetCompressor($this->view->headLink(),
+        $this->optimizer = new HeadLinkOptimizer($this->view->headLink(),
             $options);
-        $this->compressor->clearCache();
+        $this->optimizer->clearCache();
 
         \Zend_Controller_Front::getInstance()->setRequest(
             new \Zend_Controller_Request_Http());
@@ -109,16 +109,16 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
     {
         /* @var $headlink \Majisti_View_Helper_HeadLink */
         $headlink   = $this->view->headLink();
-        $compressor = $this->compressor;
+        $optimizer  = $this->optimizer;
         $url        = $this->url;
 
-        $compressor->setBundlingEnabled();
+        $optimizer->setBundlingEnabled();
 
         /* append and bundle stylesheets */
         $headlink = $this->appendHeadlinkStylesheets($headlink,
                 array('theme1', 'theme2'));
 
-        $compressor->bundle(
+        $optimizer->bundle(
                 $this->files. '/themes.css',
                 $url . '/themes.css'
         );
@@ -136,10 +136,10 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
     public function testAddFileRemapOverideHeadLinkDuplicates()
     {
        $headlink    = $this->view->headLink();
-       $compressor  = $this->compressor;
+       $optimizer   = $this->optimizer;
        $url         = $this->url;
 
-       $compressor->setBundlingEnabled();
+       $optimizer->setBundlingEnabled();
 
        $request = \Zend_Controller_Front::getInstance()->getRequest();
        $uri     = $request->getScheme() . ':/' . $url;
@@ -147,10 +147,10 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
        $headlink->appendStylesheet($uri . '/styles/theme1.css');
        $headlink->appendStylesheet($url . '/styles/theme2.css');
        
-       $compressor->uriRemap($uri . '/styles/theme1.css',
+       $optimizer->uriRemap($uri . '/styles/theme1.css',
                $this->files  . '/styles/theme1.css');
 
-       $compressor->bundle($this->files . '/themes.css',
+       $optimizer->bundle($this->files . '/themes.css',
                $url . '/themes.css');
 
        $this->assertBundled('themes');
@@ -184,19 +184,19 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
     }
 
     /**
-     * Tests the compress function and asserts that the core, theme1 and theme2
+     * Tests the optimize function and asserts that the core, theme1 and theme2
      * css files have been minified and bundled.
      */
-    public function testCompress()
+    public function testOptimize()
     {
         /* @var $headlink \Majisti_View_Helper_HeadLink */
         $headlink   = $this->view->headLink();
-        $compressor = $this->compressor;
+        $optimizer = $this->optimizer;
         $url        = $this->url;
 
         /* setting minify on */
-        $compressor->setBundlingEnabled();
-        $compressor->setMinifyingEnabled();
+        $optimizer->setBundlingEnabled();
+        $optimizer->setMinifyingEnabled();
 
         /* URLs */
         $cssFilesUrls = array(
@@ -210,28 +210,28 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
             $headlink->appendStylesheet($path);
         }
 
-        $compressor->compress(
+        $optimizer->optimize(
                 $this->files. '/all.css',
                 $url. '/all.css'
         );
 
-        /* compress() function returns absolute paths from server root */
+        /* optimize() function returns absolute paths from server root */
         $cachedFilesPaths = array(
                 "{$this->files}/styles/core.css",
                 "{$this->files}/styles/theme1.css",
                 "{$this->files}/styles/theme2.css"
         );
-        $this->assertEquals($cachedFilesPaths, $compressor->getCachedFilePaths());
-        $this->assertTrue($compressor->isBundlingEnabled());
-        $this->assertTrue($compressor->isMinifyingEnabled());
-        $this->assertCompressed('all');
+        $this->assertEquals($cachedFilesPaths, $optimizer->getCachedFilePaths());
+        $this->assertTrue($optimizer->isBundlingEnabled());
+        $this->assertTrue($optimizer->isMinifyingEnabled());
+        $this->assertOptimized('all');
     }
 
     /**
      * @desc Asserts that core, theme1 and theme2 CSS have been minified and
      * that the cachedFilePaths array has been set with the right files.
      */
-    protected function assertCompressed($filename)
+    protected function assertOptimized($filename)
     {
         $headlink   = $this->view->headlink();
         $url        = $this->url;
@@ -250,14 +250,14 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
       */
      public function testSettingNewCacheFileName()
      {
-         $compressor = $this->compressor;
-         $compressor->setOptions(array(
+         $optimizer = $this->optimizer;
+         $optimizer->setOptions(array(
              'cacheFile'        => '.foo-cache',
              'stylesheetsPath'  => $this->files . '/styles'
          ));
 
          $this->assertEquals($this->files . '/styles/.foo-cache',
-                             $compressor->getCacheFilePath());
+                             $optimizer->getCacheFilePath());
      }
 
      /**
@@ -265,7 +265,7 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
       */
      public function testUriRemappingGettersAndSetters()
      {
-         $compressor  = $this->compressor;
+         $optimizer  = $this->optimizer;
 
          $uris        = array('uri1' => 'pathA',
                               'uri2' => 'pathB',
@@ -274,19 +274,19 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
          );
 
          foreach( $uris as $uri => $path) {
-             $compressor->uriRemap($uri, $path);
+             $optimizer->uriRemap($uri, $path);
          }
 
-         $this->assertEquals($uris, $compressor->getRemappedUris());
+         $this->assertEquals($uris, $optimizer->getRemappedUris());
 
-         $compressor->removeUriRemap('uri2');
+         $optimizer->removeUriRemap('uri2');
 
-         $this->assertEquals(3, count($compressor->getRemappedUris()));
-         $this->assertArrayNotHasKey('uri2', $compressor->getRemappedUris());
+         $this->assertEquals(3, count($optimizer->getRemappedUris()));
+         $this->assertArrayNotHasKey('uri2', $optimizer->getRemappedUris());
 
-         $compressor->clearUriRemaps();
+         $optimizer->clearUriRemaps();
 
-         $this->assertEquals(0, count($compressor->getRemappedUris()));
+         $this->assertEquals(0, count($optimizer->getRemappedUris()));
      }
 
      /**
@@ -294,18 +294,18 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
       */
      public function testEnablingAndDisablingBundlingAndMinifying()
      {
-         $compressor = $this->compressor;
-         $compressor->setBundlingEnabled();
-         $compressor->setMinifyingEnabled();
+         $optimizer = $this->optimizer;
+         $optimizer->setBundlingEnabled();
+         $optimizer->setMinifyingEnabled();
 
-         $this->assertTrue($compressor->isBundlingEnabled());
-         $this->assertTrue($compressor->isMinifyingEnabled());
+         $this->assertTrue($optimizer->isBundlingEnabled());
+         $this->assertTrue($optimizer->isMinifyingEnabled());
 
-         $compressor->setBundlingEnabled(false);
-         $compressor->setMinifyingEnabled(false);
+         $optimizer->setBundlingEnabled(false);
+         $optimizer->setMinifyingEnabled(false);
 
-         $this->assertFalse($compressor->isBundlingEnabled());
-         $this->assertFalse($compressor->isMinifyingEnabled());
+         $this->assertFalse($optimizer->isBundlingEnabled());
+         $this->assertFalse($optimizer->isMinifyingEnabled());
      }
 
      /**
@@ -316,27 +316,25 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
      {
          /* @var $headlink \Majisti_View_Helper_HeadLink */
          $headlink   = $this->view->headLink();
-         $compressor = $this->compressor;
+         $optimizer  = $this->optimizer;
          $url        = $this->url;
 
          /* setting minify on */
-         $compressor->setBundlingEnabled();
-         $compressor->setMinifyingEnabled();
+         $optimizer->setBundlingEnabled();
+         $optimizer->setMinifyingEnabled();
 
          $this->appendHeadlinkStylesheets($headlink,
                  array('core', 'theme1', 'theme2'));
 
-         $url1 = $compressor->compress(
+         $url1 = $optimizer->optimize(
                     $this->files. '/all.css',
                     $url. '/all.css'
          );
 
-         $url2 = $compressor->compress(
+         $this->assertFalse($optimizer->optimize(
                     $this->files. '/all.css',
                     $url. '/all.css'
-         );
-
-        $this->assertEquals($url1, $url2);
+         ));
     }
 
      /**
@@ -347,17 +345,17 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
      {
          /* @var $headlink \Majisti_View_Helper_HeadLink */
          $headlink   = $this->view->headLink();
-         $compressor = $this->compressor;
+         $optimizer  = $this->optimizer;
          $url        = $this->url;
 
          /* setting minifying and bundling on */
-         $compressor->setBundlingEnabled();
-         $compressor->setMinifyingEnabled();
+         $optimizer->setBundlingEnabled();
+         $optimizer->setMinifyingEnabled();
 
          $this->appendHeadlinkStylesheets($headlink,
                  array('core', 'theme1', 'theme2'));
 
-         $compressor->minify();
+         $optimizer->minify();
 
          $this->assertTrue(file_exists($this->files . '/styles/core.min.css'));
          $this->assertTrue(file_exists($this->files . '/styles/theme1.min.css'));
@@ -365,4 +363,4 @@ class StylesheetCompressorTest extends \Majisti\Test\TestCase
      }
 }
 
-StylesheetCompressorTest::runAlone();
+HeadLinkOptimizerTest::runAlone();

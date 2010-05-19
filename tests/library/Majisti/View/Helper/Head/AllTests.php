@@ -21,7 +21,7 @@ class AllTests extends \Majisti\Test\TestSuite
     {
         $suite = new self('Majisti Framework - All tests');
 
-        $suite->addTestCase(__NAMESPACE__ . '\StylesheetCompressorTest');
+        $suite->addTestCase(__NAMESPACE__ . '\HeadLinkOptimizerTest');
 
         return $suite;
     }
