@@ -61,9 +61,7 @@ class HeadLinkOptimizer extends AbstractOptimizer
         }
 
         /* append version */
-        if( file_exists($path) ) {
-            $url .= $this->getVersionRequest($path);
-        }
+        $url .= $this->getVersionRequest($path);
 
         /* remove merged stylesheets from HeadLink and push the merged one */
         $header->exchangeArray($links);
@@ -184,6 +182,7 @@ class HeadLinkOptimizer extends AbstractOptimizer
             $header->appendStylesheet(
                    $this->prependMinToExtension($url) .
                    $this->getVersionRequest($obj->filepaths[$key]));
+            $obj->urls[$key] = $url . $this->getVersionRequest($obj->filepaths[$key]);
         }
 
         $this->cache();

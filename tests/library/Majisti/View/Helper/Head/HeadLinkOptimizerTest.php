@@ -71,7 +71,7 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
     public function tearDown()
     {
         $files = array('themes.css', 'all.css', 'all.min.css',
-            '.cache-stylesheets');
+            '.cached-stylesheets');
 
         $minified = array('theme1.min.css', 'theme2.min.css', 'core.min.css');
 
@@ -324,6 +324,9 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
                     $this->files. '/all.css',
                     $url. '/all.css'
          );
+//         $content1 = file_get_contents($this->files . '/all.min.css');
+//         $filemtime1 = filemtime($this->files. '/all.min.css');
+//         $cachemtime1 = filemtime($this->files . '/styles/.cached-stylesheets');
 
          $headlink->exchangeArray(array());
          $this->appendHeadlinkStylesheets($headlink, array('core', 'theme1',
@@ -333,6 +336,11 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
                     $this->files. '/all.css',
                     $url. '/all.css'
          );
+//         $content2 = file_get_contents($this->files . '/all.min.css');
+//         $filemtime2 = filemtime($this->files. '/all.min.css');
+
+//         $this->assertSame($content1, $content2);
+//         $this->assertSame($filemtime1, $filemtime2);
     }
 
      /**
@@ -384,7 +392,7 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
          );
 
          /* running optimize() a second time and asserting it returns false */
-         $this->assertFalse($optimizer->optimize(
+         $this->assertEquals($urlOptimize, $optimizer->optimize(
                  $this->files. '/all.css',
                  $url. '/all.css'
          ));
@@ -510,22 +518,25 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
                     $this->files. '/all.css',
                     $url. '/all.css'
          );
+         $content1 = file_get_contents($this->files . '/all.min.css');
 
          /* appending a new css file after having optimized */
-         $this->appendHeadlinkStylesheets($headlink, array('theme2'));
+         $headlink->exchangeArray(array());
+         $this->appendHeadlinkStylesheets($headlink, array('core', 'theme1', 'theme2'));
 
          /* optimizing a second time after the theme2 css file was added */
          $urlSecondOptimize = $optimizer->optimize(
                  $this->files. '/all.css',
                  $url. '/all.css');
+         $content2 = file_get_contents($this->files . '/all.min.css');
 
          /*
           * asserting that the two calls to optimize() return different
           * versions and not false
           */
          $this->assertNotEquals(false, $urlSecondOptimize);
-         $this->assertNotSame($urlOptimize, $urlSecondOptimize);
-         $this->assertEquals($this->files . '/styles/theme2.css',
+         $this->assertNotSame($content1, $content2);
+         $this->assertNotEquals(false,
                  array_search($this->files . '/styles/theme2.css',
                  $optimizer->getCachedFilePaths()));
      }
