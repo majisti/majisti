@@ -193,8 +193,9 @@ abstract class AbstractOptimizer implements IOptimizer
         }
 
         $key = 0;
-        foreach( $cache as $fileinfo ) {
-            if( $valid[$key++] !== $fileinfo['url'] ) {
+        foreach( $cache as $path => $fileinfo ) {
+            if( $valid[$key] !== $fileinfo['url'] ||
+                    filemtime($path) !== (int)$fileinfo['timestamp']) {
                 $this->clearCache();
                 return false;
             }
