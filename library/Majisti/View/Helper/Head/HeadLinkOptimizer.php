@@ -10,7 +10,7 @@ namespace Majisti\View\Helper\Head;
  *
  * @author Majisti
  */
-class StylesheetCompressor extends AbstractCompressor
+class HeadLinkOptimizer extends AbstractOptimizer
 {
     /**
      * @desc Bundles the currently appended stylesheets into a new stylesheet
@@ -46,21 +46,21 @@ class StylesheetCompressor extends AbstractCompressor
             if( empty($content) ) {
                 throw new Exception('No content to bundle');
             }
+
             /* store bundled css content */
             file_put_contents($path, $content);
 
             /* append version */
             $url .= $this->getVersionRequest($path);
-        } else {
-            $url .= $this->getCachedTimestamp($path);
         }
-
 
         /* remove merged stylesheets from HeadLink and push the merged one */
         $header->exchangeArray($links);
         $header->appendStylesheet($url);
 
-        return $url;
+        return !$this->isCached()
+                ? $url
+                : false;
     }
 
     protected function parseHeader($header, $callback = null)
@@ -102,10 +102,7 @@ class StylesheetCompressor extends AbstractCompressor
 
                 if( null !== $callback ) {
                     $callback($filepath);
-
-                    if( $this->isCacheEnabled() ) {
-                        $this->addToCache($filepath);
-                    }
+                    $this->addToCache($filepath);
                 }
             }
         }
@@ -132,7 +129,8 @@ class StylesheetCompressor extends AbstractCompressor
                 $pathinfo = pathinfo($filepath);
                 $ext      = $pathinfo['extension'];
 
-                file_put_contents(rtrim($filepath, $ext) . "min.{$ext}",
+                file_put_contents(rtrim($filepath, $ext) . 
+                        "min.{$ext}",
                     $minifier->minifyCss(file_get_contents($filepath)));
             };
         }
