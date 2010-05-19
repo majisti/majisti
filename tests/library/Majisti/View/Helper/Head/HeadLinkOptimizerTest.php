@@ -70,10 +70,8 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
      */
     public function tearDown()
     {
-        $files = array('themes.css', 'all.css', 'all.min.css',
-            '.cached-stylesheets');
-
-        $minified = array('theme1.min.css', 'theme2.min.css', 'core.min.css');
+        $files      = array('themes.css', 'all.css', 'all.min.css');
+        $minified   = array('theme1.min.css', 'theme2.min.css', 'core.min.css');
 
         foreach($files as $file) {
             @unlink($this->files . "/{$file}");
@@ -286,7 +284,7 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
      /**
       * @desc Tests that the enabling/disabling behaves as expected
       */
-     public function testEnablingAndDisablingBundlingAndMinifying()
+     public function testEnablingAndDisabling()
      {
          $optimizer = $this->optimizer;
          $optimizer->setBundlingEnabled();
@@ -300,13 +298,28 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
 
          $this->assertFalse($optimizer->isBundlingEnabled());
          $this->assertFalse($optimizer->isMinifyingEnabled());
+
+         $optimizer->setBundlingEnabled(false);
+         $optimizer->setMinifyingEnabled(false);
+         $optimizer->setOptimizationEnabled();
+
+         $this->assertTrue($optimizer->isBundlingEnabled());
+         $this->assertTrue($optimizer->isMinifyingEnabled());
+         $this->assertTrue($optimizer->isOptimizationEnabled());
+
+         $optimizer->setOptimizationEnabled(false);
+
+         $this->assertFalse($optimizer->isBundlingEnabled());
+         $this->assertFalse($optimizer->isMinifyingEnabled());
+         $this->assertFalse($optimizer->isOptimizationEnabled());
      }
 
      /**
-      * @desc Tests that bundling will not overwrite the CSS master file if
-      * cache is enabled and no modifications were found in the original files.
+      * @desc Tests that bundling will not overwrite the CSS master file
+      * nor the cached stylesheet if * cache is enabled
+      * and no modifications were found in the original files.
       */
-     public function testThatMasterIsNotOverridenIfOrigFilesHaveNoChanges()
+     public function testThatNothingIsOverridenIfOrigFilesHaveNoChanges()
      {
          /* @var $headlink \Majisti_View_Helper_HeadLink */
          $headlink   = $this->view->headLink();
@@ -324,9 +337,12 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
                     $this->files. '/all.css',
                     $url. '/all.css'
          );
-//         $content1 = file_get_contents($this->files . '/all.min.css');
-//         $filemtime1 = filemtime($this->files. '/all.min.css');
-//         $cachemtime1 = filemtime($this->files . '/styles/.cached-stylesheets');
+         $content1      = file_get_contents($this->files . '/all.min.css');
+         $filemtime1    = filemtime($this->files. '/all.min.css');
+         $cachemtime1   = filemtime($this->files . '/styles/.cached-stylesheets');
+
+         /* assure one second has passed */
+         sleep(1);
 
          $headlink->exchangeArray(array());
          $this->appendHeadlinkStylesheets($headlink, array('core', 'theme1',
@@ -336,11 +352,15 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
                     $this->files. '/all.css',
                     $url. '/all.css'
          );
-//         $content2 = file_get_contents($this->files . '/all.min.css');
-//         $filemtime2 = filemtime($this->files. '/all.min.css');
+         $content2      = file_get_contents($this->files . '/all.min.css');
+         $filemtime2    = filemtime($this->files. '/all.min.css');
+         $cachemtime2   = filemtime($this->files . '/styles/.cached-stylesheets');
 
-//         $this->assertSame($content1, $content2);
-//         $this->assertSame($filemtime1, $filemtime2);
+         $this->markTestIncomplete('cachemtime or filemtime should not differ here,
+             because that means that the cache gets rewritten');
+         $this->assertSame($content1, $content2);
+         $this->assertEquals($filemtime1, $filemtime2);
+         $this->assertEquals($cachemtime1, $cachemtime2);
     }
 
      /**
