@@ -22,6 +22,8 @@ $includePaths = array(
     get_include_path()
 );
 
+ini_set('memory_limit', '256M');
+
 set_include_path(implode(PATH_SEPARATOR, $includePaths));
 
 /* include PHPUnit dependencies */
