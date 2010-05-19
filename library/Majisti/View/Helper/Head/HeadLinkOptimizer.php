@@ -12,6 +12,13 @@ namespace Majisti\View\Helper\Head;
  */
 class HeadLinkOptimizer extends AbstractOptimizer
 {
+    protected $_masterUrl;
+
+    public function getMasterUrl()
+    {
+        return $this->_masterUrl;
+    }
+
     /**
      * @desc Bundles the currently appended stylesheets into a new stylesheet
      * provided with the path. Currently only works on screen media types.
@@ -25,6 +32,8 @@ class HeadLinkOptimizer extends AbstractOptimizer
      */
     public function bundle($path, $url)
     {
+        $this->_masterUrl = $this->unversionizeRequest($url);
+
         if( !$this->isBundlingEnabled() ) {
             return false;
         }
@@ -42,15 +51,17 @@ class HeadLinkOptimizer extends AbstractOptimizer
 
         $links = $this->parseHeader($header, $callback)->links;
 
-        if( null !== $callback ) {
+        if( !$this->isCached() ) {
             if( empty($content) ) {
                 throw new Exception('No content to bundle');
             }
 
             /* store bundled css content */
             file_put_contents($path, $content);
+        }
 
-            /* append version */
+        /* append version */
+        if( file_exists($path) ) {
             $url .= $this->getVersionRequest($path);
         }
 
@@ -58,9 +69,31 @@ class HeadLinkOptimizer extends AbstractOptimizer
         $header->exchangeArray($links);
         $header->appendStylesheet($url);
 
-        return !$this->isCached()
-                ? $url
-                : false;
+        $this->cache();
+
+        return $url;
+    }
+
+    protected function filterHead()
+    {
+        $header = $this->getHeader();
+        $validUrls = array();
+        $invalidUrls = array();
+
+        foreach($header as $head) {
+            if( $this->isValidStylesheet($head) ) {
+                $validUrls[] = $this->unversionizeRequest($head->href);
+            } else {
+                $invalidUrls[] = $head->href;
+            }
+        }
+
+        return array($validUrls, $invalidUrls);
+    }
+
+    protected function isValidStylesheet($head)
+    {
+        return 'stylesheet' === $head->rel || 'screen' === $head->media;
     }
 
     protected function parseHeader($header, $callback = null)
@@ -73,13 +106,17 @@ class HeadLinkOptimizer extends AbstractOptimizer
 
         $links = array();
         $urls  = array();
+        $filepaths = array();
+
+//        $heads = $this->filterHead();
+//        $heads->links
 
         foreach ($header as $head) {
             if( !('stylesheet' === $head->rel && 'screen' === $head->media) ) {
                 $links[] = $head;
             } else {
                 /* unversionize href */
-                $filepath = preg_replace('/\?.*/', '', $head->href);
+                $filepath = $this->unversionizeRequest($head->href);
                 $urls[]   = $filepath;
                 if( \Zend_Uri::check($filepath) ) {
                     $remappedUris = $this->getRemappedUris();
@@ -100,9 +137,11 @@ class HeadLinkOptimizer extends AbstractOptimizer
                     throw new Exception("File {$filepath} does not exist");
                 }
 
+                $filepaths[] = $filepath;
+
                 if( null !== $callback ) {
                     $callback($filepath);
-                    $this->addToCache($filepath);
+                    $this->addToCache($filepath, $urls[count($urls) - 1]);
                 }
             }
         }
@@ -110,6 +149,7 @@ class HeadLinkOptimizer extends AbstractOptimizer
         $obj = new \stdClass();
         $obj->links = $links;
         $obj->urls  = $urls;
+        $obj->filepaths = $filepaths;
 
         return $obj;
     }
@@ -125,11 +165,12 @@ class HeadLinkOptimizer extends AbstractOptimizer
 
         if( !$this->isCached() ) {
             $minifier = $this->getMinifier();
+
             $callback = function($filepath) use($minifier) {
                 $pathinfo = pathinfo($filepath);
                 $ext      = $pathinfo['extension'];
 
-                file_put_contents(rtrim($filepath, $ext) . 
+                file_put_contents(rtrim($filepath, $ext) .
                         "min.{$ext}",
                     $minifier->minifyCss(file_get_contents($filepath)));
             };
@@ -137,15 +178,15 @@ class HeadLinkOptimizer extends AbstractOptimizer
 
         $obj = $this->parseHeader($header, $callback);
 
-        foreach( $obj->urls as &$url ) {
-            $url = $this->prependMinToExtension($url);
-        }
-
         $header->exchangeArray($obj->links);
 
-        foreach( $obj->urls as $url ) {
-            $header->appendStylesheet($url);
+        foreach( $obj->urls as $key => $url ) {
+            $header->appendStylesheet(
+                   $this->prependMinToExtension($url) .
+                   $this->getVersionRequest($obj->filepaths[$key]));
         }
+
+        $this->cache();
 
         return $obj->urls;
     }

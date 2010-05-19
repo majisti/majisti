@@ -133,7 +133,7 @@ abstract class AbstractOptimizer implements IOptimizer
         $this->setMinifyingEnabled($flag);
     }
 
-    private function isDevelEnvironment($var)
+    protected function isDevelEnvironment($var)
     {
         /*
          * production and staging are enabled by default
@@ -155,31 +155,73 @@ abstract class AbstractOptimizer implements IOptimizer
         return $this->_minifyingEnabled;
     }
 
-    public function isCached()
+    protected function validateCache()
     {
-        if( !is_file($this->getCacheFilePath()) ) {
+        $cache  = $this->getCache();
+
+        if( empty($cache) ) {
             return false;
         }
 
-        if( null === $this->_cache ) {
-            $this->_cache = file($this->getCacheFilePath());
+        list($valid,) = $this->filterHead();
+        $masterUrl = $this->getMasterUrl();
+        
+        if( 1 === count($valid) ) {
+            foreach( $cache as $fileinfo ) {
+                if( $masterUrl === $fileinfo['url'] ) {
+                    return true;
+                }
+            }
         }
 
-        $lines = $this->_cache;
+        if( null !== $masterUrl ) {
+            foreach( $cache as $key => $fileinfo ) {
+                if( $masterUrl === $fileinfo['url'] ) {
+                    unset($cache[$key]);
+                    break;
+                }
+            }
+        }
 
-        if( empty($lines) ) {
+        if( 1 === count($valid) && $masterUrl === $valid[0] ) {
+            return false;
+        }
+        
+        if( count($cache) !== count($valid) ) {
+            $this->clearCache();
             return false;
         }
 
-        foreach( $lines as $filepath => $timestamp ) {
-            if( !(file_exists($filepath) &&
-                (int)$timestamp === filemtime($filepath)) )
-            {
+        $key = 0;
+        foreach( $cache as $fileinfo ) {
+            if( $valid[$key++] !== $fileinfo['url'] ) {
+                $this->clearCache();
                 return false;
             }
         }
 
         return true;
+    }
+
+    abstract protected function getMasterUrl();
+
+    public function isCached()
+    {
+        if( !($this->isCacheEnabled() && is_file($this->getCacheFilePath())) ) {
+            return false;
+        }
+
+        return $this->validateCache();
+
+        //if( $this->validateCache() ) {
+        //    foreach( $lines as $filepath => $fileinfo ) {
+        //        if( (int)$fileinfo['timestamp'] === filemtime($filepath) ) {
+        //            return false;
+        //        }
+        //    }
+        //}
+
+        //return false;
     }
 
     /**
@@ -200,6 +242,10 @@ abstract class AbstractOptimizer implements IOptimizer
 
     protected function getCache()
     {
+        if( null === $this->_cache ) {
+            $this->_cache = $this->getRealCache();
+        }
+
         return $this->_cache;
     }
 
@@ -209,14 +255,17 @@ abstract class AbstractOptimizer implements IOptimizer
         @unlink($this->getCacheFilePath());
     }
 
-    protected function addToCache($filepath)
+    protected function addToCache($filepath, $url)
     {
         if( null === $this->_cache ) {
             $this->_cache = array();
         }
 
         if( $this->isCacheEnabled() ) {
-            $this->_cache[$filepath] = filemtime($filepath);
+            $this->_cache[$filepath] = array(
+                'url'       => $url,
+                'timestamp' => filemtime($filepath)
+            );
         }
     }
 
@@ -230,7 +279,7 @@ abstract class AbstractOptimizer implements IOptimizer
         $filepaths = $this->getCachedFilePaths();
 
         if( array_key_exists($path, $filepaths) ) {
-            return $filepaths[$path];
+            return $filepaths[$path]['timestamp'];
         }
 
         return false;
@@ -251,6 +300,22 @@ abstract class AbstractOptimizer implements IOptimizer
         $this->_cacheEnabled = (bool) $flag;
     }
 
+    protected function getRealCache()
+    {
+        $lines = file($this->getCacheFilePath());
+
+        $cache = array();
+        foreach( $lines as $line ) {
+            list($path, $url, $timestamp) = explode(' ', $line);
+            $cache[$path] = array(
+                'url'       => $url,
+                'timestamp' => $timestamp
+            );
+        }
+
+        return $cache;
+    }
+
     protected function cache()
     {
         $cache = $this->getCache();
@@ -263,11 +328,13 @@ abstract class AbstractOptimizer implements IOptimizer
 
         if( !file_exists($cacheFile) ) {
             touch($cacheFile);
+        } else if( $cache === $this->getRealCache() ) {
+            return;
         }
 
-        $handle = fopen($cacheFile, 'a');
-        foreach( $cache as $path => $timestamp ) {
-            fwrite($handle, "{$path} {$timestamp}" . PHP_EOL);
+        $handle = fopen($cacheFile, 'w');
+        foreach( $cache as $path => $fileinfo ) {
+            fwrite($handle, "{$path} {$fileinfo['url']} {$fileinfo['timestamp']}" . PHP_EOL);
         }
         fclose($handle);
     }
@@ -284,18 +351,15 @@ abstract class AbstractOptimizer implements IOptimizer
             $this->clearUriRemaps();
             $this->uriRemap($url, $path);
 
-            $this->setCacheEnabled(false);
-            $this->minify($path, $url);
-            $this->setCacheEnabled(true);
+            $urls = $this->minify($path, $url);
+            $url = reset($urls);
 
             $this->setUriRemaps($uris);
 
-            $this->cache();
-
-            if( is_file($path) ) {
-                unlink($path);
-            }
-        } 
+//            if( is_file($path) ) {
+//                unlink($path);
+//            }
+        }
 
         return $url;
     }
@@ -363,6 +427,11 @@ abstract class AbstractOptimizer implements IOptimizer
     protected function getVersionRequest($filepath)
     {
         return '?v=' . filemtime($filepath);
+    }
+
+    protected function unversionizeRequest($str)
+    {
+        return preg_replace('/\?.*/', '', $str);
     }
 
     protected function prependMinToExtension($filepath)
