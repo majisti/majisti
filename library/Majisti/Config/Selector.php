@@ -13,6 +13,12 @@ namespace Majisti\Config;
 class Selector
 {
     /**
+     * @desc Serves as a void argument when the returnConfigAsArray is used
+     * but an exception still wants to be thrown
+     */
+    const VOID = 'MAJISTI_CONFIG_SELECTOR_VOID';
+
+    /**
      * @var \Zend_Config
      */
     protected $_config;
@@ -33,16 +39,19 @@ class Selector
      * If not, an exception is thrown.
      *
      * @param string $selector The CSS like selector (e.g foo.bar.baz)
-     * @param string [optionnal] $returnDefault The default return value,
-     * keeping null will throw an exception when the value is not found
-     * with the specified selector.
+     * @param string [opt; def=Selector::VOID] $returnDefault The default
+     * return value, keeping null will throw an exception when the value
+     * is not found with the specified selector.
+     * @param bool $returnConfigAsArray [opt; def=false] Return the parent
+     * element as an array instead of a \Zend_Config.
      *
      * @throws \Majisti\Config\Exception If the value could not be found
      * with the specified selector and that no default return value was given.
      *
      * @return string The found value
      */
-    public function find($selector, $returnDefault = null)
+    public function find($selector, $returnDefault = self::VOID,
+        $returnConfigAsArray = false)
     {
         $config             = $this->getConfig();
         $parts              = explode('.' , (string)$selector);
@@ -52,16 +61,21 @@ class Selector
         foreach ($parts as $part) {
             $currentSelection .= $part . '.';
         	if( !isset($config->$part)) {
-        	    if( null === $returnDefault ) {
+                if( $returnDefault === self::VOID ) {
         	        $formattedSelection = rtrim($currentSelection, '.');
 
             	    throw new Exception("Cannot find current selection
                         [{$formattedSelection}]");
         	    }
+
         	    return $returnDefault;
         	}
 
         	$config = $config->$part;
+        }
+
+        if( $returnConfigAsArray && $config instanceof \Zend_Config ) {
+            $config = $config->toArray();
         }
         
         return $config;
