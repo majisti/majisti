@@ -72,29 +72,30 @@ abstract class AbstractOptimizer implements IOptimizer
     /**
      * @var object An instance of \Zend_View_Helper_Head*
      */
-    protected $_header;
+    protected $_view;
 
     /**
-     * @desc Constructs the optimizer by using an head view helper,
-     * such as HeadLink or HeadScript with a sets of options that will
-     * override any default options
+     * @var string The master url
+     */
+    protected $_masterUrl;
+
+    /**
+     * @var bool Whether inline content should be appended to the master
+     * bundled file
+     */
+    protected $_appendInline;
+
+    /**
+     * @desc Constructs the optimizer by using the view with a sets of
+     * options that will override any default options
      *
-     * @param object $header The head* view helper.
+     * @param \Zend_View $view The view object
      * @param array $options The options
      */
-    public function __construct($header, array $options = array())
+    public function __construct(\Zend_View $view, array $options = array())
     {
-        $this->_header = $header;
+        $this->_view = $view;
         $this->setOptions($options);
-    }
-
-    /**
-     * @desc Returns the header object
-     * @return object An instance of \Zend_View_Helper_Head*
-     */
-    public function getHeader()
-    {
-        return $this->_header;
     }
 
     /**
@@ -107,11 +108,21 @@ abstract class AbstractOptimizer implements IOptimizer
             $this->_defaultOptions = array(
                 'path'              => APPLICATION_PATH . '/../public',
                 'cacheFile'         => '.cache',
-                'cacheEnabled'      => true
+                'cacheEnabled'      => true,
+                'appendInline'      => true,
             );
         }
 
         return $this->_defaultOptions;
+    }
+
+    /**
+     * @desc Returns the view
+     * @return \Zend_View the view
+     */
+    public function getView()
+    {
+        return $this->_view;
     }
 
     /**
@@ -124,10 +135,13 @@ abstract class AbstractOptimizer implements IOptimizer
         $selector   = new \Majisti\Config\Selector(new \Zend_Config($options));
 
         /* options to override */
-        $this->_path            = (string) $selector->find('path');
-        $this->_cacheFilePath   = (string) $selector->find('cacheFile');
-        $this->_cacheEnabled    = (bool)   $selector->find('cacheEnabled');
-        $this->_remappedUris    = $selector->find('remappedUris', array());
+        $this->_path             = (string) $selector->find('path');
+        $this->_cacheFilePath    = (string) $selector->find('cacheFile');
+        $this->_cacheEnabled     = (bool)   $selector->find('cacheEnabled');
+        $this->_appendInline     = (bool)   $selector->find('appendInline');
+        $this->_bundlingEnabled  = $selector->find('bundlingEnabled',  null);
+        $this->_minifyingEnabled = $selector->find('minifyingEnabled', null);
+        $this->_remappedUris     = $selector->find('remappedUris', array(), true);
 
         /* instanciate a minifier if one is provided */
         $minifier = $selector->find('minifier', false);
@@ -200,6 +214,17 @@ abstract class AbstractOptimizer implements IOptimizer
     }
 
     /**
+     * @desc Returns whether inline content should be appended
+     * to the master file.
+     *
+     * @return bool True to append inline content
+     */
+    public function isAppendInlineContent()
+    {
+        return $this->_appendInline;
+    }
+
+    /**
      * @desc Returns whether minifying is enabled.
      * By default, when this function is called without
      * first using {@link setMinifyingEnabled()} (therefore
@@ -222,10 +247,6 @@ abstract class AbstractOptimizer implements IOptimizer
      * @desc Validates the cache returning true if it is valid, false if not.
      * If the cache is invalid, it will be cleared before returning false.
      *
-     * A invalid cache is as such:
-     *
-     * - cache empty
-     *
      * @return True if the cache is valid, false (after cache is flushed)
      * otherwise.
      */
@@ -233,11 +254,6 @@ abstract class AbstractOptimizer implements IOptimizer
     {
         $cache = $this->getCache();
         $this->setCacheValidated();
-
-        /* no cache */
-        if( empty($cache) ) {
-            return false;
-        }
 
         list($validUrls,) = $this->filterHead();
         $masterUrl        = $this->getMasterUrl();
@@ -428,6 +444,15 @@ abstract class AbstractOptimizer implements IOptimizer
     }
 
     /**
+     * @desc Enables or disables inline content append when bundling.
+     * @param bool $flag [opt; def=true] The enabled flag
+     */
+    public function setAppendInlineContent($flag = true)
+    {
+        $this->_appendInline = (bool) $flag;
+    }
+
+    /**
      * @desc Enables or disables bundling
      * @param bool $flag [opt; def=true] The enabled flag
      */
@@ -488,6 +513,10 @@ abstract class AbstractOptimizer implements IOptimizer
      */
     protected function cache()
     {
+        if( $this->isCached() ) {
+            return;
+        }
+
         $cache     = $this->getCache();
         $cacheFile = $this->getCacheFilePath();
 
@@ -504,7 +533,8 @@ abstract class AbstractOptimizer implements IOptimizer
         /* write to file, overwriting everything in it */
         $handle = fopen($cacheFile, 'w');
         foreach( $cache as $path => $fileinfo ) {
-            fwrite($handle, "{$path} {$fileinfo['url']} {$fileinfo['timestamp']}" . PHP_EOL);
+            fwrite($handle, "{$path} {$fileinfo['url']} {$fileinfo['timestamp']}"
+                    . PHP_EOL);
         }
         fclose($handle);
     }
@@ -656,10 +686,250 @@ abstract class AbstractOptimizer implements IOptimizer
     }
 
     /**
+     * @desc Returns the master url used when bundling
+     * @return string The master url
+     */
+    protected function getMasterUrl()
+    {
+        return $this->_masterUrl;
+    }
+
+    /**
+     * @desc Bundles the currently appended items into a new master
+     * file provided with the path.
+     *
+     * @param \Zend_View_Helper_Headlink $header The header object
+     * @param string $path The path to the master bundled file
+     * @param string $url The url to the master bundled file
+     *
+     * @throws Exception If any given path is not valid
+     */
+    public function bundle($path, $url)
+    {
+        $this->_masterUrl = $this->unversionizeQuery($url);
+
+        if( !$this->isBundlingEnabled() ) {
+            return false;
+        }
+
+        $content    = '';
+        $callback   = null;
+        $header     = $this->getHeader();
+
+        /*
+         * apply call back function when there is no cache, the call back
+         * is the one that aggregates all the content that will get bundled
+         * in the master file
+         */
+        if( !$this->isCached() ) {
+            $callback = function($filepath) use (&$content) {
+                $content .= file_get_contents($filepath);
+            };
+        }
+
+        $invalidHeads = $this->parseHeader($header, $callback)->invalidHeads;
+
+        /* bundle in the master file */
+        if( !$this->isCached() ) {
+            if( $this->isAppendInlineContent() ) {
+                $content .= $this->getInlineContent();
+            }
+
+            if( empty($content) ) {
+                throw new Exception('No content to bundle');
+            }
+
+            /* store bundled css content */
+            file_put_contents($path, $content);
+        }
+
+        /* append version query */
+        $url .= $this->getVersionQuery($path);
+
+        /* remove merged items from the header and push the merged one */
+        $header->exchangeArray($invalidHeads);
+        $this->appendToHeader($url);
+
+        $this->cache();
+
+        return $url;
+    }
+
+    /**
+     * @desc Filters the head by returning an array of
+     * valid and invalid urls: array($arrayValidUrls, $arrayInvalidUrls).
+     *
+     * @return array The valid and invalid urls
+     */
+    protected function filterHead()
+    {
+        $header      = $this->getHeader();
+        $validUrls   = array();
+        $invalidUrls = array();
+
+        /* retrieve valid and invalid urls */
+        foreach($header as $head) {
+            if( $this->isValidHead($head) ) {
+                $validUrls[] = $this->unversionizeQuery($this->getAttr($head));
+            } else {
+                $invalidUrls[] = $this->getAttr($head);
+            }
+        }
+
+        return array($validUrls, $invalidUrls);
+    }
+
+    /**
+     * @desc Minifies all the valid heads inside an header, prepending
+     * the .min extension before their respective extension and generating
+     * the file according to their paths.
+     */
+    public function minify()
+    {
+        if( !$this->isMinifyingEnabled() ) {
+            return false;
+        }
+
+        $callback = null;
+        $header   = $this->getHeader();
+
+        /*
+         * apply callback function when there is no cache, the call back
+         * is the one that minifies each valid stylesheet
+         */
+        if( !$this->isCached() ) {
+            $minifier = $this->getMinifier();
+
+            $callback = function($filepath) use($minifier) {
+                $pathinfo = pathinfo($filepath);
+                $ext      = $pathinfo['extension'];
+
+                file_put_contents(rtrim($filepath, $ext) .
+                        "min.{$ext}",
+                    $minifier->minifyCss(file_get_contents($filepath)));
+            };
+        }
+
+        $obj = $this->parseHeader($header, $callback);
+
+        $header->exchangeArray($obj->invalidHeads);
+
+        /* reappend every minified and versionized stylesheets */
+        foreach( $obj->validHrefs as $key => $url ) {
+            $this->appendToHeader( /* append */
+                   $this->prependMinToExtension($url) .
+                   $this->getVersionQuery($obj->filepaths[$key]));
+
+            $obj->validHrefs[$key] = $url . $this->getVersionQuery(
+                $obj->filepaths[$key]);
+        }
+
+        $this->cache();
+
+        return $obj->validHrefs;
+    }
+
+    /**
+     * @desc Parses the header object with a given callback. The parsed header
+     * will return an object with the invalidHeads that were parsed, valid hrefs
+     * along with the filepaths.
+     *
+     * @param object $header The header object
+     * @param function $callback The callback function
+     *
+     * @return stdClass with invalidHeads, validHrefs and filepaths keys.
+     *
+     * @throws  If any given supported path is not valid in the header
+     */
+    protected function parseHeader($header, $callback = null)
+    {
+        $invalidHeads   = array();
+        $validHrefs     = array();
+        $filepaths      = array();
+
+        foreach ($header as $head) {
+            /* unsupported head, preserve it but do not bundle */
+            if( !$this->isValidHead($head) ) {
+                $invalidHeads[] = $head;
+            } else {
+                $href           = $this->unversionizeQuery($this->getAttr($head));
+                $validHrefs[]   = $href;
+
+                if( $result = $this->getRemappedPath($href) ) {
+                    if( is_string($result) ) {
+                        $href = $result;
+                    } else {
+                        $invalidHeads[] = $head;
+                        continue;
+                    }
+                }
+
+                /*
+                 * the path can be an url relative to a domain, which consists
+                 * of the "base url", it it is a base url, let's try to
+                 * prepend the document root to the href and test the file
+                 * existance
+                 */
+                if( !file_exists($href) ) {
+                    $href = rtrim($_SERVER['DOCUMENT_ROOT'], '/')
+                              . '/' . ltrim($href, '/');
+                }
+
+                /*
+                 * the href provided cannot be mapped to a real path,
+                 * and therefore can't be used in both bundle or minify.
+                 */
+                if( !file_exists($href) ) {
+                    throw new Exception("File {$href} does not exist");
+                }
+
+                $href        = realpath($href);
+                $filepaths[] = $href;
+
+                /*
+                 * when there is no cache (thefore a non null callback),
+                 * call the callback and add the href to the cache
+                 */
+                if( null !== $callback ) {
+                    $callback($href);
+                    $this->addToCache($href, end($validHrefs));
+                }
+            }
+        }
+
+        /* return stdClass object with significant data */
+        $obj                = new \stdClass();
+        $obj->invalidHeads  = $invalidHeads;
+        $obj->validHrefs    = $validHrefs;
+        $obj->filepaths     = $filepaths;
+
+        return $obj;
+    }
+
+    /**
+     * @desc Checks if the given uri is valid and if it is, check if it was
+     * remapped to a path.
+     *
+     * @return mixed the path if it was remapped, -1 if it was not and false
+     * if the given uri was not even valid
+     */
+    protected function getRemappedPath($uri)
+    {
+        if( \Zend_Uri::check($uri) ) {
+            $remappedUris = $this->getRemappedUris();
+            return array_key_exists($uri, $remappedUris)
+                ? $remappedUris[$uri]
+                : -1;
+        }
+
+        return false;
+    }
+
+    /**
      * @desc Returns the version request for a given filepath. The
      * file must exists else this function will behave unexpectedly.
      *
-     * Ex: /path/to/foo.css will return ?v={$timestamp}
+     * Ex: /path/to/foo.ext will return ?v={$timestamp}
      * where $timestamp is the file modification time.
      *
      * @return string the version request only, not appended to the filepath.
@@ -672,7 +942,7 @@ abstract class AbstractOptimizer implements IOptimizer
     /**
      * @desc Unversionize a string.
      *
-     * Ex: foo.css?v=1234567 will return foo.css
+     * Ex: foo.ext?v=1234567 will return foo.ext
      *
      * @return string The unversionized string
      */
@@ -685,7 +955,7 @@ abstract class AbstractOptimizer implements IOptimizer
      * @desc Prepends .min to an extension file. The filepath must exists
      * on disk else this function will behave unexpectedly
      *
-     * Ex: foo.css will return foo.min.css
+     * Ex: foo.ext will return foo.min.ext
      *
      * @param string $filepath The filepath
      * @return string The filepath with the prepended .min to its extension
@@ -699,17 +969,38 @@ abstract class AbstractOptimizer implements IOptimizer
     }
 
     /**
-     * @desc Returns the master file url, used only when bundling.
+     * @desc Returns the head attribute needed for getting the url.
+     * @param stdClass $head The head stdClass
      *
-     * @return string The master url
+     * @return string The attribute
      */
-    abstract protected function getMasterUrl();
+    abstract protected function getAttr($head);
 
     /**
-     * @desc Filters the head by returning an array of
-     * valid and invalid urls: array($arrayValidUrls, $arrayInvalidUrls).
+     * @desc Returns if the given head is a valid one.
      *
-     * @return array The valid and invalid urls
+     * @param stdClass $head The head
+     *
+     * @return bool True if it is a valid head
      */
-    abstract protected function filterHead();
+    abstract protected function isValidHead($head);
+
+    /**
+     * @desc Appends data to the header
+     * @param string $data The data to append
+     */
+    abstract protected function appendToHeader($str);
+
+    /**
+     * @desc Appends data to the header
+     * @param string $data The data to append
+     */
+    abstract protected function getInlineContent();
+
+    /**
+     * @desc Returns the header object
+     * @return \Zend_View_Helper_Placeholder_Container_Standalone An instance of
+     * the standalone header
+     */
+    abstract public function getHeader();
 }
