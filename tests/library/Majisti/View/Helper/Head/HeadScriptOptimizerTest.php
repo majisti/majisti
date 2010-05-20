@@ -10,7 +10,7 @@ require_once 'TestHelper.php';
  *
  * @author Majisti
  */
-class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
+class HeadScriptOptimizerTest extends \Majisti\Test\TestCase
 {
     static protected $_class = __CLASS__;
 
@@ -53,11 +53,12 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
             'path' => $this->files . '/styles',
         );
 
-        $this->optimizer = new HeadLinkOptimizer($this->view, $options);
+        $this->optimizer = new HeadScriptOptimizer($this->view->headScript(),
+            $options);
         $this->optimizer->clearCache();
 
         /* clearing headlink data */
-        $this->view->headLink()->exchangeArray(array());
+        $this->view->headScript()->exchangeArray(array());
 
         \Zend_Controller_Front::getInstance()->setRequest(
             new \Zend_Controller_Request_Http());
@@ -82,10 +83,10 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
         }
 
         foreach($styles as $style) {
-            @unlink($this->files . "/styles/{$style}");
+            @unlink($this->files . "/scripts/{$style}");
         }
 
-        $this->view->headLink()->exchangeArray(array());
+        $this->view->headScript()->exchangeArray(array());
     }
 
     /**
@@ -101,7 +102,7 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
         $url = $this->url;
         if( !empty ( $sheets) ) {
             foreach($sheets as $sheet) {
-                $headlink->appendStylesheet("{$url}/styles/{$sheet}.css");
+                $headlink->appendFile("{$url}/styles/{$sheet}.css");
             }
         }
 
@@ -114,7 +115,7 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
     public function testBundle()
     {
         /* @var $headlink \Majisti_View_Helper_HeadLink */
-        $headlink   = $this->view->headLink();
+        $headlink   = $this->view->headScript();
         $optimizer  = $this->optimizer;
         $url        = $this->url;
 
@@ -141,7 +142,7 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
      */
     public function testAddFileRemapOverideHeadLinkDuplicates()
     {
-       $headlink    = $this->view->headLink();
+       $headlink    = $this->view->headScript();
        $optimizer   = $this->optimizer;
        $url         = $this->url;
 
@@ -150,8 +151,8 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
        $request = \Zend_Controller_Front::getInstance()->getRequest();
        $uri     = $request->getScheme() . ':/' . $url;
 
-       $headlink->appendStylesheet($uri . '/styles/theme1.css');
-       $headlink->appendStylesheet($url . '/styles/theme2.css');
+       $headlink->appendFile($uri . '/styles/theme1.css');
+       $headlink->appendFile($url . '/styles/theme2.css');
        
        $optimizer->uriRemap($uri . '/styles/theme1.css',
                $this->files  . '/styles/theme1.css');
@@ -170,7 +171,7 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
      */
     protected function assertBundled($filename)
     {
-        $headlink   = $this->view->headLink();
+        $headlink   = $this->view->headScript();
         $url        = $this->url;
 
         /* file link should contain only the bundled file */
@@ -197,7 +198,7 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
      */
     public function testOptimize()
     {
-        $headlink   = $this->view->headLink();
+        $headlink   = $this->view->headScript();
         $optimizer  = $this->optimizer;
         $url        = $this->url;
 
@@ -209,11 +210,11 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
                 array('core', 'theme1', 'theme2'));
 
         /* appending an invalid link that should be preserved */
-        $headlink->appendAlternate('/feed/', 'application/rss+xml', 'RSS Feed');
-        $headlink->appendAlternate('/mydocument.pdf', "application/pdf", "foo",
-                array('media'=>'print'));
-        $headlink->appendAlternate('/mydocument2.pdf', "application/pdf", "bar",
-                array('media'=>'screen'));
+//        $headlink->appendAlternate('/feed/', 'application/rss+xml', 'RSS Feed');
+//        $headlink->appendAlternate('/mydocument.pdf', "application/pdf", "foo",
+//                array('media'=>'print'));
+//        $headlink->appendAlternate('/mydocument2.pdf', "application/pdf", "bar",
+//                array('media'=>'screen'));
 
         $optimizer->optimize(
                 $this->files. '/all.css',
@@ -245,13 +246,13 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
     protected function assertOptimized($filename)
     {
         /** @var Majisti_View_Helper_HeadLink */
-        $headlink   = $this->view->headLink();
+        $headlink   = $this->view->headScript();
         $url        = $this->url;
 
         /* asserting that invalid link was preserved */
-        $array = (array)$headlink->getContainer();
-        $this->assertEquals(4, count($array));
-        $this->assertEquals('alternate', $array[0]->rel);
+//        $array = (array)$headlink->getContainer();
+//        $this->assertEquals(1, count($array));
+//        $this->assertEquals('alternate', $array[0]->rel);
 
         /* files should contain the correct content */
         $this->assertTrue(file_exists($this->files . "/{$filename}.min.css"));
@@ -346,7 +347,7 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
      public function testThatNothingIsOverridenIfOrigFilesHaveNoChanges()
      {
          /* @var $headlink \Majisti_View_Helper_HeadLink */
-         $headlink   = $this->view->headLink();
+         $headlink   = $this->view->headScript();
          $optimizer  = $this->optimizer;
          $url        = $this->url;
 
@@ -392,7 +393,7 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
      public function testThatEveryFileGivenToTheMinifierOutputsADotMinFile()
      {
          /* @var $headlink \Majisti_View_Helper_HeadLink */
-         $headlink   = $this->view->headLink();
+         $headlink   = $this->view->headScript();
          $optimizer  = $this->optimizer;
          $url        = $this->url;
 
@@ -416,7 +417,7 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
       */
      public function testThatOptimizeFunctionAppendsAVersionToMasterFile()
      {
-         $headlink  = $this->view->headLink();
+         $headlink  = $this->view->headScript();
          /** @var Majisti_View_Helper_HeadLink */
          $optimizer = $this->optimizer;
          $url       = $this->url;
@@ -452,7 +453,7 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
           * asserting that when running more than once, optimize() also appends
           * ?v=... from the cache file.
           */
-         $this->assertTrue((boolean)substr_count($twiceOptimized->href, '?v='));
+         $this->assertTrue((boolean)substr_count($twiceOptimized->attributes['src'], '?v='));
      }
 
      /**
@@ -462,7 +463,7 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
      public function testThatNoActionIsDoneIfBundlingAndOrMinifyingIsDisabled()
      {
          /** @var Majisti_View_Helper_HeadLink */
-         $headlink  = $this->view->headLink();
+         $headlink  = $this->view->headScript();
          $optimizer = $this->optimizer;
          $url       = $this->url;
 
@@ -494,7 +495,7 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
      public function testThatDealingWithEmptyFilesThrowsException()
      {
          /** @var Majisti_View_Helper_HeadLink */
-         $headlink  = $this->view->headLink();
+         $headlink  = $this->view->headScript();
          $optimizer = $this->optimizer;
          $url       = $this->url;
 
@@ -541,7 +542,7 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
      public function testThatAddingAFileAfterOptimizingWillRewriteMasterFile()
      {
          /** @var Majisti_View_Helper_HeadLink */
-         $headlink  = $this->view->headLink();
+         $headlink  = $this->view->headScript();
          $optimizer = $this->optimizer;
          $url       = $this->url;
 
@@ -588,4 +589,4 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
      }
 }
 
-HeadLinkOptimizerTest::runAlone();
+HeadScriptOptimizerTest::runAlone();
