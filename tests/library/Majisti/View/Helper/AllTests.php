@@ -21,7 +21,6 @@ class AllTests extends \Majisti\Test\TestSuite
         $suite = new self('Majisti Framework - View - Helper - All tests');
 
         $suite->addTestSuite(Head\AllTests::suite());
-        $suite->addTestCase(__NAMESPACE__ . '\HeadLinkTest');
 
         return $suite;
     }
