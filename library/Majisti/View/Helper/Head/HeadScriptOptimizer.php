@@ -49,7 +49,7 @@ class HeadScriptOptimizer extends AbstractOptimizer
      */
     protected function appendToHeader($data)
     {
-        $this->getHeader()->appendScript((string)$data);
+        $this->getHeader()->appendFile((string)$data);
     }
 
     /**
