@@ -10,7 +10,7 @@ namespace Majisti\View\Helper\Head;
  *
  * @author Majisti
  */
-class HeadLinkOptimizer extends AbstractOptimizer
+class HeadScriptOptimizer extends AbstractOptimizer
 {
     /**
      * @desc Returns the default options
@@ -23,8 +23,8 @@ class HeadLinkOptimizer extends AbstractOptimizer
             $this->_defaultOptions = array_merge(
                 $defaultOptions,
                 array(
-                    'cacheFile' => '.stylesheets-cache',
-                    'path'      => $defaultOptions['path'] . '/styles'
+                    'cacheFile' => '.scripts-cache',
+                    'path'      => $defaultOptions['path'] . '/scripts'
                 )
             );
         }
@@ -40,7 +40,7 @@ class HeadLinkOptimizer extends AbstractOptimizer
      */
     protected function getAttr($head)
     {
-        return $head->href;
+        return $head->attributes['src'];
     }
 
     /**
@@ -49,7 +49,7 @@ class HeadLinkOptimizer extends AbstractOptimizer
      */
     protected function appendToHeader($data)
     {
-        $this->getHeader()->appendStylesheet((string)$data);
+        $this->getHeader()->appendScript((string)$data);
     }
 
     /**
@@ -59,19 +59,7 @@ class HeadLinkOptimizer extends AbstractOptimizer
      */
     protected function getInlineContent()
     {
-        $headstyle = $this->getView()->headStyle();
-
-        $content = '';
-
-        foreach( $headstyle as $item ) {
-            $content .= $item->content;
-        }
-
-        if( !empty($content) ) {
-            $content = PHP_EOL . $content;
-        }
-
-        return $content;
+        return '';
     }
 
     /**
@@ -80,7 +68,7 @@ class HeadLinkOptimizer extends AbstractOptimizer
      */
     public function getHeader()
     {
-        return $this->getView()->headLink();
+        return $this->getView()->headScript();
     }
 
     /**
@@ -92,8 +80,8 @@ class HeadLinkOptimizer extends AbstractOptimizer
      */
     protected function isValidHead($head)
     {
-        return 'stylesheet' === $head->rel  && !$head->conditionalStylesheet &&
-               'text/css'   === $head->type && isset($head->media) &&
-               'screen'     === $head->media;
+//        \Zend_Debug::dump($head, '<strong></strong>');
+        return 'text/javascript' === $head->type 
+            && !isset($head->attributes['conditional']);
     }
 }

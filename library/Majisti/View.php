@@ -61,10 +61,40 @@ class View extends \Zend_View
         }
         return null;
     }
-    
+
+    /**
+     * @desc Optimizes the headlink.
+     *
+     * @param string $path The master file path
+     * @param string $url The master file url
+     * @param array $options The options for the optimizer
+     *
+     * @see View\Helper\Head\HeadLinkOptimizer
+     */
+    public function optimizeHeadLink($path, $url, array $options = array())
+    {
+        $optimizer = new View\Helper\Head\HeadLinkOptimizer($this, $options);
+        $optimizer->optimize($path, $url);
+    }
+
+    /**
+     * @desc Optimizes the headscript.
+     *
+     * @param string $path The master file path
+     * @param string $url The master file url
+     * @param array $options The options for the optimizer
+     *
+     * @see View\Helper\Head\HeadScriptOptimizer
+     */
+    public function optimizeHeadScript($path, $url, array $options = array())
+    {
+        $optimizer = new View\Helper\Head\HeadScriptOptimizer($this, $options);
+        $optimizer->optimize($path, $url);
+    }
+
     /**
      * @desc Fallbacks to the Dispatcher's controller directories whenever
-     * a script is not found in the default controller directory. Provided that
+     * a script is not found in the default controller directory, provided that
      * the front controller's dispatcher is an instance of 
      * Majisti\Dispatcher\IDispatcher
      * 

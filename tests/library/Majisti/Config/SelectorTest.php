@@ -69,6 +69,7 @@ class SelectorTest extends \Majisti\Test\TestCase
     {
         $selector = $this->selector;
 
+        /* test find with or without default argument */
         $this->assertEquals('value1',   $selector->find('foo.bar.baz'));
         $this->assertEquals('foo',      $selector->find('foo.bar.void', 'foo'));
         $this->assertEquals('value3',   $selector->find('key1'));
@@ -88,17 +89,33 @@ class SelectorTest extends \Majisti\Test\TestCase
     /**
      * @expectedException \Majisti\Config\Exception
      */
-    public function testNullReturnValueWillThrowException()
+    public function testNotFoundValueWillThrowExceptionIfDefaultArgumentProvided()
     {
-        $this->selector->find('void', null);
+        $this->selector->find('void');
     }
 
     /**
-     * @expectedException \Majisti\Config\Exception
+     * @desc Assert null return value does not throw exception and
+     * returns indeed null.
      */
-    public function testNULLReturnValue()
+    public function testNullReturnValue()
     {
-        $this->selector->find('void', NULL);
+        $this->assertNull($this->selector->find('void', null));
+        $this->assertNull($this->selector->find('void', NULL));
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    public function testParentElementWillReturnObjectOrArray()
+    {
+        $selector = $this->selector;
+
+        $this->assertType('\Zend_Config', $selector->find('foo'));
+        $this->assertType('array', $selector->find('foo', null, true));
+
+        /* should throw exception */
+        $selector->find('void', Selector::VOID, true);
     }
 }
 
