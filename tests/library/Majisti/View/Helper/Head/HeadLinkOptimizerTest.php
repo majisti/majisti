@@ -39,6 +39,7 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
      */
     public function setUp()
     {
+        /* files path */
         $this->files = realpath(dirname(__FILE__) . '/../_files');
 
         $this->view = new \Zend_View();
@@ -47,18 +48,22 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
             'Majisti_View_Helper'
         );
 
+        /* optimizer options setting path to the styles */
         $options = array(
             'path' => $this->files . '/styles',
         );
+
         $this->optimizer = new HeadLinkOptimizer($this->view->headLink(),
             $options);
         $this->optimizer->clearCache();
 
+        /* clearing headlink data */
         $this->view->headLink()->exchangeArray(array());
 
         \Zend_Controller_Front::getInstance()->setRequest(
             new \Zend_Controller_Request_Http());
 
+        /* setting optimizer jarfile and temporary directory */
         \Majisti\Util\Minifying\Yui::$jarFile = MAJISTI_ROOT .
              '/../externals/yuicompressor-2.4.2.jar';
         \Majisti\Util\Minifying\Yui::$tempDir = '/tmp';
@@ -70,21 +75,23 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
      */
     public function tearDown()
     {
-        $files      = array('themes.css', 'all.css', 'all.min.css');
-        $minified   = array('theme1.min.css', 'theme2.min.css', 'core.min.css');
+        $files  = array('themes.css', 'all.css', 'all.min.css');
+        $styles = array('theme1.min.css', 'theme2.min.css', 'core.min.css');
 
         foreach($files as $file) {
             @unlink($this->files . "/{$file}");
         }
 
-        foreach($minified as $file) {
-            @unlink($this->files . "/styles/{$file}");
+        foreach($styles as $style) {
+            @unlink($this->files . "/styles/{$style}");
         }
 
         $this->view->headLink()->exchangeArray(array());
     }
 
     /**
+     * @desc Convenience function that appends stylesheets to the given
+     * headlink object.
      *
      * @param \Majisti_View_Helper_Headlink $headlink
      * @param array $sheets an array of stylesheets name located in _files/styles
@@ -115,7 +122,7 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
         $optimizer->setBundlingEnabled();
 
         /* append and bundle stylesheets */
-        $headlink = $this->appendHeadlinkStylesheets($headlink,
+        $headlink   = $this->appendHeadlinkStylesheets($headlink,
                 array('theme1', 'theme2'));
 
         $optimizer->bundle(
@@ -170,15 +177,17 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
         /* file link should contain only the bundled file */
         $this->assertEquals(
                 '<link href="' . $url .
-                "/{$filename}.css?v=". filemtime($this->files . "/{$filename}.css") .
+                "/{$filename}.css?v=" . filemtime($this->files .
+                "/{$filename}.css")   .
                 '" media="screen" rel="stylesheet" type="text/css" />',
                 $headlink->__toString()
         );
 
-        /* files should contain the correct content */
+        /* files should  exist and contain the correct content */
         $this->assertTrue(file_exists($this->files . "/{$filename}.css"));
         $this->assertEquals(
-                file_get_contents($this->files . "/{$filename}.bundled.expected.css"),
+                file_get_contents($this->files .
+                "/{$filename}.bundled.expected.css"),
                 file_get_contents($this->files . "/{$filename}.css")
         );
     }
@@ -189,17 +198,23 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
      */
     public function testOptimize()
     {
-        /* @var $headlink \Majisti_View_Helper_HeadLink */
         $headlink   = $this->view->headLink();
         $optimizer  = $this->optimizer;
         $url        = $this->url;
 
-        /* setting minify on */
-        $optimizer->setBundlingEnabled();
-        $optimizer->setMinifyingEnabled();
+        /* setting optimization on */
+        $optimizer->setOptimizationEnabled();
 
+        /* appending stylesheets to the headlink */
         $this->appendHeadlinkStylesheets($headlink,
                 array('core', 'theme1', 'theme2'));
+
+        /* appending an invalid link that should be preserved */
+        $headlink->appendAlternate('/feed/', 'application/rss+xml', 'RSS Feed');
+        $headlink->appendAlternate('/mydocument.pdf', "application/pdf", "foo",
+                array('media'=>'print'));
+        $headlink->appendAlternate('/mydocument2.pdf', "application/pdf", "bar",
+                array('media'=>'screen'));
 
         $optimizer->optimize(
                 $this->files. '/all.css',
@@ -213,6 +228,11 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
                 "{$this->files}/styles/theme2.css",
                 "{$this->files}/all.css"
         );
+
+        /*
+         * cached file paths should contain all files given to the optimize
+         * function
+         */
         $this->assertEquals($cachedFilesPaths, $optimizer->getCachedFilePaths());
         $this->assertTrue($optimizer->isBundlingEnabled());
         $this->assertTrue($optimizer->isMinifyingEnabled());
@@ -220,25 +240,32 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
     }
 
     /**
-     * @desc Asserts that core, theme1 and theme2 CSS have been minified and
-     * that the cachedFilePaths array has been set with the right files.
+     * @desc Asserts that the dot min file exists and that the content output
+     * is the same as the expected one.
      */
     protected function assertOptimized($filename)
     {
+        /** @var Majisti_View_Helper_HeadLink */
         $headlink   = $this->view->headlink();
         $url        = $this->url;
+
+        /* asserting that invalid link was preserved */
+        $array = (array)$headlink->getContainer();
+        $this->assertEquals(4, count($array));
+        $this->assertEquals('alternate', $array[0]->rel);
 
         /* files should contain the correct content */
         $this->assertTrue(file_exists($this->files . "/{$filename}.min.css"));
         $this->assertEquals(
-                file_get_contents($this->files . "/{$filename}.minified.expected.css"),
+                file_get_contents($this->files .
+                    "/{$filename}.optimized.expected.css"),
                 file_get_contents($this->files . "/{$filename}.min.css")
         );
      }
 
      /**
-      * Tests that setting a new cache file name will change the cache file
-      * path.
+      * @desc Tests that setting a new cache file name will change the cache
+      * file path.
       */
      public function testSettingNewCacheFileName()
      {
@@ -257,9 +284,8 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
       */
      public function testUriRemappingGettersAndSetters()
      {
-         $optimizer  = $this->optimizer;
-
-         $uris        = array('uri1' => 'pathA',
+         $optimizer = $this->optimizer;
+         $uris      = array('uri1' => 'pathA',
                               'uri2' => 'pathB',
                               'uri3' => 'pathC',
                               'uri4' => 'pathD'
@@ -282,7 +308,8 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
      }
 
      /**
-      * @desc Tests that the enabling/disabling behaves as expected
+      * @desc Tests that the enabling/disabling the bundling/minifying behaves
+      * as expected
       */
      public function testEnablingAndDisabling()
      {
@@ -299,8 +326,6 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
          $this->assertFalse($optimizer->isBundlingEnabled());
          $this->assertFalse($optimizer->isMinifyingEnabled());
 
-         $optimizer->setBundlingEnabled(false);
-         $optimizer->setMinifyingEnabled(false);
          $optimizer->setOptimizationEnabled();
 
          $this->assertTrue($optimizer->isBundlingEnabled());
@@ -338,7 +363,7 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
                     $url. '/all.css'
          );
          $content1      = file_get_contents($this->files . '/all.min.css');
-         $filemtime1    = filemtime($this->files. '/all.min.css');
+         $filemtime1    = filemtime($this->files . '/all.min.css');
          $cachemtime1   = filemtime($this->files . '/styles/.stylesheets-cache');
 
          /* assure one second has passed */
@@ -353,7 +378,7 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
                     $url. '/all.css'
          );
          $content2      = file_get_contents($this->files . '/all.min.css');
-         $filemtime2    = filemtime($this->files. '/all.min.css');
+         $filemtime2    = filemtime($this->files . '/all.min.css');
          $cachemtime2   = filemtime($this->files . '/styles/.stylesheets-cache');
 
          $this->assertSame($content1, $content2);
@@ -405,14 +430,14 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
                  array('core', 'theme1', 'theme2'));
 
          $urlOptimize = $optimizer->optimize(
-                    $this->files. '/all.css',
-                    $url. '/all.css'
+                    $this->files . '/all.css',
+                    $url . '/all.css'
          );
 
          /* running optimize() a second time and asserting it returns false */
          $this->assertEquals($urlOptimize, $optimizer->optimize(
-                 $this->files. '/all.css',
-                 $url. '/all.css'
+                 $this->files . '/all.css',
+                 $url . '/all.css'
          ));
 
          /*
@@ -448,11 +473,11 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
           */
          $urlOptimize = $optimizer->optimize(
                     $this->files. '/all.css',
-                    $url. '/all.css'
+                    $url . '/all.css'
          );
          $urlBundle   = $optimizer->bundle(
                     $this->files. '/all.css',
-                    $url. '/all.css'
+                    $url . '/all.css'
          );
          $urlMinify   = $optimizer->minify();
 
@@ -540,12 +565,13 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
 
          /* appending a new css file after having optimized */
          $headlink->exchangeArray(array());
-         $this->appendHeadlinkStylesheets($headlink, array('core', 'theme1', 'theme2'));
+         $this->appendHeadlinkStylesheets($headlink, array('core', 'theme1',
+                                                           'theme2'));
 
          /* optimizing a second time after the theme2 css file was added */
          $urlSecondOptimize = $optimizer->optimize(
-                 $this->files. '/all.css',
-                 $url. '/all.css');
+                 $this->files . '/all.css',
+                 $url . '/all.css');
          $content2 = file_get_contents($this->files . '/all.min.css');
 
          /*
@@ -554,9 +580,12 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
           */
          $this->assertNotEquals(false, $urlSecondOptimize);
          $this->assertNotSame($content1, $content2);
-         $this->assertNotEquals(false,
+         $this->assertNotEquals(
+                 false,
                  array_search($this->files . '/styles/theme2.css',
-                 $optimizer->getCachedFilePaths()));
+                 $optimizer->getCachedFilePaths()
+                 )
+         );
      }
 }
 
