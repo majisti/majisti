@@ -194,7 +194,7 @@ abstract class AbstractOptimizer implements IOptimizer
 
         $key = 0;
         foreach( $cache as $path => $fileinfo ) {
-            if( $valid[$key] !== $fileinfo['url'] ||
+            if( $valid[$key++] !== $fileinfo['url'] ||
                     filemtime($path) !== (int)$fileinfo['timestamp']) {
                 $this->clearCache();
                 return false;
@@ -356,10 +356,6 @@ abstract class AbstractOptimizer implements IOptimizer
             $url = reset($urls);
 
             $this->setUriRemaps($uris);
-
-//            if( is_file($path) ) {
-//                unlink($path);
-//            }
         }
 
         return $url;

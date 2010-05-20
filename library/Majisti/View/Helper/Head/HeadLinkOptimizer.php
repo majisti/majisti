@@ -67,7 +67,9 @@ class HeadLinkOptimizer extends AbstractOptimizer
         $header->exchangeArray($links);
         $header->appendStylesheet($url);
 
-        $this->cache();
+        if( !$this->isCached() ) {
+            $this->cache();
+        }
 
         return $url;
     }
@@ -185,7 +187,9 @@ class HeadLinkOptimizer extends AbstractOptimizer
             $obj->urls[$key] = $url . $this->getVersionRequest($obj->filepaths[$key]);
         }
 
-        $this->cache();
+        if( !$this->isCached() ) {
+            $this->cache();
+        }
 
         return $obj->urls;
     }

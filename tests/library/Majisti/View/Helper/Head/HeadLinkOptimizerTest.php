@@ -356,8 +356,6 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
          $filemtime2    = filemtime($this->files. '/all.min.css');
          $cachemtime2   = filemtime($this->files . '/styles/.cached-stylesheets');
 
-         $this->markTestIncomplete('cachemtime or filemtime should not differ here,
-             because that means that the cache gets rewritten');
          $this->assertSame($content1, $content2);
          $this->assertEquals($filemtime1, $filemtime2);
          $this->assertEquals($cachemtime1, $cachemtime2);
