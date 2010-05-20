@@ -6,6 +6,8 @@
     
     <title>Headlink Optimizer</title>
     
-    <para></para>
+    <para>The headlink optimizer is an optimizing strategy that can be used with the
+            <classname>Majisti_View_Helper_Headlink</classname> to bundle and/or minify CSS
+        stylesheets appended to the given headlink object.</para>
     
 </section>
