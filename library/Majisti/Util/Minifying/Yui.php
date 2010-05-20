@@ -61,7 +61,7 @@ class Yui extends AbstractMinifier
      */
     public function minifyJs($js, $options = array())
     {
-        return self::_minify('js', $js, $options);
+        return $this->minify('js', $js, $options);
     }
 
     /**
@@ -77,10 +77,10 @@ class Yui extends AbstractMinifier
      */
     public function minifyCss($css, $options = array())
     {
-        return self::_minify('css', $css, $options);
+        return $this->minify('css', $css, $options);
     }
 
-    private static function _minify($type, $content, $options)
+    public function minify($type, $content, $options = array())
     {
         self::_prepare();
         if (! ($tmpFile = tempnam(self::$tempDir, 'yuic_'))) {
