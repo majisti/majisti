@@ -48,7 +48,7 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
         );
 
         $options = array(
-            'stylesheetsPath' => $this->files . '/styles',
+            'path' => $this->files . '/styles',
         );
         $this->optimizer = new HeadLinkOptimizer($this->view->headLink(),
             $options);
@@ -244,8 +244,8 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
      {
          $optimizer = $this->optimizer;
          $optimizer->setOptions(array(
-             'cacheFile'        => '.foo-cache',
-             'stylesheetsPath'  => $this->files . '/styles'
+             'cacheFile' => '.foo-cache',
+             'path'      => $this->files . '/styles'
          ));
 
          $this->assertEquals($this->files . '/styles/.foo-cache',
@@ -339,7 +339,7 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
          );
          $content1      = file_get_contents($this->files . '/all.min.css');
          $filemtime1    = filemtime($this->files. '/all.min.css');
-         $cachemtime1   = filemtime($this->files . '/styles/.cached-stylesheets');
+         $cachemtime1   = filemtime($this->files . '/styles/.stylesheets-cache');
 
          /* assure one second has passed */
          sleep(1);
@@ -354,7 +354,7 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
          );
          $content2      = file_get_contents($this->files . '/all.min.css');
          $filemtime2    = filemtime($this->files. '/all.min.css');
-         $cachemtime2   = filemtime($this->files . '/styles/.cached-stylesheets');
+         $cachemtime2   = filemtime($this->files . '/styles/.stylesheets-cache');
 
          $this->assertSame($content1, $content2);
          $this->assertEquals($filemtime1, $filemtime2);

@@ -19,6 +19,22 @@ class HeadLinkOptimizer extends AbstractOptimizer
         return $this->_masterUrl;
     }
 
+    public function getDefaultOptions()
+    {
+        if( null === $this->_defaultOptions ) {
+            $defaultOptions = parent::getDefaultOptions();
+            $this->_defaultOptions = array_merge(
+                $defaultOptions,
+                array(
+                    'cacheFile' => '.stylesheets-cache',
+                    'path'      => $defaultOptions['path'] . '/styles'
+                )
+            );
+        }
+
+        return $this->_defaultOptions;
+    }
+
     /**
      * @desc Bundles the currently appended stylesheets into a new stylesheet
      * provided with the path. Currently only works on screen media types.
@@ -32,7 +48,7 @@ class HeadLinkOptimizer extends AbstractOptimizer
      */
     public function bundle($path, $url)
     {
-        $this->_masterUrl = $this->unversionizeRequest($url);
+        $this->_masterUrl = $this->unversionizeQuery($url);
 
         if( !$this->isBundlingEnabled() ) {
             return false;
@@ -61,7 +77,7 @@ class HeadLinkOptimizer extends AbstractOptimizer
         }
 
         /* append version */
-        $url .= $this->getVersionRequest($path);
+        $url .= $this->getVersionQuery($path);
 
         /* remove merged stylesheets from HeadLink and push the merged one */
         $header->exchangeArray($links);
@@ -82,7 +98,7 @@ class HeadLinkOptimizer extends AbstractOptimizer
 
         foreach($header as $head) {
             if( $this->isValidStylesheet($head) ) {
-                $validUrls[] = $this->unversionizeRequest($head->href);
+                $validUrls[] = $this->unversionizeQuery($head->href);
             } else {
                 $invalidUrls[] = $head->href;
             }
@@ -104,19 +120,16 @@ class HeadLinkOptimizer extends AbstractOptimizer
                     . " given");
         }
 
-        $links = array();
-        $urls  = array();
+        $links     = array();
+        $urls      = array();
         $filepaths = array();
-
-//        $heads = $this->filterHead();
-//        $heads->links
 
         foreach ($header as $head) {
             if( !('stylesheet' === $head->rel && 'screen' === $head->media) ) {
                 $links[] = $head;
             } else {
                 /* unversionize href */
-                $filepath = $this->unversionizeRequest($head->href);
+                $filepath = $this->unversionizeQuery($head->href);
                 $urls[]   = $filepath;
                 if( \Zend_Uri::check($filepath) ) {
                     $remappedUris = $this->getRemappedUris();
@@ -183,8 +196,8 @@ class HeadLinkOptimizer extends AbstractOptimizer
         foreach( $obj->urls as $key => $url ) {
             $header->appendStylesheet(
                    $this->prependMinToExtension($url) .
-                   $this->getVersionRequest($obj->filepaths[$key]));
-            $obj->urls[$key] = $url . $this->getVersionRequest($obj->filepaths[$key]);
+                   $this->getVersionQuery($obj->filepaths[$key]));
+            $obj->urls[$key] = $url . $this->getVersionQuery($obj->filepaths[$key]);
         }
 
         if( !$this->isCached() ) {
