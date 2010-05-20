@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en" xml:id="majisti.view.helpers.headlink" version="5.0">
+    
+    <title>Headlink view helper</title>
+    
+    <para> The Majisti headlink view helper extends the
+            <classname>Zend_View_Helper_Headlink</classname> class and adds behaviours that allow
+        you to greatly increase the loading time of your head links while in production mode by
+        bundling the links, minifying them or both. <emphasis>Bundling</emphasis> packs multiple
+        given links into a master file to allow only one fetching instead of many. For example, you
+        could bundle three or four CSS stylesheets into a master.css file.
+            <emphasis>Minifying</emphasis> your file(s) means compressing every file, removing all
+        the white spaces and packing everything into a tight chunk of text. This helps reducing the
+        size of files and thus, the loading time. In production mode, you will most likely want your
+        site to be as performant as possible, and so you may use the <code>optimize</code> function,
+        wich calls the <code>bundle</code> function, immediatly follow by the <code>minify</code>
+        function. This results in having a single minified master file, often bearing the name
+            <code>yourMasterName.min.extension</code>. By default, the view helper makes use of the
+        cache, to store wich files have been bundled and/or minified and when. This way, the master
+        file is not rewritten over and over. This would be rather counterproductive considering the
+        goal of this helper. The cache will be flushed and the master file rewritten in any of these cases:<itemizedlist>
+            <listitem>
+                <para>You have removed a link from the head.</para>
+            </listitem>
+            <listitem>
+                <para>You have appended a link to the head.</para>
+            </listitem>
+            <listitem>
+                <para>You have modified files that were cached.</para>
+            </listitem>
+        </itemizedlist></para>
+    <para>To sum up the new features added by <classname>Majisti_View_Helper_HeadLink</classname> :<itemizedlist>
+            <listitem>
+                <para><command>Bundle</command> : Merge multiple files into a master file.</para>
+            </listitem>
+            <listitem>
+                <para><command>Minify</command> : Compress one or many files, removing white spaces
+                    and creating files with .min prepended.</para>
+            </listitem>
+            <listitem>
+                <para><command>Optimize</command>: Running both bundle and minify, resulting in a
+                    master.min file representing mulitple files merged and compressed. This option
+                    offers maximum performance.</para>
+            </listitem>
+    </itemizedlist></para>
+    <para>
+        <example>
+            <title>Usage of Majisti_View_Helper_Headlink</title>
+            <para>
+                <emphasis>Optimizing your stylesheets</emphasis>
+            </para>
+            <programlisting>/* bundling all css files together under master.css */
+$headlink = $this->getView()->headLink();
+$optimizer = new \Majisti\View\Helper\Head\HeadLinkOptimizer($headlink);
+$optimizer->setOptimizationEnabled(); //If not in production or staging envirronment.
+
+/* will create an optimized master.min.css file located under your /public/styles folder */
+$headlink->optimize( APPLICATION_PATH . '/../public/styles/master.css', BASE_URL . '/styles/master.css', $optimizer );</programlisting>
+        </example>
+    </para>
+    <para>Note the <code>optimize()</code> call parameters. The first one is the target file path,
+        while the second one is the target file URL. The last parameter is the optimizing strategy
+        chosen, in this case the <classname>HeadLinkOptimizer</classname>. This example would bundle
+        all of the CSS files appended to the head, then minify the master file to output one big,
+        compressed CSS file. Also, note that once the optimizing has been completed succesfully,
+        your headlink object <emphasis>has been modified to append only the
+                <code>master.min.css</code> file</emphasis>. Do not worry though, nothing has been
+        deleted from your server. The resulting master file will also be versionized, meaning that
+        the link to the CSS file will be ending with a version parameter in the form of
+            <code>?v=xxxxxxxxxxx</code>. The version is equivalent to the timestamp at wich the
+        cache was created.</para>
+</section>

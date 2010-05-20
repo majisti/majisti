@@ -7,7 +7,7 @@
     <title>Locale helper</title>
 
     <para>The locale helper will let you retrieve the singleton instance of the
-            <classname>Majisit\I18n\LocaleSession</classname> controller. You
-        can read more on the Locale Session <link
-            xlink:href="majisti.i18n.html"> here</link>.</para>
+            <classname>Majisti\Application\Locales</classname> class used to ease the language
+        switching in your application. You can read more on the <classname>Locales</classname> class
+            <link xlink:href="majisti.i18n.html"> here</link>.</para>
 </section>

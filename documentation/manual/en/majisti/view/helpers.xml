@@ -12,4 +12,6 @@
     
     <xi:include href="helpers/locale.xml" />
     <xi:include href="helpers/model.xml" />
+    <xi:include href="helpers/headlink.xml" />
+    <xi:include href="helpers/head.xml" />
 </section>
