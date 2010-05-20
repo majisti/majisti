@@ -806,7 +806,7 @@ abstract class AbstractOptimizer implements IOptimizer
 
                 file_put_contents(rtrim($filepath, $ext) .
                         "min.{$ext}",
-                    $minifier->minifyCss(file_get_contents($filepath)));
+                    $minifier->minify($ext, file_get_contents($filepath)));
             };
         }
 
