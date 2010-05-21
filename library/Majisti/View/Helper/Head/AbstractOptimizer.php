@@ -8,7 +8,7 @@ use \Majisti\Util\Minifying as Minifying;
  * @desc The abstract optimizer provides bundling and minifying abstraction for
  * concrete optimizers. By default, it uses a cache system for caching the
  * bundled or minified files. Also, it uses the Majisti\Util\Minifying\Yui
- * compressor by default. That means that java needs to be on the server's path.
+ * minifier by default. That means that java needs to be on the server's path.
  *
  * @author Majisti
  */
@@ -509,7 +509,7 @@ abstract class AbstractOptimizer implements IOptimizer
     /**
      * @desc Flushes the object cache into the cache file, located at
      * the cache file's path only if the internal cache had difference
-     * with the real cache. This occurs a disk read but may save a disk write.
+     * with the real cache, occuring a disk read but may save a disk write.
      */
     protected function cache()
     {

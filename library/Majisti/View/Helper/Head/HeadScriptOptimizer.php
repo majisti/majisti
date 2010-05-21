@@ -53,7 +53,7 @@ class HeadScriptOptimizer extends AbstractOptimizer
     }
 
     /**
-     * @desc Returns the inline content using the headStyle header.
+     * @desc Returns the inline content using the headScript inline content.
      *
      * @return string The inline content
      */
@@ -72,15 +72,14 @@ class HeadScriptOptimizer extends AbstractOptimizer
     }
 
     /**
-     * @desc Returns if the given head is a valid stylesheet. Currently
-     * only screen media types supported without any browser conditional.
+     * @desc Returns if the given head is a valid javascript.
+     * Works only on non conditional script files of type text/javascript.
      *
      * @param stdClass $head The head
-     * @return bool True if it is a valid stylesheet
+     * @return bool True if it is a valid javascript file
      */
     protected function isValidHead($head)
     {
-//        \Zend_Debug::dump($head, '<strong></strong>');
         return 'text/javascript' === $head->type 
             && !isset($head->attributes['conditional']);
     }
