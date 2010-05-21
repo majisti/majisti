@@ -64,7 +64,7 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
 
         /* setting optimizer jarfile and temporary directory */
         \Majisti\Util\Minifying\Yui::$jarFile = MAJISTI_ROOT .
-             '/../externals/yuicompressor-2.4.2.jar';
+             '/externals/yuicompressor-2.4.2.jar';
         \Majisti\Util\Minifying\Yui::$tempDir = '/tmp';
     }
 
@@ -153,8 +153,7 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
        $headlink->appendStylesheet($uri . '/styles/theme1.css');
        $headlink->appendStylesheet($url . '/styles/theme2.css');
        
-       $optimizer->uriRemap($uri . '/styles/theme1.css',
-               $this->files  . '/styles/theme1.css');
+       $optimizer->uriRemap($uri . '/styles', $this->files  . '/styles');
 
        $optimizer->bundle($this->files . '/themes.css',
                $url . '/themes.css');
@@ -284,10 +283,14 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
      public function testUriRemappingGettersAndSetters()
      {
          $optimizer = $this->optimizer;
-         $uris      = array('uri1' => 'pathA',
-                              'uri2' => 'pathB',
-                              'uri3' => 'pathC',
-                              'uri4' => 'pathD'
+         $uris      = array(
+            MAJ_STYLES      => MAJISTI_PUBLIC_PATH  . '/styles',
+            MAJX_STYLES     => MAJISTIX_PUBLIC_PATH . '/styles',
+            JQUERY_PLUGINS  => MAJISTIX_PUBLIC_PATH . '/jquery/plugins',
+            'uri1'          => 'pathA',
+            'uri2'          => 'pathB',
+            'uri3'          => 'pathC',
+            'uri4'          => 'pathD'
          );
 
          foreach( $uris as $uri => $path) {
@@ -298,7 +301,7 @@ class HeadLinkOptimizerTest extends \Majisti\Test\TestCase
 
          $optimizer->removeUriRemap('uri2');
 
-         $this->assertEquals(3, count($optimizer->getRemappedUris()));
+         $this->assertEquals(count($uris) - 1, count($optimizer->getRemappedUris()));
          $this->assertArrayNotHasKey('uri2', $optimizer->getRemappedUris());
 
          $optimizer->clearUriRemaps();

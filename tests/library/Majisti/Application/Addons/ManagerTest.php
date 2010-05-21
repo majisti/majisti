@@ -50,7 +50,7 @@ class ManagerTest extends \Majisti\Test\TestCase
                                   'namespace2' => 'path2',
                                   'namespace3' => 'path3'
                             );
-       $this->testMajistiXPath = realpath(MAJISTI_ROOT . '/../' .
+       $this->testMajistiXPath = realpath(MAJISTI_ROOT .
                                     "/tests/library/MajistiX/_addons");
 
        $this->manager->registerAddonsPath($this->basePath, $this->namespace);

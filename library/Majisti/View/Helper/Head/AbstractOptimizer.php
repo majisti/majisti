@@ -110,6 +110,11 @@ abstract class AbstractOptimizer implements IOptimizer
                 'cacheFile'         => '.cache',
                 'cacheEnabled'      => true,
                 'appendInline'      => true,
+                'remappedUris'      => array(
+                    MAJ_STYLES      => MAJISTI_PUBLIC_PATH  . '/styles',
+                    MAJX_STYLES     => MAJISTIX_PUBLIC_PATH . '/styles',
+                    JQUERY_PLUGINS  => MAJISTIX_PUBLIC_PATH . '/jquery/plugins',
+                ),
             );
         }
 
@@ -591,7 +596,7 @@ abstract class AbstractOptimizer implements IOptimizer
             $this->_minifier = new Minifying\Yui();
 
             Minifying\Yui::$jarFile = MAJISTI_ROOT .
-                '/../externals/yuicompressor-2.4.2.jar';
+                '/externals/yuicompressor-2.4.2.jar';
             Minifying\Yui::$tempDir = '/tmp';
         }
 
@@ -624,8 +629,9 @@ abstract class AbstractOptimizer implements IOptimizer
      * in the head, it will generate the .min file within the library. This is
      * why remapping uris works best with {@link optimize()} or {@link bundle()}.
      *
-     * @param string $uri The internal uri, accessible with a path
-     * @param string $path The path to the stylesheet
+     * @param string $uri The internal uri, accessible with a path without the
+     * base path. E.g: http://foo.com
+     * @param string $path The path replaceing the uri. E.g: ~/myLibrary/public
      */
     public function uriRemap($uri, $path)
     {
@@ -815,18 +821,18 @@ abstract class AbstractOptimizer implements IOptimizer
         $header->exchangeArray($obj->invalidHeads);
 
         /* reappend every minified and versionized stylesheets */
-        foreach( $obj->validHrefs as $key => $url ) {
+        foreach( $obj->validUrls as $key => $url ) {
             $this->appendToHeader( /* append */
                    $this->prependMinToExtension($url) .
                    $this->getVersionQuery($obj->filepaths[$key]));
 
-            $obj->validHrefs[$key] = $url . $this->getVersionQuery(
+            $obj->validUrls[$key] = $url . $this->getVersionQuery(
                 $obj->filepaths[$key]);
         }
 
         $this->cache();
 
-        return $obj->validHrefs;
+        return $obj->validUrls;
     }
 
     /**
@@ -837,14 +843,14 @@ abstract class AbstractOptimizer implements IOptimizer
      * @param object $header The header object
      * @param function $callback The callback function
      *
-     * @return stdClass with invalidHeads, validHrefs and filepaths keys.
+     * @return stdClass with invalidHeads, validUrls and filepaths keys.
      *
      * @throws  If any given supported path is not valid in the header
      */
     protected function parseHeader($header, $callback = null)
     {
         $invalidHeads   = array();
-        $validHrefs     = array();
+        $validUrl       = array();
         $filepaths      = array();
 
         foreach ($header as $head) {
@@ -852,12 +858,12 @@ abstract class AbstractOptimizer implements IOptimizer
             if( !$this->isValidHead($head) ) {
                 $invalidHeads[] = $head;
             } else {
-                $href           = $this->unversionizeQuery($this->getAttr($head));
-                $validHrefs[]   = $href;
+                $url            = $this->unversionizeQuery($this->getAttr($head));
+                $validUrl[]   = $url;
 
-                if( $result = $this->getRemappedPath($href) ) {
+                if( $result = $this->getRemappedPath($url) ) {
                     if( is_string($result) ) {
-                        $href = $result;
+                        $url = $result;
                     } else {
                         $invalidHeads[] = $head;
                         continue;
@@ -870,29 +876,29 @@ abstract class AbstractOptimizer implements IOptimizer
                  * prepend the document root to the href and test the file
                  * existance
                  */
-                if( !file_exists($href) ) {
-                    $href = rtrim($_SERVER['DOCUMENT_ROOT'], '/')
-                              . '/' . ltrim($href, '/');
+                if( !file_exists($url) ) {
+                    $url = rtrim($_SERVER['DOCUMENT_ROOT'], '/')
+                              . '/' . ltrim($url, '/');
                 }
 
                 /*
                  * the href provided cannot be mapped to a real path,
                  * and therefore can't be used in both bundle or minify.
                  */
-                if( !file_exists($href) ) {
-                    throw new Exception("File {$href} does not exist");
+                if( !file_exists($url) ) {
+                    throw new Exception("File {$url} does not exist");
                 }
 
-                $href        = realpath($href);
-                $filepaths[] = $href;
+                $url         = realpath($url);
+                $filepaths[] = $url;
 
                 /*
                  * when there is no cache (thefore a non null callback),
                  * call the callback and add the href to the cache
                  */
                 if( null !== $callback ) {
-                    $callback($href);
-                    $this->addToCache($href, end($validHrefs));
+                    $callback($url);
+                    $this->addToCache($url, end($validUrl));
                 }
             }
         }
@@ -900,7 +906,7 @@ abstract class AbstractOptimizer implements IOptimizer
         /* return stdClass object with significant data */
         $obj                = new \stdClass();
         $obj->invalidHeads  = $invalidHeads;
-        $obj->validHrefs    = $validHrefs;
+        $obj->validUrls     = $validUrl;
         $obj->filepaths     = $filepaths;
 
         return $obj;
@@ -916,9 +922,13 @@ abstract class AbstractOptimizer implements IOptimizer
     protected function getRemappedPath($uri)
     {
         if( \Zend_Uri::check($uri) ) {
+            $parts = explode(DIRECTORY_SEPARATOR, $uri);
+            $file  = array_pop($parts);
+            $uri   = implode(DIRECTORY_SEPARATOR, $parts);
+
             $remappedUris = $this->getRemappedUris();
             return array_key_exists($uri, $remappedUris)
-                ? $remappedUris[$uri]
+                ? $remappedUris[$uri] . DIRECTORY_SEPARATOR . $file
                 : -1;
         }
 
