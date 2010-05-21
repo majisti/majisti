@@ -70,9 +70,10 @@ class ConstantsTest extends \Majisti\Test\TestCase
              */
             'BASE_URL'                  => $req->getBaseUrl(),
             'MAJISTI_ROOT'              => realpath(dirname(dirname(dirname
-                                           (__FILE__))) . '/../../library'),
-            'MAJISTI_PATH'              => MAJISTI_ROOT . '/Majisti',
-            'MAJISTIX_PATH'             => MAJISTI_ROOT . '/MajistiX',
+                                           (__FILE__))) . '/../..'),
+            'MAJISTI_LIBRARY'           => MAJISTI_ROOT . '/library',
+            'MAJISTI_PATH'              => MAJISTI_LIBRARY . '/Majisti',
+            'MAJISTIX_PATH'             => MAJISTI_LIBRARY . '/MajistiX',
             'MAJISTIX_MODULES'          => MAJISTIX_PATH . '/Modules',
             'MAJISTIX_EXTENSIONS'       => MAJISTIX_PATH . '/Extensions',
             'APPLICATION_URL_PREFIX'    => $req->getScheme() . '://' .
@@ -143,6 +144,7 @@ class ConstantsTest extends \Majisti\Test\TestCase
             'APP_LANG_DEF'  => $expectedConfigConstants[
                                             'APPLICATION_LOCALE_DEFAULT'],
             'MAJ_ROOT'      => $expectedConstants['MAJISTI_ROOT'],
+            'MAJ_LIB'       => $expectedConstants['MAJISTI_LIBRARY'],
             'MAJ_PATH'      => $expectedConstants['MAJISTI_PATH'],
             'MAJ_PUB'       => $expectedConfigConstants['MAJISTI_PUBLIC'],
             'MAJX_PATH'     => $expectedConstants['MAJISTIX_PATH'],

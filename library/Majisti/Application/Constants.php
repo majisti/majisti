@@ -54,10 +54,13 @@ class Constants
         }
 
         /* majisti's library path constants */
-        define('MAJISTI_ROOT', dirname(dirname(dirname(__FILE__))));
-        define('MAJISTI_PATH', MAJISTI_ROOT . '/Majisti');
+        define('MAJISTI_LIBRARY', dirname(dirname(dirname(__FILE__))));
+        define('MAJISTI_ROOT', dirname(MAJISTI_LIBRARY));
+        define('MAJISTI_PATH', MAJISTI_LIBRARY . '/Majisti');
+        define('MAJISTI_PUBLIC_PATH', realpath(MAJISTI_ROOT . '/public/majisti'));
 
-        define('MAJISTIX_PATH', MAJISTI_ROOT . '/MajistiX');
+        define('MAJISTIX_PATH', MAJISTI_LIBRARY . '/MajistiX');
+        define('MAJISTIX_PUBLIC_PATH', MAJISTI_ROOT . '/public/majistix');
         define('MAJISTIX_MODULES',    MAJISTIX_PATH . '/Modules');
         define('MAJISTIX_EXTENSIONS', MAJISTIX_PATH . '/Extensions');
 
@@ -194,6 +197,7 @@ class Constants
             define('APP_LANG_DEF', APPLICATION_LOCALE_DEFAULT);
 
             define('MAJ_ROOT', MAJISTI_ROOT);
+            define('MAJ_LIB',  MAJISTI_LIBRARY);
             define('MAJ_PATH', MAJISTI_PATH);
             define('MAJ_PUB',  MAJISTI_PUBLIC);
 
