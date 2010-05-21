@@ -391,11 +391,9 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
 
          $optimizer->minify();
 
-         $this->assertTrue(file_exists($this->filesPath .
-                 "/{$this->folder}/core.min{$ext}"));
-         $this->assertTrue(file_exists($this->filesPath .
-                 "/{$this->folder}/file1.min{$ext}"));
-         $this->assertTrue(file_exists($this->filesPath .
-                 "/{$this->folder}/file2.min{$ext}"));
+         foreach( $this->outputFiles as $file ) {
+             $this->assertTrue(file_exists($this->filesPath .
+                     "/{$this->folder}/{$file}"));
+         }
      }
 }
