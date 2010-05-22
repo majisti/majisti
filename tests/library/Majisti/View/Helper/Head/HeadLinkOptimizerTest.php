@@ -66,7 +66,8 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
     }
 
     /**
-     * @desc TODO
+     * @desc Converts an array for <filename>.<extension> strings to stdClass
+     * objects.
      */
     protected function getFilesObjects($files = array())
     {
@@ -122,6 +123,10 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
         return $headObj;
     }
 
+    /**
+     * @desc Tests that "invalid" files (other than CSS) will be preserved
+     * in the head container.
+     */
     public function testThatInvalidFilesArePreserved()
     {
         $headObj   = $this->headObject;
@@ -149,189 +154,6 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
         $this->assertEquals(4, count($array));
         $this->assertEquals('alternate', $array[0]->rel);
     }
-
-//
-//     /**
-//      * @desc Tests that the optimize function appends a version to the master
-//      * file generated.
-//      */
-//     public function testThatOptimizeFunctionAppendsAVersionToMasterFile()
-//     {
-//       $this->markTestSkipped();
-//         $headlink  = $this->view->headLink();
-//         /** @var Majisti_View_Helper_HeadLink */
-//         $optimizer = $this->optimizer;
-//         $url       = $this->filesUrl;
-//
-//         /* setting minifying and bundling on */
-//         $optimizer->setBundlingEnabled();
-//         $optimizer->setMinifyingEnabled();
-//
-//         $this->appendHeadlinkStylesheets($headlink,
-//                 array('core', 'theme1', 'theme2'));
-//
-//         $urlOptimize = $optimizer->optimize(
-//                    $this->files . '/all.css',
-//                    $url . '/all.css'
-//         );
-//
-//         /* running optimize() a second time and asserting it returns false */
-//         $this->assertEquals($urlOptimize, $optimizer->optimize(
-//                 $this->files . '/all.css',
-//                 $url . '/all.css'
-//         ));
-//
-//         /*
-//          * grabbing the master file object from the headlink after calling
-//          * optimize() twice
-//          */
-//         $twiceOptimized = $headlink->getIterator()->current();
-//
-//         /* asserting that when running once, optimize() appends ?v=... */
-//         $this->assertTrue((boolean)substr_count($urlOptimize, '?v='));
-//
-//         /*
-//          * asserting that when running more than once, optimize() also appends
-//          * ?v=... from the cache file.
-//          */
-//         $this->assertTrue((boolean)substr_count($twiceOptimized->href, '?v='));
-//     }
-//
-//     /**
-//      * @desc Tests that no action is taken if bundling, minifying or both are
-//      * disabled.
-//      */
-//     public function testThatNoActionIsDoneIfBundlingAndOrMinifyingIsDisabled()
-//     {
-//       $this->markTestSkipped();
-//         /** @var Majisti_View_Helper_HeadLink */
-//         $headlink  = $this->view->headLink();
-//         $optimizer = $this->optimizer;
-//         $url       = $this->filesUrl;
-//
-//         /*
-//          * not supposed to do anything except returning false since nothing
-//          * is enabled
-//          */
-//         $urlOptimize = $optimizer->optimize(
-//                    $this->files. '/all.css',
-//                    $url . '/all.css'
-//         );
-//         $urlBundle   = $optimizer->bundle(
-//                    $this->files. '/all.css',
-//                    $url . '/all.css'
-//         );
-//         $urlMinify   = $optimizer->minify();
-//
-//         $this->assertFalse($urlOptimize);
-//         $this->assertFalse($urlBundle);
-//         $this->assertFalse($urlMinify);
-//     }
-//
-//     /**
-//      * @desc Tests that attempting to optimize, bundle and/or minify empty
-//      * files will throw exceptions.
-//      *
-//      * @expectedException Exception
-//      */
-//     public function testThatDealingWithEmptyFilesThrowsException()
-//     {
-//       $this->markTestSkipped();
-//         /** @var Majisti_View_Helper_HeadLink */
-//         $headlink  = $this->view->headLink();
-//         $optimizer = $this->optimizer;
-//         $url       = $this->filesUrl;
-//
-//         /* setting minifying and bundling on */
-//         $optimizer->setBundlingEnabled();
-//         $optimizer->setMinifyingEnabled();
-//
-//         /* appending only an empty css file to the head....BAD */
-//         $this->appendHeadlinkStylesheets($headlink,
-//                 array('empty'));
-//
-//         /* will throw exception */
-//         $urlOptimize = $optimizer->optimize(
-//                    $this->files. '/all.css',
-//                    $url. '/all.css'
-//         );
-//     }
-//
-//     /**
-//      * @desc Tests that providing an invalid head object will throw an
-//      * exception once in the parseHeader() function.
-//      *
-//      * @expectedException Exception
-//      */
-//     public function testThatProvidingAnInvalidHeadObjectThrowsException()
-//     {
-//       $this->markTestSkipped();
-//         /* headlink is not an instance of \Zend_View_Helper_HeadLink */
-//         $headlink  = new \stdClass();
-//         $optimizer = $this->optimizer;
-//         $url       = $this->filesUrl;
-//
-//         /* setting minifying and bundling on */
-//         $optimizer->setBundlingEnabled();
-//         $optimizer->setMinifyingEnabled();
-//
-//         /* will throw Exception! */
-//         $optimizer->optimize($this->files. '/all.css', $url. '/all.css');
-//     }
-//
-//     /**
-//      * @desc Tests that when calling optimize and adding a new file afterwards
-//      * the master file will be rewritten to include the newly added file.
-//      */
-//     public function testThatAddingAFileAfterOptimizingWillRewriteMasterFile()
-//     {
-//       $this->markTestSkipped();
-//         /** @var Majisti_View_Helper_HeadLink */
-//         $headlink  = $this->view->headLink();
-//         $optimizer = $this->optimizer;
-//         $url       = $this->filesUrl;
-//
-//         /* setting minifying and bundling on */
-//         $optimizer->setBundlingEnabled();
-//         $optimizer->setMinifyingEnabled();
-//
-//         /*
-//          * appending core and theme1 css to the head, will add theme2 after
-//          * optimizing
-//          */
-//         $this->appendHeadlinkStylesheets($headlink,
-//                 array('core', 'theme1'));
-//
-//         $urlOptimize = $optimizer->optimize(
-//                    $this->files. '/all.css',
-//                    $url. '/all.css'
-//         );
-//         $content1 = file_get_contents($this->files . '/all.min.css');
-//
-//         /* appending a new css file after having optimized */
-//         $headlink->exchangeArray(array());
-//         $this->appendHeadlinkStylesheets($headlink, array('core', 'theme1',
-//                                                           'theme2'));
-//
-//         /* optimizing a second time after the theme2 css file was added */
-//         $urlSecondOptimize = $optimizer->optimize(
-//                 $this->files . '/all.css',
-//                 $url . '/all.css');
-//         $content2 = file_get_contents($this->files . '/all.min.css');
-//
-//         /*
-//          * asserting that the two calls to optimize() return different
-//          * versions and not false
-//          */
-//         $this->assertNotEquals(false, $urlSecondOptimize);
-//         $this->assertNotSame($content1, $content2);
-//         $this->assertNotEquals(
-//                 false,
-//                 array_search($this->files . '/styles/theme2.css',
-//                 $optimizer->getCachedFilePaths()
-//                 )
-//         );
-//     }
 }
 
 HeadLinkOptimizerTest::runAlone();
