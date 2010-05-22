@@ -73,7 +73,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
 
     /**
      * @desc Unit test tear down: removing the bundle() and minify() output
-     * files and clearing the headlink object.
+     * files and clearing the head object.
      */
     public function tearDown()
     {
@@ -85,7 +85,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
     }
 
     /**
-     * @desc TODO
+     * @desc Clears headLink and headScript containers.
      */
     protected function clearHead()
     {
@@ -94,7 +94,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
     }
 
     /**
-     * @desc TODO
+     * @desc Appends \stdClass objects to the head.
      */
     protected function appendFilesToHead($files = array())
     {
@@ -105,17 +105,16 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
 
     protected abstract function getHeaderOutput($filename);
     protected abstract function getFilesObjects($files = array());
-    protected abstract function appendInvalidFiles($headObject);
 
     /**
-     * @desc Asserts that stylesheets get bundled in a master file
+     * @desc Asserts that files get bundled in a master file.
      */
     public function testBundle()
     {
-        /* @var $headlink \Majisti_View_Helper_HeadLink */
-        $headObj    = $this->headObject;
         $optimizer  = $this->optimizer;
         $url        = $this->filesUrl;
+        $path       = $this->filesPath;
+        $ext        = $this->extension;
 
         $optimizer->setBundlingEnabled();
 
@@ -123,16 +122,16 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
         $this->appendFilesToHead($this->files);
 
         $optimizer->bundle(
-                $this->filesPath . "/all{$this->extension}",
-                $url . "/all{$this->extension}"
+                $path . "/all{$ext}",
+                $url  . "/all{$ext}"
         );
 
         $this->assertBundled('all');
     }
 
     /**
-     * @desc Asserts that the headlink contains only the master CSS file
-     * and that the master file in question contains all the CSS files bundled.
+     * @desc Asserts that the head contains only the master file
+     * and that the master file in question contains all the files bundled.
      *
      * @param string $filename
      */
@@ -140,19 +139,18 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
     {
         $headObj = $this->headObject;
         $ext     = $this->extension;
+        $path    = $this->filesPath;
 
         /* file link should contain only the bundled file */
         $this->assertEquals($this->getHeaderOutput($filename),
                 $headObj->__toString());
 
         /* files should  exist and contain the correct content */
-        $this->assertTrue(file_exists($this->filesPath .
+        $this->assertTrue(file_exists($path .
                 "/{$filename}{$ext}"));
         $this->assertEquals(
-                file_get_contents($this->filesPath .
-                "/{$filename}.bundled.expected{$ext}"),
-                file_get_contents($this->filesPath .
-                        "/{$filename}{$ext}")
+                file_get_contents($path .  "/{$filename}.bundled.expected{$ext}"),
+                file_get_contents($path .  "/{$filename}{$ext}")
         );
     }
 
@@ -169,6 +167,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
        $optimizer   = $this->optimizer;
        $url         = $this->filesUrl;
        $ext         = $this->extension;
+       $path        = $this->filesPath;
 
        $optimizer->setBundlingEnabled();
 
@@ -179,24 +178,24 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
        $this->appendFilesToHead($files);
 
        $optimizer->uriRemap($uri . "/{$this->folder}/file1{$ext}",
-               $this->filesPath  . "/{$this->folder}/file1{$ext}");
+               $path  . "/{$this->folder}/file1{$ext}");
 
-       $optimizer->bundle($this->filesPath . "/files{$ext}",
+       $optimizer->bundle($path . "/files{$ext}",
                $url . "/files{$ext}");
 
        $this->assertBundled('files');
     }
 
     /**
-     * Tests the optimize function and asserts that the core, theme1 and theme2
-     * css files have been minified and bundled.
+     * Tests the optimize function and asserts that the core, file1 and file2
+     * files have been minified and bundled.
      */
     public function testOptimize()
     {
-        $headObj   = $this->headObject;
         $optimizer = $this->optimizer;
         $url       = $this->filesUrl;
         $ext       = $this->extension;
+        $path      = $this->filesPath;
 
         /* setting optimization on */
         $optimizer->setOptimizationEnabled();
@@ -205,16 +204,16 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
         $this->appendFilesToHead($this->files);
 
         $optimizer->optimize(
-                $this->filesPath. "/all{$ext}",
-                $url. "/all{$ext}"
+                $path .  "/all{$ext}",
+                $url  . "/all{$ext}"
         );
 
         /* optimize() function returns absolute paths from server root */
         $cachedFilesPaths = array(
-                "{$this->filesPath}/{$this->folder}/core{$ext}",
-                "{$this->filesPath}/{$this->folder}/file1{$ext}",
-                "{$this->filesPath}/{$this->folder}/file2{$ext}",
-                "{$this->filesPath}/all{$ext}"
+                "{$path}/{$this->folder}/core{$ext}",
+                "{$path}/{$this->folder}/file1{$ext}",
+                "{$path}/{$this->folder}/file2{$ext}",
+                "{$path}/all{$ext}"
         );
 
         /*
@@ -233,17 +232,16 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
      */
     protected function assertOptimized($filename)
     {
-        /** @var Majisti_View_Helper_HeadLink */
-        $headObj = $this->headObject;
         $url     = $this->filesUrl;
         $ext     = $this->extension;
+        $path    = $this->filesPath;
 
         /* files should contain the correct content */
-        $this->assertTrue(file_exists($this->filesPath . "/{$filename}.min{$ext}"));
+        $this->assertTrue(file_exists($path . "/{$filename}.min{$ext}"));
         $this->assertEquals(
-                file_get_contents($this->filesPath .
+                file_get_contents($path .
                     "/{$filename}.optimized.expected{$ext}"),
-                file_get_contents($this->filesPath . "/{$filename}.min{$ext}")
+                file_get_contents($path . "/{$filename}.min{$ext}")
         );
      }
 
@@ -254,12 +252,13 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
      public function testSettingNewCacheFileName()
      {
          $optimizer = $this->optimizer;
+         $path      = $this->filesPath;
          $optimizer->setOptions(array(
              'cacheFile' => '.foo-cache',
-             'path'      => $this->filesPath . "/{$this->folder}"
+             'path'      => $path . "/{$this->folder}"
          ));
 
-         $this->assertEquals($this->filesPath . "/{$this->folder}/.foo-cache",
+         $this->assertEquals($path . "/{$this->folder}/.foo-cache",
                              $optimizer->getCacheFilePath());
      }
 
@@ -326,46 +325,42 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
      }
 
      /**
-      * @desc Tests that bundling will not overwrite the CSS master file
-      * nor the cached stylesheet if * cache is enabled
+      * @desc Tests that bundling will not overwrite the master file
+      * nor the cached files if cache is enabled
       * and no modifications were found in the original files.
       */
      public function testThatNothingIsOverridenIfOrigFilesHaveNoChanges()
      {
-         /* @var $headObj \Majisti_View_Helper_HeadLink */
-         $headObj    = $this->headObject;
          $optimizer  = $this->optimizer;
          $url        = $this->filesUrl;
          $ext        = $this->extension;
+         $path       = $this->filesPath;
 
-         /* setting minify on */
          $optimizer->setOptimizationEnabled();
 
          $this->appendFilesToHead($this->files);
 
          $urlOptimize = $optimizer->optimize(
-                $this->filesPath . "/all{$ext}",
-                $url . "/all{$ext}"
+                $path . "/all{$ext}",
+                $url  . "/all{$ext}"
          );
-         $content1      = file_get_contents($this->filesPath . "/all.min{$ext}");
-         $filemtime1    = filemtime($this->filesPath . "/all.min{$ext}");
-         $cachemtime1   = filemtime($this->filesPath .
-                 "/{$this->folder}/{$this->cacheName}");
+         $content1      = file_get_contents($path . "/all.min{$ext}");
+         $filemtime1    = filemtime($path . "/all.min{$ext}");
+         $cachemtime1   = filemtime($path .  "/{$this->folder}/{$this->cacheName}");
 
          /* assure one second has passed */
          sleep(1);
 
-         $headObj->exchangeArray(array());
+         $this->clearHead();
          $this->appendFilesToHead($this->files);
 
          $optimizer->optimize(
-                $this->filesPath. "/all{$ext}",
-                $url. "/all{$ext}"
+                $path . "/all{$ext}",
+                $url  . "/all{$ext}"
          );
-         $content2      = file_get_contents($this->filesPath . "/all.min{$ext}");
-         $filemtime2    = filemtime($this->filesPath . "/all.min{$ext}");
-         $cachemtime2   = filemtime($this->filesPath .
-                 "/{$this->folder}/{$this->cacheName}");
+         $content2      = file_get_contents($path . "/all.min{$ext}");
+         $filemtime2    = filemtime($path . "/all.min{$ext}");
+         $cachemtime2   = filemtime($path .  "/{$this->folder}/{$this->cacheName}");
 
          $this->assertSame($content1, $content2);
          $this->assertEquals($filemtime1, $filemtime2);
@@ -374,15 +369,14 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
 
      /**
       * @desc Making sure that every file we give to the minifier will output
-      * a <filename>.min.css file.
+      * a <filename>.min.<extension> file.
       */
      public function testThatEveryFileGivenToTheMinifierOutputsADotMinFile()
      {
-         /* @var $headObj \Majisti_View_Helper_HeadLink */
-         $headObj    = $this->headObject;
          $optimizer  = $this->optimizer;
          $url        = $this->filesUrl;
          $ext        = $this->extension;
+         $path       = $this->filesPath;
 
          /* setting minifying and bundling on */
          $optimizer->setOptimizationEnabled();
@@ -392,8 +386,180 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
          $optimizer->minify();
 
          foreach( $this->outputFiles as $file ) {
-             $this->assertTrue(file_exists($this->filesPath .
-                     "/{$this->folder}/{$file}"));
+             $this->assertTrue(file_exists($path .  "/{$this->folder}/{$file}"));
          }
+     }
+
+     /**
+      * @desc Tests that the optimize function appends a version to the master
+      * file generated.
+      */
+     public function testThatOptimizeFunctionAppendsAVersionToMasterFile()
+     {
+         $headObj   = $this->headObject;
+         $optimizer = $this->optimizer;
+         $url       = $this->filesUrl;
+         $ext       = $this->extension;
+         $path      = $this->filesPath;
+
+         /* setting minifying and bundling on */
+         $optimizer->setOptimizationEnabled();
+
+         $this->appendFilesToHead($this->files);
+
+         $urlOptimize = $optimizer->optimize(
+                    $path . "/all{$ext}",
+                    $url  . "/all{$ext}"
+         );
+
+         /* running optimize() a second time and asserting it returns false */
+         $this->assertEquals($urlOptimize, $optimizer->optimize(
+                 $path . "/all{$ext}",
+                 $url  . "/all{$ext}"
+         ));
+
+         /*
+          * grabbing the master file object from the headlink after calling
+          * optimize() twice
+          */
+         $twiceOptimized = $headObj->getIterator()->current();
+
+         /* asserting that when running once, optimize() appends ?v=... */
+         $this->assertTrue((boolean)substr_count($urlOptimize, '?v='));
+
+         /*
+          * asserting that when running more than once, optimize() also appends
+          * ?v=... from the cache file.
+          */
+         $this->assertTrue((boolean)substr_count($twiceOptimized->href, '?v='));
+     }
+
+     /**
+      * @desc Tests that no action is taken if bundling, minifying or both are
+      * disabled.
+      */
+     public function testThatNoActionIsDoneIfBundlingAndOrMinifyingIsDisabled()
+     {
+         $optimizer = $this->optimizer;
+         $url       = $this->filesUrl;
+         $path      = $this->filesPath;
+         $ext       = $this->extension;
+
+         /*
+          * not supposed to do anything except returning false since nothing
+          * is enabled
+          */
+         $urlOptimize = $optimizer->optimize(
+                    $path .  "/all{$ext}",
+                    $url  . "/all{$ext}"
+         );
+         $urlBundle   = $optimizer->bundle(
+                    $path .  "/all{$ext}",
+                    $url  . "/all{$ext}"
+         );
+         $urlMinify   = $optimizer->minify();
+
+         $this->assertFalse($urlOptimize);
+         $this->assertFalse($urlBundle);
+         $this->assertFalse($urlMinify);
+     }
+
+     /**
+      * @desc Tests that attempting to optimize, bundle and/or minify empty
+      * files will throw exceptions.
+      *
+      * @expectedException Exception
+      */
+     public function testThatDealingWithEmptyFilesThrowsException()
+     {
+         $optimizer = $this->optimizer;
+         $url       = $this->filesUrl;
+         $path      = $this->filesPath;
+         $ext       = $this->extension;
+
+         /* setting minifying and bundling on */
+         $optimizer->setOptimizationEnabled();
+
+         /* appending only an empty file to the head....BAD */
+         $this->appendFilesToHead($this->getFilesObjects(array("empty{$ext}")));
+
+         /* will throw exception */
+         $urlOptimize = $optimizer->optimize(
+                    $path . "/all{$ext}",
+                    $url  . "/all{$ext}"
+         );
+     }
+
+     /**
+      * @desc Tests that providing an invalid head object will throw an
+      * exception once in the parseHeader() function.
+      *
+      * @expectedException Exception
+      */
+     public function testThatProvidingAnInvalidHeadObjectThrowsException()
+     {
+         /* head is not a valid instance */
+         $this->headObject   = new \stdClass();
+         $optimizer          = $this->optimizer;
+         $url                = $this->filesUrl;
+         $path               = $this->filesPath;
+         $ext                = $this->extension;
+
+         /* setting minifying and bundling on */
+         $optimizer->setOptimizationEnabled();
+
+         /* will throw Exception! */
+         $optimizer->optimize($path . "/all{$ext}", $url . "/all{$ext}");
+     }
+
+     /**
+      * @desc Tests that when calling optimize and adding a new file afterwards
+      * the master file will be rewritten to include the newly added file.
+      */
+     public function testThatAddingAFileAfterOptimizingWillRewriteMasterFile()
+     {
+         $optimizer = $this->optimizer;
+         $url       = $this->filesUrl;
+         $path      = $this->filesPath;
+         $ext       = $this->extension;
+
+         /* setting minifying and bundling on */
+         $optimizer->setOptimizationEnabled();
+
+         /*
+          * appending core and file1 to the head, will add theme2 after
+          * optimizing
+          */
+         $this->appendFilesToHead($this->getFilesObjects(array("core{$ext}",
+                 "file1{$ext}")));
+
+         $urlOptimize = $optimizer->optimize(
+                    $path . "/all{$ext}",
+                    $url  . "/all{$ext}"
+         );
+         $content1 = file_get_contents($path . "/all.min{$ext}");
+
+         /* appending a new file after having optimized */
+         $this->clearHead();
+         $this->appendFilesToHead($this->files);
+
+         /* optimizing a second time after the file2 css file was added */
+         $urlSecondOptimize = $optimizer->optimize(
+                 $path . "/all{$ext}",
+                 $url  . "/all{$ext}");
+         $content2 = file_get_contents($path . "/all.min{$ext}");
+
+         /*
+          * asserting that the two calls to optimize() return different
+          * versions and not false
+          */
+         $this->assertNotEquals(false, $urlSecondOptimize);
+         $this->assertNotSame($content1, $content2);
+         $this->assertNotEquals(
+                 false,
+                 array_search($path . "/{$this->folder}/file2{$ext}",
+                 $optimizer->getCachedFilePaths()
+                 )
+         );
      }
 }
