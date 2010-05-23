@@ -26,6 +26,7 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
         $this->options     = array('path' => $this->filesPath . '/styles');
         $this->extension   = '.css';
         $this->cacheName   = '.stylesheets-cache';
+        $this->inclusionVar   = 'href';
 
         $this->view = new \Zend_View();
         $this->view->addHelperPath(
@@ -38,7 +39,7 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
         $this->optimizer = new HeadLinkOptimizer($this->view, $this->options);
         $this->optimizer->clearCache();
 
-        /* clearing headlink data */
+        /* clearing head data */
         $this->clearHead();
 
         \Zend_Controller_Front::getInstance()->setRequest(
@@ -56,12 +57,7 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
      */
     public function tearDown()
     {
-        $optimizeOutput = array('files.css', 'all.css', 'all.min.css');
-
-        foreach($optimizeOutput as $file) {
-            @unlink($this->filesPath . "/{$file}");
-        }
-
+        parent::tearDown();
         $this->clearHead();
     }
 
@@ -154,6 +150,50 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
         $this->assertEquals(4, count($array));
         $this->assertEquals('alternate', $array[0]->rel);
     }
+
+    /**
+      * @desc Tests that the optimize function appends a version to the master
+      * file generated.
+      */
+     public function testThatOptimizeFunctionAppendsAVersionToMasterFile()
+     {
+         $headObj   = $this->headObject;
+         $optimizer = $this->optimizer;
+         $url       = $this->filesUrl;
+         $ext       = $this->extension;
+         $path      = $this->filesPath;
+
+         /* setting minifying and bundling on */
+         $optimizer->setOptimizationEnabled();
+
+         $this->appendFilesToHead($this->files);
+
+         $urlOptimize = $optimizer->optimize(
+                    $path . "/all{$ext}",
+                    $url  . "/all{$ext}"
+         );
+
+         /* running optimize() a second time and asserting it returns false */
+         $this->assertEquals($urlOptimize, $optimizer->optimize(
+                 $path . "/all{$ext}",
+                 $url  . "/all{$ext}"
+         ));
+
+         /*
+          * grabbing the master file object from the headlink after calling
+          * optimize() twice
+          */
+         $twiceOptimized = $headObj->getIterator()->current();
+
+         /* asserting that when running once, optimize() appends ?v=... */
+         $this->assertTrue((boolean)substr_count($urlOptimize, '?v='));
+
+         /*
+          * asserting that when running more than once, optimize() also appends
+          * ?v=... from the cache file.
+          */
+         $this->assertTrue((boolean)substr_count($twiceOptimized->href, '?v='));
+     }
 }
 
 HeadLinkOptimizerTest::runAlone();

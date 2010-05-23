@@ -77,6 +77,15 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
      */
     public function tearDown()
     {
+        $ext    = $this->extension;
+        $folder = $this->folder;
+
+        $optimizeOutput = array("files{$ext}", "all{$ext}", "all.min{$ext}");
+
+        foreach($optimizeOutput as $file) {
+            @unlink($this->filesPath . "/{$file}");
+        }
+
         foreach( $this->outputFiles as $file ) {
             @unlink( $this->filesPath . "/{$folder}/{$file}" );
         }
@@ -148,6 +157,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
         /* files should  exist and contain the correct content */
         $this->assertTrue(file_exists($path .
                 "/{$filename}{$ext}"));
+
         $this->assertEquals(
                 file_get_contents($path .  "/{$filename}.bundled.expected{$ext}"),
                 file_get_contents($path .  "/{$filename}{$ext}")
@@ -390,49 +400,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
          }
      }
 
-     /**
-      * @desc Tests that the optimize function appends a version to the master
-      * file generated.
-      */
-     public function testThatOptimizeFunctionAppendsAVersionToMasterFile()
-     {
-         $headObj   = $this->headObject;
-         $optimizer = $this->optimizer;
-         $url       = $this->filesUrl;
-         $ext       = $this->extension;
-         $path      = $this->filesPath;
-
-         /* setting minifying and bundling on */
-         $optimizer->setOptimizationEnabled();
-
-         $this->appendFilesToHead($this->files);
-
-         $urlOptimize = $optimizer->optimize(
-                    $path . "/all{$ext}",
-                    $url  . "/all{$ext}"
-         );
-
-         /* running optimize() a second time and asserting it returns false */
-         $this->assertEquals($urlOptimize, $optimizer->optimize(
-                 $path . "/all{$ext}",
-                 $url  . "/all{$ext}"
-         ));
-
-         /*
-          * grabbing the master file object from the headlink after calling
-          * optimize() twice
-          */
-         $twiceOptimized = $headObj->getIterator()->current();
-
-         /* asserting that when running once, optimize() appends ?v=... */
-         $this->assertTrue((boolean)substr_count($urlOptimize, '?v='));
-
-         /*
-          * asserting that when running more than once, optimize() also appends
-          * ?v=... from the cache file.
-          */
-         $this->assertTrue((boolean)substr_count($twiceOptimized->href, '?v='));
-     }
+     
 
      /**
       * @desc Tests that no action is taken if bundling, minifying or both are
