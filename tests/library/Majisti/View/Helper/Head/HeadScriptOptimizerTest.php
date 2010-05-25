@@ -90,7 +90,7 @@ class HeadScriptOptimizerTest extends AbstractHeadOptimizerTest
      * @desc Tests that adding inline scripts will work just like adding a file
      * in the optimization process.
      */
-    public function testThatInlineScriptGetsOptimized()
+    public function testThatInlineScriptGetsOptimizedJustLikeFilesDo()
     {
         $headObj   = $this->headObject;
         $optimizer = $this->optimizer;
@@ -112,6 +112,10 @@ class HeadScriptOptimizerTest extends AbstractHeadOptimizerTest
                 $path . "/all{$ext}",
                 $url  . "/all{$ext}"
         );
+
+        /* head script should contain only the bundled file */
+        $this->assertEquals($this->getHeaderOutput('all'),
+                $headObj->__toString());
 
         $this->assertEquals(
                 file_get_contents($path . "/all.optimized.inc.script.expected{$ext}"),
