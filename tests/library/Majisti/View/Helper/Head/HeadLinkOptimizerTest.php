@@ -158,26 +158,28 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
     public function testThatAddingInlineStyleToHeadLinkWillAlsoBeOptimized()
     {
         $headObj   = $this->headObject;
+        $headStyle = $this->view->headStyle();
         $optimizer = $this->optimizer;
         $path      = $this->filesPath;
         $url       = $this->filesUrl;
 
-        $style = ".foo {
+        $style = ".inline {
                     color: white;
                   }";
 
         $optimizer->setOptimizationEnabled();
-        $headObj->appendFilesToHead($this->files);
-        $headObj->appendStyle($style);
+        $this->appendFilesToHead($this->files);
+        $headStyle->appendStyle($style);
 
         $optimizer->optimize(
                 $path . "/all{$ext}",
                 $url  . "/all{$ext}"
         );
 
-        /* head link should contain only the bundled file, removing the style */
-        $this->assertEquals($this->getHeaderOutput('all'),
-                $headObj->__toString());
+        /* head link should contain only the bundled file and the style
+         * from the head style should have been removed.
+         */
+        $this->assertEquals(0, $headStyle->count());
 
         $this->assertEquals(
                 file_get_contents($path . "/all.optimized.inc.style.expected{$ext}"),
