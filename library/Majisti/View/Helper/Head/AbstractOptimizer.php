@@ -777,7 +777,7 @@ abstract class AbstractOptimizer implements IOptimizer
         foreach($header as $head) {
             if( $this->isValidHead($head) ) {
                 $validUrls[] = $this->unversionizeQuery($this->getAttr($head));
-            } else {
+            } else if( !$this->isInlineHead($head) ) {
                 $invalidUrls[] = $this->getAttr($head);
             }
         }
@@ -854,12 +854,17 @@ abstract class AbstractOptimizer implements IOptimizer
         $filepaths      = array();
 
         foreach ($header as $head) {
+            /* do not even add back to the header file */
+            if( $this->isInlineHead($head) ) {
+                continue;
+            }
+
             /* unsupported head, preserve it but do not bundle */
             if( !$this->isValidHead($head) ) {
                 $invalidHeads[] = $head;
             } else {
-                $url            = $this->unversionizeQuery($this->getAttr($head));
-                $validUrl[]   = $url;
+                $url        = $this->unversionizeQuery($this->getAttr($head));
+                $validUrl[] = $url;
 
                 if( $result = $this->getRemappedPath($url) ) {
                     if( is_string($result) ) {
@@ -994,6 +999,15 @@ abstract class AbstractOptimizer implements IOptimizer
      * @return bool True if it is a valid head
      */
     abstract protected function isValidHead($head);
+
+    /**
+     * @desc Returns if the given head is an inline head
+     *
+     * @param object $head The head
+     *
+     * @return True if it is an inline head
+     */
+    abstract protected function isInlineHead($head);
 
     /**
      * @desc Appends data to the header
