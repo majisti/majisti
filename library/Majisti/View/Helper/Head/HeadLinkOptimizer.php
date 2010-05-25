@@ -96,4 +96,17 @@ class HeadLinkOptimizer extends AbstractOptimizer
                'text/css'   === $head->type && isset($head->media) &&
                'screen'     === $head->media;
     }
+
+    /**
+     * @desc Returns if the given head is an inline head
+     *
+     * @param object $head The head
+     *
+     * @return True if it is an inline head
+     */
+    protected function isInlineHead($head)
+    {
+        \Zend_Debug::dump($head, '<strong></strong>');
+        return false;
+    }
 }

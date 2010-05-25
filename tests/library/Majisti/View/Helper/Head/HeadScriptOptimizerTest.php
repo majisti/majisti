@@ -115,7 +115,7 @@ class HeadScriptOptimizerTest extends AbstractHeadOptimizerTest
 
         $this->assertEquals(
                 file_get_contents($path . "/all.optimized.inc.script.expected{$ext}"),
-                file_get_contents($path . "/all{$ext}")
+                file_get_contents($path . "/all.min{$ext}")
         );
     }
 
@@ -154,13 +154,13 @@ class HeadScriptOptimizerTest extends AbstractHeadOptimizerTest
          $twiceOptimized = $headObj->getIterator()->current();
 
          /* asserting that when running once, optimize() appends ?v=... */
-         $this->assertTrue((boolean)substr_count($urlOptimize, '?v='));
+         $this->assertTrue((bool)substr_count($urlOptimize, '?v='));
 
          /*
           * asserting that when running more than once, optimize() also appends
           * ?v=... from the cache file.
           */
-         $this->assertTrue((boolean)substr_count($twiceOptimized->attributes['src'], '?v='));
+         $this->assertTrue((bool)substr_count($twiceOptimized->attributes['src'], '?v='));
      }
 }
 

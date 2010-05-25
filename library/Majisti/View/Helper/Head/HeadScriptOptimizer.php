@@ -40,7 +40,9 @@ class HeadScriptOptimizer extends AbstractOptimizer
      */
     protected function getAttr($head)
     {
-        return $head->attributes['src'];
+        return isset($head->src)
+                ? $head->src
+                : $head->attributes['src'];
     }
 
     /**
@@ -59,7 +61,14 @@ class HeadScriptOptimizer extends AbstractOptimizer
      */
     protected function getInlineContent()
     {
-        return '';
+        $content = '';
+
+        foreach( $this->getHeader() as $head ) {
+            if( $this->isInlineHead($head) ) {
+                $content .= $head->source;
+            }
+        }
+        return $content;
     }
 
     /**
@@ -81,6 +90,20 @@ class HeadScriptOptimizer extends AbstractOptimizer
     protected function isValidHead($head)
     {
         return 'text/javascript' === $head->type 
-            && !isset($head->attributes['conditional']);
+            && !isset($head->attributes['conditional'])
+            && ( isset($head->attributes['src']) || isset($head->src) )
+            && !$this->isInlineHead($head);
+    }
+
+    /**
+     * @desc Returns if the given head is an inline head
+     *
+     * @param object $head The head
+     *
+     * @return True if it is an inline head
+     */
+    protected function isInlineHead($head)
+    {
+        return isset($head->source) && null !== $head->source;
     }
 }
