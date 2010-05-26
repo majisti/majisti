@@ -60,7 +60,7 @@ abstract class AbstractOptimizer implements IOptimizer
     protected $_cacheEnabled;
 
     /**
-     * @var bool If the currently validated cache is valid ot nor 
+     * @var bool If the currently validated cache is valid ot nor
      */
     protected $_cacheValid;
 
@@ -282,25 +282,13 @@ abstract class AbstractOptimizer implements IOptimizer
          * valid url which is contained in the cache
          */
         if( 1 === count($validUrls) ) {
-            foreach( $cache as $fileinfo ) {
-                if( $masterUrl === $fileinfo['url'] ) {
-                    return true;
-                }
-            }
-        }
-
-        /*
-         * invalid cache if the masterUrl is the only valid url
-         */
-        if( $masterUrl === reset($validUrls) ) {
-            return false;
-        }
-
-        /* remove master url from temp cache */
-        foreach( $cache as $key => $fileinfo ) {
-            if( $masterUrl === $fileinfo['url'] ) {
-                unset($cache[$key]);
-                break;
+            /*
+             * invalid cache if the masterUrl is the only valid url
+             */
+            if( $this->prependMinToExtension($masterUrl) === reset($validUrls) ) {
+                return true;
+            } else if( $masterUrl === reset($validUrls) ) {
+                return false;
             }
         }
 
@@ -353,8 +341,8 @@ abstract class AbstractOptimizer implements IOptimizer
      * @desc Returns the cache, note that the real cache is retrieved
      * only once from the file, which is used only in an object oriented way
      * after that so that no further disk read is done.
-     * 
-     * @return array The cache 
+     *
+     * @return array The cache
      */
     public function getCache()
     {
@@ -416,6 +404,14 @@ abstract class AbstractOptimizer implements IOptimizer
     protected function addToCache($filepath, $url)
     {
         if( $this->isCacheEnabled() ) {
+            
+            if( null !== $this->getMasterUrl() ) {
+                $pathinfo = pathinfo($filepath);
+                if( $this->getCacheNamespace() === $pathinfo['filename'] ) {
+                    return;
+                }
+            }
+            
             $this->_cache[$filepath] = array(
                 'url'       => $url,
                 'timestamp' => filemtime($filepath)
@@ -614,7 +610,7 @@ abstract class AbstractOptimizer implements IOptimizer
         /* bundle and minify */
         if( $url = $this->bundle($path, $url) ) {
             /*
-             * remap the actual master file, so 
+             * remap the actual master file, so
              * that minify can find it
              */
             $uris = $this->getRemappedUris();
@@ -831,7 +827,15 @@ abstract class AbstractOptimizer implements IOptimizer
         /* retrieve valid and invalid urls */
         foreach($header as $head) {
             if( $this->isValidHead($head) ) {
-                $validUrls[] = $this->unversionizeQuery($this->getAttr($head));
+                if( $result = $this->getRemappedPath($this->getAttr($head)) ) {
+                    if( is_string($result) ) {
+                        $validUrls[] = $this->getAttr($head);
+                    } else {
+                        $invalidUrls[] = $this->getAttr($head);
+                    }
+                } else {
+                    $validUrls[] = $this->unversionizeQuery($this->getAttr($head));
+                }
             } else if( !$this->isInlineHead($head) ) {
                 $invalidUrls[] = $this->getAttr($head);
             }
@@ -891,6 +895,7 @@ abstract class AbstractOptimizer implements IOptimizer
         }
 
         $this->cache();
+        $this->_cache = null;
 
         return $obj->validUrls;
     }
@@ -910,7 +915,7 @@ abstract class AbstractOptimizer implements IOptimizer
     protected function parseHeader($header, $callback = null)
     {
         $invalidHeads   = array();
-        $validUrl       = array();
+        $validUrls      = array();
         $filepaths      = array();
 
         foreach ($header as $head) {
@@ -923,14 +928,14 @@ abstract class AbstractOptimizer implements IOptimizer
             if( !$this->isValidHead($head) ) {
                 $invalidHeads[] = $head;
             } else {
-                $url        = $this->unversionizeQuery($this->getAttr($head));
-                $validUrl[] = $url;
+                $url         = $this->unversionizeQuery($this->getAttr($head));
+                $validUrls[] = $url;
 
                 if( $result = $this->getRemappedPath($url) ) {
                     if( is_string($result) ) {
                         $url = $result;
                     } else {
-                        array_pop($validUrl);
+                        array_pop($validUrls);
                         $invalidHeads[] = $head;
                         continue;
                     }
@@ -948,7 +953,7 @@ abstract class AbstractOptimizer implements IOptimizer
                 }
 
                 /*
-                 * the href provided cannot be mapped to a real path,
+                 * the url provided cannot be mapped to a real path,
                  * and therefore can't be used in both bundle or minify.
                  */
                 if( !file_exists($url) ) {
@@ -962,11 +967,11 @@ abstract class AbstractOptimizer implements IOptimizer
 
                 /*
                  * when there is no cache (thefore a non null callback),
-                 * call the callback and add the href to the cache
+                 * call the callback and add the url to the cache
                  */
                 if( null !== $callback ) {
                     $callback($url);
-                    $this->addToCache($url, end($validUrl));
+                    $this->addToCache($url, end($validUrls));
                 }
             }
         }
@@ -974,7 +979,7 @@ abstract class AbstractOptimizer implements IOptimizer
         /* return stdClass object with significant data */
         $obj                = new \stdClass();
         $obj->invalidHeads  = $invalidHeads;
-        $obj->validUrls     = $validUrl;
+        $obj->validUrls     = $validUrls;
         $obj->filepaths     = $filepaths;
 
         return $obj;
