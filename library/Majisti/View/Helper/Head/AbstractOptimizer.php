@@ -376,7 +376,16 @@ abstract class AbstractOptimizer implements IOptimizer
     }
 
     /**
-     * @desc Clears the cache and removes the cached file
+     * @desc Clears the cache and removes the cached file(s). Works only
+     * when the cache is enabled.
+     *
+     * @param $namespace [opt; def=*] The cache namespace. A cache namespace
+     * is identified by the master's filename provided when optimizing or
+     * bundling or according to the cache namespace parameter to the minify
+     * function. If no namespace is specified it will assume all possible
+     * namespace (wildcard).
+     *
+     * @return AbstractOptimizer this
      */
     public function clearCache($namespace = '*')
     {
@@ -388,6 +397,8 @@ abstract class AbstractOptimizer implements IOptimizer
                 @unlink($filepath);
             }
         }
+
+        return $this;
     }
 
     /**
@@ -840,7 +851,10 @@ abstract class AbstractOptimizer implements IOptimizer
             return false;
         }
 
-        $this->setCacheNamespace($cacheNamespace);
+        if( $cacheNamespace !== $this->getCacheNamespace()) {
+            $this->_cache = null;
+            $this->setCacheNamespace($cacheNamespace);
+        }
 
         $callback = null;
         $header   = $this->getHeader();
@@ -1004,7 +1018,7 @@ abstract class AbstractOptimizer implements IOptimizer
      *
      * @return string the version request only, not appended to the filepath.
      */
-    protected function getVersionQuery($filepath)
+    public function getVersionQuery($filepath)
     {
         return '?v=' . filemtime($filepath);
     }
@@ -1016,7 +1030,7 @@ abstract class AbstractOptimizer implements IOptimizer
      *
      * @return string The unversionized string
      */
-    protected function unversionizeQuery($str)
+    public function unversionizeQuery($str)
     {
         return preg_replace('/\?.*/', '', $str);
     }
