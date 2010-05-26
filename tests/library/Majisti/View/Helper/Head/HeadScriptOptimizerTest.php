@@ -70,6 +70,7 @@ class HeadScriptOptimizerTest extends AbstractHeadOptimizerTest
         foreach( $files as $file ) {
             $object = new \stdClass();
             $object->type       = "text/javascript";
+            $object->source      = null;
             if( null !== $url) {
                 $object->src = $url;
                 $object->attributes['src'] = $url;

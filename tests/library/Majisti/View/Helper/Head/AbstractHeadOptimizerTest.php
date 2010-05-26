@@ -100,6 +100,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
     {
         $this->view->headLink()->exchangeArray(array());
         $this->view->headScript()->exchangeArray(array());
+        $this->view->headStyle()->exchangeArray(array());
     }
 
     /**
@@ -222,8 +223,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
         $cachedFilesPaths = array(
                 "{$path}/{$this->folder}/core{$ext}",
                 "{$path}/{$this->folder}/file1{$ext}",
-                "{$path}/{$this->folder}/file2{$ext}",
-                "{$path}/all{$ext}"
+                "{$path}/{$this->folder}/file2{$ext}"
         );
 
         /*
@@ -618,17 +618,20 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
                    $url  . "/all{$ext}"
         );
 
-        $this->appendFilesToHead($this->getFilesObjects(array("file2{$ext}",
-                "/file2{$ext}")));
+        $this->appendFilesToHead($this->getFilesObjects(array("file2{$ext}")));
+
+        /* non existant url that was no remapped */
+        $this->appendFilesToHead($this->getFilesObjects(array("file3{$ext}"),
+            'http://example.com/foo.css'));
 
         $optimizer->setMinifyingEnabled();
         $urlList = $optimizer->minify("foo");
 
         /* getting mtime of the created bundled and minified files */
-         $masterMtime  = filemtime($path . "/all{$ext}");
-         $file2Mtime   = filemtime($path .  "/{$this->folder}/file2.min{$ext}");
+        $masterMtime  = filemtime($path . "/all{$ext}");
+        $file2Mtime   = filemtime($path .  "/{$this->folder}/file2.min{$ext}");
 
-         sleep(1);
+        sleep(1);
 
         $this->clearHead();
 
@@ -645,9 +648,13 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
                    $url  . "/all{$ext}"
         );
 
-        $this->appendFilesToHead($this->getFilesObjects(array("file2{$ext}",
-                "/file2{$ext}")));
-
+        $this->appendFilesToHead($this->getFilesObjects(array("file2{$ext}")));
+        
+        /* non existant url that was no remapped */
+        $this->appendFilesToHead($this->getFilesObjects(array("file3{$ext}"),
+            'http://example.com/foo.css'));
+        
+        $optimizer->setMinifyingEnabled();
         $urlList2 = $optimizer->minify("foo");
 
         /*
