@@ -65,14 +65,18 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
      * @desc Converts an array for <filename>.<extension> strings to stdClass
      * objects.
      */
-    protected function getFilesObjects($files = array())
+    protected function getFilesObjects($files = array(), $url = null)
     {
         $objects = array();
         foreach( $files as $file ) {
             $object = new \stdClass();
             $object->rel   = "stylesheet";
             $object->type  = "text/css";
-            $object->href  = "{$this->filesUrl}/{$this->folder}/{$file}";
+            if( null !== $url ) {
+                $object->href  = $url;
+            } else {
+                $object->href  = "{$this->filesUrl}/{$this->folder}/{$file}";
+            }
             $object->media = "screen";
             $object->conditionalStylesheet = false;
             $objects[] = $object;
