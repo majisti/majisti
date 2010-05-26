@@ -162,6 +162,7 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
         $optimizer = $this->optimizer;
         $path      = $this->filesPath;
         $url       = $this->filesUrl;
+        $ext       = $this->extension;
 
         $style = ".inline {
                     color: white;
@@ -183,7 +184,7 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
 
         $this->assertEquals(
                 file_get_contents($path . "/all.optimized.inc.style.expected{$ext}"),
-                file_get_contents($path . "/all{$ext}"));
+                file_get_contents($path . "/all.min{$ext}"));
     }
 
     /**

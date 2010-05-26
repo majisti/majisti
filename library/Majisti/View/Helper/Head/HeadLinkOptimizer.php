@@ -12,6 +12,8 @@ namespace Majisti\View\Helper\Head;
  */
 class HeadLinkOptimizer extends AbstractOptimizer
 {
+    protected $_inlineContent;
+
     /**
      * @desc Returns the default options
      * @return array The default options
@@ -55,23 +57,32 @@ class HeadLinkOptimizer extends AbstractOptimizer
     /**
      * @desc Returns the inline content using the headStyle header.
      *
+     * Note: The headStyle object will be truncated after the initial
+     * content fetch. The function will return the same content everytime
+     * it is called afterwards.
+     *
      * @return string The inline content
      */
     protected function getInlineContent()
     {
-        $headstyle = $this->getView()->headStyle();
+        if ( null === $this->_inlineContent ) {
+            $headstyle = $this->getView()->headStyle();
 
-        $content = '';
+            $content = '';
 
-        foreach( $headstyle as $item ) {
-            $content .= $item->content;
+            foreach( $headstyle as $item ) {
+                $content .= $item->content;
+            }
+
+            if( !empty($content) ) {
+                $content = PHP_EOL . $content;
+            }
+
+            $this->_inlineContent = $content;
+            $headstyle->exchangeArray(array());
         }
 
-        if( !empty($content) ) {
-            $content = PHP_EOL . $content;
-        }
-
-        return $content;
+        return $this->_inlineContent;
     }
 
     /**
@@ -106,7 +117,6 @@ class HeadLinkOptimizer extends AbstractOptimizer
      */
     protected function isInlineHead($head)
     {
-        \Zend_Debug::dump($head, '<strong></strong>');
         return false;
     }
 }

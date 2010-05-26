@@ -69,12 +69,16 @@ class View extends \Zend_View
      * @param string $url The master file url
      * @param array $options The options for the optimizer
      *
-     * @see View\Helper\Head\HeadLinkOptimizer
+     * @return \Majisti\View\Helper\Head\HeadLinkOptimizer The optimizer
+     *
+     * @see \Majisti\View\Helper\Head\HeadLinkOptimizer
      */
     public function optimizeHeadLink($path, $url, array $options = array())
     {
         $optimizer = new View\Helper\Head\HeadLinkOptimizer($this, $options);
         $optimizer->optimize($path, $url);
+
+        return $optimizer;
     }
 
     /**
@@ -84,12 +88,16 @@ class View extends \Zend_View
      * @param string $url The master file url
      * @param array $options The options for the optimizer
      *
-     * @see View\Helper\Head\HeadScriptOptimizer
+     * @return \Majisti\View\Helper\Head\HeadScriptOptimizer The optimizer
+     *
+     * @see Majisti\View\Helper\Head\HeadScriptOptimizer
      */
     public function optimizeHeadScript($path, $url, array $options = array())
     {
         $optimizer = new View\Helper\Head\HeadScriptOptimizer($this, $options);
         $optimizer->optimize($path, $url);
+
+        return $optimizer;
     }
 
     /**

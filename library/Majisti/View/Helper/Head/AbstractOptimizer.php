@@ -15,6 +15,11 @@ use \Majisti\Util\Minifying as Minifying;
 abstract class AbstractOptimizer implements IOptimizer
 {
     /**
+     * @var array The default options
+     */
+    protected $_defaultOptions;
+
+    /**
      * @var bool
      */
     protected $_bundlingEnabled;
@@ -45,6 +50,11 @@ abstract class AbstractOptimizer implements IOptimizer
     protected $_cache;
 
     /**
+     * @var string The cache namespace
+     */
+    protected $_cacheNamespace;
+
+    /**
      * @var bool If the cache mecanism is enabled
      */
     protected $_cacheEnabled;
@@ -58,11 +68,6 @@ abstract class AbstractOptimizer implements IOptimizer
      * @var bool If the cache was already validated or not
      */
     protected $_cacheValidated;
-
-    /**
-     * @var array The default options
-     */
-    protected $_defaultOptions;
 
     /**
      * @var array The remapped uris
@@ -106,19 +111,27 @@ abstract class AbstractOptimizer implements IOptimizer
     {
         if( null === $this->_defaultOptions ) {
             $this->_defaultOptions = array(
-                'path'              => APPLICATION_PATH . '/../public',
-                'cacheFile'         => '.cache',
-                'cacheEnabled'      => true,
-                'appendInline'      => true,
-                'remappedUris'      => array(
-                    MAJ_STYLES      => MAJISTI_PUBLIC_PATH  . '/styles',
-                    MAJX_STYLES     => MAJISTIX_PUBLIC_PATH . '/styles',
-                    JQUERY_PLUGINS  => MAJISTIX_PUBLIC_PATH . '/jquery/plugins',
+                'path'                      => APPLICATION_PUBLIC_PATH,
+                'cacheFile'                 => '.cache',
+                'cacheEnabled'              => true,
+                'appendInline'              => true,
+                'remappedUris'              => array(
+                    MAJISTI_URL_STYLES      => MAJISTI_PUBLIC_PATH  . '/styles',
+                    MAJISTIX_URL_STYLES     => MAJISTIX_PUBLIC_PATH . '/styles',
+
+                    JQUERY_PLUGINS          => MAJISTIX_PUBLIC_PATH . '/jquery/plugins',
+                    JQUERY_STYLES           => MAJISTIX_PUBLIC_PATH . '/jquery/styles',
+                    JQUERY_THEMES           => MAJISTIX_PUBLIC_PATH . '/jquery/themes',
                 ),
             );
         }
 
         return $this->_defaultOptions;
+    }
+
+    public function setDefaultOptions(array $defaultOptions)
+    {
+        $this->_defaultOptions = $defaultOptions;
     }
 
     /**
@@ -176,18 +189,19 @@ abstract class AbstractOptimizer implements IOptimizer
     }
 
     /**
-     * @desc Returns whether bundling and minifying are enabled.
+     * @desc Returns whether bundling or minifying are enabled.
+     *
      * By default, when this function is called without
      * first using {@link setOptimizationEnabled()} (therefore
      * lazily called) it will return true if the current application
      * environment is set to production or staging (as defined in
      * the APPLICATION_ENVIRONMENT constant.
      *
-     * @return bool Whether bundling and minifying are both enabled or not
+     * @return bool Whether bundling or minifying are both enabled or not
      */
     public function isOptimizationEnabled()
     {
-        return $this->isBundlingEnabled() && $this->isMinifyingEnabled();
+        return $this->isBundlingEnabled() || $this->isMinifyingEnabled();
     }
 
     /**
@@ -292,7 +306,7 @@ abstract class AbstractOptimizer implements IOptimizer
 
         /* invalid cache if the file count is not the same */
         if( count($cache) !== count($validUrls) ) {
-            $this->clearCache();
+            $this->clearCache($this->getCacheNamespace());
             return false;
         }
 
@@ -305,7 +319,7 @@ abstract class AbstractOptimizer implements IOptimizer
             if( !($validUrls[$key++] === $fileinfo['url'] &&
                     filemtime($path) === (int)$fileinfo['timestamp']))
             {
-                $this->clearCache();
+                $this->clearCache($this->getCacheNamespace());
                 return false;
             }
         }
@@ -352,13 +366,27 @@ abstract class AbstractOptimizer implements IOptimizer
     }
 
     /**
+     * @desc Returns the cache namespace
+     *
+     * @return string The namespace
+     */
+    protected function getCacheNamespace()
+    {
+        return $this->_cacheNamespace;
+    }
+
+    /**
      * @desc Clears the cache and removes the cached file
      */
-    public function clearCache()
+    public function clearCache($namespace = '*')
     {
         if( $this->isCacheEnabled() ) {
             $this->_cache = null;
-            @unlink($this->getCacheFilePath());
+
+            $filepaths = glob($this->getCacheFilePath() . $namespace);
+            foreach( $filepaths as $filepath ) {
+                @unlink($filepath);
+            }
         }
     }
 
@@ -416,9 +444,10 @@ abstract class AbstractOptimizer implements IOptimizer
      * @desc Returns The cache file's path
      * @return string the cache filepath
      */
-    public function getCacheFilePath()
+    protected function getCacheFilePath()
     {
-        return $this->_path . DIRECTORY_SEPARATOR . $this->_cacheFilePath;
+        return $this->_path . DIRECTORY_SEPARATOR
+                . $this->_cacheFilePath . '_' . $this->getCacheNamespace();
     }
 
     /**
@@ -437,6 +466,16 @@ abstract class AbstractOptimizer implements IOptimizer
     public function setCacheEnabled($flag = true)
     {
         $this->_cacheEnabled = (bool) $flag;
+    }
+
+    /**
+     * @desc Sets the cache namepsace
+     *
+     * @param string $cacheNamespace The cache namespace
+     */
+    protected function setCacheNamespace($cacheNamespace)
+    {
+        $this->_cacheNamespace = $cacheNamespace;
     }
 
     /**
@@ -572,11 +611,13 @@ abstract class AbstractOptimizer implements IOptimizer
             $this->uriRemap($url, $path);
 
             /* minify */
-            $urls = $this->minify($path, $url);
-            $url = reset($urls);
+            if( $urls = $this->minify($this->getCacheNamespace()) ) {
+                $url = reset($urls);
 
-            /* put back user uris */
-            $this->setUriRemaps($uris);
+                /* put back user uris */
+                $this->setUriRemaps($uris);
+            }
+
         }
 
         $this->setCacheValidated(false);
@@ -714,6 +755,9 @@ abstract class AbstractOptimizer implements IOptimizer
     {
         $this->_masterUrl = $this->unversionizeQuery($url);
 
+        $pathinfo = pathinfo($this->_masterUrl);
+        $this->setCacheNamespace($pathinfo['filename']);
+
         if( !$this->isBundlingEnabled() ) {
             return false;
         }
@@ -790,23 +834,25 @@ abstract class AbstractOptimizer implements IOptimizer
      * the .min extension before their respective extension and generating
      * the file according to their paths.
      */
-    public function minify()
+    public function minify($cacheNamespace)
     {
         if( !$this->isMinifyingEnabled() ) {
             return false;
         }
 
+        $this->setCacheNamespace($cacheNamespace);
+
         $callback = null;
         $header   = $this->getHeader();
 
         /*
-         * apply callback function when there is no cache, the call back
+         * apply callback function when there is no cache, the callback
          * is the one that minifies each valid stylesheet
          */
         if( !$this->isCached() ) {
             $minifier = $this->getMinifier();
 
-            $callback = function($filepath) use($minifier) {
+            $callback = function($filepath) use ($minifier) {
                 $pathinfo = pathinfo($filepath);
                 $ext      = $pathinfo['extension'];
 
@@ -826,8 +872,8 @@ abstract class AbstractOptimizer implements IOptimizer
                    $this->prependMinToExtension($url) .
                    $this->getVersionQuery($obj->filepaths[$key]));
 
-            $obj->validUrls[$key] = $url . $this->getVersionQuery(
-                $obj->filepaths[$key]);
+            $obj->validUrls[$key] = $this->prependMinToExtension($url)
+                    . $this->getVersionQuery($obj->filepaths[$key]);
         }
 
         $this->cache();
@@ -870,6 +916,7 @@ abstract class AbstractOptimizer implements IOptimizer
                     if( is_string($result) ) {
                         $url = $result;
                     } else {
+                        array_pop($validUrl);
                         $invalidHeads[] = $head;
                         continue;
                     }
@@ -891,7 +938,9 @@ abstract class AbstractOptimizer implements IOptimizer
                  * and therefore can't be used in both bundle or minify.
                  */
                 if( !file_exists($url) ) {
-                    throw new Exception("File {$url} does not exist");
+                    throw new Exception("File {$url} does not exist and could " .
+                    "not be found using the provided url remaps: " .
+                    implode(' :: ', array_keys($this->getRemappedUris())));
                 }
 
                 $url         = realpath($url);
@@ -919,7 +968,7 @@ abstract class AbstractOptimizer implements IOptimizer
 
     /**
      * @desc Checks if the given uri is valid and if it is, check if it was
-     * remapped to a path.
+     * remapped to a path. Supports subdirectories.
      *
      * @return mixed the path if it was remapped, -1 if it was not and false
      * if the given uri was not even valid
@@ -927,14 +976,20 @@ abstract class AbstractOptimizer implements IOptimizer
     protected function getRemappedPath($uri)
     {
         if( \Zend_Uri::check($uri) ) {
-            $parts = explode(DIRECTORY_SEPARATOR, $uri);
-            $file  = array_pop($parts);
-            $uri   = implode(DIRECTORY_SEPARATOR, $parts);
-
+            /*
+             * return the base remapped url, subdirectories and the file with
+             * a preg_match from the remappedUri
+             */
             $remappedUris = $this->getRemappedUris();
-            return array_key_exists($uri, $remappedUris)
-                ? $remappedUris[$uri] . DIRECTORY_SEPARATOR . $file
-                : -1;
+            foreach( array_keys($remappedUris) as $remappedUri ) {
+                if( preg_match('/(' . preg_quote($remappedUri, '/') . ')(.*)\/(.*\..*)/',
+                        $uri, $matches) )
+                {
+                    return $remappedUris[$matches[1]] . $matches[2] . "/{$matches[3]}";
+                }
+            }
+
+            return -1;
         }
 
         return false;

@@ -114,8 +114,8 @@ class HeadScriptOptimizerTest extends AbstractHeadOptimizerTest
         );
 
         /* head script should contain only the bundled file */
-        $this->assertEquals($this->getHeaderOutput('all'),
-                $headObj->__toString());
+        $this->assertEquals($urlOptimize, 
+                $headObj->getIterator()->current()->attributes['src']);
 
         $this->assertEquals(
                 file_get_contents($path . "/all.optimized.inc.script.expected{$ext}"),

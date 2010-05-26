@@ -215,7 +215,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
 
         $optimizer->optimize(
                 $path .  "/all{$ext}",
-                $url  . "/all{$ext}"
+                $url  .  "/all{$ext}"
         );
 
         /* optimize() function returns absolute paths from server root */
@@ -256,23 +256,6 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
      }
 
      /**
-      * @desc Tests that setting a new cache file name will change the cache
-      * file path.
-      */
-     public function testSettingNewCacheFileName()
-     {
-         $optimizer = $this->optimizer;
-         $path      = $this->filesPath;
-         $optimizer->setOptions(array(
-             'cacheFile' => '.foo-cache',
-             'path'      => $path . "/{$this->folder}"
-         ));
-
-         $this->assertEquals($path . "/{$this->folder}/.foo-cache",
-                             $optimizer->getCacheFilePath());
-     }
-
-     /**
       * @desc Tests that uri remaps setters and getters behave as expected.
       */
      public function testUriRemappingGettersAndSetters()
@@ -294,43 +277,12 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
 
          $optimizer->removeUriRemap('http://www.foo.com/uri2');
 
-         $this->assertEquals(6, count($optimizer->getRemappedUris()));
          $this->assertArrayNotHasKey('http://www.foo.com/uri2',
                  $optimizer->getRemappedUris());
 
          $optimizer->clearUriRemaps();
 
          $this->assertEquals(0, count($optimizer->getRemappedUris()));
-     }
-
-     /**
-      * @desc Tests that adding an uri remapping while providing an unexistant
-      * path will throw an exception.
-      *
-      * @expectedException Exception
-      */
-     public function testThatGivingAnInvalidPathToUriRemapWillThrowException()
-     {
-         $optimizer = $this->optimizer;
-         $url = "http://www.somedomain.com/foo/bar";
-         $path = "/public/tests/invalid/file.ext";
-
-         $optimizer->uriRemap($url, $path);
-     }
-
-     /**
-      * @desc Tests that adding an url remapping when providing a file path will
-      * throw an exception.
-      *
-      * @expectedException Exception
-      */
-     public function testThatProvidingAFilePathToUriRemappingWillThrowException()
-     {
-         $optimizer = $this->optimizer;
-         $url = "http://www.somedomain.com/foo/bar";
-         $path = $this->filesPath . "all.bundled.expected.css";
-
-         $optimizer->uriRemap($url, $path);
      }
 
      /**
@@ -387,7 +339,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
          );
          $content1      = file_get_contents($path . "/all.min{$ext}");
          $filemtime1    = filemtime($path . "/all.min{$ext}");
-         $cachemtime1   = filemtime($path .  "/{$this->folder}/{$this->cacheName}");
+         $cachemtime1   = filemtime($path .  "/{$this->folder}/{$this->cacheName}_all");
 
          /* assure one second has passed */
          sleep(1);
@@ -401,7 +353,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
          );
          $content2      = file_get_contents($path . "/all.min{$ext}");
          $filemtime2    = filemtime($path . "/all.min{$ext}");
-         $cachemtime2   = filemtime($path .  "/{$this->folder}/{$this->cacheName}");
+         $cachemtime2   = filemtime($path .  "/{$this->folder}/{$this->cacheName}_all");
 
          $this->assertSame($content1, $content2);
          $this->assertEquals($filemtime1, $filemtime2);
@@ -424,7 +376,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
 
          $this->appendFilesToHead($this->files);
 
-         $optimizer->minify();
+         $optimizer->minify('all');
 
          foreach( $this->outputFiles as $file ) {
              $this->assertTrue(file_exists($path .  "/{$this->folder}/{$file}"));
@@ -456,7 +408,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
                     $path .  "/all{$ext}",
                     $url  . "/all{$ext}"
          );
-         $urlMinify   = $optimizer->minify();
+         $urlMinify   = $optimizer->minify('all');
 
          $this->assertFalse($urlOptimize);
          $this->assertFalse($urlBundle);
@@ -557,7 +509,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
          $this->assertNotEquals(
                  false,
                  array_search($path . "/{$this->folder}/file2{$ext}",
-                 $optimizer->getCachedFilePaths()
+                     $optimizer->getCachedFilePaths()
                  )
          );
      }

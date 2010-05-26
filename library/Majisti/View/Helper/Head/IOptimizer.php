@@ -22,5 +22,5 @@ interface IOptimizer
     /*
      * @desc Minifies the files contained in the header
      */
-    public function minify();
+    public function minify($cacheNamespace);
 }
