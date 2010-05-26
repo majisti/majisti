@@ -64,7 +64,11 @@ class Constants
         define('MAJISTIX_MODULES',    MAJISTIX_PATH . '/Modules');
         define('MAJISTIX_EXTENSIONS', MAJISTIX_PATH . '/Extensions');
 
-        /* majisti's library url constants */
+        /* application paths */
+        define('APPLICATION_ROOT', realpath(APPLICATION_PATH . '/../'));
+        define('APPLICATION_PUBLIC_PATH', APPLICATION_ROOT . '/public');
+
+        /* application urls */
         define('APPLICATION_URL_PREFIX', $request->getScheme() . '://' .
             $request->getHttpHost());
         define('APPLICATION_URL', APPLICATION_URL_PREFIX . BASE_URL);
@@ -183,6 +187,7 @@ class Constants
     {
         if( static::isAliasesUsed() ) {
             define('APP_PATH', APPLICATION_PATH);
+            define('APP_PUB_PATH', APPLICATION_PUBLIC_PATH);
             define('APP_LIB',  APPLICATION_LIBRARY);
             define('APP_ENV',  APPLICATION_ENVIRONMENT);
 
