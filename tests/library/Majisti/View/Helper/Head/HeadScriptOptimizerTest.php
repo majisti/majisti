@@ -64,15 +64,20 @@ class HeadScriptOptimizerTest extends AbstractHeadOptimizerTest
      * @desc Converts an array for <filename>.<extension> strings to stdClass
      * objects.
      */
-    protected function getFilesObjects($files = array())
+    protected function getFilesObjects($files = array(), $url = null)
     {
         $objects = array();
         foreach( $files as $file ) {
             $object = new \stdClass();
             $object->type       = "text/javascript";
-            $object->src        = "{$this->filesUrl}/{$this->folder}/{$file}";
+            if( null !== $url) {
+                $object->src = $url;
+                $object->attributes['src'] = $url;
+            } else {
+                $object->src = "{$this->filesUrl}/{$this->folder}/{$file}";
+                $object->attributes['src'] = "{$this->filesUrl}/{$this->folder}/{$file}";
+            }
             $object->attributes = array();
-            $object->attributes['src'] = "{$this->filesUrl}/{$this->folder}/{$file}";
             $objects[] = $object;
         }
         return $objects;

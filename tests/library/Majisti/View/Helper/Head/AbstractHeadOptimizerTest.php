@@ -113,7 +113,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
     }
 
     protected abstract function getHeaderOutput($filename);
-    protected abstract function getFilesObjects($files = array());
+    protected abstract function getFilesObjects($files = array(), $url = null);
 
     /**
      * @desc Asserts that files get bundled in a master file.
@@ -588,5 +588,76 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
                     $optimizer->getCachedFilePaths()
                 )
         );
+    }
+
+    /**
+     * @desc Tests that when adding a non-remapped URL to the head after a
+     * bundling operation eveything works as expected if a minify call is
+     * launched.
+     */
+    public function testThatMinifyingAMasterFileAndANonRemappedUrlBehavesAsExpected()
+    {
+        $optimizer = $this->optimizer;
+        $url       = $this->filesUrl;
+        $path      = $this->filesPath;
+        $ext       = $this->extension;
+        $folder    = $this->folder;
+
+        /* setting and bundling on */
+        $optimizer->setBundlingEnabled();
+
+        /*
+         * appending core and file1 to the head, will add theme2 after
+         * optimizing
+         */
+        $this->appendFilesToHead($this->getFilesObjects(array("core{$ext}",
+                "file1{$ext}")));
+
+        $urlOptimize = $optimizer->optimize(
+                   $path . "/all{$ext}",
+                   $url  . "/all{$ext}"
+        );
+
+        $this->appendFilesToHead($this->getFilesObjects(array("file2{$ext}",
+                "/file2{$ext}")));
+
+        $optimizer->setMinifyingEnabled();
+        $urlList = $optimizer->minify("foo");
+
+        /* getting mtime of the created bundled and minified files */
+         $masterMtime  = filemtime($path . "/all{$ext}");
+         $file2Mtime   = filemtime($path .  "/{$this->folder}/file2.min{$ext}");
+
+         sleep(1);
+
+        $this->clearHead();
+
+        /*
+         * appending core and file1 to the head once again, will add theme2 after
+         * optimizing
+         */
+        $this->appendFilesToHead($this->getFilesObjects(array("core{$ext}",
+                "file1{$ext}")));
+
+        $optimizer->setMinifyingEnabled(false);
+        $urlOptimize2 = $optimizer->optimize(
+                   $path . "/all{$ext}",
+                   $url  . "/all{$ext}"
+        );
+
+        $this->appendFilesToHead($this->getFilesObjects(array("file2{$ext}",
+                "/file2{$ext}")));
+
+        $urlList2 = $optimizer->minify("foo");
+
+        /*
+         * getting mtime of the output files that were NOT supposed to be
+         * rewritten
+         */
+        $masterMtime2  = filemtime($path . "/all{$ext}");
+        $file2Mtime2   = filemtime($path .  "/{$this->folder}/file2.min{$ext}");
+
+        $this->assertEquals($masterMtime, $masterMtime2);
+        $this->assertEquals($file2Mtime, $file2Mtime2);
     }
 }
