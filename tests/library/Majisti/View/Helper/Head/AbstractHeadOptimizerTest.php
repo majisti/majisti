@@ -209,7 +209,8 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
         $path      = $this->filesPath;
 
         /* setting optimization on */
-        $optimizer->setOptimizationEnabled();
+        $optimizer->setBundlingEnabled();
+        $optimizer->setMinifyingEnabled();
 
         /* appending files to the head */
         $this->appendFilesToHead($this->files);
@@ -303,18 +304,6 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
 
          $this->assertFalse($optimizer->isBundlingEnabled());
          $this->assertFalse($optimizer->isMinifyingEnabled());
-
-         $optimizer->setOptimizationEnabled();
-
-         $this->assertTrue($optimizer->isBundlingEnabled());
-         $this->assertTrue($optimizer->isMinifyingEnabled());
-         $this->assertTrue($optimizer->isOptimizationEnabled());
-
-         $optimizer->setOptimizationEnabled(false);
-
-         $this->assertFalse($optimizer->isBundlingEnabled());
-         $this->assertFalse($optimizer->isMinifyingEnabled());
-         $this->assertFalse($optimizer->isOptimizationEnabled());
      }
 
      /**
@@ -329,7 +318,8 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
          $ext        = $this->extension;
          $path       = $this->filesPath;
 
-         $optimizer->setOptimizationEnabled();
+         $optimizer->setBundlingEnabled();
+         $optimizer->setMinifyingEnabled();
 
          $this->appendFilesToHead($this->files);
 
@@ -367,7 +357,8 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
          $ext        = $this->extension;
          $path       = $this->filesPath;
 
-         $optimizer->setOptimizationEnabled();
+         $optimizer->setBundlingEnabled();
+         $optimizer->setMinifyingEnabled();
 
          $this->appendFilesToHead($this->files);
 
@@ -408,7 +399,8 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
          $ext        = $this->extension;
          $path       = $this->filesPath;
 
-         $optimizer->setOptimizationEnabled();
+         $optimizer->setBundlingEnabled();
+         $optimizer->setMinifyingEnabled();
 
          $this->appendFilesToHead($this->files);
 
@@ -448,7 +440,8 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
         $path       = $this->filesPath;
 
         /* setting minifying and bundling on */
-        $optimizer->setOptimizationEnabled();
+        $optimizer->setBundlingEnabled();
+        $optimizer->setMinifyingEnabled();
 
         $this->appendFilesToHead($this->files);
 
@@ -505,7 +498,8 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
         $ext       = $this->extension;
 
         /* setting minifying and bundling on */
-        $optimizer->setOptimizationEnabled();
+        $optimizer->setBundlingEnabled();
+        $optimizer->setMinifyingEnabled();
 
         /* appending only an empty file to the head....BAD */
         $this->appendFilesToHead($this->getFilesObjects(array("empty{$ext}")));
@@ -533,7 +527,8 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
         $ext                = $this->extension;
 
         /* setting minifying and bundling on */
-        $optimizer->setOptimizationEnabled();
+        $optimizer->setBundlingEnabled();
+        $optimizer->setMinifyingEnabled();
 
         /* will throw Exception! */
         $optimizer->optimize($path . "/all{$ext}", $url . "/all{$ext}");
@@ -551,7 +546,8 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
         $ext       = $this->extension;
 
         /* setting minifying and bundling on */
-        $optimizer->setOptimizationEnabled();
+        $optimizer->setBundlingEnabled();
+        $optimizer->setMinifyingEnabled();
 
         /*
          * appending core and file1 to the head, will add theme2 after
