@@ -105,7 +105,8 @@ class HeadScriptOptimizerTest extends AbstractHeadOptimizerTest
         $path      = $this->filesPath;
 
         /* setting minifying and bundling on */
-        $optimizer->setOptimizationEnabled();
+        $optimizer->setBundlingEnabled();
+        $optimizer->setMinifyingEnabled();
 
         $this->appendFilesToHead($this->files);
 
@@ -142,7 +143,8 @@ class HeadScriptOptimizerTest extends AbstractHeadOptimizerTest
          $path      = $this->filesPath;
 
          /* setting minifying and bundling on */
-         $optimizer->setOptimizationEnabled();
+         $optimizer->setBundlingEnabled();
+         $optimizer->setMinifyingEnabled();
 
          $this->appendFilesToHead($this->files);
 
