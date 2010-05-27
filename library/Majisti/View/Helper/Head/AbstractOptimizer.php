@@ -189,22 +189,6 @@ abstract class AbstractOptimizer implements IOptimizer
     }
 
     /**
-     * @desc Returns whether bundling or minifying are enabled.
-     *
-     * By default, when this function is called without
-     * first using {@link setOptimizationEnabled()} (therefore
-     * lazily called) it will return true if the current application
-     * environment is set to production or staging (as defined in
-     * the APPLICATION_ENVIRONMENT constant.
-     *
-     * @return bool Whether bundling or minifying are both enabled or not
-     */
-    public function isOptimizationEnabled()
-    {
-        return $this->isBundlingEnabled() || $this->isMinifyingEnabled();
-    }
-
-    /**
      * @desc Returns whether the cache was already valided or not.
      *
      * @return bool True is the cache was already validated
@@ -501,36 +485,48 @@ abstract class AbstractOptimizer implements IOptimizer
     public function setAppendInlineContent($flag = true)
     {
         $this->_appendInline = (bool) $flag;
+
+        return $this;
     }
 
     /**
      * @desc Enables or disables bundling
      * @param bool $flag [opt; def=true] The enabled flag
      */
-    public function setBundlingEnabled($flag = true)
+    public function setBundlingEnabled($flag = true, $environments = array())
     {
-        $this->_bundlingEnabled = (bool) $flag;
+        if( count($environments) ) {
+            foreach( $environments as $env ) {
+                if( APPLICATION_ENVIRONMENT === $env ) {
+                    $this->_bundlingEnabled = (bool) $flag;
+                    return $this;
+                }
+            }
+        } else {
+            $this->_bundlingEnabled = (bool) $flag;
+        }
+
+        return $this;
     }
 
     /**
      * @desc Enables or disables minifying
      * @param bool $flag [opt; def=true] The enabled flag
      */
-    public function setMinifyingEnabled($flag = true)
+    public function setMinifyingEnabled($flag = true, $environments = array())
     {
-        $this->_minifyingEnabled = (bool) $flag;
-    }
+        if( count($environments) ) {
+            foreach( $environments as $env ) {
+                if( APPLICATION_ENVIRONMENT === $env ) {
+                    $this->_minifyingEnabled = (bool) $flag;
+                    return $this;
+                }
+            }
+        } else {
+            $this->_minifyingEnabled = (bool) $flag;
+        }
 
-    /**
-     * @desc Enables or disables optimization
-     * @param bool $flag [opt; def=true] The enabled flag
-     */
-    public function setOptimizationEnabled($flag = true)
-    {
-        $flag = (bool) $flag;
-
-        $this->setBundlingEnabled($flag);
-        $this->setMinifyingEnabled($flag);
+        return $this;
     }
 
     /**
@@ -603,10 +599,6 @@ abstract class AbstractOptimizer implements IOptimizer
      */
     public function optimize($path, $url)
     {
-        if( !$this->isOptimizationEnabled() ) {
-            return false;
-        }
-
         /* bundle and minify */
         if( $url = $this->bundle($path, $url) ) {
             /*
@@ -625,9 +617,8 @@ abstract class AbstractOptimizer implements IOptimizer
                 $this->setUriRemaps($uris);
             }
 
+            $this->setCacheValidated(false);
         }
-
-        $this->setCacheValidated(false);
 
         return $url;
     }
