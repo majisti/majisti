@@ -23,7 +23,7 @@ namespace Majisti\Util\Minifying;
  *
  * @author Stephen Clay <steve@mrclay.org>
  */
-class Yui extends AbstractMinifier
+class Yui implements IMinifier
 {
     /**
      * Filepath of the YUI Compressor jar file. This must be set before
