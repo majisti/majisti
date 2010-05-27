@@ -15,6 +15,11 @@ use \Majisti\Util\Minifying as Minifying;
 abstract class AbstractOptimizer implements IOptimizer
 {
     /**
+     * @var Minifying\IMinifier The minifier
+     */
+    static protected $_defaultMinifier;
+
+    /**
      * @var array The default options
      */
     protected $_defaultOptions;
@@ -632,23 +637,64 @@ abstract class AbstractOptimizer implements IOptimizer
     public function getMinifier()
     {
         if ( null === $this->_minifier ) {
-            $this->_minifier = new Minifying\Yui();
-
-            Minifying\Yui::$jarFile = MAJISTI_ROOT .
-                '/externals/yuicompressor-2.4.2.jar';
-            Minifying\Yui::$tempDir = '/tmp';
+            $this->_minifier = static::getDefaultMinifier();
         }
 
         return $this->_minifier;
     }
 
     /**
+     * @desc Returns the default minifier for every AbstractOptimizer instances.
+     * If no default minifier was setup using the setDefaultMinifier() function,
+     * it will return the Yui Minifier by default.
+     *
+     * TODO: check it the java Yui minifier should be used by default or not
+     *
+     * @return Minifying\IMinifier The default minifier
+     */
+    static public function getDefaultMinifier()
+    {
+        if( null === static::$_defaultMinifier ) {
+            static::$_defaultMinifier = new Minifying\Yui();
+
+            Minifying\Yui::$jarFile = MAJISTI_ROOT .
+                '/externals/yuicompressor-2.4.2.jar';
+            Minifying\Yui::$tempDir = '/tmp';
+        }
+
+        return static::$_defaultMinifier;
+    }
+
+    /**
+     * @desc Sets the default minifier. If no minifier is set to an instance
+     * of this AbstractOptimizer, this default one will be used.
+     *
+     * @param IMinifier|class $minifier The default minifier
+     * @param mixed $options [opt] The options for the concrete minifier
+     */
+    static public function setDefaultMinifier($minifier, $options = array())
+    {
+        if( is_string($minifier) ) {
+            $minifier = Minifying\Factory::createMinifier(
+                'Crockford', $options);
+        }
+
+        static::$_defaultMinifier = $minifier;
+    }
+
+    /**
      * @desc Sets a minifier for this optimizer
      *
-     * @param IMinifier $minifier The minifier
+     * @param IMinifier|class $minifier The minifier
+     * @param mixed $options [opt] The options for the concrete minifier
      */
-    public function setMinifier(Minifying\IMinifier $minifier)
+    public function setMinifier($minifier, $options = array())
     {
+        if( is_string($minifier) ) {
+            $minifier = Minifying\Factory::createMinifier(
+                'Cockford', $options);
+        }
+
         $this->_minifier = $minifier;
     }
 
