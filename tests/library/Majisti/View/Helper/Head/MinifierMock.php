@@ -1,8 +1,8 @@
 <?php
 
-namespace Majisti\Util\Minifying;
+namespace Majisti\View\Helper\Head;
 
-class MinifierMock implements IMinifier
+class MinifierMock extends \Majisti\Util\Minifying\AbstractMinifier
 {
     const ALL_STATE = "all";
     const ALL_INC_INLINE_STATE = "allInline";

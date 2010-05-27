@@ -228,7 +228,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
         $path      = $this->filesPath;
         $minifier  = $this->minifier;
 
-        $minifer::setState('all');
+//        $minifer::setState('all');
         $this->appendFilesAndExecute('optimize', 'all', $this->files);
 
         /* optimize() function returns absolute paths from server root */
