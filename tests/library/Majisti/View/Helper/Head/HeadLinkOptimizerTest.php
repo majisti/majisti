@@ -3,7 +3,6 @@
 namespace Majisti\View\Helper\Head;
 
 require_once 'TestHelper.php';
-require_once 'MinifierMock.php';
 
 /**
  * @desc Tests that the stylesheet optimizer can bundle and minify
@@ -36,10 +35,10 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
         );
 
         $this->headObject = $this->view->headLink();
-        $this->minifier = new \Majisti\Util\Minifying\MinifierMock();
+//        $this->minifier = new MinifierMock();
 
         $this->optimizer = new HeadLinkOptimizer($this->view, $this->options);
-        $this->optimizer->setMinifier($this->minifier);
+//        $this->optimizer->setMinifier($this->minifier);
         $this->optimizer->clearCache();
 
         /* clearing head data */
