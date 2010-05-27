@@ -35,10 +35,10 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
         );
 
         $this->headObject = $this->view->headLink();
-//        $this->minifier = new MinifierMock();
+        $this->minifier = new MinifierMock();
 
         $this->optimizer = new HeadLinkOptimizer($this->view, $this->options);
-//        $this->optimizer->setMinifier($this->minifier);
+        $this->optimizer->setMinifier($this->minifier);
         $this->optimizer->clearCache();
 
         /* clearing head data */
