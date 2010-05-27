@@ -156,6 +156,7 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
         $path      = $this->filesPath;
         $url       = $this->filesUrl;
         $ext       = $this->extension;
+        $minifier  = $this->minifier;
 
         $style = ".inline {
                     color: white;
@@ -163,6 +164,7 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
 
         $headStyle->appendStyle($style);
 
+        $minifier::setState("allInline");
         $this->appendFilesAndExecute('optimize', 'all', $this->files);
 
         /* head link should contain only the bundled file and the style

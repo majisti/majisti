@@ -34,8 +34,10 @@ class HeadScriptOptimizerTest extends AbstractHeadOptimizerTest
         );
 
         $this->headObject = $this->view->headScript();
+        $this->minifier   = new MinifierMock();
 
         $this->optimizer = new HeadScriptOptimizer($this->view, $this->options);
+        $this->optimizer->setMinifier($this->minifier);
         $this->optimizer->clearCache();
 
         /* clearing head data */
@@ -99,26 +101,17 @@ class HeadScriptOptimizerTest extends AbstractHeadOptimizerTest
     public function testThatInlineScriptGetsOptimizedJustLikeFilesDo()
     {
         $headObj   = $this->headObject;
-        $optimizer = $this->optimizer;
-        $url       = $this->filesUrl;
         $ext       = $this->extension;
         $path      = $this->filesPath;
-
-        /* setting minifying and bundling on */
-        $optimizer->setBundlingEnabled();
-        $optimizer->setMinifyingEnabled();
-
-        $this->appendFilesToHead($this->files);
+        $minifier  = $this->minifier;
 
         $script = "function helloWorld() {
                         window.print('Hello World!');
                    }";
         $headObj->appendScript($script);
 
-        $urlOptimize = $optimizer->optimize(
-                $path . "/all{$ext}",
-                $url  . "/all{$ext}"
-        );
+        $minifier::setState("allInline");
+        $urlOptimize = $this->appendFilesAndExecute('optimize', 'all', $this->files);
 
         /* head script should contain only the bundled file */
         $this->assertEquals($urlOptimize, 
@@ -142,16 +135,7 @@ class HeadScriptOptimizerTest extends AbstractHeadOptimizerTest
          $ext       = $this->extension;
          $path      = $this->filesPath;
 
-         /* setting minifying and bundling on */
-         $optimizer->setBundlingEnabled();
-         $optimizer->setMinifyingEnabled();
-
-         $this->appendFilesToHead($this->files);
-
-         $urlOptimize = $optimizer->optimize(
-                    $path . "/all{$ext}",
-                    $url  . "/all{$ext}"
-         );
+         $urlOptimize = $this->appendFilesAndExecute('optimize', 'all', $this->files);
 
          /* running optimize() a second time and asserting it returns false */
          $this->assertEquals($urlOptimize, $optimizer->optimize(
