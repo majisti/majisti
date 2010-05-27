@@ -3,6 +3,7 @@
 namespace Majisti\View\Helper\Head;
 
 require_once 'TestHelper.php';
+require_once 'MinifierMock.php';
 
 /**
  * @desc Tests that the stylesheet optimizer can bundle and minify
@@ -35,8 +36,10 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
         );
 
         $this->headObject = $this->view->headLink();
+        $this->minifier = new \Majisti\Util\Minifying\MinifierMock();
 
         $this->optimizer = new HeadLinkOptimizer($this->view, $this->options);
+        $this->optimizer->setMinifier($this->minifier);
         $this->optimizer->clearCache();
 
         /* clearing head data */
@@ -130,24 +133,11 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
     public function testThatInvalidFilesArePreserved()
     {
         $headObj   = $this->headObject;
-        $optimizer = $this->optimizer;
-        $url       = $this->filesUrl;
-        $ext       = $this->extension;
-
-        /* setting optimization on */
-        $optimizer->setOptimizationEnabled();
-
-        /* appending files to the head */
-        $this->appendFilesToHead($this->getFilesObjects(array("core{$ext}",
-                "file1{$ext}", "file2{$ext}")));
 
         /* appending invalid files that should be preserved */
         $this->appendInvalidFiles($headObj);
 
-        $optimizer->optimize(
-                $this->filesPath. "/all{$ext}",
-                $url. "/all{$ext}"
-        );
+        $this->appendFilesAndExecute('optimize', 'all', $this->files);
 
         /* asserting that invalid files inclusions were preserved */
         $array = (array)$headObj->getContainer();
@@ -172,14 +162,9 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
                     color: white;
                   }";
 
-        $optimizer->setOptimizationEnabled();
-        $this->appendFilesToHead($this->files);
         $headStyle->appendStyle($style);
 
-        $optimizer->optimize(
-                $path . "/all{$ext}",
-                $url  . "/all{$ext}"
-        );
+        $this->appendFilesAndExecute('optimize', 'all', $this->files);
 
         /* head link should contain only the bundled file and the style
          * from the head style should have been removed.
@@ -203,15 +188,7 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
          $ext       = $this->extension;
          $path      = $this->filesPath;
 
-         /* setting minifying and bundling on */
-         $optimizer->setOptimizationEnabled();
-
-         $this->appendFilesToHead($this->files);
-
-         $urlOptimize = $optimizer->optimize(
-                    $path . "/all{$ext}",
-                    $url  . "/all{$ext}"
-         );
+         $urlOptimize = $this->appendFilesAndExecute('optimize', 'all', $this->files);
 
          /* running optimize() a second time and asserting it returns false */
          $this->assertEquals($urlOptimize, $optimizer->optimize(
