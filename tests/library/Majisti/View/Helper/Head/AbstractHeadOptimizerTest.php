@@ -228,7 +228,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
         $path      = $this->filesPath;
         $minifier  = $this->minifier;
 
-//        $minifer::setState('all');
+        $minifier::setState('all');
         $this->appendFilesAndExecute('optimize', 'all', $this->files);
 
         /* optimize() function returns absolute paths from server root */
@@ -510,11 +510,13 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
         $optimizer = $this->optimizer;
         $path      = $this->filesPath;
         $ext       = $this->extension;
+        $minifier  = $this->minifier;
 
         /*
          * appending core and file1 to the head, will add theme2 after
          * optimizing
          */
+        $minifier::setState("coreFile1");
         $files = $this->getFilesObjects(array("core{$ext}", "file1{$ext}"));
         $urlOptimize1 = $this->appendFilesAndExecute('optimize', 'all', $files);
         $infos1 = $this->getOutputContentsAndModificationTime('all.min');
@@ -522,6 +524,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
         /* appending a new file after having optimized */
         $this->clearHead();
 
+        $minifier::setState("all");
         $urlOptimize2 = $this->appendFilesAndExecute('optimize', 'all', $this->files);
         $infos2 = $this->getOutputContentsAndModificationTime('all.min');
 
