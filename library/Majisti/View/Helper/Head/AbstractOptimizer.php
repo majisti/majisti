@@ -15,6 +15,11 @@ use \Majisti\Util\Minifying as Minifying;
 abstract class AbstractOptimizer implements IOptimizer
 {
     /**
+     * @var Minifying\IMinifier The minifier
+     */
+    static protected $_defaultMinifier;
+
+    /**
      * @var array The default options
      */
     protected $_defaultOptions;
@@ -186,22 +191,6 @@ abstract class AbstractOptimizer implements IOptimizer
         }
 
         return $this->_bundlingEnabled;
-    }
-
-    /**
-     * @desc Returns whether bundling or minifying are enabled.
-     *
-     * By default, when this function is called without
-     * first using {@link setOptimizationEnabled()} (therefore
-     * lazily called) it will return true if the current application
-     * environment is set to production or staging (as defined in
-     * the APPLICATION_ENVIRONMENT constant.
-     *
-     * @return bool Whether bundling or minifying are both enabled or not
-     */
-    public function isOptimizationEnabled()
-    {
-        return $this->isBundlingEnabled() || $this->isMinifyingEnabled();
     }
 
     /**
@@ -501,36 +490,48 @@ abstract class AbstractOptimizer implements IOptimizer
     public function setAppendInlineContent($flag = true)
     {
         $this->_appendInline = (bool) $flag;
+
+        return $this;
     }
 
     /**
      * @desc Enables or disables bundling
      * @param bool $flag [opt; def=true] The enabled flag
      */
-    public function setBundlingEnabled($flag = true)
+    public function setBundlingEnabled($flag = true, $environments = array())
     {
-        $this->_bundlingEnabled = (bool) $flag;
+        if( count($environments) ) {
+            foreach( $environments as $env ) {
+                if( APPLICATION_ENVIRONMENT === $env ) {
+                    $this->_bundlingEnabled = (bool) $flag;
+                    return $this;
+                }
+            }
+        } else {
+            $this->_bundlingEnabled = (bool) $flag;
+        }
+
+        return $this;
     }
 
     /**
      * @desc Enables or disables minifying
      * @param bool $flag [opt; def=true] The enabled flag
      */
-    public function setMinifyingEnabled($flag = true)
+    public function setMinifyingEnabled($flag = true, $environments = array())
     {
-        $this->_minifyingEnabled = (bool) $flag;
-    }
+        if( count($environments) ) {
+            foreach( $environments as $env ) {
+                if( APPLICATION_ENVIRONMENT === $env ) {
+                    $this->_minifyingEnabled = (bool) $flag;
+                    return $this;
+                }
+            }
+        } else {
+            $this->_minifyingEnabled = (bool) $flag;
+        }
 
-    /**
-     * @desc Enables or disables optimization
-     * @param bool $flag [opt; def=true] The enabled flag
-     */
-    public function setOptimizationEnabled($flag = true)
-    {
-        $flag = (bool) $flag;
-
-        $this->setBundlingEnabled($flag);
-        $this->setMinifyingEnabled($flag);
+        return $this;
     }
 
     /**
@@ -603,10 +604,6 @@ abstract class AbstractOptimizer implements IOptimizer
      */
     public function optimize($path, $url)
     {
-        if( !$this->isOptimizationEnabled() ) {
-            return false;
-        }
-
         /* bundle and minify */
         if( $url = $this->bundle($path, $url) ) {
             /*
@@ -625,9 +622,8 @@ abstract class AbstractOptimizer implements IOptimizer
                 $this->setUriRemaps($uris);
             }
 
+            $this->setCacheValidated(false);
         }
-
-        $this->setCacheValidated(false);
 
         return $url;
     }
@@ -641,23 +637,64 @@ abstract class AbstractOptimizer implements IOptimizer
     public function getMinifier()
     {
         if ( null === $this->_minifier ) {
-            $this->_minifier = new Minifying\Yui();
-
-            Minifying\Yui::$jarFile = MAJISTI_ROOT .
-                '/externals/yuicompressor-2.4.2.jar';
-            Minifying\Yui::$tempDir = '/tmp';
+            $this->_minifier = static::getDefaultMinifier();
         }
 
         return $this->_minifier;
     }
 
     /**
+     * @desc Returns the default minifier for every AbstractOptimizer instances.
+     * If no default minifier was setup using the setDefaultMinifier() function,
+     * it will return the Yui Minifier by default.
+     *
+     * TODO: check it the java Yui minifier should be used by default or not
+     *
+     * @return Minifying\IMinifier The default minifier
+     */
+    static public function getDefaultMinifier()
+    {
+        if( null === static::$_defaultMinifier ) {
+            static::$_defaultMinifier = new Minifying\Yui();
+
+            Minifying\Yui::$jarFile = MAJISTI_ROOT .
+                '/externals/yuicompressor-2.4.2.jar';
+            Minifying\Yui::$tempDir = '/tmp';
+        }
+
+        return static::$_defaultMinifier;
+    }
+
+    /**
+     * @desc Sets the default minifier. If no minifier is set to an instance
+     * of this AbstractOptimizer, this default one will be used.
+     *
+     * @param IMinifier|class $minifier The default minifier
+     * @param mixed $options [opt] The options for the concrete minifier
+     */
+    static public function setDefaultMinifier($minifier, $options = array())
+    {
+        if( is_string($minifier) ) {
+            $minifier = Minifying\Factory::createMinifier(
+                'Crockford', $options);
+        }
+
+        static::$_defaultMinifier = $minifier;
+    }
+
+    /**
      * @desc Sets a minifier for this optimizer
      *
-     * @param IMinifier $minifier The minifier
+     * @param IMinifier|class $minifier The minifier
+     * @param mixed $options [opt] The options for the concrete minifier
      */
-    public function setMinifier(Minifying\IMinifier $minifier)
+    public function setMinifier($minifier, $options = array())
     {
+        if( is_string($minifier) ) {
+            $minifier = Minifying\Factory::createMinifier(
+                'Cockford', $options);
+        }
+
         $this->_minifier = $minifier;
     }
 
