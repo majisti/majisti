@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Translate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: PriorityTest.php 17667 2009-08-18 21:40:09Z mikaelkael $
+ * @version    $Id: PriorityTest.php 21365 2010-03-07 09:38:41Z thomas $
  */
 
 require_once 'PHPUnit/Framework/TestCase.php';
@@ -29,7 +29,7 @@ require_once 'Zend/Validate/Sitemap/Priority.php';
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Validate
  */
@@ -82,14 +82,30 @@ class Zend_Validate_Sitemap_PriorityTest extends PHPUnit_Framework_TestCase
     public function testInvalidPriorities()
     {
         $values = array(
-            'alwayz',  '_hourly', 'Daily', 'wEekly',
-            'mönthly ', ' yearly ', 'never ', 'rofl',
-            '0,0', '1.1', '02', '3', '01.4', '0.f',
-            1.1, -0.001, 1.0001
+            -1, -0.1, 1.1, 100, 10, 2, '3', '-4',
         );
 
         foreach ($values as $value) {
             $this->assertSame(false, $this->_validator->isValid($value));
+            $messages = $this->_validator->getMessages();
+            $this->assertContains('is no valid', current($messages));
+        }
+    }
+
+    /**
+     * Tests values that are no numbers
+     *
+     */
+    public function testNotNumbers()
+    {
+        $values = array(
+            null, new stdClass(), true, false, 'abcd',
+        );
+
+        foreach ($values as $value) {
+            $this->assertSame(false, $this->_validator->isValid($value));
+            $messages = $this->_validator->getMessages();
+            $this->assertContains('should be a integer', current($messages));
         }
     }
 }

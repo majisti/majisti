@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Json
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: JsonTest.php 18950 2009-11-12 15:37:56Z alexander $
+ * @version    $Id: JsonTest.php 20616 2010-01-25 19:56:04Z matthew $
  */
 
 /**
@@ -49,7 +49,7 @@ require_once 'Zend/Json/Decoder.php';
  * @category   Zend
  * @package    Zend_Json
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Json
  */
@@ -719,6 +719,41 @@ class Zend_JsonTest extends PHPUnit_Framework_TestCase
     public function testEncodeObjectImplementingIterator()
     {
         $this->markTestIncomplete('Test is not yet finished.');
+    }
+    
+    /**
+     * @group ZF-8663
+     */
+    public function testNativeJsonEncoderWillProperlyEncodeSolidusInStringValues()
+    {
+        $source = "</foo><foo>bar</foo>";
+        $target = '"<\\/foo><foo>bar<\\/foo>"';
+        
+        // first test ext/json
+        Zend_Json::$useBuiltinEncoderDecoder = false;
+        $this->assertEquals($target, Zend_Json::encode($source));
+    }
+    
+    /**
+     * @group ZF-8663
+     */
+    public function testBuiltinJsonEncoderWillProperlyEncodeSolidusInStringValues()
+    {
+        $source = "</foo><foo>bar</foo>";
+        $target = '"<\\/foo><foo>bar<\\/foo>"';
+        
+        // first test ext/json
+        Zend_Json::$useBuiltinEncoderDecoder = true;
+        $this->assertEquals($target, Zend_Json::encode($source));
+    }
+    
+    /**
+     * @group ZF-8918
+     * @expectedException Zend_Json_Exception
+     */
+    public function testDecodingInvalidJsonShouldRaiseAnException()
+    {
+        Zend_Json::decode(' some string ');
     }
 }
 

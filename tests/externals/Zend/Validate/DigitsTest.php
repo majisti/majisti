@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: DigitsTest.php 17573 2009-08-13 18:01:41Z alexander $
+ * @version    $Id: DigitsTest.php 21136 2010-02-22 22:30:50Z thomas $
  */
 
 
@@ -36,7 +36,7 @@ require_once 'Zend/Validate/Digits.php';
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Validate
  */
@@ -127,7 +127,7 @@ class Zend_Validate_DigitsTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($this->_validator->isValid('#'));
         $messages = $this->_validator->getMessages();
         $arrayExpected = array(
-            Zend_Validate_Digits::NOT_DIGITS => '\'#\' contains not only digit characters'
+            Zend_Validate_Digits::NOT_DIGITS => '\'#\' contains characters which are not digits; but only digits are allowed'
             );
         $this->assertThat($messages, $this->identicalTo($arrayExpected));
     }

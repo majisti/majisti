@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Dojo
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: BuildLayerTest.php 17667 2009-08-18 21:40:09Z mikaelkael $
+ * @version    $Id: BuildLayerTest.php 22279 2010-05-24 20:38:52Z matthew $
  */
 
 /**
@@ -38,7 +38,7 @@ require_once 'Zend/Json.php';
  * @category   Zend
  * @package    Zend_Dojo
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Dojo
  */
@@ -60,6 +60,11 @@ class Zend_Dojo_BuildLayerTest extends PHPUnit_Framework_TestCase
     {
         $this->view = new Zend_View();
         Zend_Dojo::enableView($this->view);
+    }
+
+    public function tearDown()
+    {
+        unset($this->view);
     }
 
     public function testViewShouldBeNullByDefault()
@@ -310,8 +315,8 @@ class Zend_Dojo_BuildLayerTest extends PHPUnit_Framework_TestCase
     public function testGeneratedDojoBuildProfileWithNoExtraLayerDependencies()
     {
         $build = new Zend_Dojo_BuildLayer(array(
-            'view' => $this->view,
-            'layerName' => 'zend.main',
+            'layerScriptPath' => '../zend/main.js',
+            'layerName'       => 'zend.main',
         ));
         $profile  = $build->generateBuildProfile();
         $expected = file_get_contents(dirname(__FILE__) . '/_files/BuildProfile.js');
@@ -319,7 +324,10 @@ class Zend_Dojo_BuildLayerTest extends PHPUnit_Framework_TestCase
         $decodedProfile  = $this->decodeProfileJson($profile);
         $decodedExpected = $this->decodeProfileJson($expected);
 
-        $this->assertEquals($decodedExpected, $decodedProfile, 'Expected: ' . $expected . "\nReceived: " . $profile . "\n");
+        foreach ($decodedExpected as $key => $value) {
+            $this->assertArrayHasKey($key, $decodedProfile);
+            $this->assertEquals($value, $decodedProfile[$key], $key . ' is not same');
+        }
     }
 
     public function testGeneratedDojoBuildProfileWithLayerDependencies()
@@ -327,8 +335,9 @@ class Zend_Dojo_BuildLayerTest extends PHPUnit_Framework_TestCase
         $this->view->dojo()->requireModule('dijit.layout.BorderContainer')
                            ->requireModule('dojox.layout.ContentPane');
         $build = new Zend_Dojo_BuildLayer(array(
-            'view' => $this->view,
-            'layerName' => 'zend.main',
+            'layerScriptPath' => '../zend/main.js',
+            'view'            => $this->view,
+            'layerName'       => 'zend.main',
         ));
         $profile  = $build->generateBuildProfile();
         $expected = file_get_contents(dirname(__FILE__) . '/_files/BuildProfileWithDependencies.js');
@@ -336,7 +345,10 @@ class Zend_Dojo_BuildLayerTest extends PHPUnit_Framework_TestCase
         $decodedProfile  = $this->decodeProfileJson($profile);
         $decodedExpected = $this->decodeProfileJson($expected);
 
-        $this->assertEquals($decodedExpected, $decodedProfile, 'Expected: ' . $expected . "\nReceived: " . $profile . "\n");
+        foreach ($decodedExpected as $key => $value) {
+            $this->assertArrayHasKey($key, $decodedProfile);
+            $this->assertEquals($value, $decodedProfile[$key]);
+        }
     }
 
     protected function stripWhitespace($string)

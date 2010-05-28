@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Text
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: MultiByteTest.php 18950 2009-11-12 15:37:56Z alexander $
+ * @version    $Id: MultiByteTest.php 21933 2010-04-18 15:37:03Z dasprid $
  */
 
 // Call Zend_Text_MultiByteTest::main() if this source file is executed directly.
@@ -39,7 +39,7 @@ require_once 'Zend/Text/MultiByte.php';
  * @category   Zend
  * @package    Zend_Text
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Text
  */
@@ -75,6 +75,21 @@ class Zend_Text_MultiByteTest extends PHPUnit_Framework_TestCase
     {
         $line = Zend_Text_MultiByte::wordWrap('Ä very long wöööööööööööörd.', 8, "\n", true);
         $this->assertEquals("Ä very\nlong\nwööööööö\nööööörd.", $line);
+    }
+
+    public function testWordWrapCutMultiLineWithPreviousNewlines()
+    {
+        $line = Zend_Text_MultiByte::wordWrap("Ä very\nlong wöööööööööööörd.", 8, "\n", false);
+        $this->assertEquals("Ä very\nlong\nwöööööööööööörd.", $line);
+    }
+
+    /**
+     * Long-Break tests
+     */
+    public function testWordWrapLongBreak()
+    {
+        $line = Zend_Text_MultiByte::wordWrap("Ä very<br>long wöö<br>öööööööö<br>öörd.", 8, '<br>', false);
+        $this->assertEquals("Ä very<br>long<br>wöö<br>öööööööö<br>öörd.", $line);
     }
 
     /**

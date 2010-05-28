@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Service_LiveDocx
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: $
  */
@@ -36,7 +36,7 @@ require_once 'Zend/Service/LiveDocx/MailMerge.php';
  * @subpackage UnitTests
  * @group      Zend_Service
  * @group      Zend_Service_LiveDocx
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: $
  */
@@ -377,12 +377,6 @@ class Zend_Service_LiveDocx_MailMergeTest extends PHPUnit_Framework_TestCase
     {
         $expectedResults = array('bmp' , 'gif' , 'jpg' , 'png' , 'tiff');
         $this->assertEquals($expectedResults, $this->phpLiveDocx->getImageFormats());
-    }
-
-    public function testGetDocumentAccessOptions()
-    {
-        $expectedResults = array('AllowAuthoring' , 'AllowAuthoringFields' , 'AllowContentAccessibility' , 'AllowDocumentAssembly' , 'AllowExtractContents' , 'AllowGeneralEditing' , 'AllowHighLevelPrinting' , 'AllowLowLevelPrinting' , 'AllowAll');
-        $this->assertEquals($expectedResults, $this->phpLiveDocx->getDocumentAccessOptions());
     }
     
     // -------------------------------------------------------------------------

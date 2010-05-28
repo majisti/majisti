@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Format
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: FormatTest.php 18521 2009-10-12 18:10:00Z matthew $
+ * @version    $Id: FormatTest.php 21493 2010-03-14 12:01:43Z thomas $
  */
 
 require_once dirname(__FILE__) . '/../../TestHelper.php';
@@ -31,7 +31,7 @@ require_once 'Zend/Locale/Format.php';
  * @category   Zend
  * @package    Zend_Locale
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Locale
  */
@@ -732,7 +732,7 @@ class Zend_Locale_FormatTest extends PHPUnit_Framework_TestCase
         $this->assertEquals( '1.234.567,00',      Zend_Locale_Format::toNumber( 1234567,         array('number_format' => '#,##0.00', 'locale' => 'de_AT')));
         $this->assertEquals( '1.234.567,12',      Zend_Locale_Format::toNumber( 1234567.123,     array('precision' => 2,              'locale' => 'de_AT')));
         $this->assertEquals(   '1234567,12-',     Zend_Locale_Format::toNumber(-1234567.123,     array('number_format' => '#0.00-',   'locale' => 'de_AT')));
-        $this->assertEquals(   '-12.345',         Zend_Locale_Format::toNumber(  -12345.67,      array('precision' => 0,              'locale' => 'de_AT')));
+        $this->assertEquals(   '-12.346',         Zend_Locale_Format::toNumber(  -12345.67,      array('precision' => 0,              'locale' => 'de_AT')));
     }
 
     /**
@@ -1073,5 +1073,26 @@ class Zend_Locale_FormatTest extends PHPUnit_Framework_TestCase
 
         $options = array('locale' => 'de_AT');
         $this->assertEquals('0,567', Zend_Locale_Format::toNumber(.567, $options));
+    }
+
+    /**
+     * @group ZF-9160
+     */
+    public function testGetNumberWithZeroPrecision()
+    {
+        $this->assertEquals(1234, Zend_Locale_Format::getNumber('1234.567', array('locale' => 'en_US', 'precision' => 0)));
+    }
+
+    /**
+     * @group ZF-9319
+     */
+    public function testToNumberWithoutFormatWithPrecision()
+    {
+        $options = array('locale' => 'de_AT', 'precision' => 2);
+        $this->assertEquals('3,99', Zend_Locale_Format::toNumber(3.99, $options));
+        $this->assertEquals('3,99', Zend_Locale_Format::toNumber(3.994, $options));
+        $this->assertEquals('4,00', Zend_Locale_Format::toNumber(3.995, $options));
+        $this->assertEquals('4,00', Zend_Locale_Format::toNumber(3.999, $options));
+        $this->assertEquals('4,00', Zend_Locale_Format::toNumber(4, $options));
     }
 }

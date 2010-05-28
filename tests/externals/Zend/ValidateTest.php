@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ValidateTest.php 18028 2009-09-08 20:52:23Z thomas $
+ * @version    $Id: ValidateTest.php 21340 2010-03-05 15:33:49Z thomas $
  */
 
 /**
@@ -36,10 +36,15 @@ require_once 'Zend/Validate.php';
 require_once 'Zend/Validate/Abstract.php';
 
 /**
+ * @see Zend_Translate
+ */
+require_once 'Zend/Translate.php';
+
+/**
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Validate
  */
@@ -152,18 +157,11 @@ class Zend_ValidateTest extends PHPUnit_Framework_TestCase
      *
      * @group  ZF-2724
      * @return void
+     * @expectedException Zend_Validate_Exception
      */
     public function testStaticFactoryClassNotFound()
     {
-        set_error_handler(array($this, 'handleNotFoundError'), E_WARNING);
-        try {
-            Zend_Validate::is('1234', 'UnknownValidator');
-        } catch (Zend_Exception $e) {
-        }
-        restore_error_handler();
-        $this->assertTrue($this->error);
-        $this->assertTrue(isset($e));
-        $this->assertContains('Validate class not found', $e->getMessage());
+        Zend_Validate::is('1234', 'UnknownValidator');
     }
 
     /**
@@ -215,6 +213,15 @@ class Zend_ValidateTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(strlen($message) <= 5);
     }
 
+    public function testSetGetDefaultTranslator()
+    {
+        set_error_handler(array($this, 'errorHandlerIgnore'));
+        $translator = new Zend_Translate('array', array(), 'en');
+        restore_error_handler();
+        Zend_Validate_Abstract::setDefaultTranslator($translator);
+        $this->assertSame($translator->getAdapter(), Zend_Validate_Abstract::getDefaultTranslator());
+    }
+
     /**
      * Handle file not found errors
      *
@@ -228,6 +235,21 @@ class Zend_ValidateTest extends PHPUnit_Framework_TestCase
         if (strstr($errstr, 'No such file')) {
             $this->error = true;
         }
+    }
+
+    /**
+     * Ignores a raised PHP error when in effect, but throws a flag to indicate an error occurred
+     *
+     * @param  integer $errno
+     * @param  string  $errstr
+     * @param  string  $errfile
+     * @param  integer $errline
+     * @param  array   $errcontext
+     * @return void
+     */
+    public function errorHandlerIgnore($errno, $errstr, $errfile, $errline, array $errcontext)
+    {
+        $this->_errorOccurred = true;
     }
 }
 

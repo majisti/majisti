@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: RecordExistsTest.php 18028 2009-09-08 20:52:23Z thomas $
+ * @version    $Id: RecordExistsTest.php 20412 2010-01-19 07:02:01Z thomas $
  */
 
 
@@ -61,7 +61,7 @@ require_once dirname(__FILE__) . '/_files/Db/MockHasResult.php';
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Validate
  */
@@ -242,5 +242,15 @@ class Zend_Validate_Db_RecordExistsTest extends PHPUnit_Framework_TestCase
         } catch (Exception $e) {
             $this->markTestSkipped('No database available');
         }
+    }
+
+    /**
+     * @return ZF-8863
+     */
+    public function testExcludeConstructor()
+    {
+        Zend_Db_Table_Abstract::setDefaultAdapter($this->_adapterHasResult);
+        $validator = new Zend_Validate_Db_RecordExists('users', 'field1', 'id != 1');
+        $this->assertTrue($validator->isValid('value3'));
     }
 }

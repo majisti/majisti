@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Feed_Writer
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Rss.php 19789 2009-12-19 19:32:45Z padraic $
+ * @version    $Id: Rss.php 22065 2010-04-30 14:04:57Z padraic $
  */
 
 /**
@@ -27,7 +27,7 @@ require_once 'Zend/Feed/Writer/Renderer/RendererAbstract.php';
 /**
  * @category   Zend
  * @package    Zend_Feed_Writer
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Writer_Renderer_Entry_Rss
@@ -131,6 +131,9 @@ class Zend_Feed_Writer_Renderer_Entry_Rss
                 return;
             }
         }
+        if (!$this->getDataContainer()->getDescription()) {
+            return;
+        }
         $subtitle = $dom->createElement('description');
         $root->appendChild($subtitle);
         $text = $dom->createCDATASection($this->getDataContainer()->getDescription());
@@ -214,6 +217,37 @@ class Zend_Feed_Writer_Renderer_Entry_Rss
         $data = $this->_container->getEnclosure();
         if ((!$data || empty($data))) {
             return;
+        }
+        if (!isset($data['type'])) {
+            require_once 'Zend/Feed/Exception.php';
+            $exception = new Zend_Feed_Exception('Enclosure "type" is not set');
+            if (!$this->_ignoreExceptions) {
+                throw $exception;
+            } else {
+                $this->_exceptions[] = $exception;
+                return;
+            }
+        }
+        if (!isset($data['length'])) {
+            require_once 'Zend/Feed/Exception.php';
+            $exception = new Zend_Feed_Exception('Enclosure "length" is not set');
+            if (!$this->_ignoreExceptions) {
+                throw $exception;
+            } else {
+                $this->_exceptions[] = $exception;
+                return;
+            }
+        }
+        if (isset($data['length']) && (int) $data['length'] <= 0) {
+            require_once 'Zend/Feed/Exception.php';
+            $exception = new Zend_Feed_Exception('Enclosure "length" must be an integer'
+            . ' indicating the content\'s length in bytes');
+            if (!$this->_ignoreExceptions) {
+                throw $exception;
+            } else {
+                $this->_exceptions[] = $exception;
+                return;
+            }
         }
         $enclosure = $this->_dom->createElement('enclosure');
         $enclosure->setAttribute('type', $data['type']);

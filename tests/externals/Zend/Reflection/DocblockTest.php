@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Reflection
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: DocblockTest.php 18950 2009-11-12 15:37:56Z alexander $
+ * @version    $Id: DocblockTest.php 20394 2010-01-18 18:39:03Z mabe $
  */
 
 /**
@@ -32,7 +32,7 @@ require_once 'Zend/Reflection/File.php';
  * @category   Zend
  * @package    Zend_Reflection
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Reflection
  * @group      Zend_Reflection_Docblock
@@ -129,13 +129,12 @@ EOS;
 
         $classDocblock = $classReflection->getDocblock();
 
-        $expectedString = "Docblock [ /* Docblock */ ] {
-
-  - Tags [1] {
-    Docblock Tag [ * @author ]
-  }
-}
-";
+        $expectedString = 'Docblock [ /* Docblock */ ] {' . PHP_EOL
+                        . PHP_EOL
+                        . '  - Tags [1] {' . PHP_EOL
+                        . '    Docblock Tag [ * @author ]' . PHP_EOL
+                        . '  }' . PHP_EOL
+                        . '}' . PHP_EOL;
 
         $this->assertEquals($expectedString, (string)$classDocblock);
     }

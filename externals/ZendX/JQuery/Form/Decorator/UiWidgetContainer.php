@@ -15,9 +15,9 @@
  * @category    ZendX
  * @package     ZendX_JQuery
  * @subpackage  View
- * @copyright   Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license     http://framework.zend.com/license/new-bsd     New BSD License
- * @version     $Id: UiWidgetContainer.php 19855 2009-12-21 19:21:34Z matthew $
+ * @version     $Id: UiWidgetContainer.php 20746 2010-01-29 10:36:35Z beberlei $
  */
 
 require_once "Zend/Form/Decorator/Abstract.php";
@@ -27,7 +27,7 @@ require_once "Zend/Form/Decorator/Abstract.php";
  *
  * @package    ZendX_JQuery
  * @subpackage Form
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class ZendX_JQuery_Form_Decorator_UiWidgetContainer extends Zend_Form_Decorator_Abstract
@@ -128,11 +128,7 @@ abstract class ZendX_JQuery_Form_Decorator_UiWidgetContainer extends Zend_Form_D
         }
 
         $jQueryParams = $this->getJQueryParams();
-        $attribs     = array_merge($this->getAttribs(), $this->getOptions());
-
-        if(!isset($jQueryParams['title'])) {
-
-        }
+        $attribs     = $this->getOptions();
 
         $helper      = $this->getHelper();
         $id          = $element->getId() . '-container';

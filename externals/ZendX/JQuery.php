@@ -15,9 +15,9 @@
  * @category    ZendX
  * @package     ZendX_JQuery
  * @subpackage  View
- * @copyright   Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license     http://framework.zend.com/license/new-bsd     New BSD License
- * @version     $Id: JQuery.php 19855 2009-12-21 19:21:34Z matthew $
+ * @version     $Id: JQuery.php 21869 2010-04-16 07:49:18Z beberlei $
  */
 
 /**
@@ -30,7 +30,7 @@ require_once "Zend/Json.php";
  *
  * @todo       Offer convenience methods to add a tab or accordion container/pane combination.
  * @package    ZendX_JQuery
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
   */
 class ZendX_JQuery
@@ -142,6 +142,10 @@ class ZendX_JQuery
      */
     public static function encodeJson($value)
     {
+        if (is_array($value) && count($value) == 0) {
+            return '{}';
+        }
+
         if(!class_exists('Zend_Json')) {
             /**
              * @see Zend_Json

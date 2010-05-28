@@ -15,64 +15,26 @@
  * @category   Zend
  * @package    Zend_Dom
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Css2XpathTest.php 18224 2009-09-18 08:39:56Z sgehrig $
+ * @version    $Id: Css2XpathTest.php 22045 2010-04-28 19:59:49Z matthew $
  */
 
-// Call Zend_Dom_Query_Css2XpathTest::main() if this source file is executed directly.
-if (!defined("PHPUnit_MAIN_METHOD")) {
-    define("PHPUnit_MAIN_METHOD", "Zend_Dom_Query_Css2XpathTest::main");
-}
-
 require_once dirname(__FILE__) . '/../../../TestHelper.php';
-
-/** Zend_Dom_Query_Css2Xpath */
 require_once 'Zend/Dom/Query/Css2Xpath.php';
 
 /**
- * Test class for Zend_Dom_Query_Css2Xpath.
+ * Test class for Css2Xpath.
  *
  * @category   Zend
  * @package    Zend_Dom
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Dom
  */
 class Zend_Dom_Query_Css2XpathTest extends PHPUnit_Framework_TestCase
 {
-    /**
-     * Runs the test methods of this class.
-     *
-     * @return void
-     */
-    public static function main()
-    {
-        $suite  = new PHPUnit_Framework_TestSuite("Zend_Dom_Query_Css2XpathTest");
-        $result = PHPUnit_TextUI_TestRunner::run($suite);
-    }
-
-    /**
-     * Sets up the fixture, for example, open a network connection.
-     * This method is called before a test is executed.
-     *
-     * @return void
-     */
-    public function setUp()
-    {
-    }
-
-    /**
-     * Tears down the fixture, for example, close a network connection.
-     * This method is called after a test is executed.
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-    }
-
     public function testTransformShouldBeCalledStatically()
     {
         Zend_Dom_Query_Css2Xpath::transform('');
@@ -84,11 +46,15 @@ class Zend_Dom_Query_Css2XpathTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(is_string($test));
     }
 
+    /**
+     * @group ZF-6281
+     */
     public function testTransformShouldReturnMultiplePathsWhenExpressionContainsCommas()
     {
         $test = Zend_Dom_Query_Css2Xpath::transform('#foo, #bar');
-        $this->assertTrue(is_array($test));
-        $this->assertEquals(2, count($test));
+        $this->assertTrue(is_string($test));
+        $this->assertContains('|', $test);
+        $this->assertEquals(2, count(explode('|', $test)));
     }
 
     public function testTransformShouldRecognizeHashSymbolAsId()
@@ -100,16 +66,16 @@ class Zend_Dom_Query_Css2XpathTest extends PHPUnit_Framework_TestCase
     public function testTransformShouldRecognizeDotSymbolAsClass()
     {
         $test = Zend_Dom_Query_Css2Xpath::transform('.foo');
-        $this->assertEquals("//*[contains(@class, ' foo ')]", $test);
+        $this->assertEquals("//*[contains(concat(' ', normalize-space(@class), ' '), ' foo ')]", $test);
     }
 
     public function testTransformShouldAssumeSpacesToIndicateRelativeXpathQueries()
     {
         $test = Zend_Dom_Query_Css2Xpath::transform('div#foo .bar');
-        $this->assertContains(' | ', $test);
+        $this->assertContains('|', $test);
         $expected = array(
-            "//div[@id='foo']//*[contains(@class, ' bar ')]",
-            "//div[@id='foo'][contains(@class, ' bar ')]",
+            "//div[@id='foo']//*[contains(concat(' ', normalize-space(@class), ' '), ' bar ')]",
+            "//div[@id='foo'][contains(concat(' ', normalize-space(@class), ' '), ' bar ')]",
         );
         foreach ($expected as $path) {
             $this->assertContains($path, $test);
@@ -122,16 +88,21 @@ class Zend_Dom_Query_Css2XpathTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("//div[@id='foo']/span", $test);
     }
 
+    /**
+     * @group ZF-6281
+     */
     public function testMultipleComplexCssSpecificationShouldTransformToExpectedXpath()
     {
         $test = Zend_Dom_Query_Css2Xpath::transform('div#foo span.bar, #bar li.baz a');
-        $this->assertTrue(is_array($test));
+        $this->assertTrue(is_string($test));
+        $this->assertContains('|', $test);
+        $actual   = explode('|', $test);
         $expected = array(
-            "//div[@id='foo']//span[contains(@class, ' bar ')]",
-            "//*[@id='bar']//li[contains(@class, ' baz ')]//a",
+            "//div[@id='foo']//span[contains(concat(' ', normalize-space(@class), ' '), ' bar ')]",
+            "//*[@id='bar']//li[contains(concat(' ', normalize-space(@class), ' '), ' baz ')]//a",
         );
-        $this->assertEquals(count($expected), count($test));
-        foreach ($test as $path) {
+        $this->assertEquals(count($expected), count($actual));
+        foreach ($actual as $path) {
             $this->assertContains($path, $expected);
         }
     }
@@ -139,12 +110,12 @@ class Zend_Dom_Query_Css2XpathTest extends PHPUnit_Framework_TestCase
     public function testClassNotationWithoutSpecifiedTagShouldResultInMultipleQueries()
     {
         $test = Zend_Dom_Query_Css2Xpath::transform('div.foo .bar a .baz span');
-        $this->assertContains(' | ', $test);
+        $this->assertContains('|', $test);
         $segments = array(
-            "//div[contains(@class, ' foo ')]//*[contains(@class, ' bar ')]//a//*[contains(@class, ' baz ')]//span",
-            "//div[contains(@class, ' foo ')]//*[contains(@class, ' bar ')]//a[contains(@class, ' baz ')]//span",
-            "//div[contains(@class, ' foo ')][contains(@class, ' bar ')]//a//*[contains(@class, ' baz ')]//span",
-            "//div[contains(@class, ' foo ')][contains(@class, ' bar ')]//a[contains(@class, ' baz ')]//span",
+            "//div[contains(concat(' ', normalize-space(@class), ' '), ' foo ')]//*[contains(concat(' ', normalize-space(@class), ' '), ' bar ')]//a//*[contains(concat(' ', normalize-space(@class), ' '), ' baz ')]//span",
+            "//div[contains(concat(' ', normalize-space(@class), ' '), ' foo ')]//*[contains(concat(' ', normalize-space(@class), ' '), ' bar ')]//a[contains(concat(' ', normalize-space(@class), ' '), ' baz ')]//span",
+            "//div[contains(concat(' ', normalize-space(@class), ' '), ' foo ')][contains(concat(' ', normalize-space(@class), ' '), ' bar ')]//a//*[contains(concat(' ', normalize-space(@class), ' '), ' baz ')]//span",
+            "//div[contains(concat(' ', normalize-space(@class), ' '), ' foo ')][contains(concat(' ', normalize-space(@class), ' '), ' bar ')]//a[contains(concat(' ', normalize-space(@class), ' '), ' baz ')]//span",
         );
         foreach ($segments as $xpath) {
             $this->assertContains($xpath, $test);
@@ -166,7 +137,7 @@ class Zend_Dom_Query_Css2XpathTest extends PHPUnit_Framework_TestCase
     public function testShouldAllowContentSubSelectionOfArbitraryAttributes()
     {
         $test = Zend_Dom_Query_Css2Xpath::transform('div[foo~="bar"]');
-        $this->assertEquals("//div[contains(@foo, ' bar ')]", $test);
+        $this->assertEquals("//div[contains(concat(' ', normalize-space(@foo), ' '), ' bar ')]", $test);
     }
 
     public function testShouldAllowContentMatchingOfArbitraryAttributes()
@@ -183,9 +154,31 @@ class Zend_Dom_Query_Css2XpathTest extends PHPUnit_Framework_TestCase
         $test = Zend_Dom_Query_Css2Xpath::transform('tag#id @attribute');
         $this->assertEquals("//tag[@id='id']//@attribute", $test);
     }
-}
 
-// Call Zend_Dom_Query_Css2XpathTest::main() if this source file is executed directly.
-if (PHPUnit_MAIN_METHOD == "Zend_Dom_Query_Css2XpathTest::main") {
-    Zend_Dom_Query_Css2XpathTest::main();
+    /**
+     * @group ZF-8006
+     */
+    public function testShouldAllowWhitespaceInDescendentSelectorExpressions()
+    {
+        $test = Zend_Dom_Query_Css2Xpath::transform('child > leaf');
+        $this->assertEquals("//child/leaf", $test);
+    }
+
+    /**
+     * @group ZF-9764
+     */
+    public function testIdSelectorWithAttribute()
+    {
+        $test = Zend_Dom_Query_Css2Xpath::transform('#id[attribute="value"]');
+        $this->assertEquals("//*[@id='id'][@attribute='value']", $test);
+    }
+
+    /**
+     * @group ZF-9764
+     */
+    public function testIdSelectorWithLeadingAsterix()
+    {
+        $test = Zend_Dom_Query_Css2Xpath::transform('*#id');
+        $this->assertEquals("//*[@id='id']", $test);
+    }
 }

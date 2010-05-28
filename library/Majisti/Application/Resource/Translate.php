@@ -24,7 +24,7 @@ class Translate extends \Zend_Application_Resource_Translate
     }
     
     /**
-     * @desc Returns a null translator for this application if nothing
+     * @desc Returns a empty translator for this application if nothing
      * was setup in the configuration. Any string will be returned with it.
      * Note that it also sets it under the key Zend_Translate in the registry.
      *
@@ -33,8 +33,9 @@ class Translate extends \Zend_Application_Resource_Translate
     public function getTranslate()
     {
         if( !array_key_exists('data', $this->getOptions()) ) {
-            \Zend_Registry::set('Zend_Translate', new \Zend_Translate_Adapter_Array(
-                array(), null, array('disableNotices' => true)), array());
+            \Zend_Registry::set('Zend_Translate',
+                new \Zend_Translate_Adapter_Array(
+                    array(), null, array('disableNotices' => true)), array());
 
             return \Zend_Registry::get('Zend_Translate');
         } else {

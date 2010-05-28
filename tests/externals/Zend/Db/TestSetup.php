@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: TestSetup.php 17573 2009-08-13 18:01:41Z alexander $
+ * @version    $Id: TestSetup.php 20514 2010-01-22 07:57:10Z ralph $
  */
 
 
@@ -54,7 +54,7 @@ PHPUnit_Util_Filter::addFileToFilter(__FILE__);
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Db
  */
@@ -117,6 +117,7 @@ abstract class Zend_Db_TestSetup extends PHPUnit_Framework_TestCase
     public function tearDown()
     {
         $this->_util->tearDown();
+        $this->_db->closeConnection();
         $this->_db = null;
     }
 

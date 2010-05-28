@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Loader
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: LoaderTest.php 17573 2009-08-13 18:01:41Z alexander $
+ * @version    $Id: LoaderTest.php 22020 2010-04-27 16:35:56Z matthew $
  */
 
 // Call Zend_LoaderTest::main() if this source file is executed directly.
@@ -44,7 +44,7 @@ require_once 'Zend/Loader/Autoloader.php';
  * @category   Zend
  * @package    Zend_Loader
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Loader
  */
@@ -256,7 +256,7 @@ class Zend_LoaderTest extends PHPUnit_Framework_TestCase
         $this->assertFalse(Zend_Loader::isReadable(__FILE__ . '.foobaar'));
 
         // test that a file in include_path gets loaded, see ZF-2985
-        $this->assertTrue(Zend_Loader::isReadable('Zend/Controller/Front.php'));
+        $this->assertTrue(Zend_Loader::isReadable('Zend/Controller/Front.php'), get_include_path());
     }
 
     /**
@@ -456,6 +456,97 @@ class Zend_LoaderTest extends PHPUnit_Framework_TestCase
                 }
             }
         }
+    }
+
+    /**
+     * @group ZF-8200
+     */
+    public function testLoadClassShouldAllowLoadingPhpNamespacedClasses()
+    {
+        if (version_compare(PHP_VERSION, '5.3.0') < 0) {
+            $this->markTestSkipped('PHP < 5.3.0 does not support namespaces');
+        }
+        Zend_Loader::loadClass('\Zfns\Foo', array(dirname(__FILE__) . '/Loader/_files'));
+    }
+
+    /**
+     * @group ZF-7271
+     * @group ZF-8913
+     */
+    public function testIsReadableShouldHonorStreamDefinitions()
+    {
+        if (version_compare(PHP_VERSION, '5.3.0', '<')) {
+            $this->markTestSkipped();
+        }
+
+        $pharFile = dirname(__FILE__) . '/Loader/_files/Zend_LoaderTest.phar';
+        $phar     = new Phar($pharFile, 0, 'zlt.phar');
+        $incPath = 'phar://zlt.phar'
+                 . PATH_SEPARATOR . $this->includePath;
+        set_include_path($incPath);
+        $this->assertTrue(Zend_Loader::isReadable('User.php'));
+        unset($phar);
+    }
+
+    /**
+     * @group ZF-8913
+     */
+    public function testIsReadableShouldNotLockWhenTestingForNonExistantFileInPhar()
+    {
+        if (version_compare(PHP_VERSION, '5.3.0', '<')) {
+            $this->markTestSkipped();
+        }
+
+        $pharFile = dirname(__FILE__) . '/Loader/_files/Zend_LoaderTest.phar';
+        $phar     = new Phar($pharFile, 0, 'zlt.phar');
+        $incPath = 'phar://zlt.phar'
+                 . PATH_SEPARATOR . $this->includePath;
+        set_include_path($incPath);
+        $this->assertFalse(Zend_Loader::isReadable('does-not-exist'));
+        unset($phar);
+    }
+
+    /**
+     * @group ZF-7271
+     */
+    public function testExplodeIncludePathProperlyIdentifiesStreamSchemes()
+    {
+        if (PATH_SEPARATOR != ':') {
+            $this->markTestSkipped();
+        }
+        $path = 'phar://zlt.phar:/var/www:.:filter://[a-z]:glob://*';
+        $paths = Zend_Loader::explodeIncludePath($path);
+        $this->assertSame(array(
+            'phar://zlt.phar',
+            '/var/www',
+            '.',
+            'filter://[a-z]',
+            'glob://*',
+        ), $paths);
+    }
+
+    /**
+     * @group ZF-9100
+     */
+    public function testIsReadableShouldReturnTrueForAbsolutePaths()
+    {
+        set_include_path(dirname(__FILE__) . '../../');
+        $path = dirname(__FILE__);
+        $this->assertTrue(Zend_Loader::isReadable($path));
+    }
+
+    /**
+     * @group ZF-9263
+     * @group ZF-9166
+     * @group ZF-9306
+     */
+    public function testIsReadableShouldFailEarlyWhenProvidedInvalidWindowsAbsolutePath()
+    {
+        if (strtoupper(substr(PHP_OS, 0, 3)) != 'WIN') {
+            $this->markTestSkipped('Windows-only test');
+        }
+        $path = 'C:/this/file/should/not/exist.php';
+        $this->assertFalse(Zend_Loader::isReadable($path));
     }
 
     /**

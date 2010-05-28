@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: BootstrapTest.php 19581 2009-12-11 21:14:39Z bkarwin $
+ * @version    $Id: BootstrapTest.php 20096 2010-01-06 02:05:09Z bkarwin $
  */
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
@@ -38,7 +38,7 @@ require_once 'Zend/Loader/Autoloader.php';
  * @category   Zend
  * @package    Zend_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Application
  */
@@ -175,66 +175,66 @@ class Zend_Application_Module_BootstrapTest extends PHPUnit_Framework_TestCase
     /**
      * @group ZF-6545
      */
-//    public function testModuleBootstrapsShouldNotAcceptModuleResourceInOrderToPreventRecursion()
-//    {
-//        require_once dirname(__FILE__) . '/../_files/ZfModuleBootstrap.php';
-//        $this->application->setOptions(array(
-//            'resources' => array(
-//                'modules' => array(),
-//                'frontController' => array(
-//                    'baseUrl'             => '/foo',
-//                    'moduleDirectory'     => dirname(__FILE__) . '/../_files/modules',
-//                ),
-//            ),
-//            'bootstrap' => array(
-//                'path'  => dirname(__FILE__) . '/../_files/ZfAppBootstrap.php',
-//                'class' => 'ZfAppBootstrap',
-//            )
-//        ));
-//        $appBootstrap = $this->application->getBootstrap();
-//        $appBootstrap->bootstrap('Modules');
-//        $modules = $appBootstrap->getResource('Modules');
-//        foreach ($modules as $module => $bootstrap) {
-//            if ($module == 'default') {
-//                // "default" module gets lumped in, and is not a Module_Bootstrap
-//                continue;
-//            }
-//            $resources = $bootstrap->getPluginResourceNames();
-//            $this->assertFalse($bootstrap->hasPluginResource('Modules'));
-//        }
-//    }
+    public function testModuleBootstrapsShouldNotAcceptModuleResourceInOrderToPreventRecursion()
+    {
+        require_once dirname(__FILE__) . '/../_files/ZfModuleBootstrap.php';
+        $this->application->setOptions(array(
+            'resources' => array(
+                'modules' => array(),
+                'frontController' => array(
+                    'baseUrl'             => '/foo',
+                    'moduleDirectory'     => dirname(__FILE__) . '/../_files/modules',
+                ),
+            ),
+            'bootstrap' => array(
+                'path'  => dirname(__FILE__) . '/../_files/ZfAppBootstrap.php',
+                'class' => 'ZfAppBootstrap',
+            )
+        ));
+        $appBootstrap = $this->application->getBootstrap();
+        $appBootstrap->bootstrap('Modules');
+        $modules = $appBootstrap->getResource('Modules');
+        foreach ($modules as $module => $bootstrap) {
+            if ($module == 'default') {
+                // "default" module gets lumped in, and is not a Module_Bootstrap
+                continue;
+            }
+            $resources = $bootstrap->getPluginResourceNames();
+            $this->assertFalse($bootstrap->hasPluginResource('Modules'));
+        }
+    }
 
     /**
      * @group ZF-6567
      */
-//    public function testModuleBootstrapShouldInheritApplicationBootstrapPluginPaths()
-//    {
-//        require_once dirname(__FILE__) . '/../_files/ZfModuleBootstrap.php';
-//        $this->application->setOptions(array(
-//            'resources' => array(
-//                'modules' => array(),
-//                'frontController' => array(
-//                    'baseUrl'             => '/foo',
-//                    'moduleDirectory'     => dirname(__FILE__) . '/../_files/modules',
-//                ),
-//            ),
-//            'pluginPaths' => array(
-//                'ZfModuleBootstrap_Resource' => dirname(__FILE__),
-//            ),
-//            'bootstrap' => array(
-//                'path'  => dirname(__FILE__) . '/../_files/ZfAppBootstrap.php',
-//                'class' => 'ZfAppBootstrap',
-//            )
-//        ));
-//        $appBootstrap = $this->application->getBootstrap();
-//        $appBootstrap->bootstrap('Modules');
-//        $modules = $appBootstrap->getResource('Modules');
-//        foreach ($modules as $bootstrap) {
-//            $loader = $bootstrap->getPluginLoader();
-//            $paths  = $loader->getPaths();
-//            $this->assertTrue(array_key_exists('ZfModuleBootstrap_Resource_', $paths));
-//        }
-//    }
+    public function testModuleBootstrapShouldInheritApplicationBootstrapPluginPaths()
+    {
+        require_once dirname(__FILE__) . '/../_files/ZfModuleBootstrap.php';
+        $this->application->setOptions(array(
+            'resources' => array(
+                'modules' => array(),
+                'frontController' => array(
+                    'baseUrl'             => '/foo',
+                    'moduleDirectory'     => dirname(__FILE__) . '/../_files/modules',
+                ),
+            ),
+            'pluginPaths' => array(
+                'ZfModuleBootstrap_Resource' => dirname(__FILE__),
+            ),
+            'bootstrap' => array(
+                'path'  => dirname(__FILE__) . '/../_files/ZfAppBootstrap.php',
+                'class' => 'ZfAppBootstrap',
+            )
+        ));
+        $appBootstrap = $this->application->getBootstrap();
+        $appBootstrap->bootstrap('Modules');
+        $modules = $appBootstrap->getResource('Modules');
+        foreach ($modules as $bootstrap) {
+            $loader = $bootstrap->getPluginLoader();
+            $paths  = $loader->getPaths();
+            $this->assertTrue(array_key_exists('ZfModuleBootstrap_Resource_', $paths));
+        }
+    }
 }
 
 if (PHPUnit_MAIN_METHOD == 'Zend_Application_Module_BootstrapTest::main') {

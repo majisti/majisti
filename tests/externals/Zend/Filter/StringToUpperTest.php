@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Filter
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: StringToUpperTest.php 17887 2009-08-29 13:55:21Z thomas $
+ * @version    $Id: StringToUpperTest.php 20912 2010-02-04 19:44:42Z thomas $
  */
 
 
@@ -36,7 +36,7 @@ require_once 'Zend/Filter/StringToUpper.php';
  * @category   Zend
  * @package    Zend_Filter
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Filter
  */
@@ -115,6 +115,58 @@ class Zend_Filter_StringToUpperTest extends PHPUnit_Framework_TestCase
             $this->fail();
         } catch (Zend_Filter_Exception $e) {
             $this->assertContains('is not supported', $e->getMessage());
+        }
+    }
+
+    /**
+     * @ZF-8989
+     */
+    public function testInitiationWithEncoding()
+    {
+        $valuesExpected = array(
+            'ü'     => 'Ü',
+            'ñ'     => 'Ñ',
+            'üñ123' => 'ÜÑ123'
+        );
+
+        try {
+            $filter = new Zend_Filter_StringToUpper(array('encoding' => 'UTF-8'));
+            foreach ($valuesExpected as $input => $output) {
+                $this->assertEquals($output, $filter->filter($input));
+            }
+        } catch (Zend_Filter_Exception $e) {
+            $this->assertContains('mbstring is required', $e->getMessage());
+        }
+    }
+
+    /**
+     *  @ZF-9058
+     */
+    public function testCaseInsensitiveEncoding()
+    {
+        $valuesExpected = array(
+            'ü'     => 'Ü',
+            'ñ'     => 'Ñ',
+            'üñ123' => 'ÜÑ123'
+        );
+
+        try {
+            $this->_filter->setEncoding('UTF-8');
+            foreach ($valuesExpected as $input => $output) {
+                $this->assertEquals($output, $this->_filter->filter($input));
+            }
+
+            $this->_filter->setEncoding('utf-8');
+            foreach ($valuesExpected as $input => $output) {
+                $this->assertEquals($output, $this->_filter->filter($input));
+            }
+
+            $this->_filter->setEncoding('UtF-8');
+            foreach ($valuesExpected as $input => $output) {
+                $this->assertEquals($output, $this->_filter->filter($input));
+            }
+        } catch (Zend_Filter_Exception $e) {
+            $this->assertContains('mbstring is required', $e->getMessage());
         }
     }
 }

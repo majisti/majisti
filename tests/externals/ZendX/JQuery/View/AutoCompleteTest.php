@@ -15,9 +15,9 @@
  * @category    ZendX
  * @package     ZendX_JQuery
  * @subpackage  View
- * @copyright   Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license     http://framework.zend.com/license/new-bsd     New BSD License
- * @version     $Id: AutoCompleteTest.php 19855 2009-12-21 19:21:34Z matthew $
+ * @version     $Id: AutoCompleteTest.php 20754 2010-01-29 11:42:43Z beberlei $
  */
 
 require_once dirname(__FILE__)."/../../../TestHelper.php";
@@ -99,9 +99,9 @@ class ZendX_JQuery_View_AutoCompleteTest extends PHPUnit_Framework_TestCase
 
     public function testShouldCreateInputField()
     {
-        $element = $this->view->autoComplete("elem1", "Default", array('data' => array('Test')));
+        $element = $this->view->autoComplete("elem1", "Default", array('source' => array('Test')));
 
-        $this->assertEquals(array('$("#elem1").autocomplete({"data":["Test"]});'), $this->view->jQuery()->getOnLoadActions());
+        $this->assertEquals(array('$("#elem1").autocomplete({"source":["Test"]});'), $this->view->jQuery()->getOnLoadActions());
         $this->assertContains("<input", $element);
         $this->assertContains('id="elem1"', $element);
         $this->assertContains('value="Default"', $element);

@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Paginator
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: NullTest.php 17363 2009-08-03 07:40:18Z bkarwin $
+ * @version    $Id: NullTest.php 21151 2010-02-23 16:34:14Z matthew $
  */
 
 /**
@@ -39,7 +39,7 @@ require_once 'PHPUnit/Framework/TestCase.php';
  * @category   Zend
  * @package    Zend_Paginator
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Paginator
  */
@@ -100,5 +100,23 @@ class Zend_Paginator_Adapter_NullTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(4, $pages->currentItemCount);
         $this->assertEquals(19, $pages->lastItemNumber);
+    }
+
+    /**
+     * @group ZF-4151
+     */
+    public function testEmptySet() {
+        $this->_adapter = new Zend_Paginator_Adapter_Null(0);
+        $actual = $this->_adapter->getItems(0, 10);
+        $this->assertEquals(array(), $actual);
+    }
+    
+    /**
+     * Verify that the fix for ZF-4151 doesn't create an OBO error
+     */
+    public function testSetOfOne() {
+        $this->_adapter = new Zend_Paginator_Adapter_Null(1);
+        $actual = $this->_adapter->getItems(0, 10);
+        $this->assertEquals(array_fill(0, 1, null), $actual);
     }
 }

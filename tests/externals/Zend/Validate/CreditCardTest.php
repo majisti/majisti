@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id:$
  */
@@ -34,7 +34,7 @@ require_once 'Zend/Validate/CreditCard.php';
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Validate
  */
@@ -247,6 +247,16 @@ class Zend_Validate_CreditCardTest extends PHPUnit_Framework_TestCase
         $validator = new Zend_Validate_CreditCard('Visa', array('Zend_Validate_CreditCardTest', 'staticCallback'));
         $this->assertEquals(array('Visa'), $validator->getType());
         $this->assertEquals(array('Zend_Validate_CreditCardTest', 'staticCallback'), $validator->getService());
+    }
+
+    /**
+     * @group ZF-9477
+     */
+    public function testMultiInstitute() {
+        $validator      = new Zend_Validate_CreditCard(array('type' => Zend_Validate_CreditCard::MASTERCARD));
+        $this->assertFalse($validator->isValid('4111111111111111'));
+        $message = $validator->getMessages();
+        $this->assertContains('not from an allowed institute', current($message));
     }
 
     public static function staticCallback($value)

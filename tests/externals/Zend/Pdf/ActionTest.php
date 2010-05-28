@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ActionTest.php 19671 2009-12-15 21:50:08Z alexander $
+ * @version    $Id: ActionTest.php 20467 2010-01-21 16:04:11Z alexander $
  */
 
 /** Zend_Pdf_Action */
@@ -50,7 +50,7 @@ require_once 'PHPUnit/Framework/TestCase.php';
  * @category   Zend
  * @package    Zend_Pdf
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Pdf
  */
@@ -444,23 +444,15 @@ class Zend_Pdf_ActionTest extends PHPUnit_Framework_TestCase
      */
     public function testPhpVersionBug()
     {
-        if (!version_compare(phpversion(), '5.3.0', '>=')) {
-            $this->markTestSkipped('PHP Version must be 5.3.0 or higher');
-        }
-
         try {
-            $file = '_files/ZF-8462.pdf';
+            $file = dirname(__FILE__) . '/_files/ZF-8462.pdf';
             $pdf = Zend_Pdf::load($file);
         } catch (Zend_Pdf_Exception $e) {
-            // skip this Exception because that should happen
-            $error = error_get_last();
-            if ($error !== null && $error['type'] == E_WARNING) {
-                $this->fail('The expected bug exists. Please verify.');
+            if (strpos($e->getMessage(), 'Cross-reference streams are not supported yet.') !== false) {
+                // Skip expected exception
+                return;
             }
-            // nothing happen no bug?
-            return;
+            throw $e;
         }
-
-        $this->fail('An expected Exception has never been raised.');
     }
 }

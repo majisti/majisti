@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ViewTest.php 17667 2009-08-18 21:40:09Z mikaelkael $
+ * @version    $Id: ViewTest.php 21143 2010-02-23 07:17:41Z ralph $
  */
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
@@ -34,11 +34,13 @@ require_once dirname(__FILE__) . '/../../../TestHelper.php';
  */
 require_once 'Zend/Loader/Autoloader.php';
 
+require_once 'Zend/Application/Resource/View.php';
+
 /**
  * @category   Zend
  * @package    Zend_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Application
  */
@@ -89,7 +91,6 @@ class Zend_Application_Resource_ViewTest extends PHPUnit_Framework_TestCase
 
     public function testInitializationInitializesViewObject()
     {
-        require_once 'Zend/Application/Resource/View.php';
         $resource = new Zend_Application_Resource_View(array());
         $resource->init();
         $this->assertTrue($resource->getView() instanceof Zend_View);
@@ -97,7 +98,6 @@ class Zend_Application_Resource_ViewTest extends PHPUnit_Framework_TestCase
 
     public function testInitializationInjectsViewIntoViewRenderer()
     {
-        require_once 'Zend/Application/Resource/View.php';
         $resource = new Zend_Application_Resource_View(array());
         $resource->init();
         $view = $resource->getView();
@@ -116,6 +116,15 @@ class Zend_Application_Resource_ViewTest extends PHPUnit_Framework_TestCase
         $view  = $resource->getView();
         $paths = $view->getScriptPaths();
         $this->assertContains(dirname(__FILE__) . '/', $paths, var_export($paths, 1));
+    }
+
+    public function testDoctypeIsSet()
+    {
+        $options = array('doctype' => 'XHTML1_FRAMESET');
+	$resource = new Zend_Application_Resource_View($options);
+        $resource->init();
+        $view  = $resource->getView();
+	$this->assertEquals('XHTML1_FRAMESET', $view->doctype()->getDoctype());
     }
 }
 

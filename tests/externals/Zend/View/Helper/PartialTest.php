@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: PartialTest.php 18950 2009-11-12 15:37:56Z alexander $
+ * @version    $Id: PartialTest.php 21179 2010-02-23 21:59:42Z matthew $
  */
 
 // Call Zend_View_Helper_PartialTest::main() if this source file is executed directly.
@@ -44,7 +44,7 @@ require_once 'Zend/Controller/Front.php';
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_View
  * @group      Zend_View_Helper
@@ -247,7 +247,7 @@ class Zend_View_Helper_PartialTest extends PHPUnit_Framework_TestCase
 
         foreach (get_object_vars($model) as $key => $value) {
             $string = sprintf('%s: %s', $key, $value);
-            $this->assertContains($string, $return);
+            $this->assertContains($string, $return, "Checking for '$return' containing '$string'");
         }
     }
 

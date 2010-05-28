@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Controller
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -35,9 +35,9 @@ require_once 'Zend/XmlRpc/Fault.php';
  *
  * @category Zend
  * @package  Zend_XmlRpc
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version $Id: Response.php 19569 2009-12-10 17:02:01Z lars $
+ * @version $Id: Response.php 20208 2010-01-11 22:37:37Z lars $
  */
 class Zend_XmlRpc_Response
 {
@@ -225,13 +225,13 @@ class Zend_XmlRpc_Response
     {
         $value = $this->_getXmlRpcReturn();
         $generator = Zend_XmlRpc_Value::getGenerator();
-        $generator->startElement('methodResponse')
-                  ->startElement('params')
-                  ->startElement('param');
+        $generator->openElement('methodResponse')
+                  ->openElement('params')
+                  ->openElement('param');
         $value->generateXml();
-        $generator->endElement('param')
-                  ->endElement('params')
-                  ->endElement('methodResponse');
+        $generator->closeElement('param')
+                  ->closeElement('params')
+                  ->closeElement('methodResponse');
 
         return $generator->flush();
     }

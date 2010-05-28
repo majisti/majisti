@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Http
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: testRedirections.php 19099 2009-11-20 16:10:24Z beberlei $
+ * @version    $Id: testRedirections.php 20096 2010-01-06 02:05:09Z bkarwin $
  */
 
 if (! isset($_GET['redirection'])) $_GET['redirection'] = 0;

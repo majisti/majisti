@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id $
  */
@@ -48,7 +48,7 @@ require_once 'Zend/Loader.php';
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_View
  */
@@ -451,14 +451,15 @@ class Zend_ViewTest extends PHPUnit_Framework_TestCase
 
     /**
      * Test set/getEncoding()
+     * @group ZF-8715
      */
     public function testSetGetEncoding()
     {
         $view = new Zend_View();
-        $this->assertEquals('ISO-8859-1', $view->getEncoding());
-
-        $view->setEncoding('UTF-8');
         $this->assertEquals('UTF-8', $view->getEncoding());
+
+        $view->setEncoding('ISO-8859-1');
+        $this->assertEquals('ISO-8859-1', $view->getEncoding());
     }
 
     public function testEmptyPropertiesReturnAppropriately()
@@ -661,7 +662,6 @@ class Zend_ViewTest extends PHPUnit_Framework_TestCase
         ob_start();
         echo $view->render('testZf995.phtml');
         $content = ob_get_flush();
-        ob_end_clean();
         $this->assertTrue(empty($content));
     }
 
@@ -671,7 +671,7 @@ class Zend_ViewTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('bar', $view->foo);
         $paths = $view->getScriptPaths();
         $this->assertEquals(1, count($paths));
-        $this->assertEquals(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'View' . DIRECTORY_SEPARATOR . '_templates' . DIRECTORY_SEPARATOR, $paths[0]);
+        $this->assertEquals(dirname(__FILE__) . '/View/_templates/', $paths[0]);
     }
 
     public function testHelperViewAccessor()
@@ -825,10 +825,10 @@ class Zend_ViewTest extends PHPUnit_Framework_TestCase
     public function testGetScriptPath()
     {
         $view = new Zend_View();
-        $base = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'View' . DIRECTORY_SEPARATOR . '_templates';
+        $base = dirname(__FILE__) . '/View/_templates';
         $view->setScriptPath($base);
         $path = $view->getScriptPath('test.phtml');
-        $this->assertEquals($base . DIRECTORY_SEPARATOR . 'test.phtml', $path);
+        $this->assertEquals($base . '/test.phtml', $path);
     }
 
     public function testGetHelper()
@@ -1122,13 +1122,28 @@ class Zend_ViewTest extends PHPUnit_Framework_TestCase
     	$view->registerHelper($helper, 'doctype');
         $this->assertSame($view, $helper->view);
     }
+
+    /**
+     * @group ZF-9000
+     */
+    public function testAddingStreamSchemeAsScriptPathShouldNotReverseSlashesOnWindows()
+    {
+        if (false === strstr(strtolower(PHP_OS), 'windows')) {
+            $this->markTestSkipped('Windows-only test');
+        }
+    	$view = new Zend_View();
+        $path = rtrim('file://' . str_replace('\\', '/', realpath(dirname(__FILE__))), '/') . '/';
+        $view->addScriptPath($path);
+        $paths = $view->getScriptPaths();
+        $this->assertContains($path, $paths, var_export($paths, 1));
+    }
 }
 
 /**
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_ViewTest_Extension extends Zend_View

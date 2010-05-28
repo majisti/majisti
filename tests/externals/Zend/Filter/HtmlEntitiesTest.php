@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Filter
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: HtmlEntitiesTest.php 17573 2009-08-13 18:01:41Z alexander $
+ * @version    $Id: HtmlEntitiesTest.php 21061 2010-02-15 21:56:54Z thomas $
  */
 
 /**
@@ -34,7 +34,7 @@ require_once 'Zend/Filter/HtmlEntities.php';
  * @category   Zend
  * @package    Zend_Filter
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Filter
  */
@@ -101,11 +101,12 @@ class Zend_Filter_HtmlEntitiesTest extends PHPUnit_Framework_TestCase
     /**
      * Ensures that getCharSet() returns expected default value
      *
+     * @group ZF-8715
      * @return void
      */
     public function testGetCharSet()
     {
-        $this->assertEquals('ISO-8859-1', $this->_filter->getCharSet());
+        $this->assertEquals('UTF-8', $this->_filter->getCharSet());
     }
 
     /**
@@ -149,5 +150,22 @@ class Zend_Filter_HtmlEntitiesTest extends PHPUnit_Framework_TestCase
     {
         $instance = $this->_filter->setCharSet('UTF-8')->setQuoteStyle(ENT_QUOTES)->setDoubleQuote(false);
         $this->assertTrue($instance instanceof Zend_Filter_HtmlEntities);
+    }
+
+    /**
+     * @group ZF-8995
+     */
+    public function testConfigObject()
+    {
+        require_once 'Zend/Config.php';
+        $options = array('quotestyle' => 5, 'encoding' => 'ISO-8859-1');
+        $config  = new Zend_Config($options);
+
+        $filter = new Zend_Filter_HtmlEntities(
+            $config
+        );
+
+        $this->assertEquals('ISO-8859-1', $filter->getEncoding());
+        $this->assertEquals(5, $filter->getQuoteStyle());
     }
 }

@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id $
  */
@@ -28,7 +28,7 @@ PHPUnit_Util_Filter::addFileToFilter(__FILE__);
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Db
  * @group      Zend_Db_Statement
@@ -143,6 +143,49 @@ class Zend_Db_Statement_MysqliTest extends Zend_Db_Statement_TestCommon
         $stmt = $this->_db->query($sql);
         $result = $stmt->fetch();
         $this->assertFalse($result);
+    }
+    
+	/**
+	 * Test to verify valid report of issue
+	 * 
+     * @group ZF-8986
+     */
+    public function testNumberOfBoundParamsDoesNotMatchNumberOfTokens()
+    {
+    	$this->_util->createTable('zf_objects', array(
+            'object_id'		=> 'INTEGER NOT NULL',
+    		'object_type'	=> 'INTEGER NOT NULL',
+    		'object_status' => 'INTEGER NOT NULL',
+    		'object_lati'   => 'REAL',
+    		'object_long'   => 'REAL',
+        ));
+        $tableName = $this->_util->getTableName('zf_objects');
+        
+        $numRows = $this->_db->insert($tableName, array (
+        	'object_id' => 1,
+        	'object_type' => 1,
+        	'object_status' => 1,
+        	'object_lati' => 1.12345,
+        	'object_long' => 1.54321,
+        ));
+        
+        $sql = 'SELECT object_id, object_type, object_status,'
+             . ' object_lati, object_long FROM ' . $tableName 
+             . ' WHERE object_id = ?';
+             
+        try {
+        	$stmt = $this->_db->query($sql, 1);
+        } catch (Exception $e) {
+        	$this->fail('Bounding params failed: ' . $e->getMessage());
+        }
+        $result = $stmt->fetch();
+        $this->assertType('array', $result);
+        $this->assertEquals(5, count($result));
+        $this->assertEquals(1, $result['object_id']);
+        $this->assertEquals(1, $result['object_type']);
+        $this->assertEquals(1, $result['object_status']);
+        $this->assertEquals(1.12345, $result['object_lati']);
+        $this->assertEquals(1.54321, $result['object_long']);
     }
 
 

@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: TestSetup.php 18950 2009-11-12 15:37:56Z alexander $
+ * @version    $Id: TestSetup.php 20514 2010-01-22 07:57:10Z ralph $
  */
 
 
@@ -34,7 +34,7 @@ PHPUnit_Util_Filter::addFileToFilter(__FILE__);
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Db
  * @group      Zend_Db_Table
@@ -64,6 +64,7 @@ abstract class Zend_Db_Table_TestSetup extends Zend_Db_TestSetup
         if ($this->_runtimeIncludePath) {
             $this->_restoreIncludePath();
         }
+        parent::tearDown();
     }
 
     protected function _getTable($tableClass, $options = array())

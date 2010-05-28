@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: TestCommon.php 18950 2009-11-12 15:37:56Z alexander $
+ * @version    $Id: TestCommon.php 21103 2010-02-19 21:14:10Z mikaelkael $
  */
 
 
@@ -34,7 +34,7 @@ PHPUnit_Util_Filter::addFileToFilter(__FILE__);
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Db_Table_Select_TestCommon extends Zend_Db_Select_TestCommon
@@ -62,6 +62,7 @@ abstract class Zend_Db_Table_Select_TestCommon extends Zend_Db_Select_TestCommon
         if ($this->_runtimeIncludePath) {
             $this->_restoreIncludePath();
         }
+        parent::tearDown();
     }
 
     protected function _getTable($tableClass, $options = array())
@@ -261,6 +262,37 @@ abstract class Zend_Db_Table_Select_TestCommon extends Zend_Db_Select_TestCommon
 
         $selectUnion = $table->select()->union(array($select1, $select2));
         $selectUnionSql = $selectUnion->assemble();
+    }
+
+    /**
+     * Test the Adapter's fetchRow() method with a select with offset
+     * @group ZF-8944
+     */
+    public function testAdapterFetchRowWithOffset()
+    {
+        $table = $this->_getSelectTable('products');
+        $products = $this->_db->quoteIdentifier('zfproducts');
+        $product_id = $this->_db->quoteIdentifier('product_id');
+
+        // Grab the first two rows
+        $data[0] = $this->_db->fetchRow("SELECT * from $products WHERE $product_id = 1");
+        $data[1] = $this->_db->fetchRow("SELECT * from $products WHERE $product_id = 2");
+
+        $select = $table->select();
+        $select->order('product_id');
+        $select->limit(1, 0);
+
+        $row = $this->_db->fetchRow($select);
+
+        $this->assertEquals($data[0], $row);
+
+        $select = $table->select();
+        $select->order('product_id');
+        $select->limit(1, 1);
+
+        $row = $this->_db->fetchRow($select);
+
+        $this->assertEquals($data[1], $row);
     }
 
     // ZF-3239

@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage Table
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Abstract.php 19661 2009-12-15 18:03:07Z matthew $
+ * @version    $Id: Abstract.php 22230 2010-05-21 20:59:18Z ralph $
  */
 
 /**
@@ -29,10 +29,10 @@ require_once 'Zend/Db.php';
  * @category   Zend
  * @package    Zend_Db
  * @subpackage Table
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-abstract class Zend_Db_Table_Row_Abstract implements ArrayAccess
+abstract class Zend_Db_Table_Row_Abstract implements ArrayAccess, IteratorAggregate
 {
 
     /**
@@ -293,13 +293,14 @@ abstract class Zend_Db_Table_Row_Abstract implements ArrayAccess
      }
 
      /**
-      * Does nothing
+      * Proxy to __unset
       * Required by the ArrayAccess implementation
       *
       * @param string $offset
       */
      public function offsetUnset($offset)
      {
+         return $this->__unset($offset);
      }
 
     /**
@@ -641,6 +642,11 @@ abstract class Zend_Db_Table_Row_Abstract implements ArrayAccess
         return $result;
     }
 
+    public function getIterator()
+    {
+        return new ArrayIterator((array) $this->_data);
+    }
+    
     /**
      * Returns the column/value data as an array.
      *
@@ -1050,7 +1056,7 @@ abstract class Zend_Db_Table_Row_Abstract implements ArrayAccess
         }
         $joinCond = implode(' AND ', $joinCond);
 
-        $select->from(array('i' => $interName), Zend_Db_Select::SQL_WILDCARD, $interSchema)
+        $select->from(array('i' => $interName), array(), $interSchema)
                ->joinInner(array('m' => $matchName), $joinCond, Zend_Db_Select::SQL_WILDCARD, $matchSchema)
                ->setIntegrityCheck(false);
 

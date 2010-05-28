@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Ldap
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: AttributeTest.php 18874 2009-11-06 08:35:38Z sgehrig $
+ * @version    $Id: AttributeTest.php 22162 2010-05-14 10:15:55Z sgehrig $
  */
 
 /**
@@ -33,7 +33,7 @@ require_once 'Zend/Ldap/Attribute.php';
  * @category   Zend
  * @package    Zend_Ldap
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Ldap
  */
@@ -307,7 +307,7 @@ class Zend_Ldap_AttributeTest extends PHPUnit_Framework_TestCase
     {
         $data=array('ts' => array('dummy'));
         $retTs=Zend_Ldap_Attribute::getDateTimeAttribute($data, 'ts', 0);
-        $this->assertNull($retTs);
+        $this->assertEquals('dummy', $retTs);
     }
 
     public function testGetDateTimeValueNegativeOffet()
@@ -414,6 +414,13 @@ class Zend_Ldap_AttributeTest extends PHPUnit_Framework_TestCase
     public function testConvertFromLdapDateTimeValue()
     {
         $ldap='20080625123030+0200';
+        $this->assertEquals(gmmktime(10, 30, 30, 6, 25, 2008),
+            Zend_Ldap_Attribute::convertFromLdapDateTimeValue($ldap));
+    }
+
+    public function testConvertFromLdapDateTimeValueActiveDirectory()
+    {
+        $ldap='20080625123030.0+0200';
         $this->assertEquals(gmmktime(10, 30, 30, 6, 25, 2008),
             Zend_Ldap_Attribute::convertFromLdapDateTimeValue($ldap));
     }

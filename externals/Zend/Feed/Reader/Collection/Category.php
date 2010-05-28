@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Feed_Reader
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Category.php 19725 2009-12-17 21:14:28Z padraic $
+ * @version    $Id: Category.php 20954 2010-02-06 17:56:27Z padraic $
  */
  
 /**
@@ -27,7 +27,7 @@ require_once 'Zend/Feed/Reader/Collection/CollectionAbstract.php';
 /**
  * @category   Zend
  * @package    Zend_Feed_Reader
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Reader_Collection_Category
@@ -45,7 +45,11 @@ extends Zend_Feed_Reader_Collection_CollectionAbstract
     public function getValues() {
         $categories = array();
         foreach ($this->getIterator() as $element) {
-            $categories[] = $element['label'];
+            if (isset($element['label']) && !empty($element['label'])) {
+                $categories[] = $element['label'];
+            } else {
+                $categories[] = $element['term'];
+            }
         }
         return array_unique($categories);
     }

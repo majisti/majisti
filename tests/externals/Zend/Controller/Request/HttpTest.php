@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Controller
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: HttpTest.php 19076 2009-11-20 00:28:50Z matthew $
+ * @version    $Id: HttpTest.php 20984 2010-02-08 16:25:08Z matthew $
  */
 
 // Call Zend_Controller_Request_HttpTest::main() if this source file is executed directly.
@@ -32,7 +32,7 @@ require_once 'Zend/Controller/Request/Http.php';
  * @category   Zend
  * @package    Zend_Controller
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Controller
  * @group      Zend_Controller_Request
@@ -826,6 +826,18 @@ class Zend_Controller_Request_HttpTest extends PHPUnit_Framework_TestCase
         $this->_request->setParamSources(array('_POST'));
         $params = $this->_request->getParams();
         $this->assertEquals(array('foo' => 'baz'), $params);
+    }
+
+    /**
+     * @group ZF-9091
+     */
+    public function testSetPathInfoShouldNotStripBaseUrlIfBaseUrlNotInRequestUri()
+    {
+        $request = new Zend_Controller_Request_Http();
+        $request->setBaseUrl('/app');
+        $_SERVER['REQUEST_URI'] = '/index/index';
+        $pathInfo = $request->getPathInfo();
+        $this->assertEquals('/index/index', $pathInfo);
     }
 }
 

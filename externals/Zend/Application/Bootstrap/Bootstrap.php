@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Application
  * @subpackage Bootstrap
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Bootstrap.php 19571 2009-12-10 21:22:08Z matthew $
+ * @version    $Id: Bootstrap.php 20886 2010-02-03 19:36:06Z matthew $
  */
 
 /**
@@ -29,7 +29,7 @@
  * @category   Zend
  * @package    Zend_Application
  * @subpackage Bootstrap
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Application_Bootstrap_Bootstrap
@@ -80,7 +80,7 @@ class Zend_Application_Bootstrap_Bootstrap
      * If so, it registers the bootstrap with the 'bootstrap' parameter of
      * the front controller, and dispatches the front controller.
      *
-     * @return void
+     * @return mixed
      * @throws Zend_Application_Bootstrap_Exception
      */
     public function run()
@@ -94,7 +94,10 @@ class Zend_Application_Bootstrap_Bootstrap
         }
 
         $front->setParam('bootstrap', $this);
-        $front->dispatch();
+        $response = $front->dispatch();
+        if ($front->returnResponse()) {
+            return $response;
+        }
     }
 
     /**

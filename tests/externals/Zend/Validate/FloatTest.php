@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: FloatTest.php 17798 2009-08-24 20:07:53Z thomas $
+ * @version    $Id: FloatTest.php 22296 2010-05-25 20:05:42Z thomas $
  */
 
 /**
@@ -34,7 +34,7 @@ require_once 'Zend/Validate/Float.php';
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Validate
  */
@@ -54,7 +54,29 @@ class Zend_Validate_FloatTest extends PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
+        $this->_locale = setlocale(LC_ALL, 0); //backup locale
+
+        require_once 'Zend/Registry.php';
+        if (Zend_Registry::isRegistered('Zend_Locale')) {
+            Zend_Registry::getInstance()->offsetUnset('Zend_Locale');
+        }
+
         $this->_validator = new Zend_Validate_Float();
+    }
+
+    public function tearDown()
+    {
+        //restore locale
+        if (is_string($this->_locale) && strpos($this->_locale, ';')) {
+            $locales = array();
+            foreach (explode(';', $this->_locale) as $l) {
+                $tmp = explode('=', $l);
+                $locales[$tmp[0]] = $tmp[1];
+            }
+            setlocale(LC_ALL, $locales);
+            return;
+        }
+        setlocale(LC_ALL, $this->_locale);
     }
 
     /**
@@ -68,7 +90,6 @@ class Zend_Validate_FloatTest extends PHPUnit_Framework_TestCase
             array(1.00, true),
             array(0.01, true),
             array(-0.1, true),
-            array('10.1', true),
             array(1, true),
             array('not a float', false),
             );
@@ -113,5 +134,90 @@ class Zend_Validate_FloatTest extends PHPUnit_Framework_TestCase
         Zend_Registry::set('Zend_Locale', new Zend_Locale('de'));
         $valid = new Zend_Validate_Float();
         $this->assertTrue($valid->isValid('123,456'));
+    }
+
+    /**
+     * @ZF-7987
+     */
+    public function testNoZendLocaleButPhpLocale()
+    {
+        setlocale(LC_ALL, 'de');
+        $valid = new Zend_Validate_Float();
+        $this->assertTrue($valid->isValid(123,456));
+        $this->assertTrue($valid->isValid('123,456'));
+    }
+
+    /**
+     * @ZF-7987
+     */
+    public function testLocaleDeFloatType()
+    {
+        $this->_validator->setLocale('de');
+        $this->assertEquals('de', $this->_validator->getLocale());
+        $this->assertEquals(true, $this->_validator->isValid(10.5));
+    }
+
+    /**
+     * @ZF-7987
+     */
+    public function testPhpLocaleDeFloatType()
+    {
+        setlocale(LC_ALL, 'de');
+        $valid = new Zend_Validate_Float();
+        $this->assertTrue($valid->isValid(10.5));
+    }
+
+    /**
+     * @ZF-7987
+     */
+    public function testPhpLocaleFrFloatType()
+    {
+        setlocale(LC_ALL, 'fr');
+        $valid = new Zend_Validate_Float();
+        $this->assertTrue($valid->isValid(10.5));
+    }
+
+    /**
+     * @ZF-8919
+     */
+    public function testPhpLocaleDeStringType()
+    {
+        setlocale(LC_ALL, 'de_AT');
+        setlocale(LC_NUMERIC, 'de_AT');
+        $valid = new Zend_Validate_Float('de_AT');
+        $this->assertTrue($valid->isValid('1,3'));
+        $this->assertTrue($valid->isValid('1000,3'));
+        $this->assertTrue($valid->isValid('1.000,3'));
+        $this->assertFalse($valid->isValid('1.3'));
+        $this->assertFalse($valid->isValid('1000.3'));
+        $this->assertFalse($valid->isValid('1,000.3'));
+    }
+
+    /**
+     * @ZF-8919
+     */
+    public function testPhpLocaleFrStringType()
+    {
+        $valid = new Zend_Validate_Float('fr_FR');
+        $this->assertTrue($valid->isValid('1,3'));
+        $this->assertTrue($valid->isValid('1000,3'));
+        $this->assertTrue($valid->isValid('1 000,3'));
+        $this->assertFalse($valid->isValid('1.3'));
+        $this->assertFalse($valid->isValid('1000.3'));
+        $this->assertFalse($valid->isValid('1,000.3'));
+    }
+
+    /**
+     * @ZF-8919
+     */
+    public function testPhpLocaleEnStringType()
+    {
+        $valid = new Zend_Validate_Float('en_US');
+        $this->assertTrue($valid->isValid('1.3'));
+        $this->assertTrue($valid->isValid('1000.3'));
+        $this->assertTrue($valid->isValid('1,000.3'));
+        $this->assertFalse($valid->isValid('1,3'));
+        $this->assertFalse($valid->isValid('1000,3'));
+        $this->assertFalse($valid->isValid('1.000,3'));
     }
 }

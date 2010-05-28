@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Feed
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ReaderTest.php 19136 2009-11-20 20:00:28Z padraic $
+ * @version    $Id: ReaderTest.php 22032 2010-04-28 15:50:04Z padraic $
  */
 
 require_once 'PHPUnit/Framework/TestCase.php';
@@ -28,7 +28,7 @@ require_once 'Zend/Cache.php';
  * @category   Zend
  * @package    Zend_Feed
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Feed
  * @group      Zend_Feed_Reader
@@ -118,6 +118,16 @@ class Zend_Feed_ReaderTest extends PHPUnit_Framework_TestCase
             file_get_contents($this->_feedSamplePath.'/Reader/atom03.xml'));
         $type = Zend_Feed_Reader::detectType($feed);
         $this->assertEquals(Zend_Feed_Reader::TYPE_ATOM_03, $type);
+    }
+
+    /**
+     * @group ZF-9723
+     */
+    public function testDetectsTypeFromStringOrToRemindPaddyAboutForgettingATestWhichLetsAStupidTypoSurviveUnnoticedForMonths()
+    {
+        $feed = '<?xml version="1.0" encoding="utf-8" ?><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/"><channel></channel></rdf:RDF>';
+        $type = Zend_Feed_Reader::detectType($feed);
+        $this->assertEquals(Zend_Feed_Reader::TYPE_RSS_10, $type);
     }
 
     public function testGetEncoding()

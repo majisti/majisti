@@ -16,7 +16,7 @@
  * @package    Zend_Service_WindowsAzure
  * @subpackage UnitTests
  * @version    $Id: AllTests.php 35999 2009-12-21 07:56:42Z unknown $
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -47,7 +47,7 @@ require_once 'Zend/Service/WindowsAzure/SessionHandlerTest.php';
  * @package    Zend_Service_WindowsAzure
  * @subpackage UnitTests
  * @version    $Id: AllTests.php 35999 2009-12-21 07:56:42Z unknown $
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_WindowsAzure_AllTests
@@ -59,9 +59,9 @@ class Zend_Service_WindowsAzure_AllTests
 
     public static function suite()
     {
-        $suite = new PHPUnit_Framework_TestSuite(__CLASS__);
+        $suite = new PHPUnit_Framework_TestSuite('Zend_Service_WindowsAzure test suite');
 
-        $suite->addTest(Zend_Service_WindowsAzure_Credentials_AllTests::suite());
+        $suite->addTestSuite(Zend_Service_WindowsAzure_Credentials_AllTests::suite());
         
         $suite->addTestSuite('Zend_Service_WindowsAzure_RetryPolicyTest');
         $suite->addTestSuite('Zend_Service_WindowsAzure_StorageTest');

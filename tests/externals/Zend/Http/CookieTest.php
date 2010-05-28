@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Http_Cookie
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: CookieTest.php 17573 2009-08-13 18:01:41Z alexander $
+ * @version    $Id: CookieTest.php 21020 2010-02-11 17:27:23Z shahar $
  */
 
 require_once dirname(__FILE__) . '/../../TestHelper.php';
@@ -29,7 +29,7 @@ require_once 'Zend/Http/Cookie.php';
  * @category   Zend
  * @package    Zend_Http_Cookie
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Http
  * @group      Zend_Http_Cookie
@@ -93,6 +93,48 @@ class Zend_Http_CookieTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Make sure we get the correct value if it was set through fromString()
+     *
+     * @param        string $value
+     * @dataProvider validCookieValueProvider
+     */
+    public function testGetRawValueFromString($val)
+    {
+        // Because ';' has special meaning in the cookie, strip it out for this test.
+        $val = str_replace(';', '', $val);
+        $cookie = Zend_Http_Cookie::fromString('cookie=' . $val . '; domain=example.com', null, false);
+        $this->assertEquals($val, $cookie->getValue());
+    }
+
+    /**
+     * Make sure we get the correct value if it was set through fromString()
+     *
+     * @param        string $value
+     * @dataProvider validCookieValueProvider
+     */
+    public function testGetRawValueFromStringToString($val)
+    {
+        // Because ';' has special meaning in the cookie, strip it out for this test.
+        $val = str_replace(';', '', $val);
+        $cookie = Zend_Http_Cookie::fromString('cookie=' . $val . '; domain=example.com', null, false);
+        $this->assertEquals('cookie=' . $val . ';', (string)$cookie);
+    }
+
+    /**
+     * Make sure we get the correct value if it was set through fromString()
+     *
+     * @param        string $value
+     * @dataProvider validCookieValueProvider
+     */
+    public function testGetValueFromStringEncodedToString($val)
+    {
+        // Because ';' has special meaning in the cookie, strip it out for this test.
+        $val = str_replace(';', '', $val);
+        $cookie = Zend_Http_Cookie::fromString('cookie=' . $val . '; domain=example.com', null, true);
+        $this->assertEquals('cookie=' . urlencode($val) . ';', (string)$cookie);
+    }
+
+    /**
      * Make sure we get the correct domain when it's set in the cookie string
      *
      * @dataProvider validCookieWithInfoProvider
@@ -152,6 +194,9 @@ class Zend_Http_CookieTest extends PHPUnit_Framework_TestCase
         $path = $uri->getPath();
         if (substr($path, -1, 1) == '/') $path .= 'x';
         $path = dirname($path);
+        if ($path == DIRECTORY_SEPARATOR) {
+            $path = '/';
+        }
 
         $cookie = Zend_Http_Cookie::fromString('foo=bar', (string) $uri);
         if (! $cookie instanceof Zend_Http_Cookie) {
@@ -440,6 +485,7 @@ class Zend_Http_CookieTest extends PHPUnit_Framework_TestCase
             array('space cookie'),
             array('!@#$%^*&()* ][{}?;'),
             array("line\n\rbreaks"),
+            array("0000j8CydACPu_-J9bE8uTX91YU:12a83ks4k"), // value from: Alexander Cheshchevik's comment on issue: ZF-1850
 
             // Long cookie value - 2kb
             array(str_repeat(md5(time()), 64))

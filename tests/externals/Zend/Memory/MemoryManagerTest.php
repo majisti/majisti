@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Memory
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: MemoryManagerTest.php 18950 2009-11-12 15:37:56Z alexander $
+ * @version    $Id: MemoryManagerTest.php 20805 2010-02-01 15:52:15Z alexander $
  */
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
@@ -36,7 +36,7 @@ require_once 'Zend/Memory.php';
  * @category   Zend
  * @package    Zend_Memory
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Memory
  */
@@ -88,6 +88,18 @@ class Zend_Memory_MemoryManagerTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($memoryManager instanceof Zend_Memory_Manager);
     }
 
+
+    /**
+     * tests the Memory Manager backends naming processing
+     *
+     * @group ZF-9023
+     */
+    public function testBackendNamingProcessing()
+    {
+        /** 'File' backend */
+        $backendOptions = array('cache_dir' => $this->cacheDir); // Directory where to put the cache files
+        $memoryManager = Zend_Memory::factory('fIlE', $backendOptions);
+    }
 
     /**
      * tests the Memory Manager settings

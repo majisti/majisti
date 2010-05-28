@@ -15,10 +15,15 @@
  * @category   Zend
  * @package    Zend_Pdf
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: StringTest.php 17573 2009-08-13 18:01:41Z alexander $
+ * @version    $Id: StringTest.php 21545 2010-03-18 09:12:27Z bate $
  */
+
+/**
+ * TestHelper
+ */
+require_once dirname(dirname(dirname(dirname(__FILE__)))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
 
 /**
  * Zend_Pdf_Element_String
@@ -34,7 +39,7 @@ require_once 'PHPUnit/Framework/TestCase.php';
  * @category   Zend
  * @package    Zend_Pdf
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Pdf
  */
@@ -67,5 +72,21 @@ class Zend_Pdf_Element_StringTest extends PHPUnit_Framework_TestCase
     {
         $this->assertEquals(Zend_Pdf_Element_String::unescape("\\n\\r\\t\\b\\f\\(\\)\\\\  \nsome \\\ntext"),
                             "\n\r\t\x08\x0C()\\  \nsome text");
+    }
+
+    /**
+     * @group ZF-9450
+     */
+    public function testUnescapeOctal()
+    {
+        $input = array(
+            0304 => '\\304',
+            0326 => '\\326',
+            0334 => '\\334'
+        );
+        foreach ($input as $k => $v) {
+            $this->assertEquals(Zend_Pdf_Element_String::unescape($v),
+                chr($k), 'expected German Umlaut');
+        }
     }
 }

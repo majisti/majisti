@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: TestCommon.php 18950 2009-11-12 15:37:56Z alexander $
+ * @version    $Id: TestCommon.php 21099 2010-02-19 21:07:00Z mikaelkael $
  */
 
 require_once 'Zend/Db/TestSetup.php';
@@ -30,7 +30,7 @@ PHPUnit_Util_Filter::addFileToFilter(__FILE__);
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Db
  * @group      Zend_Db_Statement
@@ -324,7 +324,7 @@ abstract class Zend_Db_Statement_TestCommon extends Zend_Db_TestSetup
         } catch (Zend_Exception $e) {
             $this->assertType('Zend_Db_Statement_Exception', $e,
                 'Expecting object of type Zend_Db_Statement_Exception, got '.get_class($e));
-            $this->assertContains('invalid fetch mode', $e->getMessage());
+            $this->assertRegExp('#invalid fetch mode#i', $e->getMessage());
         }
     }
 
@@ -864,7 +864,8 @@ abstract class Zend_Db_Statement_TestCommon extends Zend_Db_TestSetup
      */
     public function testStatementCanReturnDriverStatement()
     {
-        $statement = $this->_db->query('SELECT * FROM zfproducts');
+        $products = $this->_db->quoteIdentifier('zfproducts');
+        $statement = $this->_db->query("SELECT * FROM $products");
         $this->assertNotNull($statement->getDriverStatement());
         return $statement;
     }

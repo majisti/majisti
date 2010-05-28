@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: NavigationTest.php 17667 2009-08-18 21:40:09Z mikaelkael $
+ * @version    $Id: NavigationTest.php 20376 2010-01-18 12:31:52Z mabe $
  */
 
 require_once dirname(__FILE__) . '/TestAbstract.php';
@@ -29,7 +29,7 @@ require_once 'Zend/View/Helper/Navigation.php';
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_View
  * @group      Zend_View_Helper
@@ -370,7 +370,7 @@ class Zend_View_Helper_Navigation_NavigationTest
                   . '    <li>' . $nl
                   . '        <a id="menu-p1" href="p1">Page 1</a>' . $nl
                   . '    </li>' . $nl
-                  . '    <li>' . PHP_EOL
+                  . '    <li>' . $nl
                   . '        <a id="menu-p2" href="p2">Page 2</a>' . $nl
                   . '    </li>' . $nl
                   . '</ul>';

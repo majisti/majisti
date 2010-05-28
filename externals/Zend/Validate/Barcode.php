@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Barcode.php 19692 2009-12-16 20:46:35Z thomas $
+ * @version    $Id: Barcode.php 21748 2010-04-03 10:29:56Z thomas $
  */
 
 /**
@@ -32,7 +32,7 @@ require_once 'Zend/Loader.php';
 /**
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate_Barcode extends Zend_Validate_Abstract
@@ -45,7 +45,7 @@ class Zend_Validate_Barcode extends Zend_Validate_Abstract
     protected $_messageTemplates = array(
         self::FAILED         => "'%value%' failed checksum validation",
         self::INVALID_CHARS  => "'%value%' contains invalid characters",
-        self::INVALID_LENGTH => "'%value%' should be %length% characters",
+        self::INVALID_LENGTH => "'%value%' should have a length of %length% characters",
         self::INVALID        => "Invalid type given, value should be string",
     );
 
@@ -131,7 +131,7 @@ class Zend_Validate_Barcode extends Zend_Validate_Abstract
      */
     public function setAdapter($adapter, $options = null)
     {
-        $adapter = ucfirst($adapter);
+        $adapter = ucfirst(strtolower($adapter));
         require_once 'Zend/Loader.php';
         if (Zend_Loader::isReadable('Zend/Validate/Barcode/' . $adapter. '.php')) {
             $adapter = 'Zend_Validate_Barcode_' . $adapter;
@@ -189,10 +189,10 @@ class Zend_Validate_Barcode extends Zend_Validate_Abstract
             return false;
         }
 
-        $this->_value  = (string) $value;
-        $this->_length = strlen($value);
-        $adapter = $this->getAdapter();
-        $result  = $adapter->checkLength($value);
+        $this->_setValue($value);
+        $adapter       = $this->getAdapter();
+        $this->_length = $adapter->getLength();
+        $result        = $adapter->checkLength($value);
         if (!$result) {
             $this->_error(self::INVALID_LENGTH);
             return false;

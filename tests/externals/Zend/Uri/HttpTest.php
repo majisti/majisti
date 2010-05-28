@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Uri
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: HttpTest.php 19253 2009-11-26 13:12:59Z bate $
+ * @version    $Id: HttpTest.php 20383 2010-01-18 16:27:24Z ralph $
  */
 
 /**
@@ -45,12 +45,18 @@ require_once 'PHPUnit/Framework/TestCase.php';
  * @category   Zend
  * @package    Zend_Uri
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Uri
  */
 class Zend_Uri_HttpTest extends PHPUnit_Framework_TestCase
 {
+    
+    public function setup()
+    {
+        Zend_Uri::setConfig(array('allow_unwise' => false));
+    }
+    
     /**
      * Tests for proper URI decomposition
      */
@@ -236,7 +242,7 @@ class Zend_Uri_HttpTest extends PHPUnit_Framework_TestCase
             'http://example.com/?q=^',
             'http://example.com/?q=`',
         );
-
+        
         foreach ($unwise as $uri) {
             $this->assertFalse(Zend_Uri::check($uri), "failed for URI $uri");
         }

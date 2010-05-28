@@ -15,9 +15,9 @@
  * @category    ZendX
  * @package     ZendX_JQuery
  * @subpackage  View
- * @copyright   Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license     http://framework.zend.com/license/new-bsd     New BSD License
- * @version     $Id: Container.php 19855 2009-12-21 19:21:34Z matthew $
+ * @version     $Id: Container.php 20751 2010-01-29 11:14:09Z beberlei $
  */
 
 /**
@@ -31,7 +31,7 @@ require_once "ZendX/JQuery.php";
  * @uses 	   ZendX_JQuery_View_Helper_JQuery_Container
  * @package    ZendX_JQuery
  * @subpackage View
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class ZendX_JQuery_View_Helper_JQuery_Container
@@ -194,9 +194,7 @@ class ZendX_JQuery_View_Helper_JQuery_Container
      */
     public function setVersion($version)
     {
-        if (is_string($version) && preg_match('/^[1-9]\.[0-9](\.[0-9])?$/', $version)) {
-            $this->_version = $version;
-        }
+        $this->_version = $version;
         return $this;
     }
 
@@ -308,9 +306,7 @@ class ZendX_JQuery_View_Helper_JQuery_Container
      */
     public function setUiVersion($version)
     {
-    	if (preg_match('/^[1-9]\.[0-9](\.[0-9])?$/', $version)) {
-    		$this->_uiVersion = $version;
-    	}
+        $this->_uiVersion = $version;
     	return $this;
     }
 
@@ -525,16 +521,8 @@ class ZendX_JQuery_View_Helper_JQuery_Container
      */
     public function addJavascript($js)
     {
-        $js = trim($js);
-        if (!in_array(substr($js, -1), array(';', '}'))) {
-            $js .= ';';
-        }
-
-        if (in_array($js, $this->_javascriptStatements)) {
-            return $this;
-        }
-
         $this->_javascriptStatements[] = $js;
+        $this->enable();
         return $this;
     }
 
@@ -595,6 +583,7 @@ class ZendX_JQuery_View_Helper_JQuery_Container
         if (!in_array($callback, $this->_onLoadActions, true)) {
             $this->_onLoadActions[] = $callback;
         }
+        $this->enable();
         return $this;
     }
 
@@ -672,7 +661,7 @@ class ZendX_JQuery_View_Helper_JQuery_Container
     protected function _renderStylesheets()
     {
     	if( ($this->getRenderMode() & ZendX_JQuery::RENDER_STYLESHEETS) == 0) {
-    		return '';
+            return '';
     	}
 
         foreach ($this->getStylesheets() as $stylesheet) {

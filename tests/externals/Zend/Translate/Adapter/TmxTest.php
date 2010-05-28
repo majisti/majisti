@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Translate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: TmxTest.php 19259 2009-11-26 18:47:53Z thomas $
+ * @version    $Id: TmxTest.php 22282 2010-05-25 14:21:53Z matthew $
  */
 
 /**
@@ -34,7 +34,7 @@ require_once 'PHPUnit/Framework/TestCase.php';
  * @category   Zend
  * @package    Zend_Translate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Translate
  */
@@ -122,19 +122,26 @@ class Zend_Translate_Adapter_TmxTest extends PHPUnit_Framework_TestCase
     {
         $adapter = new Zend_Translate_Adapter_Tmx(dirname(__FILE__) . '/_files/translation_en.tmx', 'en');
         $adapter->setOptions(array('testoption' => 'testkey'));
-        $this->assertEquals(
-            array(
-                'testoption'      => 'testkey',
-                'clear'           => false,
-                'scan'            => null,
-                'locale'          => 'en',
-                'ignore'          => '.',
-                'disableNotices'  => false,
-                'log'             => false,
-                'logMessage'      => 'Untranslated message within \'%locale%\': %message%',
-                'logUntranslated' => false,
-                'reload'          => false),
-            $adapter->getOptions());
+        $expected = array(
+            'testoption'      => 'testkey',
+            'clear'           => false,
+            'content'         => dirname(__FILE__) . '/_files/translation_en.tmx',
+            'scan'            => null,
+            'locale'          => 'en',
+            'ignore'          => '.',
+            'disableNotices'  => false,
+            'log'             => false,
+            'logMessage'      => 'Untranslated message within \'%locale%\': %message%',
+            'logUntranslated' => false,
+            'reload'          => false
+        );
+        $options = $adapter->getOptions();
+
+        foreach ($expected as $key => $value) {
+            $this->assertArrayHasKey($key, $options);
+            $this->assertEquals($value, $options[$key]);
+        }
+
         $this->assertEquals('testkey', $adapter->getOptions('testoption'));
         $this->assertTrue(is_null($adapter->getOptions('nooption')));
     }
@@ -234,6 +241,15 @@ class Zend_Translate_Adapter_TmxTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Cooking furniture (en)', $adapter->translate('Küchen Möbel'));
         $this->assertEquals('Message 1 (fr)', $adapter->translate('Message 1', 'fr_FR'));
         $this->assertEquals('Message 1 (fr)', $adapter->_('Message 1', 'fr_FR'));
+    }
+
+    public function testUseId()
+    {
+        $adapter = new Zend_Translate_Adapter_Tmx(dirname(__FILE__) . '/_files/translation_en2.tmx', 'en', array('useId' => false));
+        $this->assertEquals(false, $adapter->getOptions('useId'));
+        $this->assertEquals('Message 1 (en)', $adapter->translate('Nachricht 1'));
+        $this->assertEquals('Message 1 (en)', $adapter->_('Nachricht 1'));
+        $this->assertEquals('Nachricht 6', $adapter->translate('Nachricht 6'));
     }
 
     /**

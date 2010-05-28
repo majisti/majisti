@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Iban.php 18028 2009-09-08 20:52:23Z thomas $
+ * @version    $Id: Iban.php 21563 2010-03-19 10:10:45Z thomas $
  */
 
 /**
@@ -29,7 +29,7 @@ require_once 'Zend/Validate/Abstract.php';
  *
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate_Iban extends Zend_Validate_Abstract
@@ -44,9 +44,9 @@ class Zend_Validate_Iban extends Zend_Validate_Abstract
      * @var array
      */
     protected $_messageTemplates = array(
-        self::NOTSUPPORTED => "'%value%' does not have IBAN",
-        self::FALSEFORMAT  => "'%value%' has a false format",
-        self::CHECKFAILED  => "'%value%' has failed the IBAN check"
+        self::NOTSUPPORTED => "Unknown country within the IBAN '%value%'",
+        self::FALSEFORMAT  => "'%value%' has a false IBAN format",
+        self::CHECKFAILED  => "'%value%' has failed the IBAN check",
     );
 
     /**
@@ -113,15 +113,24 @@ class Zend_Validate_Iban extends Zend_Validate_Abstract
     {
         if ($locale instanceof Zend_Config) {
             $locale = $locale->toArray();
+        }
+
+        if (is_array($locale)) {
             if (array_key_exists('locale', $locale)) {
                 $locale = $locale['locale'];
             } else {
-                require_once 'Zend/Validate/Exception.php';
-                throw new Zend_Validate_Exception("Missing option 'locale'");
+                $locale = null;
             }
         }
 
-        if ($locale !== null) {
+        if ($locale !== false) {
+            require_once 'Zend/Registry.php';
+            if (Zend_Registry::isRegistered('Zend_Locale')) {
+                $locale = Zend_Registry::get('Zend_Locale');
+            }
+        }
+
+        if (!empty($locale)) {
             $this->setLocale($locale);
         }
     }
@@ -144,11 +153,13 @@ class Zend_Validate_Iban extends Zend_Validate_Abstract
      */
     public function setLocale($locale = null)
     {
-        require_once 'Zend/Locale.php';
-        $locale = Zend_Locale::findLocale($locale);
-        if (strlen($locale) < 4) {
-            require_once 'Zend/Validate/Exception.php';
-            throw new Zend_Validate_Exception('Region must be given for IBAN validation');
+        if ($locale !== false) {
+            require_once 'Zend/Locale.php';
+            $locale = Zend_Locale::findLocale($locale);
+            if (strlen($locale) < 4) {
+                require_once 'Zend/Validate/Exception.php';
+                throw new Zend_Validate_Exception('Region must be given for IBAN validation');
+            }
         }
 
         $this->_locale = $locale;

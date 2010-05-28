@@ -15,9 +15,9 @@
  * @category    ZendX
  * @package     ZendX_JQuery
  * @subpackage  View
- * @copyright   Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license     http://framework.zend.com/license/new-bsd     New BSD License
- * @version     $Id: jQueryTest.php 19855 2009-12-21 19:21:34Z matthew $
+ * @version     $Id: jQueryTest.php 20751 2010-01-29 11:14:09Z beberlei $
  */
 
 require_once dirname(__FILE__)."/../../../TestHelper.php";
@@ -215,6 +215,13 @@ class ZendX_JQuery_View_jQueryTest extends PHPUnit_Framework_TestCase
     	$this->assertEquals(2, count($this->helper->getOnLoadActions()));
     }
 
+    public function testAddOnLoadEnablesJQuery()
+    {
+        $this->assertFalse($this->helper->isEnabled());
+        $this->helper->addOnLoad("1");
+        $this->assertTrue($this->helper->isEnabled());
+    }
+
     public function testShouldAllowCaptureOnLoad()
     {
     	$this->helper->onLoadCaptureStart();
@@ -293,21 +300,6 @@ class ZendX_JQuery_View_jQueryTest extends PHPUnit_Framework_TestCase
     	$this->helper->addStylesheet('test2.css');
 
     	$this->assertEquals(array('test.css', 'test2.css'), $this->helper->getStylesheets());
-    }
-
-    public function testShouldAddJavascriptOnlyOnce()
-    {
-    	$this->helper->addJavascript("alert();");
-    	$this->helper->addJavascript("alert();");
-
-    	$this->assertEquals(1, count($this->helper->getJavascript()));
-    }
-
-    public function testShouldAddDelimWhenNoneGiven()
-    {
-    	$this->helper->addJavascript("alert()");
-
-    	$this->assertEquals(array('alert();'), $this->helper->getJavascript());
     }
 
     public function testShouldRenderNothingOnDisable()

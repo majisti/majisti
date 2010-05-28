@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Form
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: RadioTest.php 18546 2009-10-15 15:50:17Z matthew $
+ * @version    $Id: RadioTest.php 22152 2010-05-12 10:01:45Z alab $
  */
 
 // Call Zend_Form_Element_RadioTest::main() if this source file is executed directly.
@@ -35,7 +35,7 @@ require_once 'Zend/Form/Element/Radio.php';
  * @category   Zend
  * @package    Zend_Form
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Form
  */
@@ -168,7 +168,22 @@ class Zend_Form_Element_RadioTest extends PHPUnit_Framework_TestCase
                 'test' => 'Test',
             ));
         $html = $this->element->render($this->getView());
-        $this->assertRegexp('#<dt[^>]*>&nbsp;</dt>.*?<dd#s', $html, $html);
+        $this->assertRegexp('#<dt[^>]*>&\#160;</dt>.*?<dd#s', $html, $html);
+    }
+
+    /**
+     * @group ZF-9682
+     */
+    public function testCustomLabelDecorator()
+    {
+        $form = new Zend_Form();
+        $form->addElementPrefixPath('My_Decorator', dirname(__FILE__) . '/../_files/decorators/', 'decorator');
+
+        $form->addElement($this->element);
+
+        $element = $form->getElement('foo');
+
+        $this->assertType('My_Decorator_Label', $element->getDecorator('Label'));
     }
 
     /**

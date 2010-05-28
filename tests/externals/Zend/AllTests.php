@@ -16,9 +16,9 @@
  * @category   Zend
  * @package    Zend
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: AllTests.php 19722 2009-12-17 20:11:20Z matthew $
+ * @version    $Id: AllTests.php 20267 2010-01-13 20:16:35Z matthew $
  */
 
 require_once dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'TestHelper.php';
@@ -71,6 +71,7 @@ require_once 'Zend/Measure/AllTests.php';
 require_once 'Zend/Memory/AllTests.php';
 require_once 'Zend/MimeTest.php';
 require_once 'Zend/Mime/AllTests.php';
+require_once 'Zend/Oauth/AllTests.php';
 require_once 'Zend/OpenIdTest.php';
 require_once 'Zend/OpenId/AllTests.php';
 require_once 'Zend/Paginator/AllTests.php';
@@ -79,6 +80,7 @@ require_once 'Zend/RegistryTest.php';
 require_once 'Zend/Rest/AllTests.php';
 require_once 'Zend/Queue/AllTests.php';
 require_once 'Zend/Search/Lucene/AllTests.php';
+require_once 'Zend/Serializer/AllTests.php';
 require_once 'Zend/Server/AllTests.php';
 require_once 'Zend/Service/AllTests.php';
 require_once 'Zend/Session/AllTests.php';
@@ -106,7 +108,7 @@ require_once 'Zend/XmlRpc/AllTests.php';
  * @package    Zend
  * @subpackage UnitTests
  * @group      Zend
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_AllTests
@@ -204,12 +206,14 @@ class Zend_AllTests
         $suite->addTest(Zend_Measure_AllTests::suite());
         $suite->addTestSuite('Zend_MimeTest');
         $suite->addTest(Zend_Mime_AllTests::suite());
+        $suite->addTest(Zend_Oauth_AllTests::suite());
         $suite->addTest(Zend_Paginator_AllTests::suite());
         $suite->addTest(Zend_Pdf_AllTests::suite());
         $suite->addTestSuite('Zend_RegistryTest');
         $suite->addTest(Zend_Rest_AllTests::suite());
         $suite->addTest(Zend_Queue_AllTests::suite());
         $suite->addTest(Zend_Search_Lucene_AllTests::suite());
+        $suite->addTest(Zend_Serializer_AllTests::suite());
         $suite->addTest(Zend_Server_AllTests::suite());
         $suite->addTest(Zend_Service_AllTests::suite());
         $suite->addTest(Zend_Tag_AllTests::suite());

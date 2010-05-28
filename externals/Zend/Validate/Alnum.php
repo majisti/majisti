@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Alnum.php 18028 2009-09-08 20:52:23Z thomas $
+ * @version    $Id: Alnum.php 20442 2010-01-20 15:15:40Z matthew $
  */
 
 /**
@@ -27,7 +27,7 @@ require_once 'Zend/Validate/Abstract.php';
 /**
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate_Alnum extends Zend_Validate_Abstract
@@ -40,7 +40,7 @@ class Zend_Validate_Alnum extends Zend_Validate_Abstract
      * Whether to allow white space characters; off by default
      *
      * @var boolean
-     * @depreciated
+     * @deprecated
      */
     public $allowWhiteSpace;
 
@@ -58,8 +58,8 @@ class Zend_Validate_Alnum extends Zend_Validate_Abstract
      */
     protected $_messageTemplates = array(
         self::INVALID      => "Invalid type given, value should be float, string, or integer",
-        self::NOT_ALNUM    => "'%value%' has not only alphabetic and digit characters",
-        self::STRING_EMPTY => "'%value%' is an empty string"
+        self::NOT_ALNUM    => "'%value%' contains characters which are non alphabetic and no digits",
+        self::STRING_EMPTY => "'%value%' is an empty string",
     );
 
     /**
@@ -72,11 +72,13 @@ class Zend_Validate_Alnum extends Zend_Validate_Abstract
     {
         if ($allowWhiteSpace instanceof Zend_Config) {
             $allowWhiteSpace = $allowWhiteSpace->toArray();
+        }
+
+        if (is_array($allowWhiteSpace)) {
             if (array_key_exists('allowWhiteSpace', $allowWhiteSpace)) {
                 $allowWhiteSpace = $allowWhiteSpace['allowWhiteSpace'];
             } else {
-                require_once 'Zend/Validate/Exception.php';
-                throw new Zend_Validate_Exception("Missing option 'allowWhiteSpace'");
+                $allowWhiteSpace = false;
             }
         }
 

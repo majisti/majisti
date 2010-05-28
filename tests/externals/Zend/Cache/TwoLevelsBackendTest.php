@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Cache
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: TwoLevelsBackendTest.php 18950 2009-11-12 15:37:56Z alexander $
+ * @version    $Id: TwoLevelsBackendTest.php 21954 2010-04-19 19:19:24Z mabe $
  */
 
 /**
@@ -40,7 +40,7 @@ require_once 'PHPUnit/Framework/TestCase.php';
  * @category   Zend
  * @package    Zend_Cache
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Cache
  */
@@ -95,6 +95,33 @@ class Zend_Cache_TwoLevelsBackendTest extends Zend_Cache_CommonExtendedBackendTe
             'fast_backend_options' => $fastBackendOptions,
             'slow_backend_options' => $slowBackendOptions
         ));
+    }
+
+    public function testSaveOverwritesIfFastIsFull()
+    {
+        $slowBackend = 'File';
+        $fastBackend = $this->getMock('Zend_Cache_Backend_Apc', array('getFillingPercentage'));
+        $fastBackend->expects($this->at(0))
+            ->method('getFillingPercentage')
+            ->will($this->returnValue(0));
+        $fastBackend->expects($this->at(1))
+            ->method('getFillingPercentage')
+            ->will($this->returnValue(90));
+        $slowBackendOptions = array(
+            'cache_dir' => $this->_cache_dir
+        );
+        $cache = new Zend_Cache_Backend_TwoLevels(array(
+            'fast_backend' => $fastBackend,
+            'slow_backend' => $slowBackend,
+            'slow_backend_options' => $slowBackendOptions,
+            'stats_update_factor' => 1
+        ));
+
+        $id = 'test'.uniqid();
+        $cache->save(10, $id); //fast usage at 0%
+
+        $cache->save(100, $id); //fast usage at 90%
+        $this->assertEquals(100, $cache->load($id));
     }
 
 }
