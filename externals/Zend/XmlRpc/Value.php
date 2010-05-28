@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage Value
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Value.php 19680 2009-12-16 00:26:57Z lars $
+ * @version    $Id: Value.php 22025 2010-04-27 18:09:14Z matthew $
  */
 
 /**
@@ -31,7 +31,7 @@
  * from PHP variables, XML string or by specifing the exact XML-RPC natvie type
  *
  * @package    Zend_XmlRpc
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_XmlRpc_Value
@@ -158,6 +158,7 @@ abstract class Zend_XmlRpc_Value
     {
         if (!$this->_xml) {
             $this->generateXml();
+            $this->_xml = (string) $this->getGenerator();
         }
         return $this->_xml;
     }
@@ -169,9 +170,7 @@ abstract class Zend_XmlRpc_Value
      */
     public function generateXml()
     {
-        if (!$this->_xml) {
-            $this->_generateXml();
-        }
+        $this->_generateXml();
     }
 
     /**

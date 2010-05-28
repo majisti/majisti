@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Tool
  * @subpackage Framework
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ApplicationDirectory.php 19525 2009-12-08 14:22:08Z ralph $
+ * @version    $Id: ApplicationDirectory.php 20967 2010-02-07 18:17:49Z ralph $
  */
 
 /**
@@ -33,7 +33,7 @@ require_once 'Zend/Tool/Project/Context/Filesystem/Directory.php';
  *
  * @category   Zend
  * @package    Zend_Tool
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Tool_Project_Context_Zf_ApplicationDirectory extends Zend_Tool_Project_Context_Filesystem_Directory
@@ -42,6 +42,14 @@ class Zend_Tool_Project_Context_Zf_ApplicationDirectory extends Zend_Tool_Projec
     protected $_filesystemName = 'application';
 
     protected $_classNamePrefix = 'Application_';
+    
+    public function init()
+    {
+        if ($this->_resource->hasAttribute('classNamePrefix')) {
+            $this->_classNamePrefix = $this->_resource->getAttribute('classNamePrefix');
+        }
+        parent::init();
+    }
     
     /**
      * getPersistentAttributes

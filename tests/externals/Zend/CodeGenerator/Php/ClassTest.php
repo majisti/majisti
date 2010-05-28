@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_CodeGenerator
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id $
  */
@@ -34,7 +34,7 @@ require_once 'Zend/CodeGenerator/Php/Class.php';
  * @category   Zend
  * @package    Zend_CodeGenerator
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  *
  * @group Zend_CodeGenerator
@@ -236,8 +236,7 @@ EOS;
     }
 
     /**
-     * @group ZF-7909
-     */
+     * @group ZF-7909 */
     public function testClassFromReflectionThatImplementsInterfaces()
     {
         if(!class_exists('Zend_CodeGenerator_Php_ClassWithInterface')) {
@@ -274,5 +273,45 @@ EOS;
 
         $expectedClassDef = 'class Zend_CodeGenerator_Php_NewClassWithInterface extends Zend_CodeGenerator_Php_ClassWithInterface implements Zend_Code_Generator_Php_ThreeInterface';
         $this->assertContains($expectedClassDef, $code);
+    }
+
+    /**
+     * @group ZF-9602
+     */
+    public function testSetextendedclassShouldIgnoreEmptyClassnameOnGenerate()
+    {
+        $codeGenClass = new Zend_CodeGenerator_Php_Class();
+        $codeGenClass->setName( 'MyClass' )
+                     ->setExtendedClass('');
+
+        $expected = <<<CODE
+class MyClass
+{
+
+
+}
+
+CODE;
+        $this->assertEquals( $expected, $codeGenClass->generate() );
+    }
+
+    /**
+     * @group ZF-9602
+     */
+    public function testSetextendedclassShouldNotIgnoreNonEmptyClassnameOnGenerate()
+    {
+        $codeGenClass = new Zend_CodeGenerator_Php_Class();
+        $codeGenClass->setName( 'MyClass' )
+                     ->setExtendedClass('ParentClass');
+
+        $expected = <<<CODE
+class MyClass extends ParentClass
+{
+
+
+}
+
+CODE;
+        $this->assertEquals( $expected, $codeGenClass->generate() );
     }
 }

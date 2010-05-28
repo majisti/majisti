@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Feed_Reader
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Feed.php 19823 2009-12-21 00:21:01Z padraic $
+ * @version    $Id: Feed.php 22301 2010-05-26 10:15:13Z padraic $
  */
 
 /**
@@ -42,7 +42,7 @@ require_once 'Zend/Feed/Reader/Collection/Author.php';
 /**
  * @category   Zend
  * @package    Zend_Feed_Reader
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Reader_Extension_Atom_Feed
@@ -231,8 +231,6 @@ class Zend_Feed_Reader_Extension_Atom_Feed
 
         if (!$generator) {
             $generator = null;
-        } else {
-            $generator = html_entity_decode($generator, ENT_QUOTES, $this->getEncoding());
         }
 
         $this->_data['generator'] = $generator;
@@ -292,6 +290,30 @@ class Zend_Feed_Reader_Extension_Atom_Feed
         $this->_data['language'] = $language;
 
         return $this->_data['language'];
+    }
+
+    /**
+     * Get the feed image
+     *
+     * @return array|null
+     */
+    public function getImage()
+    {
+        if (array_key_exists('image', $this->_data)) {
+            return $this->_data['image'];
+        }
+
+        $imageUrl = $this->_xpath->evaluate('string(' . $this->getXpathPrefix() . '/atom:logo)');
+
+        if (!$imageUrl) {
+            $image = null;
+        } else {
+            $image = array('uri'=>$imageUrl);
+        }
+
+        $this->_data['image'] = $image;
+
+        return $this->_data['image'];
     }
 
     /**
@@ -442,7 +464,7 @@ class Zend_Feed_Reader_Extension_Atom_Feed
                 $categoryCollection[] = array(
                     'term' => $category->getAttribute('term'),
                     'scheme' => $category->getAttribute('scheme'),
-                    'label' => html_entity_decode($category->getAttribute('label'))
+                    'label' => $category->getAttribute('label')
                 );
             }
         } else {

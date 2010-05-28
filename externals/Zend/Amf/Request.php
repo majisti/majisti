@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Amf
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Request.php 19661 2009-12-15 18:03:07Z matthew $
+ * @version    $Id: Request.php 20096 2010-01-06 02:05:09Z bkarwin $
  */
 
 /** @see Zend_Amf_Parse_InputStream */
@@ -40,7 +40,7 @@ require_once 'Zend/Amf/Value/MessageBody.php';
  *
  * @todo       Currently not checking if the object needs to be Type Mapped to a server object.
  * @package    Zend_Amf
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Amf_Request

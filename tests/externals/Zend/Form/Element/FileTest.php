@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Form
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: FileTest.php 18964 2009-11-13 18:17:02Z thomas $
+ * @version    $Id: FileTest.php 20268 2010-01-13 20:18:22Z matthew $
  */
 
 // Call Zend_Form_Element_FileTest::main() if this source file is executed directly.
@@ -31,6 +31,8 @@ require_once 'Zend/Form/Element/File.php';
 require_once 'Zend/File/Transfer/Adapter/Abstract.php';
 require_once 'Zend/Validate/File/Upload.php';
 require_once 'Zend/Form/SubForm.php';
+require_once 'Zend/Form.php';
+require_once 'Zend/Registry.php';
 require_once 'Zend/View.php';
 
 /**
@@ -39,7 +41,7 @@ require_once 'Zend/View.php';
  * @category   Zend
  * @package    Zend_Form
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Form
  */
@@ -66,6 +68,8 @@ class Zend_Form_Element_FileTest extends PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
+        Zend_Registry::_unsetInstance();
+        Zend_Form::setDefaultTranslator(null);
         $this->element = new Zend_Form_Element_File('foo');
     }
 
@@ -396,9 +400,9 @@ class Zend_Form_Element_FileTest extends PHPUnit_Framework_TestCase
         $adapter = new Zend_Form_Element_FileTest_MockAdapter();
         $element->setTransferAdapter($adapter);
 
-        $this->assertEquals('8B', $element->getFileSize('baz.text'));
+        $this->assertEquals('1.14kB', $element->getFileSize('baz.text'));
         $adapter->setOptions(array('useByteString' => false));
-        $this->assertEquals(8, $element->getFileSize('baz.text'));
+        $this->assertEquals(1172, $element->getFileSize('baz.text'));
     }
 
     public function testMimeType()

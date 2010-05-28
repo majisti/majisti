@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Feed
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: AtomTest.php 19725 2009-12-17 21:14:28Z padraic $
+ * @version    $Id: AtomTest.php 20464 2010-01-21 15:26:31Z padraic $
  */
 
 require_once 'PHPUnit/Framework/TestCase.php';
@@ -27,7 +27,7 @@ require_once 'Zend/Feed/Reader.php';
  * @category   Zend
  * @package    Zend_Feed
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Feed
  * @group      Zend_Feed_Reader
@@ -313,13 +313,56 @@ class Zend_Feed_Reader_Entry_AtomTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Entry Content', $entry->getContent());
     }
 
+    /**
+     * TEXT
+     * @group ZFRATOMCONTENT
+     */
     public function testGetsContentFromAtom10()
     {
         $feed = Zend_Feed_Reader::importString(
             file_get_contents($this->_feedSamplePath . '/content/plain/atom10.xml')
         );
         $entry = $feed->current();
-        $this->assertEquals('Entry Content', $entry->getContent());
+        $this->assertEquals('Entry Content &amp;', $entry->getContent());
+    }
+    
+    /**
+     * HTML Escaped
+     * @group ZFRATOMCONTENT
+     */
+    public function testGetsContentFromAtom10Html()
+    {
+        $feed = Zend_Feed_Reader::importString(
+            file_get_contents($this->_feedSamplePath . '/content/plain/atom10_Html.xml')
+        );
+        $entry = $feed->current();
+        $this->assertEquals('<p>Entry Content &amp;</p>', $entry->getContent());
+    }
+    
+    /**
+     * HTML CDATA Escaped
+     * @group ZFRATOMCONTENT
+     */
+    public function testGetsContentFromAtom10HtmlCdata()
+    {
+        $feed = Zend_Feed_Reader::importString(
+            file_get_contents($this->_feedSamplePath . '/content/plain/atom10_HtmlCdata.xml')
+        );
+        $entry = $feed->current();
+        $this->assertEquals('<p>Entry Content &amp;</p>', $entry->getContent());
+    }
+    
+    /**
+     * XHTML
+     * @group ZFRATOMCONTENT
+     */
+    public function testGetsContentFromAtom10XhtmlNamespaced()
+    {
+        $feed = Zend_Feed_Reader::importString(
+            file_get_contents($this->_feedSamplePath . '/content/plain/atom10_Xhtml.xml')
+        );
+        $entry = $feed->current();
+        $this->assertEquals('<p class="x:"><em>Entry Content &amp;x:</em></p>', $entry->getContent());
     }
 
     /**

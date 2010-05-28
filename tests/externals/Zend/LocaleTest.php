@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Locale
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id $
  */
@@ -38,7 +38,7 @@ require_once 'Zend/Cache.php';
  * @category   Zend
  * @package    Zend_Locale
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Locale
  */
@@ -836,6 +836,20 @@ class Zend_LocaleTest extends PHPUnit_Framework_TestCase
     public function testFailedLocaleOnPreTranslations()
     {
         $this->assertEquals('Andorra', Zend_LocaleTestHelper::getTranslation('AD', 'country', 'gl_GL'));
+    }
+
+    /**
+     * @ZF-9488
+     */
+    public function testTerritoryToGetLocale() {
+        $value = Zend_Locale::findLocale('US');
+        $this->assertEquals('en_US', $value);
+
+        $value = new Zend_Locale('US');
+        $this->assertEquals('en_US', $value->toString());
+
+        $value = new Zend_Locale('TR');
+        $this->assertEquals('tr_TR', $value->toString());
     }
 
     /**

@@ -15,9 +15,9 @@
  * @category    ZendX
  * @package     ZendX_JQuery
  * @subpackage  View
- * @copyright   Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license     http://framework.zend.com/license/new-bsd     New BSD License
- * @version     $Id: AutoComplete.php 19855 2009-12-21 19:21:34Z matthew $
+ * @version     $Id: AutoComplete.php 20754 2010-01-29 11:42:43Z beberlei $
  */
 
 /**
@@ -31,9 +31,9 @@ require_once "ZendX/JQuery/View/Helper/UiWidget.php";
  * @uses 	   Zend_Json, Zend_View_Helper_FormText
  * @package    ZendX_JQuery
  * @subpackage View
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
-  */
+ */
 class ZendX_JQuery_View_Helper_AutoComplete extends ZendX_JQuery_View_Helper_UiWidget
 {
     /**
@@ -54,25 +54,36 @@ class ZendX_JQuery_View_Helper_AutoComplete extends ZendX_JQuery_View_Helper_UiW
      * @param  array $attribs
      * @return String
      */
-	public function autoComplete($id, $value = null, array $params = array(), array $attribs = array())
-	{
+    public function autoComplete($id, $value = null, array $params = array(), array $attribs = array())
+    {
         $attribs = $this->_prepareAttributes($id, $value, $attribs);
 
-        if(!isset($params['data']) && !isset($params['url'])) {
-            require_once "ZendX/JQuery/Exception.php";
-            throw new ZendX_JQuery_Exception("Cannot construct AutoComplete field without specifying Parameters Data and Url");
+        if (!isset($params['source'])) {
+            if (isset($params['url'])) {
+                $params['source'] = $params['url'];
+                unset($params['url']);
+            } else if (isset($params['data'])) {
+                $params['source'] = $params['data'];
+                unset($params['data']);
+            } else {
+                require_once "ZendX/JQuery/Exception.php";
+                throw new ZendX_JQuery_Exception(
+                    "Cannot construct AutoComplete field without specifying 'source' field, ".
+                    "either an url or an array of elements."
+                );
+            }
         }
 
         $params = ZendX_JQuery::encodeJson($params);
 
         $js = sprintf('%s("#%s").autocomplete(%s);',
-            ZendX_JQuery_View_Helper_JQuery::getJQueryHandler(),
-            $attribs['id'],
-            $params
+                ZendX_JQuery_View_Helper_JQuery::getJQueryHandler(),
+                $attribs['id'],
+                $params
         );
 
         $this->jquery->addOnLoad($js);
 
         return $this->view->formText($id, $value, $attribs);
-	}
+    }
 }

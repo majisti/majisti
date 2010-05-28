@@ -16,9 +16,9 @@
  * @category   ZendX
  * @package    ZendX
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: AllTests.php 19855 2009-12-21 19:21:34Z matthew $
+ * @version    $Id: AllTests.php 20183 2010-01-10 21:14:36Z freak $
  */
 
 /**
@@ -30,6 +30,7 @@ if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'ZendX_AllTests::main');
 }
 
+require_once 'ZendX/Application/AllTests.php';
 require_once 'ZendX/Console/AllTests.php';
 require_once 'ZendX/JQuery/AllTests.php';
 require_once 'ZendX/Db/AllTests.php';
@@ -38,7 +39,7 @@ require_once 'ZendX/Db/AllTests.php';
  * @category   ZendX
  * @package    ZendX
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class ZendX_AllTests
@@ -52,6 +53,7 @@ class ZendX_AllTests
     {
         $suite = new PHPUnit_Framework_TestSuite('Zend Framework Extras - ZendX');
 
+        $suite->addTestSuite('ZendX_Application_AllTests');
         $suite->addTestSuite('ZendX_Console_AllTests');
         $suite->addTestSuite('ZendX_JQuery_AllTests');
         $suite->addTestSuite('ZendX_Db_AllTests');

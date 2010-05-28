@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Log
  * @subpackage Filter
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Suppress.php 19550 2009-12-09 17:49:01Z matthew $
+ * @version    $Id: Suppress.php 20096 2010-01-06 02:05:09Z bkarwin $
  */
 
 /** Zend_Log_Filter_Interface */
@@ -27,9 +27,9 @@ require_once 'Zend/Log/Filter/Interface.php';
  * @category   Zend
  * @package    Zend_Log
  * @subpackage Filter
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Suppress.php 19550 2009-12-09 17:49:01Z matthew $
+ * @version    $Id: Suppress.php 20096 2010-01-06 02:05:09Z bkarwin $
  */
 class Zend_Log_Filter_Suppress extends Zend_Log_Filter_Abstract
 {

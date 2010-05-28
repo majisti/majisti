@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Filter
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: FilterTest.php 17573 2009-08-13 18:01:41Z alexander $
+ * @version    $Id: FilterTest.php 21144 2010-02-23 07:19:05Z ralph $
  */
 
 
@@ -36,7 +36,7 @@ require_once 'Zend/Filter.php';
  * @category   Zend
  * @package    Zend_Filter
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Filter
  */
@@ -96,6 +96,19 @@ class Zend_FilterTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Ensures that filters can be prepended and will be executed in the
+     * expected order
+     */
+    public function testFilterPrependOrder()
+    {
+        $this->_filter->appendFilter(new Zend_FilterTest_StripUpperCase())
+                      ->prependFilter(new Zend_FilterTest_LowerCase());
+        $value = 'AbC';
+        $valueExpected = 'abc';
+        $this->assertEquals($valueExpected, $this->_filter->filter($value));
+    }
+
+    /**
      * Ensures that we can call the static method get()
      * to instantiate a named validator by its class basename
      * and it returns the result of filter() with the input.
@@ -131,18 +144,11 @@ class Zend_FilterTest extends PHPUnit_Framework_TestCase
      *
      * @group  ZF-2724
      * @return void
+     * @expectedException Zend_Filter_Exception
      */
     public function testStaticFactoryClassNotFound()
     {
-        set_error_handler(array($this, 'handleNotFoundError'), E_WARNING);
-        try {
-            Zend_Filter::filterStatic('1234', 'UnknownFilter');
-        } catch (Zend_Filter_Exception $e) {
-        }
-        restore_error_handler();
-        $this->assertTrue($this->error);
-        $this->assertTrue(isset($e));
-        $this->assertContains('Filter class not found', $e->getMessage());
+        Zend_Filter::filterStatic('1234', 'UnknownFilter');
     }
 
     /**

@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Feed_Writer
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Entry.php 19730 2009-12-17 22:28:45Z padraic $
+ * @version    $Id: Entry.php 20326 2010-01-16 00:20:43Z padraic $
  */
  
 /**
@@ -27,12 +27,22 @@ require_once 'Zend/Feed/Writer/Extension/RendererAbstract.php';
 /**
  * @category   Zend
  * @package    Zend_Feed_Writer
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Writer_Extension_Threading_Renderer_Entry
     extends Zend_Feed_Writer_Extension_RendererAbstract
 {
+
+    /**
+     * Set to TRUE if a rendering method actually renders something. This
+     * is used to prevent premature appending of a XML namespace declaration
+     * until an element which requires it is actually appended.
+     *
+     * @var bool
+     */
+    protected $_called = false;
+    
     /**
      * Render entry
      * 
@@ -43,10 +53,12 @@ class Zend_Feed_Writer_Extension_Threading_Renderer_Entry
         if (strtolower($this->getType()) == 'rss') {
             return; // Atom 1.0 only
         }
-        $this->_appendNamespaces();
         $this->_setCommentLink($this->_dom, $this->_base);
         $this->_setCommentFeedLinks($this->_dom, $this->_base);
         $this->_setCommentCount($this->_dom, $this->_base);
+        if ($this->_called) {
+            $this->_appendNamespaces();
+        }
     }
     
     /**
@@ -78,11 +90,11 @@ class Zend_Feed_Writer_Extension_Threading_Renderer_Entry
         $clink->setAttribute('type', 'text/html');
         $clink->setAttribute('href', $link);
         $count = $this->getDataContainer()->getCommentCount();
-        if (!$count) {
-            $count = 0;
+        if (!is_null($count)) {
+            $clink->setAttribute('thr:count', $count);
         }
-        $clink->setAttribute('thr:count', $count);
         $root->appendChild($clink);
+        $this->_called = true;
     }
     
     /**
@@ -104,11 +116,11 @@ class Zend_Feed_Writer_Extension_Threading_Renderer_Entry
             $flink->setAttribute('type', 'application/'. $link['type'] .'+xml');
             $flink->setAttribute('href', $link['uri']);
             $count = $this->getDataContainer()->getCommentCount();
-            if (!$count) {
-                $count = 0;
+            if (!is_null($count)) {
+                $flink->setAttribute('thr:count', $count);
             }
-            $flink->setAttribute('thr:count', $count);
             $root->appendChild($flink);
+            $this->_called = true;
         }
     }
 
@@ -122,11 +134,12 @@ class Zend_Feed_Writer_Extension_Threading_Renderer_Entry
     protected function _setCommentCount(DOMDocument $dom, DOMElement $root)
     {
         $count = $this->getDataContainer()->getCommentCount();
-        if (!$count) {
-            $count = 0;
+        if (is_null($count)) {
+            return;
         }
         $tcount = $this->_dom->createElement('thr:total');
         $tcount->nodeValue = $count;
         $root->appendChild($tcount);
+        $this->_called = true;
     }
 }

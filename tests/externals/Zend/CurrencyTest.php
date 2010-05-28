@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Currency
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: CurrencyTest.php 18477 2009-10-04 18:07:30Z thomas $
+ * @version    $Id: CurrencyTest.php 21647 2010-03-25 20:59:40Z thomas $
  */
 
 /**
@@ -40,7 +40,7 @@ require_once 'PHPUnit/Framework.php';
  * @category   Zend
  * @package    Zend_Currency
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Currency
  */
@@ -50,10 +50,15 @@ class Zend_CurrencyTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         require_once 'Zend/Cache.php';
-        $cache = Zend_Cache::factory('Core', 'File',
+        $this->_cache = Zend_Cache::factory('Core', 'File',
                  array('lifetime' => 120, 'automatic_serialization' => true),
                  array('cache_dir' => dirname(__FILE__) . '/_files/'));
-        Zend_Currency::setCache($cache);
+        Zend_Currency::setCache($this->_cache);
+    }
+
+    public function tearDown()
+    {
+        $this->_cache->clean(Zend_Cache::CLEANING_MODE_ALL);
     }
 
     /**
@@ -92,43 +97,36 @@ class Zend_CurrencyTest extends PHPUnit_Framework_TestCase
 
         try {
             $currency = new Zend_Currency('de_XX');
-            $this->fail("locale should always include region and therefor not been recognised");
+            $this->fail("Locale without region should not been recognised");
         } catch (Zend_Currency_Exception $e) {
             // success
         }
+
         try {
             $currency = new Zend_Currency('xx_XX');
-            $this->fail("unknown locale should not have been recognised");
         } catch (Zend_Currency_Exception $e) {
             // success
         }
 
         try {
-            $currency = new Zend_Currency('EUR');
+            $currency = new Zend_Currency(array('currency' => 'EUR'));
             $this->assertTrue($currency instanceof Zend_Currency);
         } catch (Zend_Currency_Exception $e) {
             $this->assertContains('No region found within the locale', $e->getMessage());
         }
 
         try {
-            $currency = new Zend_Currency('USD');
+            $currency = new Zend_Currency(array('currency' => 'USD'));
             $this->assertTrue($currency instanceof Zend_Currency);
         } catch (Zend_Currency_Exception $e) {
             $this->assertContains('No region found within the locale', $e->getMessage());
         }
 
         try {
-            $currency = new Zend_Currency('AWG');
+            $currency = new Zend_Currency(array('currency' => 'AWG'));
             $this->assertTrue($currency instanceof Zend_Currency);
         } catch (Zend_Currency_Exception $e) {
             $this->assertContains('No region found within the locale', $e->getMessage());
-        }
-
-        try {
-            $currency = new Zend_Currency('XYZ');
-            $this->fail("unknown shortname should not have been recognised");
-        } catch (Zend_Currency_Exception $e) {
-            // success
         }
     }
 
@@ -390,7 +388,7 @@ class Zend_CurrencyTest extends PHPUnit_Framework_TestCase
             $USD->setFormat(array('format' => 'unknown'));
             $this->fail("Exception expected");
         } catch (Zend_Currency_Exception $e) {
-            $this->assertContains("is not a known locale", $e->getMessage());
+            $this->assertContains("is no format token", $e->getMessage());
         }
 
         try {
@@ -405,13 +403,6 @@ class Zend_CurrencyTest extends PHPUnit_Framework_TestCase
             $this->fail("Exception expected");
         } catch (Zend_Currency_Exception $e) {
             $this->assertContains("Unknown script", $e->getMessage());
-        }
-
-        try {
-            $USD->setFormat(array('unknown' => 'unknown'));
-            $this->fail("Exception expected");
-        } catch (Zend_Currency_Exception $e) {
-            $this->assertContains("Unknown option", $e->getMessage());
         }
 
         $USD->setFormat(array('precision' => null));
@@ -505,13 +496,13 @@ class Zend_CurrencyTest extends PHPUnit_Framework_TestCase
         }
 
         try {
-            $currency = new Zend_Currency('USD');
+            $currency = new Zend_Currency(array('currency' => 'USD'));
             $this->assertTrue(is_array($currency->getRegionList()));
         } catch (Zend_Currency_Exception $e) {
             $this->assertContains('No region found within the locale', $e->getMessage());
         }
 
-        $currency = new Zend_Currency('USD', 'en_US');
+        $currency = new Zend_Currency(array('currency' => 'USD'), 'en_US');
         $currency->setFormat(array('currency' => null));
         try {
             $this->assertEquals('US', $currency->getRegionList());
@@ -520,7 +511,7 @@ class Zend_CurrencyTest extends PHPUnit_Framework_TestCase
             $this->assertContains("No currency defined", $e->getMessage());
         }
 
-        $currency = new Zend_Currency('USD', 'en_US');
+        $currency = new Zend_Currency(array('currency' => 'USD'), 'en_US');
         $this->assertEquals(array(0 => 'AS', 1 => 'EC', 2 => 'FM', 3 => 'GU', 4 => 'IO', 5 => 'MH', 6 => 'MP',
             7 => 'PR', 8 => 'PW', 9 => "SV", 10 => 'TC', 11 => 'TL', 12 => 'UM', 13 => 'US', 14 => 'VG', 15 => 'VI'), $currency->getRegionList());
     }
@@ -549,8 +540,8 @@ class Zend_CurrencyTest extends PHPUnit_Framework_TestCase
     public function testToString()
     {
         $USD = new Zend_Currency('USD','en_US');
-        $this->assertSame('US Dollar', $USD->toString());
-        $this->assertSame('US Dollar', $USD->__toString());
+        $this->assertSame('$0.00', $USD->toString());
+        $this->assertSame('$0.00', $USD->__toString());
     }
 
     /**
@@ -630,5 +621,199 @@ class Zend_CurrencyTest extends PHPUnit_Framework_TestCase
 
         $currency = new Zend_Currency("USD", "de_DE");
         $this->assertEquals('2,3000 $', $currency->toCurrency(2.3, array('precision' => 4)));
+    }
+
+    /**
+     * Testing options at initiation
+     */
+    public function testOptionsWithConstructor()
+    {
+        $currency = new Zend_Currency(array('currency' => 'EUR', 'locale' => 'de_AT'));
+        $this->assertEquals('de_AT', $currency->getLocale());
+        $this->assertEquals('EUR', $currency->getShortName());
+    }
+
+    /**
+     * Testing value at initiation
+     */
+    public function testValueWithConstructor()
+    {
+        $currency = new Zend_Currency(array('currency' => 'EUR', 'locale' => 'de_AT', 'value' => 100));
+        $this->assertEquals('de_AT', $currency->getLocale());
+        $this->assertEquals('EUR', $currency->getShortName());
+        $this->assertEquals('€ 100,00', $currency->toCurrency());
+    }
+
+    /**
+     * Add values
+     */
+    public function testAddValues()
+    {
+        $currency = new Zend_Currency(array('currency' => 'EUR', 'locale' => 'de_AT'));
+        $currency->add(100);
+        $this->assertEquals('€ 100,00', $currency->toCurrency());
+
+        $currency->add(100)->add(100);
+        $this->assertEquals('€ 300,00', $currency->toCurrency());
+    }
+
+    /**
+     * Substract values
+     */
+    public function testSubValues()
+    {
+        $currency = new Zend_Currency(array('currency' => 'EUR', 'locale' => 'de_AT'));
+        $currency->sub(100);
+        $this->assertEquals('-€ 100,00', $currency->toCurrency());
+
+        $currency->sub(100)->sub(100);
+        $this->assertEquals('-€ 300,00', $currency->toCurrency());
+    }
+
+    /**
+     * Multiply values
+     */
+    public function testMulValues()
+    {
+        $currency = new Zend_Currency(array('currency' => 'EUR', 'locale' => 'de_AT'));
+        $currency->add(100);
+        $currency->mul(2);
+        $this->assertEquals('€ 200,00', $currency->toCurrency());
+
+        $currency->mul(2)->mul(2);
+        $this->assertEquals('€ 800,00', $currency->toCurrency());
+    }
+
+    /**
+     * Divide values
+     */
+    public function testDivValues()
+    {
+        $currency = new Zend_Currency(array('currency' => 'EUR', 'locale' => 'de_AT'));
+        $currency->add(800);
+        $currency->div(2);
+        $this->assertEquals('€ 400,00', $currency->toCurrency());
+
+        $currency->div(2)->div(2);
+        $this->assertEquals('€ 100,00', $currency->toCurrency());
+    }
+
+    /**
+     * Modulo values
+     */
+    public function testModValues()
+    {
+        $currency = new Zend_Currency(array('currency' => 'EUR', 'locale' => 'de_AT'));
+        $currency->add(801);
+        $currency->mod(2);
+        $this->assertEquals('€ 1,00', $currency->toCurrency());
+    }
+
+    /**
+     * Compare values
+     */
+    public function testCompareValues()
+    {
+        $currency  = new Zend_Currency(array('currency' => 'EUR', 'locale' => 'de_AT', 'value' => 100));
+        $currency2 = new Zend_Currency(array('currency' => 'EUR', 'locale' => 'de_AT', 'value' => 100));
+        $this->assertEquals(0, $currency->compare($currency2));
+
+        $currency3 = new Zend_Currency(array('currency' => 'EUR', 'locale' => 'de_AT', 'value' => 101));
+        $this->assertEquals(-1, $currency->compare($currency3));
+
+        $currency4 = new Zend_Currency(array('currency' => 'EUR', 'locale' => 'de_AT', 'value' => 99));
+        $this->assertEquals(1, $currency->compare($currency4));
+    }
+
+    /**
+     * Equals values
+     */
+    public function testEqualsValues()
+    {
+        $currency  = new Zend_Currency(array('currency' => 'EUR', 'locale' => 'de_AT', 'value' => 100));
+        $currency2 = new Zend_Currency(array('currency' => 'EUR', 'locale' => 'de_AT', 'value' => 100));
+        $this->assertTrue($currency->equals($currency2));
+
+        $currency3 = new Zend_Currency(array('currency' => 'EUR', 'locale' => 'de_AT', 'value' => 101));
+        $this->assertFalse($currency->equals($currency3));
+    }
+
+    /**
+     * IsMore values
+     */
+    public function testIsMoreValues()
+    {
+        $currency  = new Zend_Currency(array('currency' => 'EUR', 'locale' => 'de_AT', 'value' => 100));
+        $currency2 = new Zend_Currency(array('currency' => 'EUR', 'locale' => 'de_AT', 'value' => 100));
+        $this->assertFalse($currency->isMore($currency2));
+
+        $currency3 = new Zend_Currency(array('currency' => 'EUR', 'locale' => 'de_AT', 'value' => 99));
+        $this->assertTrue($currency->isMore($currency3));
+    }
+
+    /**
+     * IsLess values
+     */
+    public function testIsLessValues()
+    {
+        $currency  = new Zend_Currency(array('currency' => 'EUR', 'locale' => 'de_AT', 'value' => 100));
+        $currency2 = new Zend_Currency(array('currency' => 'EUR', 'locale' => 'de_AT', 'value' => 100));
+        $this->assertFalse($currency->isLess($currency2));
+
+        $currency3 = new Zend_Currency(array('currency' => 'EUR', 'locale' => 'de_AT', 'value' => 101));
+        $this->assertTrue($currency->isLess($currency3));
+    }
+
+    /**
+     * Exchange tests
+     */
+    public function testExchangeValues()
+    {
+        $currency  = new Zend_Currency(array('currency' => 'EUR', 'locale' => 'de_AT', 'value' => 100));
+        $currency2 = new Zend_Currency(array('currency' => 'EUR', 'locale' => 'de_AT', 'value' => 100));
+
+        require_once 'Currency/ExchangeTest.php';
+
+        $this->assertEquals(null, $currency->getService());
+        $currency->setService(new ExchangeTest());
+        $this->assertTrue($currency->getService() instanceof Zend_Currency_CurrencyInterface);
+
+        $currency->setService('ExchangeTest');
+        $this->assertTrue($currency->getService() instanceof Zend_Currency_CurrencyInterface);
+    }
+
+    /**
+     * IsLess values
+     */
+    public function testConstructingPrecisionValues()
+    {
+        $currency  = new Zend_Currency(array('value' => 100.5));
+        $this->assertEquals('€ 100,50', $currency->toString('de_AT'));
+    }
+
+    /**
+     * @ZF-9491
+     */
+    public function testCurrencyWithSelfPattern()
+    {
+        $currency  = new Zend_Currency(array('value' => 10000, 'format' => '#,#0', 'locale' => 'de_DE'));
+        $this->assertEquals('1.00.00', $currency->toString());
+    }
+
+    /**
+     * @ZF-9519
+     */
+    public function testSetValueWithoutLocale()
+    {
+        $currency = new Zend_Currency('RUB', 'ru_RU');
+        require_once 'Currency/ExchangeTest.php';
+
+        $this->assertEquals(null, $currency->getService());
+        $currency->setService(new ExchangeTest());
+        $this->assertTrue($currency->getService() instanceof Zend_Currency_CurrencyInterface);
+
+        $currency->setValue(100, 'USD');
+        $this->assertEquals(50, $currency->getValue());
+        $this->assertEquals('RUB', $currency->getShortName());
     }
 }

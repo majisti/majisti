@@ -15,15 +15,15 @@
  * @category   Zend
  * @package    Zend_Tool
  * @subpackage Framework
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Model.php 19643 2009-12-14 14:57:07Z ralph $
+ * @version    $Id: Model.php 20967 2010-02-07 18:17:49Z ralph $
  */
 
 /**
  * @category   Zend
  * @package    Zend_Tool
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Tool_Project_Provider_Model extends Zend_Tool_Project_Provider_Abstract
@@ -100,50 +100,67 @@ class Zend_Tool_Project_Provider_Model extends Zend_Tool_Project_Provider_Abstra
     {
         $this->_loadProfile(self::NO_PROFILE_THROW_EXCEPTION);
 
+        $originalName = $name;
+        
+        $name = ucwords($name);
+        
         // determine if testing is enabled in the project
         $testingEnabled = false; //Zend_Tool_Project_Provider_Test::isTestingEnabled($this->_loadedProfile);
-
-        if (self::hasResource($this->_loadedProfile, $name, $module)) {
-            throw new Zend_Tool_Project_Provider_Exception('This project already has a model named ' . $name);
-        }
+        $testModelResource = null;
 
         // Check that there is not a dash or underscore, return if doesnt match regex
         if (preg_match('#[_-]#', $name)) {
             throw new Zend_Tool_Project_Provider_Exception('Model names should be camel cased.');
         }
         
-        $name = ucwords($name);
+        if (self::hasResource($this->_loadedProfile, $name, $module)) {
+            throw new Zend_Tool_Project_Provider_Exception('This project already has a model named ' . $name);
+        }
+        
+        // get request/response object
+        $request = $this->_registry->getRequest();
+        $response = $this->_registry->getResponse();
+        
+        // alert the user about inline converted names
+        $tense = (($request->isPretend()) ? 'would be' : 'is');
+        
+        if ($name !== $originalName) {
+            $response->appendContent(
+                'Note: The canonical model name that ' . $tense
+                    . ' used with other providers is "' . $name . '";'
+                    . ' not "' . $originalName . '" as supplied',
+                array('color' => array('yellow'))
+                );
+        }
         
         try {
             $modelResource = self::createResource($this->_loadedProfile, $name, $module);
 
             if ($testingEnabled) {
-                $testModelResource = null;
                 // $testModelResource = Zend_Tool_Project_Provider_Test::createApplicationResource($this->_loadedProfile, $name, 'index', $module);
             }
 
         } catch (Exception $e) {
-            $response = $this->_registry->getResponse();
             $response->setException($e);
             return;
         }
 
         // do the creation
-        if ($this->_registry->getRequest()->isPretend()) {
+        if ($request->isPretend()) {
 
-            $this->_registry->getResponse()->appendContent('Would create a model at '  . $modelResource->getContext()->getPath());
+            $response->appendContent('Would create a model at '  . $modelResource->getContext()->getPath());
 
             if ($testModelResource) {
-                $this->_registry->getResponse()->appendContent('Would create a model test file at ' . $testModelResource->getContext()->getPath());
+                $response->appendContent('Would create a model test file at ' . $testModelResource->getContext()->getPath());
             }
 
         } else {
 
-            $this->_registry->getResponse()->appendContent('Creating a model at ' . $modelResource->getContext()->getPath());
+            $response->appendContent('Creating a model at ' . $modelResource->getContext()->getPath());
             $modelResource->create();
 
             if ($testModelResource) {
-                $this->_registry->getResponse()->appendContent('Creating a model test file at ' . $testModelResource->getContext()->getPath());
+                $response->appendContent('Creating a model test file at ' . $testModelResource->getContext()->getPath());
                 $testModelResource->create();
             }
 

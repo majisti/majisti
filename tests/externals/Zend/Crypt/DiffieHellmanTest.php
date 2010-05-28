@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Crypt
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: DiffieHellmanTest.php 17667 2009-08-18 21:40:09Z mikaelkael $
+ * @version    $Id: DiffieHellmanTest.php 22053 2010-04-29 14:29:52Z padraic $
  */
 
 require_once 'Zend/Crypt/DiffieHellman.php';
@@ -27,7 +27,7 @@ require_once 'PHPUnit/Framework/TestCase.php';
  * @category   Zend
  * @package    Zend_Crypt
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Crypt
  */
@@ -132,5 +132,13 @@ class Zend_Crypt_DiffieHellmanTest extends PHPUnit_Framework_TestCase
         $expectedSharedSecret = base64_decode('FAAkw7NN1+raX9K1+dR3nqX2LZcDYYuZH13lpasaDIM4/ZXqbzdgiHZ86SILN27BjmJObtNQG/SNHfhxMalLMtLv+v0JFte/6+pIvMG9tAoPFsVh2BAvBuNpLY5W5gusgQ2p4pvJK0wz9YJ8iFdOHEOnhzYuN7LS/YXx2rBOz0Q=');
         $this->assertEquals($expectedSharedSecret, $aliceSecretKey);
         $this->assertEquals($expectedSharedSecret, $bobSecretKey);
+    }
+
+    public function testGenerateKeysWithUnsetPrivateKey()
+    {
+        $dh = new Zend_Crypt_DiffieHellman(563, 5);
+        $dh->generateKeys();
+        $privateKey = $dh->getPrivateKey();
+        $this->assertNotNull($privateKey);
     }
 }

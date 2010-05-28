@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Cache
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: CommonBackendTest.php 19830 2009-12-21 14:40:21Z matthew $
+ * @version    $Id: CommonBackendTest.php 21224 2010-02-28 02:55:15Z mabe $
  */
 
 require_once 'PHPUnit/Util/Filter.php';
@@ -33,11 +33,11 @@ require_once 'PHPUnit/Framework/TestCase.php';
  * @category   Zend
  * @package    Zend_Cache
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Cache
  */
-class Zend_Cache_CommonBackendTest extends PHPUnit_Framework_TestCase {
+abstract class Zend_Cache_CommonBackendTest extends PHPUnit_Framework_TestCase {
 
     protected $_instance;
     protected $_className;
@@ -98,7 +98,9 @@ class Zend_Cache_CommonBackendTest extends PHPUnit_Framework_TestCase {
 
     public function tearDown()
     {
-        $this->_instance->clean();
+        if ($this->_instance) {
+            $this->_instance->clean();
+        }
         $this->rmdir();
     }
 

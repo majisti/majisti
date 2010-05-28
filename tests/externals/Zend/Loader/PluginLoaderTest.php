@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Loader
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: PluginLoaderTest.php 18950 2009-11-12 15:37:56Z alexander $
+ * @version    $Id: PluginLoaderTest.php 21170 2010-02-23 19:50:16Z matthew $
  */
 
 // Call Zend_Loader_PluginLoaderTest::main() if this source file is executed directly.
@@ -38,7 +38,7 @@ require_once 'Zend/Loader/PluginLoader.php';
  * @category   Zend
  * @package    Zend_Loader
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Loader
  */
@@ -454,6 +454,51 @@ class Zend_Loader_PluginLoaderTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(array(
             "Zend_View_Helper_" => array("Zend/View/Helper/"),
         ), $loader2->getPaths());
+    }
+
+    /**
+     * @group ZF-4697
+     */
+    public function testClassFilesGrabCorrectPathForLoadedClasses()
+    {
+        require_once 'Zend/View/Helper/DeclareVars.php';
+        $reflection = new ReflectionClass('Zend_View_Helper_DeclareVars');
+        $expected   = $reflection->getFileName();
+        
+        $loader = new Zend_Loader_PluginLoader(array());
+        $loader->addPrefixPath('Zend_View_Helper', $this->libPath . '/Zend/View/Helper');
+        $loader->addPrefixPath('ZfTest', dirname(__FILE__) . '/_files/ZfTest');
+        try {
+            // Class in /Zend/View/Helper and not in /_files/ZfTest
+            $className = $loader->load('DeclareVars');
+        } catch (Exception $e) {
+            $paths = $loader->getPaths();
+            $this->fail(sprintf("Failed loading helper; paths: %s", var_export($paths, 1)));
+        }
+        
+        $classPath = $loader->getClassPath('DeclareVars');
+        $this->assertContains($expected, $classPath);
+    }
+
+    /**
+     * @group ZF-7350
+     */
+    public function testPrefixesEndingInBackslashDenoteNamespacedClasses()
+    {
+        if (version_compare(PHP_VERSION, '5.3.0', '<')) {
+            $this->markTestSkipped(__CLASS__ . '::' . __METHOD__ . ' requires PHP 5.3.0 or greater');
+            return;
+        }
+        $loader = new Zend_Loader_PluginLoader(array());
+        $loader->addPrefixPath('Zfns\\', dirname(__FILE__) . '/_files/Zfns');
+        try {
+            $className = $loader->load('Foo');
+        } catch (Exception $e) {
+            $paths = $loader->getPaths();
+            $this->fail(sprintf("Failed loading helper; paths: %s", var_export($paths, 1)));
+        }
+        $this->assertEquals('Zfns\\Foo', $className);
+        $this->assertEquals('Zfns\\Foo', $loader->getClassName('Foo'));
     }
 }
 

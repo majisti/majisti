@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage Value
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Scalar.php 19561 2009-12-10 03:08:58Z lars $
+ * @version    $Id: Scalar.php 22025 2010-04-27 18:09:14Z matthew $
  */
 
 
@@ -31,7 +31,7 @@ require_once 'Zend/XmlRpc/Value.php';
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage Value
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_XmlRpc_Value_Scalar extends Zend_XmlRpc_Value
@@ -45,11 +45,9 @@ abstract class Zend_XmlRpc_Value_Scalar extends Zend_XmlRpc_Value
     {
         $generator = $this->getGenerator();
 
-        $generator->startElement('value')
-                  ->startElement($this->_type, $this->_value)
-                  ->endElement($this->_type)
-                  ->endElement('value');
-
-        $this->_xml = (string)$generator;
+        $generator->openElement('value')
+                  ->openElement($this->_type, $this->_value)
+                  ->closeElement($this->_type)
+                  ->closeElement('value');
     }
 }

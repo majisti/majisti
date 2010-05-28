@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: BootstrapTest.php 19571 2009-12-10 21:22:08Z matthew $
+ * @version    $Id: BootstrapTest.php 20886 2010-02-03 19:36:06Z matthew $
  */
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
@@ -38,7 +38,7 @@ require_once 'Zend/Loader/Autoloader.php';
  * @category   Zend
  * @package    Zend_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Application
  */
@@ -166,6 +166,29 @@ class Zend_Application_Bootstrap_BootstrapTest extends PHPUnit_Framework_TestCas
         );
         $al = $bootstrap->getResourceLoader();
         $this->assertEquals('Default', $al->getNamespace());
+    }
+
+    /**
+     * @group ZF-7367
+     */
+    public function testBootstrapRunMethodShouldReturnResponseIfFlagEnabled()
+    {
+        $this->bootstrap->setOptions(array(
+            'resources' => array(
+                'frontcontroller' => array(
+                    'moduleDirectory' => dirname(__FILE__) . '/../_files/modules',
+                    'returnresponse'  => true,
+                ),
+            ),
+        ));
+        $this->bootstrap->bootstrap();
+
+        $front   = $this->bootstrap->getResource('FrontController');
+        $request = $front->getRequest();
+        $request->setRequestUri('/zfappbootstrap');
+
+        $result = $this->bootstrap->run();
+        $this->assertTrue($result instanceof Zend_Controller_Response_Abstract);
     }
 }
 

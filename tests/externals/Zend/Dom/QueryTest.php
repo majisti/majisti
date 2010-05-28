@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Dojo
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: QueryTest.php 18950 2009-11-12 15:37:56Z alexander $
+ * @version    $Id: QueryTest.php 22045 2010-04-28 19:59:49Z matthew $
  */
 
 // Call Zend_Dom_QueryTest::main() if this source file is executed directly.
@@ -36,7 +36,7 @@ require_once 'Zend/Dom/Query.php';
  * @category   Zend
  * @package    Zend_Dom
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Dom
  */
@@ -87,6 +87,11 @@ class Zend_Dom_QueryTest extends PHPUnit_Framework_TestCase
     public function loadHtml()
     {
         $this->query->setDocument($this->getHtml());
+    }
+
+    public function handleError($msg, $code = 0) 
+    {
+        $this->error = $msg;
     }
 
     public function testConstructorShouldNotRequireArguments()
@@ -154,11 +159,14 @@ class Zend_Dom_QueryTest extends PHPUnit_Framework_TestCase
 
     public function testQueryingInvalidDocumentShouldThrowException()
     {
+        set_error_handler(array($this, 'handleError'));
         $this->query->setDocumentXml('some bogus string');
         try {
             $this->query->query('.foo');
+            restore_error_handler();
             $this->fail('Querying invalid document should throw exception');
         } catch (Zend_Dom_Exception $e) {
+            restore_error_handler();
             $this->assertContains('Error parsing', $e->getMessage());
         }
     }
@@ -221,6 +229,47 @@ class Zend_Dom_QueryTest extends PHPUnit_Framework_TestCase
         $this->loadHtml();
         $result = $this->query->queryXpath('//li[contains(@dojotype, "bar")]');
         $this->assertEquals(2, count($result), $result->getXpathQuery());
+    }
+
+    /**
+     * @group ZF-9243
+     */
+    public function testLoadingDocumentWithErrorsShouldNotRaisePhpErrors()
+    {
+        $file = file_get_contents(dirname(__FILE__) . '/_files/bad-sample.html');
+        $this->query->setDocument($file);
+        $this->query->query('p');
+        $errors = $this->query->getDocumentErrors();
+        $this->assertTrue(is_array($errors));
+        $this->assertTrue(0 < count($errors));
+    }
+    
+    /**
+     * @group ZF-9765
+     */
+    public function testCssSelectorShouldFindNodesWhenMatchingMultipleAttributes()
+    {
+        $html = <<<EOF
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<body>
+  <form action="#" method="get">
+    <input type="hidden" name="foo" value="1" id="foo"/>
+    <input type="hidden" name="bar" value="0" id="bar"/>
+    <input type="hidden" name="baz" value="1" id="baz"/>
+  </form>
+</body>
+</html>
+EOF;
+
+        $this->query->setDocument($html);
+        $results = $this->query->query('input[type="hidden"][value="1"]');
+        $this->assertEquals(2, count($results), $results->getXpathQuery());
+        $results = $this->query->query('input[value="1"][type~="hidden"]');
+        $this->assertEquals(2, count($results), $results->getXpathQuery());
+        $results = $this->query->query('input[type="hidden"][value="0"]');
+        $this->assertEquals(1, count($results));
     }
 }
 

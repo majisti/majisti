@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Feed_Reader
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Reader.php 19725 2009-12-17 21:14:28Z padraic $
+ * @version    $Id: Reader.php 22093 2010-05-04 12:55:06Z padraic $
  */
 
 /**
@@ -42,7 +42,7 @@ require_once 'Zend/Feed/Reader/FeedSet.php';
 /**
  * @category   Zend
  * @package    Zend_Feed_Reader
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Reader
@@ -286,7 +286,9 @@ class Zend_Feed_Reader
                 require_once 'Zend/Feed/Exception.php';
                 throw new Zend_Feed_Exception('Feed failed to load, got response code ' . $response->getStatus());
             }
-            return self::importString($response->getBody());
+            $reader = self::importString($response->getBody());
+            $reader->setOriginalSourceUri($uri);
+            return $reader;
         }
     }
 
@@ -427,7 +429,7 @@ class Zend_Feed_Reader
         } elseif(is_string($feed) && !empty($feed)) {
             @ini_set('track_errors', 1);
             $dom = new DOMDocument;
-            $status = @$doc->loadXML($string);
+            $status = @$dom->loadXML($feed);
             @ini_restore('track_errors');
             if (!$status) {
                 if (!isset($php_errormsg)) {

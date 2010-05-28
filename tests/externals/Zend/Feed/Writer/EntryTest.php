@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Feed
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -30,7 +30,7 @@ require_once 'Zend/Feed/Writer/Entry.php';
  * @subpackage UnitTests
  * @group      Zend_Feed
  * @group      Zend_Feed_Writer
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Writer_EntryTest extends PHPUnit_Framework_TestCase
@@ -188,62 +188,12 @@ class Zend_Feed_Writer_EntryTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException Zend_Feed_Exception
      */
-    public function testAddsEnclosureThrowsExceptionOnMissingType()
-    {
-        $entry = new Zend_Feed_Writer_Entry;
-        $entry->setEnclosure(array(
-            'uri' => 'http://example.com/audio.mp3',
-            'length' => '1337'
-        ));
-    }
-    
-    /**
-     * @expectedException Zend_Feed_Exception
-     */
     public function testAddsEnclosureThrowsExceptionOnMissingUri()
     {
         $entry = new Zend_Feed_Writer_Entry;
         $entry->setEnclosure(array(
             'type' => 'audio/mpeg',
             'length' => '1337'
-        ));
-    }
-    
-    /**
-     * @expectedException Zend_Feed_Exception
-     */
-    public function testAddsEnclosureThrowsExceptionOnMissingLength()
-    {
-        $entry = new Zend_Feed_Writer_Entry;
-        $entry->setEnclosure(array(
-            'type' => 'audio/mpeg',
-            'uri' => 'http://example.com/audio.mp3'
-        ));
-    }
-    
-    /**
-     * @expectedException Zend_Feed_Exception
-     */
-    public function testAddsEnclosureThrowsExceptionOnNonNumericLength()
-    {
-        $entry = new Zend_Feed_Writer_Entry;
-        $entry->setEnclosure(array(
-            'type' => 'audio/mpeg',
-            'uri' => 'http://example.com/audio.mp3',
-            'length' => 'abc'
-        ));
-    }
-    
-    /**
-     * @expectedException Zend_Feed_Exception
-     */
-    public function testAddsEnclosureThrowsExceptionOnNegativeLength()
-    {
-        $entry = new Zend_Feed_Writer_Entry;
-        $entry->setEnclosure(array(
-            'type' => 'audio/mpeg',
-            'uri' => 'http://example.com/audio.mp3',
-            'length' => -23
         ));
     }
     
@@ -426,7 +376,7 @@ class Zend_Feed_Writer_EntryTest extends PHPUnit_Framework_TestCase
         }
     }
 
-    public function testGetIdReturnsNullIfDateNotSet()
+    public function testGetIdReturnsNullIfNotSet()
     {
         $entry = new Zend_Feed_Writer_Entry;
         $this->assertTrue(is_null($entry->getId()));

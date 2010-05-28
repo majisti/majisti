@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_InfoCard
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: XmlParsingTest.php 17573 2009-08-13 18:01:41Z alexander $
+ * @version    $Id: XmlParsingTest.php 20096 2010-01-06 02:05:09Z bkarwin $
  */
 
 // Call Zend_InfoCard_XmlParsingTest::main() if this source file is executed directly.
@@ -36,7 +36,7 @@ require_once 'Zend/InfoCard/Xml/SecurityTokenReference.php';
  * @category   Zend
  * @package    Zend_InfoCard
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_InfoCard
  */

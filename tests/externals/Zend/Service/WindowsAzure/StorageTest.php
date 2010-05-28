@@ -16,30 +16,30 @@
  * @package    Zend_Service_WindowsAzure
  * @subpackage UnitTests
  * @version    $Id: StorageTest.php 28585 2009-09-07 12:12:56Z unknown $
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
+
+/**
+ * Test helpers
+ */
+require_once dirname(__FILE__) . '/../../../TestHelper.php';
+
+/**
+ * @see Zend_Service_WindowsAzure_Storage
+ */
+require_once 'Zend/Service/WindowsAzure/Storage.php';
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Zend_Service_WindowsAzure_StorageTest::main');
 }
 
 /**
- * Test helpers
- */
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
-require_once dirname(__FILE__) . '/../../../TestConfiguration.php.dist';
-require_once 'PHPUnit/Framework/TestCase.php';
-
-/** Zend_Service_WindowsAzure_Storage */
-require_once 'Zend/Service/WindowsAzure/Storage.php';
-
-/**
  * @category   Zend
  * @package    Zend_Service_WindowsAzure
  * @subpackage UnitTests
  * @version    $Id: StorageTest.php 28585 2009-09-07 12:12:56Z unknown $
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_WindowsAzure_StorageTest extends PHPUnit_Framework_TestCase

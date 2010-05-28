@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: AlnumTest.php 17573 2009-08-13 18:01:41Z alexander $
+ * @version    $Id: AlnumTest.php 20358 2010-01-17 19:03:49Z thomas $
  */
 
 
@@ -36,7 +36,7 @@ require_once 'Zend/Validate/Alnum.php';
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Validate
  */
@@ -157,7 +157,7 @@ class Zend_Validate_AlnumTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($this->_validator->isValid('#'));
         $messages = $this->_validator->getMessages();
         $arrayExpected = array(
-            Zend_Validate_Alnum::NOT_ALNUM => '\'#\' has not only alphabetic and digit characters'
+            Zend_Validate_Alnum::NOT_ALNUM => '\'#\' contains characters which are non alphabetic and no digits'
             );
         $this->assertThat($messages, $this->identicalTo($arrayExpected));
     }

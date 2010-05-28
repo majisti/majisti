@@ -77,7 +77,7 @@ class Xml
             if( $this->isBBCodeMarkupUsed() ) {
                 /* parse with BBCode Zend_Markup */
                 $bbCode = \Zend_Markup::factory('Bbcode');
-                $bbCode->addTag(
+                $bbCode->addMarkup(
                     'br',
                     \Zend_Markup::REPLACE,
                     array(

@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    UnitTests
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: CallbackTest.php 19823 2009-12-21 00:21:01Z padraic $
+ * @version    $Id: CallbackTest.php 20724 2010-01-28 19:23:05Z padraic $
  */
 
 require_once 'Zend/Feed/Pubsubhubbub/Subscriber/Callback.php';
@@ -29,7 +29,7 @@ require_once 'Zend/Db/Table/Rowset/Abstract.php';
  * @subpackage UnitTests
  * @group      Zend_Feed
  * @group      Zend_Feed_Subsubhubbub
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Pubsubhubbub_Subscriber_CallbackTest extends PHPUnit_Framework_TestCase
@@ -141,7 +141,7 @@ class Zend_Feed_Pubsubhubbub_Subscriber_CallbackTest extends PHPUnit_Framework_T
 
     public function testCanSetStorageImplementation()
     {
-	    $storage = new Zend_Feed_Pubsubhubbub_Model_ModelAbstract($this->_tableGateway);
+	    $storage = new Zend_Feed_Pubsubhubbub_Model_Subscription($this->_tableGateway);
         $this->_callback->setStorage($storage);
         $this->assertThat($this->_callback->getStorage(), $this->identicalTo($storage));
     }
@@ -252,8 +252,9 @@ class Zend_Feed_Pubsubhubbub_Subscriber_CallbackTest extends PHPUnit_Framework_T
         $rowdata = new stdClass;
         $rowdata->id = 'verifytokenkey';
         $rowdata->verify_token = hash('sha256', 'cba');
-        $t = time();
-        $rowdata->created_time = $t;
+        $t = new Zend_Date;
+        $rowdata->created_time = $t->get(Zend_Date::TIMESTAMP);
+        $rowdata->lease_seconds = 10000;
         $this->_rowset->expects($this->any())
             ->method('current')
             ->will($this->returnValue($rowdata));
@@ -261,7 +262,7 @@ class Zend_Feed_Pubsubhubbub_Subscriber_CallbackTest extends PHPUnit_Framework_T
         $this->_tableGateway->expects($this->once())
             ->method('update')
             ->with(
-                $this->equalTo(array('id'=>'verifytokenkey','verify_token'=>hash('sha256', 'cba'),'created_time'=>$t,'verified'=>'1')),
+                $this->equalTo(array('id'=>'verifytokenkey','verify_token'=>hash('sha256', 'cba'),'created_time'=>$t->get(Zend_Date::TIMESTAMP),'lease_seconds'=>1234567,'subscription_state'=>'verified','expiration_time'=>$t->add(1234567,Zend_Date::SECOND)->get('yyyy-MM-dd HH:mm:ss'))),
                 $this->equalTo('id = \'verifytokenkey\'')
             );
         $this->_adapter->expects($this->once())
@@ -282,8 +283,9 @@ class Zend_Feed_Pubsubhubbub_Subscriber_CallbackTest extends PHPUnit_Framework_T
         $rowdata = new stdClass;
         $rowdata->id = 'verifytokenkey';
         $rowdata->verify_token = hash('sha256', 'cba');
-        $t = time();
-        $rowdata->created_time = $t;
+        $t = new Zend_Date;
+        $rowdata->created_time = $t->get(Zend_Date::TIMESTAMP);
+        $rowdata->lease_seconds = 10000;
         $this->_rowset->expects($this->any())
             ->method('current')
             ->will($this->returnValue($rowdata));
@@ -291,7 +293,7 @@ class Zend_Feed_Pubsubhubbub_Subscriber_CallbackTest extends PHPUnit_Framework_T
         $this->_tableGateway->expects($this->once())
             ->method('update')
             ->with(
-                $this->equalTo(array('id'=>'verifytokenkey','verify_token'=>hash('sha256', 'cba'),'created_time'=>$t,'verified'=>'1')),
+                $this->equalTo(array('id'=>'verifytokenkey','verify_token'=>hash('sha256', 'cba'),'created_time'=>$t->get(Zend_Date::TIMESTAMP),'lease_seconds'=>1234567,'subscription_state'=>'verified','expiration_time'=>$t->add(1234567,Zend_Date::SECOND)->get('yyyy-MM-dd HH:mm:ss'))),
                 $this->equalTo('id = \'verifytokenkey\'')
             );
         $this->_adapter->expects($this->once())

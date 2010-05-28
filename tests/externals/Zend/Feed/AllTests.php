@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Feed
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: AllTests.php 19794 2009-12-19 22:45:53Z padraic $
+ * @version    $Id: AllTests.php 20519 2010-01-22 14:06:24Z padraic $
  */
 
 require_once dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
@@ -53,6 +53,7 @@ require_once 'Zend/Feed/Reader/Integration/H-OnlineComAtom10Test.php';
 
 require_once 'Zend/Feed/Writer/FeedTest.php';
 require_once 'Zend/Feed/Writer/EntryTest.php';
+require_once 'Zend/Feed/Writer/DeletedTest.php';
 require_once 'Zend/Feed/Writer/Renderer/Feed/AtomTest.php';
 require_once 'Zend/Feed/Writer/Renderer/Feed/RssTest.php';
 require_once 'Zend/Feed/Writer/Renderer/Entry/AtomTest.php';
@@ -67,7 +68,7 @@ require_once 'Zend/Feed/Pubsubhubbub/AllTests.php';
  * @category   Zend
  * @package    Zend_Feed
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Feed
  */
@@ -120,6 +121,7 @@ class Zend_Feed_AllTests
         
         $suite->addTestSuite('Zend_Feed_Writer_FeedTest');
         $suite->addTestSuite('Zend_Feed_Writer_EntryTest');
+        $suite->addTestSuite('Zend_Feed_Writer_DeletedTest');
         $suite->addTestSuite('Zend_Feed_Writer_Renderer_Feed_AtomTest');
         $suite->addTestSuite('Zend_Feed_Writer_Renderer_Feed_RssTest');
         $suite->addTestSuite('Zend_Feed_Writer_Renderer_Entry_AtomTest');

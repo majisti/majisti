@@ -15,7 +15,7 @@
  * @category    ZendX
  * @package     ZendX_JQuery
  * @subpackage  View
- * @copyright   Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license     http://framework.zend.com/license/new-bsd     New BSD License
  * @version     $Id: AllTests.php 11232 2008-09-05 08:16:33Z beberlei $
  */
@@ -160,24 +160,24 @@ class ZendX_JQuery_Form_ElementTest extends PHPUnit_Framework_TestCase
         $view = new Zend_View();
         $form = new  ZendX_JQuery_Form();
 
-        $array = array(0 => 'John Doe');
+        $dataSource = array(0 => 'John Doe');
 
         $lastname = new ZendX_JQuery_Form_Element_AutoComplete("Lastname", array('label' => 'Lastname'));
         $form->addElement($lastname);
-        $form->Lastname->setJQueryParam('data', $array);
+        $form->Lastname->setJQueryParam('source', $dataSource);
 
         Zend_Json::$useBuiltinEncoderDecoder = true;
         $output = $form->render($view);
 
         $this->assertEquals(
-            array('$("#Lastname").autocomplete({"data":["John Doe"]});'),
+            array('$("#Lastname").autocomplete({"source":["John Doe"]});'),
             $view->jQuery()->getOnLoadActions()
         );
 
         Zend_Json::$useBuiltinEncoderDecoder = false;
         $output = $form->render($view);
         $this->assertEquals(
-            array('$("#Lastname").autocomplete({"data":["John Doe"]});'),
+            array('$("#Lastname").autocomplete({"source":["John Doe"]});'),
             $view->jQuery()->getOnLoadActions()
         );
     }

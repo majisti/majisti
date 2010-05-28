@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Filter
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: PregReplaceTest.php 17573 2009-08-13 18:01:41Z alexander $
+ * @version    $Id: PregReplaceTest.php 21086 2010-02-18 21:10:39Z thomas $
  */
 
 
@@ -43,7 +43,7 @@ require_once 'Zend/Filter/PregReplace.php';
  * @category   Zend
  * @package    Zend_Filter
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Filter
  */
@@ -130,6 +130,24 @@ class Zend_Filter_PregReplaceTest extends PHPUnit_Framework_TestCase
         } catch (Exception $e) {
         }
     }
+
+    /**
+      * @group ZF-9202
+      */
+    public function testExtendsPregReplace()
+    {
+        $startMatchPattern = '~(&gt;){3,}~i';
+        $filter = new XPregReplace();
+        $this->assertEquals($startMatchPattern, $filter->getMatchPattern());
+    }
+}
+
+/**
+ * @group ZF-9202
+ */
+class XPregReplace extends Zend_Filter_PregReplace
+{
+    protected $_matchPattern = '~(&gt;){3,}~i';
 }
 
 // Call Zend_Filter_PregReplaceTest::main() if this source file is executed directly.

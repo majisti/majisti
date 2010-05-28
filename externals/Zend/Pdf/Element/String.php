@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Pdf
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: String.php 18992 2009-11-15 16:52:57Z alexander $
+ * @version    $Id: String.php 21545 2010-03-18 09:12:27Z bate $
  */
 
 
@@ -28,7 +28,7 @@ require_once 'Zend/Pdf/Element.php';
  *
  * @category   Zend
  * @package    Zend_Pdf
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Pdf_Element_String extends Zend_Pdf_Element
@@ -246,7 +246,7 @@ class Zend_Pdf_Element_String extends Zend_Pdf_Element
                                 }
                             }
 
-                            $outEntries[] = chr($nextCode);
+                            $outEntries[] = chr(octdec($nextCode));
                         } else {
                             $outEntries[] = $str[$offset];
                         }

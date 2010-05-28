@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Http_Client
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: StaticTest.php 19308 2009-11-30 10:24:28Z bate $
+ * @version    $Id: StaticTest.php 21920 2010-04-16 22:10:02Z dragonbe $
  */
 
 require_once realpath(dirname(__FILE__) . '/../../../') . '/TestHelper.php';
@@ -35,7 +35,7 @@ require_once 'Zend/Http/Client/Adapter/Test.php';
  * @category   Zend
  * @package    Zend_Http_Client
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Http
  * @group      Zend_Http_Client
@@ -542,6 +542,49 @@ class Zend_Http_Client_StaticTest extends PHPUnit_Framework_TestCase
         // if the bug exists this call should creates a fatal error
         $client->setAuth(false);
     }
+    
+	/**
+     * Testing if the connection isn't closed
+     * 
+     * @group ZF-9685
+     */
+    public function testOpenTempStreamWithValidFileDoesntThrowsException()
+    {
+    	$url = 'http://www.example.com';
+    	$config = array (
+			'output_stream' => realpath(dirname(__FILE__) . '/_files/zend_http_client_stream.file'),
+		);
+		$client = new Zend_Http_Client($url, $config);
+		try {
+			$result = $client->request();
+		} catch (Zend_Http_Client_Exception $e) {
+			$this->fail('Unexpected exception was thrown');
+		}
+		// we can safely return until we can verify link is still active
+		// @todo verify link is still active
+		return;
+    }
+    
+    /**
+     * Testing if the connection can be closed
+     * 
+     * @group ZF-9685
+     */
+    public function testOpenTempStreamWithBogusFileClosesTheConnection()
+    {
+    	$url = 'http://www.example.com';
+    	$config = array (
+			'output_stream' => '/path/to/bogus/file.ext',
+		);
+		$client = new Zend_Http_Client($url, $config);
+		try {
+			$result = $client->request();
+			$this->fail('Expected exception was not thrown');
+		} catch (Zend_Http_Client_Exception $e) {
+			// we return since we expect the exception
+			return;
+		}
+    }
 
     /**
      * Data providers
@@ -608,7 +651,8 @@ class Zend_Http_Client_StaticTest_Mock extends Zend_Http_Client
         'keepalive'       => false,
         'storeresponse'   => true,
         'strict'          => true,
-        'output_stream'	  => false,
+        'output_stream'   => false,
+        'encodecookies'   => true,
     );
 }
 

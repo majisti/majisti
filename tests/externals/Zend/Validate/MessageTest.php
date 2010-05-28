@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: MessageTest.php 17573 2009-08-13 18:01:41Z alexander $
+ * @version    $Id: MessageTest.php 20358 2010-01-17 19:03:49Z thomas $
  */
 
 // Call Zend_Validate_MessageTest::main() if this source file is executed directly.
@@ -40,7 +40,7 @@ require_once 'Zend/Validate/StringLength.php';
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Validate
  */
@@ -80,7 +80,7 @@ class Zend_Validate_MessageTest extends PHPUnit_Framework_TestCase
         $inputInvalid = 'abcdefghij';
         $this->assertFalse($this->_validator->isValid($inputInvalid));
         $messages = $this->_validator->getMessages();
-        $this->assertEquals("'$inputInvalid' is greater than 8 characters long", current($messages));
+        $this->assertEquals("'$inputInvalid' is more than 8 characters long", current($messages));
 
         $this->_validator->setMessage(
             'Your value is too long',
@@ -285,7 +285,7 @@ class Zend_Validate_MessageTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($this->_validator->isValid($inputInvalid));
 
         $messages = $this->_validator->getMessages();
-        $this->assertEquals("'$inputInvalid' is greater than 8 characters long", current($messages));
+        $this->assertEquals("'$inputInvalid' is more than 8 characters long", current($messages));
 
         $errors = $this->_validator->getErrors();
         $this->assertEquals(Zend_Validate_StringLength::TOO_LONG, current($errors));

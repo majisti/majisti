@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Filter
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: CamelCaseToUnderscoreTest.php 18950 2009-11-12 15:37:56Z alexander $
+ * @version    $Id: CamelCaseToUnderscoreTest.php 21089 2010-02-19 06:49:15Z thomas $
  */
 
 // Call Zend_Filter_CamelCaseToUnderscoreTest::main() if this source file is executed directly.
@@ -37,7 +37,7 @@ require_once 'Zend/Filter/Word/CamelCaseToUnderscore.php';
  * @category   Zend
  * @package    Zend_Filter
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Filter
  */
@@ -64,6 +64,30 @@ class Zend_Filter_Word_CamelCaseToUnderscoreTest extends PHPUnit_Framework_TestC
 
         $this->assertNotEquals($string, $filtered);
         $this->assertEquals('Camel_Cased_Words', $filtered);
+    }
+
+    public function testFilterSeperatingNumbersToUnterscore()
+    {
+        $string = 'PaTitle';
+        $filter   = new Zend_Filter_Word_CamelCaseToUnderscore();
+        $filtered = $filter->filter($string);
+
+        $this->assertNotEquals($string, $filtered);
+        $this->assertEquals('Pa_Title', $filtered);
+
+        $string = 'Pa2Title';
+        $filter   = new Zend_Filter_Word_CamelCaseToUnderscore();
+        $filtered = $filter->filter($string);
+
+        $this->assertNotEquals($string, $filtered);
+        $this->assertEquals('Pa2_Title', $filtered);
+
+        $string = 'Pa2aTitle';
+        $filter   = new Zend_Filter_Word_CamelCaseToUnderscore();
+        $filtered = $filter->filter($string);
+
+        $this->assertNotEquals($string, $filtered);
+        $this->assertEquals('Pa2a_Title', $filtered);
     }
 }
 

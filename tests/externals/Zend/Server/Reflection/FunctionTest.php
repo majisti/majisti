@@ -15,14 +15,13 @@
  * @category   Zend
  * @package    Zend_Server
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version $Id: FunctionTest.php 18950 2009-11-12 15:37:56Z alexander $
+ * @version $Id: FunctionTest.php 20617 2010-01-25 20:11:06Z matthew $
  */
 
+require_once dirname(__FILE__) . '/../../../TestHelper.php';
 require_once 'Zend/Server/Reflection/Function.php';
-require_once 'PHPUnit/Framework/TestCase.php';
-require_once 'PHPUnit/Framework/IncompleteTestError.php';
 
 /**
  * Test case for Zend_Server_Reflection_Function
@@ -30,7 +29,7 @@ require_once 'PHPUnit/Framework/IncompleteTestError.php';
  * @category   Zend
  * @package    Zend_Server
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Server
  */
@@ -164,6 +163,21 @@ class Zend_Server_Reflection_FunctionTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, count($params));
         $this->assertEquals('string', $params[0]->getType());
     }
+
+    /**
+     * @group ZF-6996
+     */
+    public function testParameterReflectionShouldReturnTypeAndVarnameAndDescription()
+    {
+        $function = new ReflectionFunction('Zend_Server_Reflection_FunctionTest_function');
+        $r = new Zend_Server_Reflection_Function($function);
+
+        $prototypes = $r->getPrototypes();
+        $prototype  = $prototypes[0];
+        $params = $prototype->getParameters();
+        $param  = $params[0];
+        $this->assertContains('Some description', $param->getDescription(), var_export($param, 1));
+    }
 }
 
 /**
@@ -171,7 +185,7 @@ class Zend_Server_Reflection_FunctionTest extends PHPUnit_Framework_TestCase
  *
  * Test function for reflection unit tests
  *
- * @param string $var1
+ * @param string $var1 Some description
  * @param string|array $var2
  * @param array $var3
  * @return null|array

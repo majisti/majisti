@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: SqlsrvTest.php 17667 2009-08-18 21:40:09Z mikaelkael $
+ * @version    $Id: SqlsrvTest.php 21197 2010-02-24 16:12:53Z rob $
  */
 
 /**
@@ -36,7 +36,7 @@ PHPUnit_Util_Filter::addFileToFilter(__FILE__);
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Db_Adapter_SqlsrvTest extends Zend_Db_Adapter_TestCommon
@@ -430,6 +430,49 @@ class Zend_Db_Adapter_SqlsrvTest extends Zend_Db_Adapter_TestCommon
 
         $this->assertTrue($db->setTransactionIsolationLevel(), "Setting to default should work by passsing null or nothing");
     }
+    
+    /**
+     * @group ZF-9252
+     * @see zf-trunk/tests/Zend/Db/Adapter/Zend_Db_Adapter_TestCommon#testAdapterLimit()
+     */
+    public function testAdapterLimit()
+    {
+    	parent::testAdapterLimit();
+
+        $products = $this->_db->quoteIdentifier('zfproducts');
+        $product_id = $this->_db->quoteIdentifier('product_id');
+
+        $sql = $this->_db->limit("SELECT * FROM $products ORDER BY $products.$product_id", 1);
+
+        $stmt = $this->_db->query($sql);
+        $result = $stmt->fetchAll();
+        $this->assertEquals(1, count($result),
+            'Expecting row count to be 1');
+        $this->assertEquals(1, $result[0]['product_id'],
+            'Expecting to get product_id 1');
+
+    }
+    
+    /**
+     * @group ZF-9252
+     * @see zf-trunk/tests/Zend/Db/Adapter/Zend_Db_Adapter_TestCommon#testAdapterLimitOffset()
+     */
+    public function testAdapterLimitOffset()
+    {
+    	parent::testAdapterLimitOffset();
+    	
+        $products = $this->_db->quoteIdentifier('zfproducts');
+        $product_id = $this->_db->quoteIdentifier('product_id');
+
+        $sql = $this->_db->limit("SELECT * FROM $products ORDER BY $products.$product_id", 1, 1);
+
+        $stmt = $this->_db->query($sql);
+        $result = $stmt->fetchAll();
+        $this->assertEquals(1, count($result),
+            'Expecting row count to be 1');
+        $this->assertEquals(2, $result[0]['product_id'],
+            'Expecting to get product_id 2');
+    }    
 
     public function getDriver()
     {

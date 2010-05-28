@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Tool
  * @subpackage Framework
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: View.php 18386 2009-09-23 20:44:43Z ralph $
  */
@@ -23,7 +23,7 @@
 /**
  * @category   Zend
  * @package    Zend_Tool
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Tool_Project_Provider_DbTable 
@@ -93,6 +93,14 @@ class Zend_Tool_Project_Provider_DbTable
     {
         $this->_loadProfile(self::NO_PROFILE_THROW_EXCEPTION);
 
+        // Check that there is not a dash or underscore, return if doesnt match regex
+        if (preg_match('#[_-]#', $name)) {
+            throw new Zend_Tool_Project_Provider_Exception('DbTable names should be camel cased.');
+        }
+        
+        $originalName = $name;
+        $name = ucfirst($name);
+        
         if ($actualTableName == '') {
             throw new Zend_Tool_Project_Provider_Exception('You must provide both the DbTable name as well as the actual db table\'s name.');
         }
@@ -101,12 +109,21 @@ class Zend_Tool_Project_Provider_DbTable
             throw new Zend_Tool_Project_Provider_Exception('This project already has a DbTable named ' . $name);
         }
 
-        // Check that there is not a dash or underscore, return if doesnt match regex
-        if (preg_match('#[_-]#', $name)) {
-            throw new Zend_Tool_Project_Provider_Exception('DbTable names should be camel cased.');
-        }
+        // get request/response object
+        $request = $this->_registry->getRequest();
+        $response = $this->_registry->getResponse();
         
-        $name = ucwords($name);
+        // alert the user about inline converted names
+        $tense = (($request->isPretend()) ? 'would be' : 'is');
+        
+        if ($name !== $originalName) {
+            $response->appendContent(
+                'Note: The canonical model name that ' . $tense
+                    . ' used with other providers is "' . $name . '";'
+                    . ' not "' . $originalName . '" as supplied',
+                array('color' => array('yellow'))
+                );
+        }
         
         try {
             $tableResource = self::createResource($this->_loadedProfile, $name, $actualTableName, $module);
@@ -117,15 +134,11 @@ class Zend_Tool_Project_Provider_DbTable
         }
 
         // do the creation
-        if ($this->_registry->getRequest()->isPretend()) {
-
-            $this->_registry->getResponse()->appendContent('Would create a DbTable at '  . $tableResource->getContext()->getPath());
-
+        if ($request->isPretend()) {
+            $response->appendContent('Would create a DbTable at '  . $tableResource->getContext()->getPath());
         } else {
-
-            $this->_registry->getResponse()->appendContent('Creating a DbTable at ' . $tableResource->getContext()->getPath());
+            $response->appendContent('Creating a DbTable at ' . $tableResource->getContext()->getPath());
             $tableResource->create();
-
             $this->_storeProfile();
         }
     }

@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: AllTests.php 19839 2009-12-21 15:34:09Z matthew $
+ * @version    $Id: AllTests.php 20111 2010-01-07 00:15:30Z freak $
  */
 
 require_once dirname(dirname(dirname(dirname(__FILE__)))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
@@ -34,7 +34,9 @@ require_once 'Zend/Application/Resource/FrontcontrollerTest.php';
 require_once 'Zend/Application/Resource/LayoutTest.php';
 require_once 'Zend/Application/Resource/LocaleTest.php';
 require_once 'Zend/Application/Resource/LogTest.php';
+require_once 'Zend/Application/Resource/MailTest.php';
 require_once 'Zend/Application/Resource/ModulesTest.php';
+require_once 'Zend/Application/Resource/MultidbTest.php';
 require_once 'Zend/Application/Resource/NavigationTest.php';
 require_once 'Zend/Application/Resource/SessionTest.php';
 require_once 'Zend/Application/Resource/ViewTest.php';
@@ -43,7 +45,7 @@ require_once 'Zend/Application/Resource/ViewTest.php';
  * @category   Zend
  * @package    Zend_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Application
  * @group      Zend_Application_Resource
@@ -67,7 +69,9 @@ class Zend_Application_Resource_AllTests
         $suite->addTestSuite('Zend_Application_Resource_LayoutTest');
         $suite->addTestSuite('Zend_Application_Resource_LocaleTest');
         $suite->addTestSuite('Zend_Application_Resource_LogTest');
+        $suite->addTestSuite('Zend_Application_Resource_MailTest');
         $suite->addTestSuite('Zend_Application_Resource_ModulesTest');
+        $suite->addTestSuite('Zend_Application_Resource_MultidbTest');
         $suite->addTestSuite('Zend_Application_Resource_NavigationTest');
         $suite->addTestSuite('Zend_Application_Resource_SessionTest');
         $suite->addTestSuite('Zend_Application_Resource_ViewTest');

@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Measure
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: TimeTest.php 17573 2009-08-13 18:01:41Z alexander $
+ * @version    $Id: TimeTest.php 21330 2010-03-04 22:07:38Z thomas $
  */
 
 /**
@@ -34,7 +34,7 @@ require_once 'PHPUnit/Framework/TestCase.php';
  * @category   Zend
  * @package    Zend_Measure
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Measure
  */
@@ -385,5 +385,19 @@ class Zend_Measure_TimeTest extends PHPUnit_Framework_TestCase
         $value = new Zend_Measure_Time('-100',Zend_Measure_Time::STANDARD,'de');
         $unit  = $value->getConversionList();
         $this->assertTrue(is_array($unit), 'Array expected');
+    }
+
+    /**
+     * @group ZF-9078
+     */
+    public function testSetTypeOnPhpMathWithStrippedValue()
+    {
+        $locale = new Zend_Locale('en_US');
+        $time = new Zend_Measure_Time(0, Zend_Measure_Time::SECOND);
+        $time->setLocale($locale);
+        $time->setType(Zend_Measure_Time::SECOND);
+        $seconds = $time->getValue();
+        $this->assertEquals(0, $seconds);
+        $this->assertEquals(Zend_Measure_Time::SECOND, $time->getType());
     }
 }

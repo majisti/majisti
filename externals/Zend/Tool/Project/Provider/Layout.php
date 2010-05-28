@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Tool
  * @subpackage Framework
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: View.php 18386 2009-09-23 20:44:43Z ralph $
  */
@@ -28,7 +28,7 @@ require_once 'Zend/Tool/Project/Provider/Abstract.php';
 /**
  * @category   Zend
  * @package    Zend_Tool
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Tool_Project_Provider_Layout extends Zend_Tool_Project_Provider_Abstract implements Zend_Tool_Framework_Provider_Pretendable
@@ -77,12 +77,10 @@ class Zend_Tool_Project_Provider_Layout extends Zend_Tool_Project_Provider_Abstr
         
         $layoutPath = 'APPLICATION_PATH "/layouts/scripts/"';
         
-        $quoteValue = (preg_match('#"\'#', $layoutPath)) ? false : true;
-        
         if ($this->_registry->getRequest()->isPretend()) {
             $this->_registry->getResponse()->appendContent('Would add "resources.layout.layoutPath" key to the application config file.');
         } else {
-            $applicationConfigResource->addStringItem('resources.layout.layoutPath', $layoutPath, 'production', $quoteValue);
+            $applicationConfigResource->addStringItem('resources.layout.layoutPath', $layoutPath, 'production', false);
             $applicationConfigResource->create(); 
             
             $layoutScriptFile = self::createResource($profile);

@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Feed_Reader
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Entry.php 19725 2009-12-17 21:14:28Z padraic $
+ * @version    $Id: Entry.php 22301 2010-05-26 10:15:13Z padraic $
  */
 
 /**
@@ -52,7 +52,7 @@ require_once 'Zend/Feed/Reader/Feed/Atom/Source.php';
 /**
  * @category   Zend
  * @package    Zend_Feed_Reader
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Reader_Extension_Atom_Entry
@@ -127,20 +127,64 @@ class Zend_Feed_Reader_Extension_Atom_Entry
         if (array_key_exists('content', $this->_data)) {
             return $this->_data['content'];
         }
-
-        $content = $this->getXpath()->evaluate('string(' . $this->getXpathPrefix() . '/atom:content)');
-
-        if ($content) {
-            $content =  html_entity_decode($content, ENT_QUOTES, $this->getEncoding());
+        
+        $content = null;
+        
+        $el = $this->getXpath()->query($this->getXpathPrefix() . '/atom:content');
+        if($el->length > 0) {
+            $el = $el->item(0);
+            $type = $el->getAttribute('type');
+            switch ($type) {
+                case '':
+                case 'text':
+                case 'text/plain':
+                case 'html':
+                case 'text/html':
+                    $content = $el->nodeValue;
+                break;
+                case 'xhtml':
+                    $this->getXpath()->registerNamespace('xhtml', 'http://www.w3.org/1999/xhtml');
+                    $xhtml = $this->getXpath()->query(
+                        $this->getXpathPrefix() . '/atom:content/xhtml:div'
+                    )->item(0);
+                    //$xhtml->setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+                    $d = new DOMDocument('1.0', $this->getEncoding());
+                    $xhtmls = $d->importNode($xhtml, true);
+                    $d->appendChild($xhtmls);
+                    $content = $this->_collectXhtml(
+                        $d->saveXML(),
+                        $d->lookupPrefix('http://www.w3.org/1999/xhtml')
+                    );
+                break;
+            }
         }
+        
+        //var_dump($content); exit;
 
         if (!$content) {
             $content = $this->getDescription();
         }
 
-        $this->_data['content'] = $content;
+        $this->_data['content'] = trim($content);
 
         return $this->_data['content'];
+    }
+    
+    /**
+     * Parse out XHTML to remove the namespacing
+     */
+    protected function _collectXhtml($xhtml, $prefix)
+    {
+        if (!empty($prefix)) $prefix = $prefix . ':';
+        $matches = array(
+            "/<\?xml[^<]*>[^<]*<" . $prefix . "div[^<]*/",
+            "/<\/" . $prefix . "div>\s*$/"
+        );
+        $xhtml = preg_replace($matches, '', $xhtml);
+        if (!empty($prefix)) {
+            $xhtml = preg_replace("/(<[\/]?)" . $prefix . "([a-zA-Z]+)/", '$1$2', $xhtml);
+        }
+        return $xhtml;
     }
 
     /**
@@ -216,8 +260,6 @@ class Zend_Feed_Reader_Extension_Atom_Entry
 
         if (!$description) {
             $description = null;
-        } else {
-            $description = html_entity_decode($description, ENT_QUOTES, $this->getEncoding());
         }
 
         $this->_data['description'] = $description;
@@ -381,8 +423,6 @@ class Zend_Feed_Reader_Extension_Atom_Entry
 
         if (!$title) {
             $title = null;
-        } else {
-            $title = html_entity_decode($title, ENT_QUOTES, $this->getEncoding());
         }
 
         $this->_data['title'] = $title;
@@ -500,7 +540,7 @@ class Zend_Feed_Reader_Extension_Atom_Entry
                 $categoryCollection[] = array(
                     'term' => $category->getAttribute('term'),
                     'scheme' => $category->getAttribute('scheme'),
-                    'label' => html_entity_decode($category->getAttribute('label'))
+                    'label' => $category->getAttribute('label')
                 );
             }
         } else {

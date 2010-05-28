@@ -16,8 +16,8 @@
  * @category   Zend
  * @package    Zend_Http
  * @subpackage Client
- * @version    $Id: Client.php 19706 2009-12-17 07:47:17Z maartenba $
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @version    $Id: Client.php 21952 2010-04-19 18:44:26Z shahar $
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -60,7 +60,7 @@ require_once 'Zend/Http/Response/Stream.php';
  * @package    Zend_Http
  * @subpackage Client
  * @throws     Zend_Http_Client_Exception
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Http_Client
@@ -117,7 +117,8 @@ class Zend_Http_Client
         'keepalive'       => false,
         'storeresponse'   => true,
         'strict'          => true,
-        'output_stream'	  => false,
+        'output_stream'   => false,
+        'encodecookies'   => true,
     );
 
     /**
@@ -640,7 +641,7 @@ class Zend_Http_Client
             return $this;
         }
 
-        if ($value !== null) {
+        if ($value !== null && $this->config['encodecookies']) {
             $value = urlencode($value);
         }
 
@@ -648,7 +649,9 @@ class Zend_Http_Client
             if ($cookie instanceof Zend_Http_Cookie) {
                 $this->cookiejar->addCookie($cookie);
             } elseif (is_string($cookie) && $value !== null) {
-                $cookie = Zend_Http_Cookie::fromString("{$cookie}={$value}", $this->uri);
+                $cookie = Zend_Http_Cookie::fromString("{$cookie}={$value}",
+                                                       $this->uri,
+                                                       $this->config['encodecookies']);
                 $this->cookiejar->addCookie($cookie);
             }
         } else {
@@ -907,16 +910,17 @@ class Zend_Http_Client
                  'Zend_Http_Client');
         }
 
-        $fp = fopen($this->_stream_name, "w+b");
-        if(!$fp) {
-                $this->close();
+        if (false === ($fp = @fopen($this->_stream_name, "w+b"))) {
+                if ($this->adapter instanceof Zend_Http_Client_Adapter_Interface) {
+                    $this->adapter->close();
+                }
                 require_once 'Zend/Http/Client/Exception.php';
-                throw new Zend_Http_Client_Exception("Could not open temp file $name");
-
+                throw new Zend_Http_Client_Exception("Could not open temp file {$this->_stream_name}");
         }
+        
         return $fp;
     }
-
+    
     /**
      * Send the HTTP request and return an HTTP response object
      *

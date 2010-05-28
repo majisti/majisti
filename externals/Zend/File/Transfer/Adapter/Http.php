@@ -14,9 +14,9 @@
  *
  * @category  Zend
  * @package   Zend_File_Transfer
- * @copyright Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
- * @version   $Id: Http.php 18441 2009-09-29 21:21:11Z thomas $
+ * @version   $Id: Http.php 20911 2010-02-04 19:40:57Z thomas $
  */
 
 /**
@@ -29,7 +29,7 @@ require_once 'Zend/File/Transfer/Adapter/Abstract.php';
  *
  * @category  Zend
  * @package   Zend_File_Transfer
- * @copyright Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_File_Transfer_Adapter_Http extends Zend_File_Transfer_Adapter_Abstract
@@ -49,12 +49,9 @@ class Zend_File_Transfer_Adapter_Http extends Zend_File_Transfer_Adapter_Abstrac
             throw new Zend_File_Transfer_Exception('File uploads are not allowed in your php config!');
         }
 
-        $this->_files = $this->_prepareFiles($_FILES);
+        $this->setOptions($options);
+        $this->_prepareFiles();
         $this->addValidator('Upload', false, $this->_files);
-
-        if (is_array($options)) {
-            $this->setOptions($options);
-        }
     }
 
     /**
@@ -431,31 +428,56 @@ class Zend_File_Transfer_Adapter_Http extends Zend_File_Transfer_Adapter_Abstrac
      * @param  array $files
      * @return array
      */
-    protected function _prepareFiles(array $files = array())
+    protected function _prepareFiles()
     {
-        $result = array();
-        foreach ($files as $form => $content) {
+        $this->_files = array();
+        foreach ($_FILES as $form => $content) {
             if (is_array($content['name'])) {
                 foreach ($content as $param => $file) {
                     foreach ($file as $number => $target) {
-                        $result[$form . '_' . $number . '_'][$param]      = $target;
-                        $result[$form . '_' . $number . '_']['options']   = $this->_options;
-                        $result[$form . '_' . $number . '_']['validated'] = false;
-                        $result[$form . '_' . $number . '_']['received']  = false;
-                        $result[$form . '_' . $number . '_']['filtered']  = false;
-                        $result[$form]['multifiles'][$number] = $form . '_' . $number . '_';
-                        $result[$form]['name'] = $form;
+                        $this->_files[$form . '_' . $number . '_'][$param]      = $target;
+                        $this->_files[$form]['multifiles'][$number] = $form . '_' . $number . '_';
+                    }
+                }
+
+                $this->_files[$form]['name'] = $form;
+                foreach($this->_files[$form]['multifiles'] as $key => $value) {
+                    $this->_files[$value]['options']   = $this->_options;
+                    $this->_files[$value]['validated'] = false;
+                    $this->_files[$value]['received']  = false;
+                    $this->_files[$value]['filtered']  = false;
+
+                    $mimetype = $this->_detectMimeType($this->_files[$value]);
+                    $this->_files[$value]['type'] = $mimetype;
+
+                    $filesize = $this->_detectFileSize($this->_files[$value]);
+                    $this->_files[$value]['size'] = $filesize;
+
+                    if ($this->_options['detectInfos']) {
+                        $_FILES[$form]['type'][$key] = $mimetype;
+                        $_FILES[$form]['size'][$key] = $filesize;
                     }
                 }
             } else {
-                $result[$form]              = $content;
-                $result[$form]['options']   = $this->_options;
-                $result[$form]['validated'] = false;
-                $result[$form]['received']  = false;
-                $result[$form]['filtered']  = false;
+                $this->_files[$form]              = $content;
+                $this->_files[$form]['options']   = $this->_options;
+                $this->_files[$form]['validated'] = false;
+                $this->_files[$form]['received']  = false;
+                $this->_files[$form]['filtered']  = false;
+
+                $mimetype = $this->_detectMimeType($this->_files[$form]);
+                $this->_files[$form]['type'] = $mimetype;
+
+                $filesize = $this->_detectFileSize($this->_files[$form]);
+                $this->_files[$form]['size'] = $filesize;
+
+                if ($this->_options['detectInfos']) {
+                    $_FILES[$form]['type'] = $mimetype;
+                    $_FILES[$form]['size'] = $filesize;
+                }
             }
         }
 
-        return $result;
+        return $this;
     }
 }

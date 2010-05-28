@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Ldap
  * @subpackage Ldif
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Encoder.php 17459 2009-08-08 12:18:44Z sgehrig $
+ * @version    $Id: Encoder.php 21007 2010-02-09 13:40:16Z sgehrig $
  */
 
 /**
@@ -26,7 +26,7 @@
  * @category   Zend
  * @package    Zend_Ldap
  * @subpackage Ldif
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Ldap_Ldif_Encoder
@@ -181,7 +181,7 @@ class Zend_Ldap_Ldif_Encoder
     protected function _encodeString($string, &$base64 = null)
     {
         $string = (string)$string;
-        if (empty($string)) {
+        if (!is_numeric($string) && empty($string)) {
             return '';
         }
 

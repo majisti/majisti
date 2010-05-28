@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Feed_Writer
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Entry.php 19730 2009-12-17 22:28:45Z padraic $
+ * @version    $Id: Entry.php 20326 2010-01-16 00:20:43Z padraic $
  */
  
 /**
@@ -27,12 +27,22 @@ require_once 'Zend/Feed/Writer/Extension/RendererAbstract.php';
 /**
  * @category   Zend
  * @package    Zend_Feed_Writer
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Writer_Extension_Slash_Renderer_Entry
     extends Zend_Feed_Writer_Extension_RendererAbstract
 {
+
+    /**
+     * Set to TRUE if a rendering method actually renders something. This
+     * is used to prevent premature appending of a XML namespace declaration
+     * until an element which requires it is actually appended.
+     *
+     * @var bool
+     */
+    protected $_called = false;
+    
     /**
      * Render entry
      * 
@@ -43,8 +53,10 @@ class Zend_Feed_Writer_Extension_Slash_Renderer_Entry
         if (strtolower($this->getType()) == 'atom') {
             return; // RSS 2.0 only
         }
-        $this->_appendNamespaces();
         $this->_setCommentCount($this->_dom, $this->_base);
+        if ($this->_called) {
+            $this->_appendNamespaces();
+        }
     }
     
     /**
@@ -74,5 +86,6 @@ class Zend_Feed_Writer_Extension_Slash_Renderer_Entry
         $tcount = $this->_dom->createElement('slash:comments');
         $tcount->nodeValue = $count;
         $root->appendChild($tcount);
+        $this->_called = true;
     }
 }

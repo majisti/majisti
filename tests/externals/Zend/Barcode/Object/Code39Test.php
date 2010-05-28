@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Barcode
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Code39Test.php 19774 2009-12-19 06:35:46Z bkarwin $
+ * @version    $Id: Code39Test.php 20096 2010-01-06 02:05:09Z bkarwin $
  */
 
 require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/TestHelper.php';
@@ -31,7 +31,7 @@ require_once 'Zend/Barcode/Object/Code39.php';
  * @package    Zend_Barcode
  * @subpackage UnitTests
  * @group      Zend_Barcode
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Barcode_Object_Code39Test extends Zend_Barcode_Object_TestCommon

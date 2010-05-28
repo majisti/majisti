@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Feed
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -32,7 +32,7 @@ require_once 'Zend/Version.php';
  * @subpackage UnitTests
  * @group      Zend_Feed
  * @group      Zend_Feed_Writer
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Writer_Renderer_Feed_AtomTest extends PHPUnit_Framework_TestCase
@@ -401,6 +401,20 @@ class Zend_Feed_Writer_Renderer_Feed_AtomTest extends PHPUnit_Framework_TestCase
             'http://www.example.com/hub', 'http://www.example.com/hub2'
         );
         $this->assertEquals($expected, (array) $feed->getHubs());
+    }
+
+    public function testImageCanBeSet()
+    {
+        $this->_validWriter->setImage(
+            array('uri'=>'http://www.example.com/logo.gif')
+        );
+        $atomFeed = new Zend_Feed_Writer_Renderer_Feed_Atom($this->_validWriter);
+        $atomFeed->render();
+        $feed = Zend_Feed_Reader::importString($atomFeed->saveXml());
+        $expected = array(
+            'uri' => 'http://www.example.com/logo.gif'
+        );
+        $this->assertEquals($expected, $feed->getImage());
     }
 
 }

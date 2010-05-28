@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: TestCommon.php 18950 2009-11-12 15:37:56Z alexander $
+ * @version    $Id: TestCommon.php 21102 2010-02-19 21:13:37Z ralph $
  */
 
 
@@ -39,7 +39,7 @@ PHPUnit_Util_Filter::addFileToFilter(__FILE__);
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Db
  * @group      Zend_Db_Table
@@ -1256,6 +1256,28 @@ abstract class Zend_Db_Table_Relationships_TestCommon extends Zend_Db_Table_Test
         $options = array('name' => 'zfalt_bugs_products', 'referenceMap' => $refMap);
         $table = $this->_getTable('My_ZendDbTable_TableSpecial', $options);
         return $table;
+    }
+    
+    /**
+     * Ensure that the related table returned from the ManyToManyRowset only contains
+     * the proper columns for the table.
+     * 
+     * @group ZF-3709
+     */
+    public function testTableRelationshipReturnsOnlyTheColumnsInTargetTable()
+    {
+        $table = $this->_table['bugs'];
+        $relatedTable = $this->_table['products'];
+        $relatedTableExpectedColumns = $relatedTable->info(Zend_Db_Table::COLS);
+
+        $row = $table->fetchRow('bug_id = 1');
+
+        $relatedRows = $row->findManyToManyRowset('My_ZendDbTable_TableProducts', 'My_ZendDbTable_TableBugsProducts');
+
+        foreach ($relatedRows as $relatedRow) {
+            $actualColumns = array_keys($relatedRow->toArray());
+            $this->assertEquals($relatedTableExpectedColumns, $actualColumns);
+        }
     }
 
 }

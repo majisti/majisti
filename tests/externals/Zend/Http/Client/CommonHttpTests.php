@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Http
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: CommonHttpTests.php 19228 2009-11-25 00:50:29Z stas $
+ * @version    $Id: CommonHttpTests.php 21778 2010-04-06 11:19:35Z shahar $
  */
 
 // Read local configuration
@@ -50,7 +50,7 @@ require_once 'Zend/Uri/Http.php';
  * @category   Zend
  * @package    Zend_Http_Client
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Http
  * @group      Zend_Http_Client
@@ -506,7 +506,7 @@ abstract class Zend_Http_Client_CommonHttpTests extends PHPUnit_Framework_TestCa
 
         // Set the new expected URI
         $uri = clone $this->client->getUri();
-        $uri->setPath(dirname($uri->getPath()) . '/path/to/fake/file.ext');
+        $uri->setPath(rtrim(dirname($uri->getPath()), '/') . '/path/to/fake/file.ext');
         $uri = $uri->__toString();
 
         $res = $this->client->request('GET');
@@ -844,7 +844,7 @@ abstract class Zend_Http_Client_CommonHttpTests extends PHPUnit_Framework_TestCa
      * Test that lines that might be evaluated as boolean false do not break
      * the reading prematurely.
      *
-     * @see http://framework.zend.com/issues/browse/ZF-4238
+     * @link http://framework.zend.com/issues/browse/ZF-4238
      */
     public function testZF4238FalseLinesInResponse()
     {
@@ -936,6 +936,29 @@ abstract class Zend_Http_Client_CommonHttpTests extends PHPUnit_Framework_TestCa
         $res = $this->client->setRawData($data, 'image/jpeg')->request('PUT');
         $expected = $this->_getTestFileContents('staticFile.jpg');
         $this->assertEquals($expected, $res->getBody(), 'Response body does not contain the expected data');
+    }
+    
+    /**
+     * Test that we can deal with double Content-Length headers
+     * 
+     * @link http://framework.zend.com/issues/browse/ZF-9404
+     */
+    public function testZF9404DoubleContentLengthHeader()
+    {
+        $this->client->setUri($this->baseuri . 'ZF9404-doubleContentLength.php');
+        $expect = filesize(dirname(realpath(__FILE__)) . DIRECTORY_SEPARATOR . '_files' . DIRECTORY_SEPARATOR . 'ZF9404-doubleContentLength.php');
+        
+        $response = $this->client->request();
+        if (! $response->isSuccessful()) {
+            throw new ErrorException("Error requesting test URL");
+        }
+        
+        $clen = $response->getHeader('content-length');
+        if (! (is_array($clen))) {
+            $this->markTestSkipped("Didn't get multiple Content-length headers");
+        }
+        
+        $this->assertEquals($expect, strlen($response->getBody()));
     }
     
     /**

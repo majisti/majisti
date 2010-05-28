@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Search_Lucene
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Lucene.php 19661 2009-12-15 18:03:07Z matthew $
+ * @version    $Id: Lucene.php 21640 2010-03-24 18:28:32Z alexander $
  */
 
 
@@ -89,7 +89,7 @@ require_once 'Zend/Search/Lucene/LockManager.php';
 /**
  * @category   Zend
  * @package    Zend_Search_Lucene
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Search_Lucene implements Zend_Search_Lucene_Interface
@@ -300,6 +300,21 @@ class Zend_Search_Lucene implements Zend_Search_Lucene_Interface
 
         return -1;
     }
+
+    /**
+     * Get generation number associated with this index instance
+     *
+     * The same generation number in pair with document number or query string
+     * guarantees to give the same result while index retrieving.
+     * So it may be used for search result caching.
+     *
+     * @return integer
+     */
+    public function getGeneration()
+    {
+        return $this->_generation;
+    }
+
 
     /**
      * Get segments file name
@@ -979,6 +994,8 @@ class Zend_Search_Lucene implements Zend_Search_Lucene_Interface
             $sortAsc    = SORT_ASC;
             $sortNum    = SORT_NUMERIC;
 
+            $sortFieldValues = array();
+
             require_once 'Zend/Search/Lucene/Exception.php';
             for ($count = 1; $count < count($argList); $count++) {
                 $fieldName = $argList[$count];
@@ -988,29 +1005,35 @@ class Zend_Search_Lucene implements Zend_Search_Lucene_Interface
                 }
 
                 if (strtolower($fieldName) == 'score') {
-                    $sortArgs[] = $scores;
+                    $sortArgs[] = &$scores;
                 } else {
                     if (!in_array($fieldName, $fieldNames)) {
                         throw new Zend_Search_Lucene_Exception('Wrong field name.');
                     }
 
-                    $valuesArray = array();
-                    foreach ($hits as $hit) {
-                        try {
-                            $value = $hit->getDocument()->getFieldValue($fieldName);
-                        } catch (Zend_Search_Lucene_Exception $e) {
-                            if (strpos($e->getMessage(), 'not found') === false) {
-                                throw new Zend_Search_Lucene_Exception($e->getMessage(), $e->getCode(), $e);
-                            } else {
-                                $value = null;
+                    if (!isset($sortFieldValues[$fieldName])) {
+                        $valuesArray = array();
+                        foreach ($hits as $hit) {
+                            try {
+                                $value = $hit->getDocument()->getFieldValue($fieldName);
+                            } catch (Zend_Search_Lucene_Exception $e) {
+                                if (strpos($e->getMessage(), 'not found') === false) {
+                                    throw new Zend_Search_Lucene_Exception($e->getMessage(), $e->getCode(), $e);
+                                } else {
+                                    $value = null;
+                                }
                             }
+
+                            $valuesArray[] = $value;
                         }
 
-                        $valuesArray[] = $value;
+                        // Collect loaded values in $sortFieldValues
+                        // Required for PHP 5.3 which translates references into values when source
+                        // variable is destroyed
+                        $sortFieldValues[$fieldName] = $valuesArray;
                     }
 
-                    $sortArgs[] = &$valuesArray;
-                    unset($valuesArray);
+                    $sortArgs[] = &$sortFieldValues[$fieldName];
                 }
 
                 if ($count + 1 < count($argList)  &&  is_integer($argList[$count+1])) {

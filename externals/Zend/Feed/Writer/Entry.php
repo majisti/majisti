@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Feed_Writer
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Entry.php 19789 2009-12-19 19:32:45Z padraic $
+ * @version    $Id: Entry.php 22065 2010-04-30 14:04:57Z padraic $
  */
 
 /**
@@ -29,10 +29,12 @@ require_once 'Zend/Date.php';
  */
 require_once 'Zend/Uri.php';
 
+require_once 'Zend/Feed/Writer/Source.php';
+
 /**
  * @category   Zend
  * @package    Zend_Feed_Writer
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Writer_Entry
@@ -107,6 +109,10 @@ class Zend_Feed_Writer_Entry
                 }
                 $author['uri'] = $name['uri'];
             }
+        /**
+         * @deprecated
+         * Array notation (above) is preferred and will be the sole supported input from ZF 2.0
+         */
         } else {
             if (empty($name['name']) || !is_string($name['name'])) {
                 require_once 'Zend/Feed/Exception.php';
@@ -586,20 +592,15 @@ class Zend_Feed_Writer_Entry
     }
     
     /**
-     * Adds an enclosure to the entry.
+     * Adds an enclosure to the entry. The array parameter may contain the
+     * keys 'uri', 'type' and 'length'. Only 'uri' is required for Atom, though the
+     * others must also be provided or RSS rendering (where they are required)
+     * will throw an Exception.
      *
      * @param array $enclosures
      */
     public function setEnclosure(array $enclosure)
     {
-        if (!isset($enclosure['type'])) {
-            require_once 'Zend/Feed/Exception.php';
-            throw new Zend_Feed_Exception('Enclosure "type" is not set');
-        }
-        if (!isset($enclosure['length'])) {
-            require_once 'Zend/Feed/Exception.php';
-            throw new Zend_Feed_Exception('Enclosure "length" is not set');
-        }
         if (!isset($enclosure['uri'])) {
             require_once 'Zend/Feed/Exception.php';
             throw new Zend_Feed_Exception('Enclosure "uri" is not set');
@@ -607,11 +608,6 @@ class Zend_Feed_Writer_Entry
         if (!Zend_Uri::check($enclosure['uri'])) {
             require_once 'Zend/Feed/Exception.php';
             throw new Zend_Feed_Exception('Enclosure "uri" is not a valid URI/IRI');
-        }
-        if ((int) $enclosure['length'] <= 0) {
-            require_once 'Zend/Feed/Exception.php';
-            throw new Zend_Feed_Exception('Enclosure "length" must be an integer'
-            . ' indicating the content\'s length in bytes');
         }
         $this->_data['enclosure'] = $enclosure;
     }
@@ -706,6 +702,45 @@ class Zend_Feed_Writer_Entry
         require_once 'Zend/Feed/Exception.php';
         throw new Zend_Feed_Exception('Method: ' . $method
             . ' does not exist and could not be located on a registered Extension');
+    }
+    
+    /**
+     * Creates a new Zend_Feed_Writer_Source data container for use. This is NOT
+     * added to the current feed automatically, but is necessary to create a
+     * container with some initial values preset based on the current feed data.
+     *
+     * @return Zend_Feed_Writer_Source
+     */
+    public function createSource()
+    {
+        $source = new Zend_Feed_Writer_Source;
+        if ($this->getEncoding()) {
+            $source->setEncoding($this->getEncoding());
+        }
+        $source->setType($this->getType());
+        return $source;
+    }
+
+    /**
+     * Appends a Zend_Feed_Writer_Entry object representing a new entry/item
+     * the feed data container's internal group of entries.
+     *
+     * @param Zend_Feed_Writer_Source $source
+     */
+    public function setSource(Zend_Feed_Writer_Source $source)
+    {
+        $this->_data['source'] = $source;
+    }
+    
+    /**
+     * @return Zend_Feed_Writer_Source
+     */
+    public function getSource()
+    {
+        if (isset($this->_data['source'])) {
+            return $this->_data['source'];
+        }
+        return null;
     }
 
     /**

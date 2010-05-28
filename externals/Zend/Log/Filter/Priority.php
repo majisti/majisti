@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Log
  * @subpackage Filter
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Priority.php 19555 2009-12-09 20:49:42Z matthew $
+ * @version    $Id: Priority.php 20260 2010-01-13 18:29:22Z ralph $
  */
 
 /** Zend_Log_Filter_Abstract */
@@ -27,9 +27,9 @@ require_once 'Zend/Log/Filter/Abstract.php';
  * @category   Zend
  * @package    Zend_Log
  * @subpackage Filter
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Priority.php 19555 2009-12-09 20:49:42Z matthew $
+ * @version    $Id: Priority.php 20260 2010-01-13 18:29:22Z ralph $
  */
 class Zend_Log_Filter_Priority extends Zend_Log_Filter_Abstract
 {
@@ -78,12 +78,12 @@ class Zend_Log_Filter_Priority extends Zend_Log_Filter_Abstract
         ), $config);
 
         // Add support for constants
-        if (is_string($config['priority'])) {
+        if (!is_numeric($config['priority']) && isset($config['priority']) && defined($config['priority'])) {
             $config['priority'] = constant($config['priority']);
         }
 
         return new self(
-            $config['priority'], 
+            (int) $config['priority'], 
             $config['operator']
         );
     }

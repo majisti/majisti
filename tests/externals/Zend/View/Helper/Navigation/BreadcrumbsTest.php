@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: BreadcrumbsTest.php 19775 2009-12-19 07:09:00Z bkarwin $
+ * @version    $Id: BreadcrumbsTest.php 20096 2010-01-06 02:05:09Z bkarwin $
  */
 require_once dirname(__FILE__) . '/TestAbstract.php';
 require_once 'Zend/View/Helper/Navigation/Breadcrumbs.php';
@@ -28,7 +28,7 @@ require_once 'Zend/View/Helper/Navigation/Breadcrumbs.php';
  * @category   Zend_Tests
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_View
  * @group      Zend_View_Helper

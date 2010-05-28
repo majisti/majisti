@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Cache
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: MemcachedBackendTest.php 18950 2009-11-12 15:37:56Z alexander $
+ * @version    $Id: MemcachedBackendTest.php 21535 2010-03-17 18:20:53Z mabe $
  */
 
 /**
@@ -40,7 +40,7 @@ require_once 'PHPUnit/Framework/TestCase.php';
  * @category   Zend
  * @package    Zend_Cache
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Cache
  */
@@ -55,13 +55,18 @@ class Zend_Cache_MemcachedBackendTest extends Zend_Cache_CommonExtendedBackendTe
 
     public function setUp($notag = true)
     {
-        $server = array(
+        $serverValid = array(
             'host' => TESTS_ZEND_CACHE_MEMCACHED_HOST,
             'port' => TESTS_ZEND_CACHE_MEMCACHED_PORT,
             'persistent' => TESTS_ZEND_CACHE_MEMCACHED_PERSISTENT
         );
+        $serverFail = array(
+            'host' => 'not.exist',
+            'port' => TESTS_ZEND_CACHE_MEMCACHED_PORT,
+            'persistent' => TESTS_ZEND_CACHE_MEMCACHED_PERSISTENT
+        );
         $options = array(
-            'servers' => array(0 => $server)
+            'servers' => array($serverValid, $serverFail)
         );
         $this->_instance = new Zend_Cache_Backend_Memcached($options);
         parent::setUp($notag);
@@ -154,6 +159,18 @@ class Zend_Cache_MemcachedBackendTest extends Zend_Cache_CommonExtendedBackendTe
     public function testGetMetadatas($notag = false)
     {
         parent::testGetMetadatas(true);
+    }
+
+    public function testGetFillingPercentage()
+    {
+        $this->_instance->setDirectives(array('logging' => false));
+        parent::testGetFillingPercentage();
+    }
+
+    public function testGetFillingPercentageOnEmptyBackend()
+    {
+        $this->_instance->setDirectives(array('logging' => false));
+        parent::testGetFillingPercentageOnEmptyBackend();
     }
 
 }
