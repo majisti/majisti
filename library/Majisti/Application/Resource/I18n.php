@@ -2,14 +2,25 @@
 
 namespace Majisti\Application\Resource;
 
+/**
+ * @desc Initializes all kind of internationnalisation for an application
+ *
+ * @author Majisti
+ */
 class I18n extends \Zend_Application_Resource_ResourceAbstract
 {
+    /**
+     * @desc Inits the resource
+     */
     public function init()
     {
-        $this->initFormValidation();
+        $this->initForm();
     }
 
-    protected function initFormValidation()
+    /**
+     * @desc Inits translation for forms
+     */
+    protected function initForm()
     {
         $locales = \Majisti\Application\Locales::getInstance();
 
@@ -20,6 +31,6 @@ class I18n extends \Zend_Application_Resource_ResourceAbstract
             array('scan' => \Zend_Translate_Adapter::LOCALE_DIRECTORY)
         );
 
-        \Zend_Validate_Abstract::setDefaultTranslator($translator);
+        \Zend_Form::setDefaultTranslator($translator);
     }
 }

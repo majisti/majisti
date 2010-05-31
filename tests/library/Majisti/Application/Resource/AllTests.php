@@ -12,6 +12,7 @@ class AllTests extends \Majisti\Test\TestSuite
         
         $suite->addTestCase(__NAMESPACE__ . '\ConfighandlerTest');
         $suite->addTestCase(__NAMESPACE__ . '\DispatcherTest');
+        $suite->addTestCase(__NAMESPACE__ . '\I18nTest');
         $suite->addTestCase(__NAMESPACE__ . '\TranslateTest');
         $suite->addTestCase(__NAMESPACE__ . '\LayoutTest');
         $suite->addTestCase(__NAMESPACE__ . '\LocaleTest');
