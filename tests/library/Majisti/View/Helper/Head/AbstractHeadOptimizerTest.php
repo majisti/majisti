@@ -66,7 +66,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
     protected $options = array();
 
     /**
-     * @desc \Majisti\Util\Minifying\IMinifier
+     * @desc MinifierMock
      */
     protected $minifier;
 
@@ -94,6 +94,8 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
         foreach( $this->outputFiles as $file ) {
             @unlink( $this->filesPath . "/{$folder}/{$file}" );
         }
+
+        $this->optimizer->clearCache();
 
         $this->clearHead();
     }
@@ -132,10 +134,10 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
         if( !empty($files) ) {
             $this->appendFilesToHead($files);
 
-            if( "bundle" === $action || "optimize" === $action ) {
+            if( 'bundle' === $action || 'optimize' === $action ) {
                 $optimizer->setBundlingEnabled();
 
-                if( "optimize" === $action ) {
+                if( 'optimize' === $action ) {
                     $optimizer->setMinifyingEnabled();
                 }
 
@@ -143,8 +145,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
                             $path . "/{$output}{$ext}",
                             $url  . "/{$output}{$ext}"
                 );
-
-            } else if ("minify" === $action) {
+            } else if ('minify' === $action) {
                 $optimizer->setMinifyingEnabled();
                 $return = $optimizer->minify($output);
             }
@@ -226,9 +227,9 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
         $optimizer = $this->optimizer;
         $ext       = $this->extension;
         $path      = $this->filesPath;
-        $minifier  = $this->minifier;
 
-        $minifier::setState('all');
+        MinifierMock::setState('all');
+
         $this->appendFilesAndExecute('optimize', 'all', $this->files);
 
         /* optimize() function returns absolute paths from server root */
@@ -327,7 +328,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
       * - testThatNothingIsRecachedIfOrigFilesHaveNoChangesWhenBundling()
       * - testThatNothingIsRecachedIfOrigFilesHaveNoChangesWhenMinifying()
       */
-     protected function getOutputContentsAndModificationTime($output, $minify = false)
+     protected function getInfos($output, $minify = false)
      {
          $infos     = new \StdClass();
          $path      = $this->filesPath;
@@ -336,12 +337,15 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
          $cacheName = $this->cacheName;
 
          if( !$minify ) {
-             $infos->content   = file_get_contents($path . "/{$output}{$ext}");
-             $infos->fileTime  = filemtime($path . "/{$output}{$ext}");
+             $infos->path      = $path . "/{$output}{$ext}";
+             $infos->content   = file_get_contents($infos->path);
+             $infos->fileTime  = filemtime($infos->path);
          } else {
-             $infos->content   = file_get_contents($path . "/{$folder}/{$output}{$ext}");
-             $infos->fileTime  = filemtime($path . "/{$folder}/{$output}{$ext}");
+             $infos->path      = $path . "/{$folder}/{$output}{$ext}";
+             $infos->content   = file_get_contents($infos->path);
+             $infos->fileTime  = filemtime($infos->path);
          }
+
          $infos->cacheTime = filemtime($path . "/{$folder}/{$cacheName}_all");
 
          return $infos;
@@ -354,12 +358,15 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
       */
      public function testThatNothingIsRecachedIfOrigFilesHaveNoChangesWhenOptimizing()
      {
+         MinifierMock::setState('all');
+
          $this->appendFilesAndExecute('optimize', 'all', $this->files);
 
-         $infos1 = $this->getOutputContentsAndModificationTime('all.min');
+         $infos1  = $this->getInfos('all.min');
 
-         /* assure one second has passed */
-         sleep(1);
+         /* assure content stays same, that way we know file was not rewritten */
+         $content = $infos1->content . 'MAJISTI_TEST';
+         file_put_contents($infos1->path, $content);
 
          /*
           * clearing head and re-adding same files, then re-optimizing and asserting
@@ -368,10 +375,10 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
          $this->clearHead();
          $this->appendFilesAndExecute('optimize', 'all', $this->files);
 
-         $infos2 = $this->getOutputContentsAndModificationTime('all.min');
+         $infos2 = $this->getInfos('all.min');
 
-         $this->assertSame($infos1->content, $infos2->content);
-         $this->assertEquals($infos1->fileTime, $infos2->fileTime);
+         $this->assertSame($content, $infos2->content);
+         $this->assertEquals($infos1->fileTime,  $infos2->fileTime);
          $this->assertEquals($infos1->cacheTime, $infos2->cacheTime);
     }
 
@@ -379,7 +386,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
     {
          $urlBundle1 = $this->appendFilesAndExecute('bundle', 'all', $this->files);
 
-         $infos1 = $this->getOutputContentsAndModificationTime('all');
+         $infos1 = $this->getInfos('all');
 
          /*
           * clearing head and re-adding same files, then re-bundling and asserting
@@ -390,7 +397,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
 
          $urlBundle2 = $this->appendFilesAndExecute('bundle', 'all', $this->files);
 
-         $infos2 = $this->getOutputContentsAndModificationTime('all');
+         $infos2 = $this->getInfos('all');
 
          $this->assertSame($infos1->content, $infos2->content);
          $this->assertEquals($infos1->fileTime, $infos2->fileTime);
@@ -401,14 +408,14 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
     public function testThatNothingIsRecachedIfOrigFilesHaveNoChangesWhenMinifying()
     {
          $urlMinify1 = $this->appendFilesAndExecute('minify', 'all', $this->files);
-         $infos1 = $this->getOutputContentsAndModificationTime('core.min', true);
+         $infos1 = $this->getInfos('core.min', true);
 
          /* assure one second has passed */
          sleep(1);
          $this->clearHead();
 
          $urlMinify2 = $this->appendFilesAndExecute('minify', 'all', $this->files);
-         $infos2 = $this->getOutputContentsAndModificationTime('core.min', true);
+         $infos2 = $this->getInfos('core.min', true);
 
          $this->assertSame($infos1->content, $infos2->content);
          $this->assertEquals($infos1->fileTime, $infos2->fileTime);
@@ -519,14 +526,14 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
         $minifier::setState("coreFile1");
         $files = $this->getFilesObjects(array("core{$ext}", "file1{$ext}"));
         $urlOptimize1 = $this->appendFilesAndExecute('optimize', 'all', $files);
-        $infos1 = $this->getOutputContentsAndModificationTime('all.min');
+        $infos1 = $this->getInfos('all.min');
 
         /* appending a new file after having optimized */
         $this->clearHead();
 
         $minifier::setState("all");
         $urlOptimize2 = $this->appendFilesAndExecute('optimize', 'all', $this->files);
-        $infos2 = $this->getOutputContentsAndModificationTime('all.min');
+        $infos2 = $this->getInfos('all.min');
 
         /*
          * asserting that the two calls to optimize() return different

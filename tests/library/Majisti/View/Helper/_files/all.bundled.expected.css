@@ -3,6 +3,7 @@
 }
 .theme1 {
     color: green;
+    background: url('styles/img/foo.jpg');
 }
 .theme2 {
     color: blue;

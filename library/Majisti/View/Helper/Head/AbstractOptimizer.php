@@ -89,11 +89,15 @@ abstract class AbstractOptimizer implements IOptimizer
      */
     protected $_masterUrl;
 
+    protected $_masterPath;
+
     /**
      * @var bool Whether inline content should be appended to the master
      * bundled file
      */
     protected $_appendInline;
+
+    protected $_bundledContent;
 
     /**
      * @desc Constructs the optimizer by using the view with a sets of
@@ -173,6 +177,12 @@ abstract class AbstractOptimizer implements IOptimizer
         } elseif( is_object($minifier) ) {
             $this->setMinifier($minifier);
         }
+    }
+
+    public function hasCacheNamespace($namespace)
+    {
+        return file_exists($this->_path . DIRECTORY_SEPARATOR
+                . $this->_cacheFilePath . '_' . $namespace);
     }
 
     /**
@@ -785,6 +795,16 @@ abstract class AbstractOptimizer implements IOptimizer
         return $this->_masterUrl;
     }
 
+    protected function bundleContent($filepath)
+    {
+        $this->_bundledContent .= $this->getContentToBundle($filepath);
+    }
+
+    protected function getContentToBundle($filepath)
+    {
+        return file_get_contents($filepath);
+    }
+
     /**
      * @desc Bundles the currently appended items into a new master
      * file provided with the path.
@@ -797,44 +817,35 @@ abstract class AbstractOptimizer implements IOptimizer
      */
     public function bundle($path, $url)
     {
-        $this->_masterUrl = $this->unversionizeQuery($url);
+        $this->_masterUrl  = $this->unversionizeQuery($url);
+        $this->_masterPath = $path;
 
-        $pathinfo = pathinfo($this->_masterUrl);
+        $pathinfo = pathinfo($this->_masterPath);
+
         $this->setCacheNamespace($pathinfo['filename']);
 
         if( !$this->isBundlingEnabled() ) {
             return false;
         }
 
-        $content    = '';
-        $callback   = null;
-        $header     = $this->getHeader();
+        $header = $this->getHeader();
+        $this->_bundledContent =  '';
+        $this->_parseHeaderCallback = 'bundleContent';
 
-        /*
-         * apply call back function when there is no cache, the call back
-         * is the one that aggregates all the content that will get bundled
-         * in the master file
-         */
-        if( !$this->isCached() ) {
-            $callback = function($filepath) use (&$content) {
-                $content .= file_get_contents($filepath);
-            };
-        }
-
-        $invalidHeads = $this->parseHeader($header, $callback)->invalidHeads;
+        $invalidHeads = $this->parseHeader($header)->invalidHeads;
 
         /* bundle in the master file */
         if( !$this->isCached() ) {
             if( $this->isAppendInlineContent() ) {
-                $content .= $this->getInlineContent();
+                $this->_bundledContent .= $this->getInlineContent();
             }
 
-            if( empty($content) ) {
+            if( empty($this->_bundledContent) ) {
                 throw new Exception('No content to bundle');
             }
 
             /* store bundled css content */
-            file_put_contents($path, $content);
+            file_put_contents($path, $this->_bundledContent);
         }
 
         /* append version query */
@@ -881,6 +892,22 @@ abstract class AbstractOptimizer implements IOptimizer
         return array($validUrls, $invalidUrls);
     }
 
+    protected function minifyContent($filepath)
+    {
+        /*
+         * apply callback function when there is no cache, the callback
+         * is the one that minifies each valid stylesheet
+         */
+        $minifier = $this->getMinifier();
+
+        $pathinfo = pathinfo($filepath);
+        $ext      = $pathinfo['extension'];
+
+        file_put_contents(rtrim($filepath, $ext) .
+                "min.{$ext}",
+            $minifier->minify($ext, file_get_contents($filepath)));
+    }
+
     /**
      * @desc Minifies all the valid heads inside an header, prepending
      * the .min extension before their respective extension and generating
@@ -897,27 +924,10 @@ abstract class AbstractOptimizer implements IOptimizer
             $this->setCacheNamespace($cacheNamespace);
         }
 
-        $callback = null;
+        $this->_parseHeaderCallback = 'minifyContent';
         $header   = $this->getHeader();
 
-        /*
-         * apply callback function when there is no cache, the callback
-         * is the one that minifies each valid stylesheet
-         */
-        if( !$this->isCached() ) {
-            $minifier = $this->getMinifier();
-
-            $callback = function($filepath) use ($minifier) {
-                $pathinfo = pathinfo($filepath);
-                $ext      = $pathinfo['extension'];
-
-                file_put_contents(rtrim($filepath, $ext) .
-                        "min.{$ext}",
-                    $minifier->minify($ext, file_get_contents($filepath)));
-            };
-        }
-
-        $obj = $this->parseHeader($header, $callback);
+        $obj = $this->parseHeader($header);
 
         $header->exchangeArray($obj->invalidHeads);
 
@@ -943,13 +953,12 @@ abstract class AbstractOptimizer implements IOptimizer
      * along with the filepaths.
      *
      * @param object $header The header object
-     * @param function $callback The callback function
      *
      * @return stdClass with invalidHeads, validUrls and filepaths keys.
      *
      * @throws  If any given supported path is not valid in the header
      */
-    protected function parseHeader($header, $callback = null)
+    protected function parseHeader($header)
     {
         $invalidHeads   = array();
         $validUrls      = array();
@@ -964,52 +973,54 @@ abstract class AbstractOptimizer implements IOptimizer
             /* unsupported head, preserve it but do not bundle */
             if( !$this->isValidHead($head) ) {
                 $invalidHeads[] = $head;
-            } else {
-                $url         = $this->unversionizeQuery($this->getAttr($head));
-                $validUrls[] = $url;
+                continue;
+            }
 
-                if( $result = $this->getRemappedPath($url) ) {
-                    if( is_string($result) ) {
-                        $url = $result;
-                    } else {
-                        array_pop($validUrls);
-                        $invalidHeads[] = $head;
-                        continue;
-                    }
+            $url         = $this->unversionizeQuery($this->getAttr($head));
+            $validUrls[] = $url;
+
+            if( $result = $this->getRemappedPath($url) ) {
+                if( is_string($result) ) {
+                    $url = $result;
+                } else {
+                    array_pop($validUrls);
+                    $invalidHeads[] = $head;
+                    continue;
                 }
+            }
 
-                /*
-                 * the path can be an url relative to a domain, which consists
-                 * of the "base url", it it is a base url, let's try to
-                 * prepend the document root to the href and test the file
-                 * existance
-                 */
-                if( !file_exists($url) ) {
-                    $url = rtrim($_SERVER['DOCUMENT_ROOT'], '/')
-                              . '/' . ltrim($url, '/');
-                }
+            /*
+             * the path can be an url relative to a domain, which consists
+             * of the "base url", it it is a base url, let's try to
+             * prepend the document root to the href and test the file
+             * existance
+             */
+            if( !file_exists($url) ) {
+                $url = rtrim($_SERVER['DOCUMENT_ROOT'], '/')
+                          . '/' . ltrim($url, '/');
+            }
 
-                /*
-                 * the url provided cannot be mapped to a real path,
-                 * and therefore can't be used in both bundle or minify.
-                 */
-                if( !file_exists($url) ) {
-                    throw new Exception("File {$url} does not exist and could " .
-                    "not be found using the provided url remaps: " .
-                    implode(' :: ', array_keys($this->getRemappedUris())));
-                }
+            /*
+             * the url provided cannot be mapped to a real path,
+             * and therefore can't be used in both bundle or minify.
+             */
+            if( !file_exists($url) ) {
+                throw new Exception("File {$url} does not exist and could " .
+                "not be found using the provided url remaps: " .
+                implode(' :: ', array_keys($this->getRemappedUris())));
+            }
 
-                $url         = realpath($url);
-                $filepaths[] = $url;
+            $url         = realpath($url);
+            $filepaths[] = $url;
 
-                /*
-                 * when there is no cache (thefore a non null callback),
-                 * call the callback and add the url to the cache
-                 */
-                if( null !== $callback ) {
-                    $callback($url);
-                    $this->addToCache($url, end($validUrls));
-                }
+            /*
+             * when there is no cache (thefore a non null callback),
+             * call the callback and add the url to the cache
+             */
+            if( !$this->isCached() ) {
+                $func = $this->_parseHeaderCallback;
+                $this->$func($url);
+                $this->addToCache($url, end($validUrls));
             }
         }
 
@@ -1063,6 +1074,11 @@ abstract class AbstractOptimizer implements IOptimizer
     public function getVersionQuery($filepath)
     {
         return '?v=' . filemtime($filepath);
+    }
+
+    protected function hasVersionQuery($str)
+    {
+        return false !== strpos($str, '?v=');
     }
 
     /**

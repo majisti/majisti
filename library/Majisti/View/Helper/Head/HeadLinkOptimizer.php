@@ -119,4 +119,21 @@ class HeadLinkOptimizer extends AbstractOptimizer
     {
         return false;
     }
+
+    protected function getContentToBundle($filepath)
+    {
+        $content = file_get_contents($filepath);
+
+        $concreteDir = dirname($filepath);
+        $masterDir   = dirname($this->_masterPath);
+
+        preg_match('/(' . preg_quote($masterDir, '/') . ')(.*)/',
+                        $concreteDir, $matches);
+
+        $subDir = ltrim($matches[2], '/');
+
+        $content = preg_replace('/url\(\'(.*)\'\)/', "url('" . $subDir . '/\1' . "')", $content);
+
+        return $content;
+    }
 }
