@@ -41,15 +41,17 @@ class MinifierMock extends \Majisti\Util\Minifying\AbstractMinifier
      */
     public function minifyCss($content, $options = array())
     {
+        $dir = dirname(dirname(__FILE__)) . '/_files';
+
         switch( $this->getState() ) {
             case self::ALL_STATE:
-                $css = ".core{color:red;}.theme1{color:green;}.theme2{color:blue;}";
+                $css = file_get_contents($dir . '/all.optimized.expected.css');
                 break;
             case self::ALL_INC_INLINE_STATE:
-                $css = ".core{color:red;}.theme1{color:green;}.theme2{color:blue;}.inline{color:white;}";
+                $css = file_get_contents($dir . '/all.optimized.inc.style.expected.css');
                 break;
             case self::CORE_AND_FILE1_STATE:
-                $css = ".core{color:red;}.theme1{color:green;}";
+                $css = ".core{color:red;}.theme1{color:green;background('styles/img/foo.jpg');}";
                 break;
             default:
                 $css = null;
