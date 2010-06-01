@@ -53,16 +53,6 @@ class HeadScriptOptimizerTest extends AbstractHeadOptimizerTest
     }
 
     /**
-     * @desc Unit test tear down: removing the bundle() and minify() output
-     * files and clearing the headlink object.
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-        $this->clearHead();
-    }
-
-    /**
      * @desc Converts an array for <filename>.<extension> strings to stdClass
      * objects.
      */
@@ -114,7 +104,7 @@ class HeadScriptOptimizerTest extends AbstractHeadOptimizerTest
         $urlOptimize = $this->appendFilesAndExecute('optimize', 'all', $this->files);
 
         /* head script should contain only the bundled file */
-        $this->assertEquals($urlOptimize, 
+        $this->assertEquals($urlOptimize,
                 $headObj->getIterator()->current()->attributes['src']);
 
         $this->assertEquals(

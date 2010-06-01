@@ -422,6 +422,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
          $this->assertEquals($infos1->cacheTime, $infos2->cacheTime);
          $this->assertEquals($urlMinify1, $urlMinify2);
     }
+
     /**
      * @desc Making sure that every file we give to the minifier will output
      * a <filename>.min.<extension> file.

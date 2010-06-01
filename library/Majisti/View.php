@@ -137,7 +137,7 @@ class View extends \Zend_View
                     }
                 }
             }
-            
+
             throw $e;
         }
     }
