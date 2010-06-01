@@ -27,6 +27,7 @@ class MinifierMock extends \Majisti\Util\Minifying\AbstractMinifier
     const ALL_STATE = "all";
     const ALL_INC_INLINE_STATE = "allInline";
     const CORE_AND_FILE1_STATE = "coreFile1";
+    const PERFORMANCE_STATE = "performance";
 
     /* static state that can be modified statically */
     static protected $state;
@@ -53,6 +54,8 @@ class MinifierMock extends \Majisti\Util\Minifying\AbstractMinifier
             case self::CORE_AND_FILE1_STATE:
                 $css = ".core{color:red;}.theme1{color:green;background('styles/img/foo.jpg');}";
                 break;
+            case self::PERFORMANCE_STATE:
+                $css = file_get_contents($dir . '/all.performance.expected.css');
             default:
                 $css = null;
         }

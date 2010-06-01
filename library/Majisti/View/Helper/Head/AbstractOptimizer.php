@@ -98,6 +98,8 @@ abstract class AbstractOptimizer implements IOptimizer
     protected $_appendInline;
 
     protected $_bundledContent;
+    
+    protected $_parseHeaderCallback;
 
     /**
      * @desc Constructs the optimizer by using the view with a sets of
@@ -504,6 +506,12 @@ abstract class AbstractOptimizer implements IOptimizer
         return $this;
     }
 
+    public function setOptimizationEnabled($flag = true, $environments = array())
+    {
+        $this->setBundlingEnabled($flag, $environments);
+        $this->setMinifyingEnabled($flag, $environments);
+    }
+
     /**
      * @desc Enables or disables bundling
      * @param bool $flag [opt; def=true] The enabled flag
@@ -830,6 +838,7 @@ abstract class AbstractOptimizer implements IOptimizer
 
         $header = $this->getHeader();
         $this->_bundledContent =  '';
+        
         $this->_parseHeaderCallback = 'bundleContent';
 
         $invalidHeads = $this->parseHeader($header)->invalidHeads;
@@ -925,10 +934,10 @@ abstract class AbstractOptimizer implements IOptimizer
         }
 
         $this->_parseHeaderCallback = 'minifyContent';
+        
         $header   = $this->getHeader();
 
         $obj = $this->parseHeader($header);
-
         $header->exchangeArray($obj->invalidHeads);
 
         /* reappend every minified and versionized stylesheets */

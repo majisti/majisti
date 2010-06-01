@@ -130,9 +130,10 @@ class HeadLinkOptimizer extends AbstractOptimizer
         preg_match('/(' . preg_quote($masterDir, '/') . ')(.*)/',
                         $concreteDir, $matches);
 
-        $subDir = ltrim($matches[2], '/');
-
-        $content = preg_replace('/url\(\'(.*)\'\)/', "url('" . $subDir . '/\1' . "')", $content);
+        if( !empty($matches) ) {
+            $subDir = ltrim($matches[2], '/');
+            $content = preg_replace('/url\(\'(.*)\'\)/', "url('" . $subDir . '/\1' . "')", $content);
+        }
 
         return $content;
     }

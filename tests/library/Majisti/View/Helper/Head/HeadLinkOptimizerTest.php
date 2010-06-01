@@ -46,21 +46,6 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
 
         \Zend_Controller_Front::getInstance()->setRequest(
             new \Zend_Controller_Request_Http());
-
-        /* setting optimizer jarfile and temporary directory */
-        \Majisti\Util\Minifying\Yui::$jarFile = MAJISTI_ROOT .
-             '/../externals/yuicompressor-2.4.2.jar';
-        \Majisti\Util\Minifying\Yui::$tempDir = '/tmp';
-    }
-
-    /**
-     * @desc Unit test tear down: removing the bundle() and minify() output
-     * files and clearing the headlink object.
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-        $this->clearHead();
     }
 
     /**
@@ -212,6 +197,37 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
           */
          $this->assertTrue((boolean)substr_count($twiceOptimized->href, '?v='));
      }
+     
+    public function testAlotOfFilesWillNotAffectPerformance()
+    {
+        $optimizer = $this->optimizer;
+        $url       = $this->filesUrl;
+        $path      = $this->filesPath;
+        $ext       = $this->extension;
+        $folder    = $this->folder;
+        
+        $numberOfFilesToAdd = 100;
+        $fileObjects = array();
+        
+        MinifierMock::setState(MinifierMock::PERFORMANCE_STATE);
+        
+        for ($i = 3 ; $i <= $numberOfFilesToAdd ; $i++) {
+            $hugeContent = '';
+            for ($j = 0 ; $j <= $numberOfFilesToAdd; $j++) {
+                $hugeContent .= ".class{$i}_{$j}{color: red;}" . PHP_EOL;
+            }
+            file_put_contents("{$path}/{$folder}/file{$i}{$ext}", $hugeContent);
+            $fileObjects[] = "file{$i}{$ext}";
+        }
+
+        $files = $this->getFilesObjects($fileObjects);
+        $this->appendFilesAndExecute(
+            'optimize', 'all', $files);
+        
+        for ($i = 3 ; $i <= $numberOfFilesToAdd ; $i++) {
+            unlink("{$path}/{$folder}/file{$i}{$ext}");
+        }
+    }
 }
 
 HeadLinkOptimizerTest::runAlone();
