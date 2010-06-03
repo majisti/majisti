@@ -74,7 +74,7 @@ class Constants
         define('APPLICATION_URL', APPLICATION_URL_PREFIX . BASE_URL);
         define('APPLICATION_URL_STYLES',  BASE_URL . '/styles');
         define('APPLICATION_URL_SCRIPTS', BASE_URL . '/scripts');
-        define('APPLICATION_URL_IMAGES',  BASE_URL . '/images/common');
+        define('APPLICATION_URL_IMAGES',  BASE_URL . '/images');
     }
 
     /**
