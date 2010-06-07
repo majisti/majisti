@@ -73,8 +73,8 @@ class Application
 
         $concreteConfigPath = APPLICATION_PATH . '/configs/core.ini';
         if( !file_exists($concreteConfigPath) ) {
-            throw new Exception("The core.ini under " . dirname($concreteConfigPath)
-                . "/ is mandatory!");
+            throw new Exception("The core.ini under " . 
+                dirname($concreteConfigPath) . "/ is mandatory!");
         }
 
         return $defaultConfig->merge(new \Zend_Config_Ini(

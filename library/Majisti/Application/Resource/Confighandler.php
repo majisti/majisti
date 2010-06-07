@@ -33,9 +33,17 @@ class Confighandler extends \Zend_Application_Resource_ResourceAbstract
     {
         try {
             $compositeHandler = $this->_prepareComposite();
-            
-            \Zend_Registry::set('Majisti_Config',
-                $compositeHandler->handle(\Zend_Registry::get('Majisti_Config')));
+            $config           = $compositeHandler->handle(
+                \Zend_Registry::get('Majisti_Config'));
+
+            /* default reg key */
+            \Zend_Registry::set('Majisti_Config', $config);
+
+            /* selector */
+            \Zend_Registry::set(
+                'Majisti_Config_Selector',
+                new \Majisti\Config\Selector($config)
+            );
         } catch( \Exception $e ) {
             throw new Exception("An exception occured in ConfigHandler resource
             while trying to load configuration with exception message:
