@@ -263,4 +263,6 @@ return array(
     "Invalid type given, value should be a string" => "Type de donnée non valide : chaîne de caractères attendue",
     "'%value%' is less than %min% characters long" => "La taille de '%value%' est inférieur à %min% caractères",
     "'%value%' is more than %max% characters long" => "La taille de '%value%' est supérieur à %max% caractères",
+
+    "Mendatory field" => "Champ obligatoire",
 );
