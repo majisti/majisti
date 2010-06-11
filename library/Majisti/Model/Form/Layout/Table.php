@@ -39,6 +39,28 @@ class Table implements ILayout
         ));
 
         $form->setElementDecorators($elementDecorators);
+
+        /* @var $element \Zend_Form_Element */
+        $captchaDecorators = array(
+                'Errors',
+                array('HtmlTag', 'options' => array('tag' => 'td', 'class' => 'element captcha')),
+                array('Label', array('tag' => 'td')),
+                array('Description', array('tag' => 'td')),
+        );
+
+        $submitDecorators = $elementDecorators;
+        unset($submitDecorators[3]);
+
+        foreach( $form->getElements() as $element ) {
+            if( 'Zend_Form_Element_Captcha' === $element->getType() ) {
+                $element->setDecorators($captchaDecorators);
+
+//                \Zend_Debug::dump($element->render());
+//                $element->render();
+            } elseif( 'Zend_Form_Element_Submit' === $element->getType() ) {
+//                $element->setDecorators($submitDecorators);
+            }
+        }
     }
 
     /**
