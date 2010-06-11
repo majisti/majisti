@@ -119,6 +119,10 @@ class Container
     public function getModel($key, $namespace = 'default',
         $returnModel = null, array $args = array())
     {
+        if( class_exists($key, true) && null === $returnModel) {
+            $returnModel = $key;
+        }
+
         $registry   = $this->_registry;
         $namespace  = strtolower((string) $namespace);
         $key        = strtolower((string) $key);
@@ -133,7 +137,7 @@ class Container
             $args           = $registry->$namespace->$key->args;
         }
 
-        return $this->_loadModel($key, $returnModel, $namespace, $args);
+        return $this->loadModel($key, $returnModel, $namespace, $args);
     }
 
     /**
@@ -142,7 +146,7 @@ class Container
      * @param string|object $model The classname or object
      * @param array $args The args
      */
-    protected function _loadModel($key, $model, $namespace, array $args)
+    protected function loadModel($key, $model, $namespace, array $args)
     {
         if( !(is_object($model) || null === $model) ) {
             $model = new \ReflectionClass($model);
