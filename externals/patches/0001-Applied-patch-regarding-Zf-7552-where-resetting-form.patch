@@ -1,0 +1,81 @@
+From a9df73ebcf35b232d42e23851ee1a55b049b024d Mon Sep 17 00:00:00 2001
+From: Steven Rosato <steven.rosato@majisti.com>
+Date: Fri, 11 Jun 2010 11:47:07 -0400
+Subject: [PATCH] Applied patch regarding Zf-7552 where resetting form decorators with a
+ captcha element would remove aliases (multiple decorators of same type).
+
+---
+ externals/Zend/Form.php              |    8 ++++++--
+ externals/Zend/Form/DisplayGroup.php |    8 ++++++--
+ externals/Zend/Form/Element.php      |    8 ++++++--
+ 3 files changed, 18 insertions(+), 6 deletions(-)
+
+diff --git a/externals/Zend/Form.php b/externals/Zend/Form.php
+index 38239fa..d38b2bf 100644
+--- a/externals/Zend/Form.php
++++ b/externals/Zend/Form.php
+@@ -2664,11 +2664,15 @@ class Zend_Form implements Iterator, Countable, Zend_Validate_Interface
+      */
+     public function addDecorators(array $decorators)
+     {
+-        foreach ($decorators as $decoratorInfo) {
++        foreach ($decorators as $decoratorName => $decoratorInfo) {
+             if (is_string($decoratorInfo)) {
+                 $this->addDecorator($decoratorInfo);
+             } elseif ($decoratorInfo instanceof Zend_Form_Decorator_Interface) {
+-                $this->addDecorator($decoratorInfo);
++                if (is_numeric($decoratorName)) {
++                    $this->addDecorator($decoratorInfo);
++                } else {
++                    $this->addDecorator(array($decoratorName => $decoratorInfo));
++                }
+             } elseif (is_array($decoratorInfo)) {
+                 $argc    = count($decoratorInfo);
+                 $options = array();
+diff --git a/externals/Zend/Form/DisplayGroup.php b/externals/Zend/Form/DisplayGroup.php
+index 772f0e4..784f2be 100644
+--- a/externals/Zend/Form/DisplayGroup.php
++++ b/externals/Zend/Form/DisplayGroup.php
+@@ -702,11 +702,15 @@ class Zend_Form_DisplayGroup implements Iterator,Countable
+      */
+     public function addDecorators(array $decorators)
+     {
+-        foreach ($decorators as $decoratorInfo) {
++        foreach ($decorators as $decoratorName => $decoratorInfo) {
+             if (is_string($decoratorInfo)) {
+                 $this->addDecorator($decoratorInfo);
+             } elseif ($decoratorInfo instanceof Zend_Form_Decorator_Interface) {
+-                $this->addDecorator($decoratorInfo);
++                if (is_numeric($decoratorName)) {
++                    $this->addDecorator($decoratorInfo);
++                } else {
++                    $this->addDecorator(array($decoratorName => $decoratorInfo));
++                }
+             } elseif (is_array($decoratorInfo)) {
+                 $argc    = count($decoratorInfo);
+                 $options = array();
+diff --git a/externals/Zend/Form/Element.php b/externals/Zend/Form/Element.php
+index 428cfd3..0f70801 100644
+--- a/externals/Zend/Form/Element.php
++++ b/externals/Zend/Form/Element.php
+@@ -1862,11 +1862,15 @@ class Zend_Form_Element implements Zend_Validate_Interface
+      */
+     public function addDecorators(array $decorators)
+     {
+-        foreach ($decorators as $decoratorInfo) {
++        foreach ($decorators as $decoratorName => $decoratorInfo) {
+             if (is_string($decoratorInfo)) {
+                 $this->addDecorator($decoratorInfo);
+             } elseif ($decoratorInfo instanceof Zend_Form_Decorator_Interface) {
+-                $this->addDecorator($decoratorInfo);
++                if (is_numeric($decoratorName)) {
++                    $this->addDecorator($decoratorInfo);
++                } else {
++                    $this->addDecorator(array($decoratorName => $decoratorInfo));
++                }
+             } elseif (is_array($decoratorInfo)) {
+                 $argc    = count($decoratorInfo);
+                 $options = array();
+-- 
+1.7.0.4
+
