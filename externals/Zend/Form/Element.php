@@ -1862,11 +1862,15 @@ class Zend_Form_Element implements Zend_Validate_Interface
      */
     public function addDecorators(array $decorators)
     {
-        foreach ($decorators as $decoratorInfo) {
+        foreach ($decorators as $decoratorName => $decoratorInfo) {
             if (is_string($decoratorInfo)) {
                 $this->addDecorator($decoratorInfo);
             } elseif ($decoratorInfo instanceof Zend_Form_Decorator_Interface) {
-                $this->addDecorator($decoratorInfo);
+                if (is_numeric($decoratorName)) {
+                    $this->addDecorator($decoratorInfo);
+                } else {
+                    $this->addDecorator(array($decoratorName => $decoratorInfo));
+                }
             } elseif (is_array($decoratorInfo)) {
                 $argc    = count($decoratorInfo);
                 $options = array();
