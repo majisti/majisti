@@ -6,7 +6,7 @@
  *
  * @author Majisti
  */
-class Majisti_View_Helper_Locale extends Majisti_View_Helper_Abstract
+class Majisti_View_Helper_Locale
 {
     /**
      * @var \Majisti\Application\Locales
