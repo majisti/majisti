@@ -7,9 +7,16 @@ class Model extends    \ArrayObject
 {
     protected $_view;
 
-    public function __construct($view = null)
+    protected $_data;
+
+    public function __construct($data = null, $view = null)
     {
-        $this->setView($view);
+        $this->_data = $data;
+    }
+
+    public function getData()
+    {
+        return $this->_data;
     }
 
     public function setView(\Zend_View_Interface $view)
