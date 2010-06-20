@@ -83,7 +83,7 @@ class ConstantsTest extends \Majisti\Test\TestCase
             'APPLICATION_URL_STYLES'    => $req->getBaseUrl() . '/styles',
             'APPLICATION_URL_SCRIPTS'   => $req->getBaseUrl() . '/scripts',
             'APPLICATION_URL_IMAGES'    => $req->getBaseUrl() .
-                                           '/images/common'
+                                           '/images'
         );
     }
 
