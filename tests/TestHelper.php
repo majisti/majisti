@@ -39,6 +39,7 @@ class TestHelper
         $this->initDependencies();
         $this->initAutoloaders();
         $this->initXdebug();
+        $this->initCodeCoverage();
         $this->initMiscelleneous();
     }
 
@@ -72,6 +73,8 @@ class TestHelper
     protected function initPhpSettings()
     {
         ini_set('memory_limit', '256M');
+
+        $_SERVER['DOCUMENT_ROOT'] = realpath(dirname(__FILE__) . '/../../');
     }
 
     /**
@@ -121,16 +124,50 @@ class TestHelper
                 foreach ($params as $key => $value) {
                    ini_set($key, $value);
                 }
+            }
+        }
+    }
 
-                /* code coverage filtering */
-                PHPUnit_Util_Filter::addDirectoryToFilter($majistiRoot . '/externals');
+    /**
+     * @desc Code coverage filtering. Works only using
+     * the command line.
+     */
+    protected function initCodeCoverage()
+    {
+        $majistiRoot = $this->getLibraryRoot();
 
-                foreach (array('php', 'phtml') as $suffix) {
-                    PHPUnit_Util_Filter::addDirectoryToFilter($majistiRoot . '/tests', ".$suffix");
-                }
+        if( 'cli' === PHP_SAPI ) {
+            /* exclude those directories */
+            $dirs = array(
+                'externals',
+                'resources',
+                'tests',
+            );
 
-                PHPUnit_Util_Filter::addFileToFilter($majistiRoot .
-                    '/library/Majisti/Application/Constants.php');
+            foreach( $dirs as $dir ) {
+                \PHPUnit_Util_Filter::addDirectoryToFilter(
+                        $majistiRoot . '/' . $dir);
+            }
+
+            /* exclude files with provided suffixes */
+            $suffixes = array(
+                'php',
+                'phtml',
+                'inc',
+            );
+
+            foreach ( $suffixes as $suffix) {
+                \PHPUnit_Util_Filter::addDirectoryToFilter($majistiRoot . 
+                        '/tests', ".$suffix");
+            }
+
+            /* exclude specific files */
+            $files = array(
+                $majistiRoot . '/library/Majisti/Application/Constants.php',
+            );
+
+            foreach( $files as $file ) {
+                \PHPUnit_Util_Filter::addFileToFilter($file);
             }
         }
     }
