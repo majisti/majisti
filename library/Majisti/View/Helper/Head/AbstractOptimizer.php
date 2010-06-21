@@ -1000,7 +1000,7 @@ abstract class AbstractOptimizer implements IOptimizer
 
             /*
              * the path can be an url relative to a domain, which consists
-             * of the "base url", it it is a base url, let's try to
+             * of the "base url", if it is a base url, let's try to
              * prepend the document root to the href and test the file
              * existance
              */
