@@ -110,7 +110,7 @@ class Application
     static public function getInstance()
     {
         if( null === static::$_application ) {
-            new static(static::getApplicationPath());
+            new self(static::getApplicationPath());
         }
 
         return static::$_application;
