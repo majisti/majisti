@@ -98,7 +98,7 @@ abstract class AbstractOptimizer implements IOptimizer
     protected $_appendInline;
 
     protected $_bundledContent;
-    
+
     protected $_parseHeaderCallback;
 
     /**
@@ -693,8 +693,7 @@ abstract class AbstractOptimizer implements IOptimizer
     static public function setDefaultMinifier($minifier, $options = array())
     {
         if( is_string($minifier) ) {
-            $minifier = Minifying\Factory::createMinifier(
-                'Crockford', $options);
+            $minifier = Minifying\Factory::createMinifier($minifier, $options);
         }
 
         static::$_defaultMinifier = $minifier;
