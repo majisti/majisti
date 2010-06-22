@@ -2,6 +2,10 @@
 
 namespace Majisti\Util\Minifying;
 
+if( !defined('JSMIN_AS_LIB') ) {
+    define('JSMIN_AS_LIB', true);
+}
+
 require_once 'Crockford/JsMin.php';
 require_once 'Crockford/CssMin.php';
 
@@ -14,6 +18,7 @@ class Crockford extends AbstractMinifier
 
     public function minifyJs($js, $options = array())
     {
-        return \JSMin::minify($js);
+        $jsmin = new \JSMin($js, false);
+        return $jsmin->minify();
     }
 }

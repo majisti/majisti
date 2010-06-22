@@ -25,7 +25,7 @@ class CrockfordTest extends \Majisti\Test\TestCase
 
         $minifiedCss = $minifier->minifyCss('.foo { color: red; }');
 
-        $this->assertEquals('.foo{color:red}', $minifiedCss);
+        $this->assertEquals('.foo{color: red;}', $minifiedCss);
     }
 
     public function testMinifyJs()
