@@ -130,6 +130,9 @@ abstract class AbstractOptimizer implements IOptimizer
                     MAJISTI_URL_STYLES      => MAJISTI_PUBLIC_PATH  . '/styles',
                     MAJISTIX_URL_STYLES     => MAJISTIX_PUBLIC_PATH . '/styles',
 
+                    MAJISTI_URL_SCRIPTS     => MAJISTI_PUBLIC_PATH . '/scripts',
+                    MAJISTIX_URL_SCRIPTS    => MAJISTIX_PUBLIC_PATH . '/scripts',
+
                     JQUERY_PLUGINS          => MAJISTIX_PUBLIC_PATH . '/jquery/plugins',
                     JQUERY_STYLES           => MAJISTIX_PUBLIC_PATH . '/jquery/styles',
                     JQUERY_THEMES           => MAJISTIX_PUBLIC_PATH . '/jquery/themes',
@@ -708,8 +711,7 @@ abstract class AbstractOptimizer implements IOptimizer
     public function setMinifier($minifier, $options = array())
     {
         if( is_string($minifier) ) {
-            $minifier = Minifying\Factory::createMinifier(
-                'Cockford', $options);
+            $minifier = Minifying\Factory::createMinifier($minifier, $options);
         }
 
         $this->_minifier = $minifier;
