@@ -107,13 +107,13 @@ class Constants
          * urls[blog] = "http://blog.mydomain.com" in the production config
          * so that it can be easily retrieved via ${APPLICATION_NAME}_URL_BLOG
          */
-        if( $urls = $selector->find('urls', false) ) {
-            foreach ($urls as $key => $url) {
-                define(
-                   strtoupper(APPLICATION_NAME) . '_URL_' .
-                   strtoupper($key), $url);
-            }
-        }
+//        if( $urls = $selector->find('urls', false) ) {
+//            foreach ($urls as $key => $url) {
+//                define(
+//                   strtoupper(APPLICATION_NAME) . '_URL_' .
+//                   strtoupper($key), $url);
+//            }
+//        }
 
         /*
          * the majisti[x]'s public folders according
