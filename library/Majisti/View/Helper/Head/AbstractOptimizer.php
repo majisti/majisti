@@ -265,7 +265,7 @@ abstract class AbstractOptimizer implements IOptimizer
 
         return $this->_minifyingEnabled;
     }
-
+    
     /**
      * @desc Validates the cache returning true if it is valid, false if not.
      * If the cache is invalid, it will be cleared before returning false.
@@ -572,7 +572,7 @@ abstract class AbstractOptimizer implements IOptimizer
             list($path, $url, $timestamp) = explode(' ', $line);
             $cache[$path] = array(
                 'url'       => $url,
-                'timestamp' => $timestamp
+                'timestamp' => (int)$timestamp
             );
         }
 
@@ -998,7 +998,7 @@ abstract class AbstractOptimizer implements IOptimizer
                     continue;
                 }
             }
-
+            
             /*
              * the path can be an url relative to a domain, which consists
              * of the "base url", if it is a base url, let's try to
