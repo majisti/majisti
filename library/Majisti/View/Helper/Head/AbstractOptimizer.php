@@ -202,7 +202,7 @@ abstract class AbstractOptimizer implements IOptimizer
     public function isBundlingEnabled()
     {
         if( null == $this->_bundlingEnabled ) {
-            $this->_bundlingEnabled = $this->isDevelEnvironment();
+            $this->_bundlingEnabled = $this->isProductionEnvironment();
         }
 
         return $this->_bundlingEnabled;
@@ -220,13 +220,13 @@ abstract class AbstractOptimizer implements IOptimizer
 
     /**
      * @desc Returns true if the current application is running
-     * in development (devel or testing). If it is running in
-     * staging or production, it returns false.
+     * in production (staging or production). If it is running in
+     * development or integration, it returns false.
      *
      * @param string $var
-     * @return bool True if the application is running in development env
+     * @return bool True if the application is running in production env
      */
-    protected function isDevelEnvironment()
+    protected function isProductionEnvironment()
     {
         /*
          * production and staging are enabled by default
@@ -260,7 +260,7 @@ abstract class AbstractOptimizer implements IOptimizer
     public function isMinifyingEnabled()
     {
         if( null === $this->_minifyingEnabled ) {
-            $this->_minifyingEnabled = $this->isDevelEnvironment();
+            $this->_minifyingEnabled = $this->isProductionEnvironment();
         }
 
         return $this->_minifyingEnabled;
