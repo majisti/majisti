@@ -14,6 +14,11 @@ namespace Majisti;
 class View extends \Zend_View 
 {
     /**
+     * @var mixed
+     */
+    protected $_return;
+
+    /**
      * @desc Traduction function that proxies to the translate view helper.
      * 
      * @param string $messageId The message to translate
@@ -140,5 +145,73 @@ class View extends \Zend_View
 
             throw $e;
         }
+    }
+
+    /**
+     * @desc Sets a mixed value that will be returned when the render()
+     * function will be called. This is particularly usefull when a view
+     * is not outputing anything but rather preparing a certain object
+     * without using placeholders and wants to return that
+     * prepared object to the caller.
+     *
+     * @param mixed $return The returned value
+     */
+    public function setRenderReturn($return)
+    {
+        $this->_return = $return;
+    }
+
+    /**
+     * @desc Returns whether the view will return a value upon
+     * render() call.
+     *
+     * @return bool True if the view contains a return value.
+     */
+    public function hasRenderReturn()
+    {
+        return null !== $this->_return;
+    }
+
+    /**
+     * @desc Clears the view's render value.
+     */
+    public function clearRenderReturn()
+    {
+        $this->_return = null;
+    }
+
+    /**
+     * @desc Returns the view's render value.
+     *
+     * @return mixed Returns the value that gets returned
+     * upon render() call.
+     */
+    public function getRenderReturn()
+    {
+        return is_object($this->_return)
+            ? clone $this->_return
+            : $this->_return;
+    }
+
+    /**
+     * @desc Renders normally unless setRenderReturn() was previouslly called
+     * in which case the view still gets rendered, but the prepared value will
+     * be returned instead of an output buffered capture.
+     *
+     * @param <type> $name
+     * @return <type>
+     */
+    public function render($name)
+    {
+        $render = parent::render($name);
+
+        if( $this->hasRenderReturn() ) {
+            $return = $this->getRenderReturn();
+            $this->clearRenderReturn();
+
+            return $return;
+        }
+
+        return $render;
     }
 }
