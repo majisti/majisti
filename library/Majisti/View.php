@@ -206,6 +206,7 @@ class View extends \Zend_View
         $render = parent::render($name);
 
         if( $this->hasRenderReturn() ) {
+            print $render;
             $return = $this->getRenderReturn();
             $this->clearRenderReturn();
 
