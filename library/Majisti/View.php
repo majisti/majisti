@@ -19,6 +19,15 @@ class View extends \Zend_View
     protected $_return;
 
     /**
+     * @var bool 
+     */
+    protected $_enableOutput;
+    /**
+     * @var string
+     */
+    protected $_notReturned = '';
+
+    /**
      * @desc Traduction function that proxies to the translate view helper.
      * 
      * @param string $messageId The message to translate
@@ -156,9 +165,10 @@ class View extends \Zend_View
      *
      * @param mixed $return The returned value
      */
-    public function setRenderReturn($return)
+    public function setRenderReturn($return, $enableOutput = true)
     {
-        $this->_return = $return;
+        $this->_return       = $return;
+        $this->_enableOutput = $enableOutput;
     }
 
     /**
@@ -194,18 +204,31 @@ class View extends \Zend_View
     }
 
     /**
+     * @return bool Returns the content that was not returned when render()
+     * was called and setRenderReturn() was enabled prior to its call.
+     */
+    public function getNotRendered()
+    {
+        return $this->_notReturned;
+    }
+
+    /**
      * @desc Renders normally unless setRenderReturn() was previouslly called
      * in which case the view still gets rendered, but the prepared value will
      * be returned instead of an output buffered capture.
      *
-     * @param <type> $name
-     * @return <type>
+     * @param string $name
+     * @return mixed
      */
     public function render($name)
     {
         $render = parent::render($name);
 
         if( $this->hasRenderReturn() ) {
+            $this->_notReturned = $render;
+            if( $this->_enableOutput ) {
+                print $render;
+            }
             $return = $this->getRenderReturn();
             $this->clearRenderReturn();
 
