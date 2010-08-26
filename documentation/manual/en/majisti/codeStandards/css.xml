@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en"
+    xml:id="majisti.codeStandards.css" version="5.0">
+    <title>CSS standards</title>
+    <para>
+        <orderedlist>
+            <listitem>
+                <para>Namescheme</para>
+                <para>Dashed separated words, unless separation of groups of
+                    words would confuse the reader, in that case the
+                    camelCaseDash syntax should be used.</para>
+                <programlisting>.what-we-do
+.what-we-do-wrapper //wrong because of two groups of word 'what we do' and 'wrapper'
+.whatWeDo-wrapper   //correct way</programlisting>
+                <para>In case namespacing occurs, underscores are used, with the
+                    namespace always in front.</para>
+                <programlisting>.theme_whatWeDo-wrapper
+.theme_what-we-do</programlisting>
+            </listitem>
+            <listitem>
+                <para>Selectors</para>
+                <para>ID selectors should be used only on top level elements,
+                    such as page identifiers. In general, ID selectors should
+                    not follow unless javascript is used for that particular
+                    element. Even in that case, it should be better to use only
+                    one ID selector even in the javascript selection (such as
+                    JQuery).</para>
+                <para>Class selectors are the one mostly used, usually following
+                    an id selector for better namespace support.</para>
+                <programlisting>#services .item {}
+#services #packages .item {} //correct only if packages is not served as a javascript ID selector.
+#services .packages .item {} //ideal way when there is no javascript ID selector needed.</programlisting>
+                <para>A class selector should never be the top most selector
+                    unless it should be used as a 'generic' class attribute.
+                    Generic class attributes should be used with care as they
+                    influence every other decending class elements.</para>
+                <programlisting>.clear-left {
+    clear: left;
+}
+
+.what-we-do {} // might not be generic enough</programlisting>
+            </listitem>
+            <listitem>
+                <para>Wrappers</para>
+            </listitem>
+        </orderedlist>
+    </para>
+</section>

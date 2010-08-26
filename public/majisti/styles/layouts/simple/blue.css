@@ -1,8 +1,8 @@
-@CHARSET "ISO-8859-1";
-
+/************************
+*         Generic
+*************************/
 body {
     background-color: #DDDDDD;
-    background-image: url('bg.gif');
     font-family: Verdana;
     font-size: 14px;
     text-align: center;
@@ -12,12 +12,14 @@ body {
     margin: 10px auto 10px auto;
 }
 
+h1, h2, h3, h4, h5, h6 { color: white; }
+
 /************************
 *         Template
 *************************/
-.container {
+#container {
     background-color: #DDEEFF;
-    border-width: 2px 2px 2px 2px; 
+    border-width: 2px;
     border-style: solid; 
     border-color: #336699; 
     text-align: left;
@@ -25,104 +27,22 @@ body {
     margin: 0 auto 0 auto;
 }
 
-.container .banner {
+#container #header {
     background-color: #336699;
     color: white;
-    vertical-align: top;
-    height: 130px;
-    width: 100%;
+    height: 110px;
     margin: 0 0 0 0;
-}
-
-.banner .header {
-    padding: 10px;    
-}
-
-.container .content {
-    min-height: 200px;
-    height: auto !important; /* FF and others */
-    height: 200px; /* IE 6 */
+    text-align: center;
     padding: 10px;
 }
 
-.container .footer {
+#container #content {
+    min-height: 400px;
+    padding: 10px;
+}
+
+#container #footer {
     clear: both;
     padding: 5px;
     text-align: center;
-}
-
-h1, h2, h3, h4, h5, h6 {
-    color: white;
-}
-
-/****************************** GENERATOR CLASSES ******************************/
-
-/******************** verticalCheckboxListing (vcl) ********************/
-td.vcl_query {    
-    border-bottom: 2px dotted #C0D0E0;
-    width: 600px;
-    padding-left: 20px;
-}
-/***********************************************************************/
-/******************** verticalRadioButtonGroup (vrbg) ********************/
-td.vrbg {
-    border-bottom: 2px dotted #C0D0E0;
-    width: 600px;
-    padding-left: 20px;
-    text-align:left;
-}
-/*************************************************************************/
-/******************** horizontalRadioButtonListing (hrbl) ********************/
-
-td.hrbl {
-    width:45px;
-    text-align:left;
-}
-
-td.hrbl_radio {
-    border-bottom: 2px dotted #C0D0E0;    
-}
-
-.hrbl_choice {
-    width:100px;
-    text-align:right;
-    padding: 0 15px 0 0;
-}
-.hrbl_choice2 {
-    width:100px;
-    text-align:left;
-    padding: 0 0 0 15px;
-}
-/*****************************************************************************/
-/******************** horizontalRadioButtonGroup (hrbg) ********************/
-tr.hrbg {
-    width: 850px;
-}
-/***************************************************************************/
-/******************** statementsRadioButtonListing (srbl) ********************/
-td.srbl {
-    padding: 3px 3px 3px 3px;
-}
-
-.srbl_query {
-    background-color: #8888CC;
-}
-.srbl_sub_statement {
-    background-color: #9999D4;
-}
-.srbl_color1 {
-    background-color: #AAAADD;
-}
-.srbl_color2 {
-    background-color: #CCCCFF;
-}
-/**********************************************************************************/
-/******************** textField (tf) ********************/
-
-input.tf {
-    border: 1px inset #336699;
-    padding: 1px;
-    margin: 0;
-    font-size: 11px;
-    font-family: Verdana;
 }
