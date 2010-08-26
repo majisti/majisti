@@ -115,6 +115,10 @@
 .bolder     {font-weight: bolder;}
 .lighter    {font-weight: lighter;}
 
+/* font-style */
+.oblique    {font-style: oblique;}
+.italic     {font-style: italic;}
+
 /* list-style-type */
 .list-disc                  {list-style-type: disc;}
 .list-circle                {list-style-type: circle;}
