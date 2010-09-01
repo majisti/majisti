@@ -154,17 +154,27 @@ class View extends \Zend_View
 
     /**
      * @desc Sets a mixed value that will be returned when the render()
-     * function will be called. This is particularly usefull when a view
+     * function will be called instead of an output buffered capture.
+     * This is particularly usefull when a view
      * is not outputing anything but rather preparing a certain object
-     * without using placeholders and wants to return that
-     * prepared object to the caller.
+     * without using the placeholders and is returning that
+     * prepared object to the caller. Note that you can still enable the output,
+     * but the ouput will be printed barely and the object will be returned after,
+     * meaning that output buffering capture should still be used in those
+     * specific use cases.
      *
      * @param mixed $return The returned value
+     * @param bool $enableOutput [opt] Enable output using a simple print
+     * when rendering.
+     *
+     * @return \Majisti\View this
      */
     public function setRenderReturn($return, $enableOutput = true)
     {
         $this->_return       = $return;
         $this->_enableOutput = $enableOutput;
+
+        return $this;
     }
 
     /**
@@ -180,10 +190,14 @@ class View extends \Zend_View
 
     /**
      * @desc Clears the view's render value.
+     *
+     * @return \Majisti\View this
      */
     public function clearRenderReturn()
     {
         $this->_return = null;
+
+        return $this;
     }
 
     /**
