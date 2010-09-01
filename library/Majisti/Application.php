@@ -255,7 +255,8 @@ class Application
         }
 
         return $defaultConfig->merge(new \Zend_Config_Ini(
-            $concreteConfigPath, $app->environment, true));
+            $concreteConfigPath, $app->environment, true))->merge(
+            $options);
     }
 
     static public function setOptions(array $options)
