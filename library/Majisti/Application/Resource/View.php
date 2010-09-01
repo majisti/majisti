@@ -35,7 +35,7 @@ class View extends \Zend_Application_Resource_View
         }
 
         $options = $this->getOptions();
-        $view = new \Majisti\View($options);
+        $view    = new \Majisti\View($options);
 
         /* Majisti view helpers */
         $view->addHelperPath('Majisti/View/Helper/', 'Majisti_View_Helper');
@@ -46,11 +46,11 @@ class View extends \Zend_Application_Resource_View
         $view->addHelperPath('MajistiX/View/Helper/', 'MajistiX\View\Helper\\');
 
         /* add application's library view helpers and scripts */
-        $view->addHelperPath(APPLICATION_LIBRARY . '/views/helpers',
-                APPLICATION_NAME . '_View_Helper');
-        $view->addHelperPath(APPLICATION_LIBRARY . '/views/helpers',
-                APPLICATION_NAME . '\View\Helper\\'); /* namespaces */
-        $view->addScriptPath(APPLICATION_LIBRARY . '/views/scripts');
+        $view->addHelperPath(MAJISTI_APPLICATION_LIBRARY . '/views/helpers',
+                MAJISTI_APPLICATION_NAMESPACE . '_View_Helper');
+        $view->addHelperPath(MAJISTI_APPLICATION_LIBRARY . '/views/helpers',
+                MAJISTI_APPLICATION_NAMESPACE . '\View\Helper\\'); /* namespaces */
+        $view->addScriptPath(MAJISTI_APPLICATION_LIBRARY . '/views/scripts');
 
         /* ZendX JQuery */
         $view->addHelperPath(
