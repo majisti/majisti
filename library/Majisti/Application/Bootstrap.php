@@ -18,9 +18,11 @@ class Bootstrap extends \Zend_Application_Bootstrap_Bootstrap
      */
     protected function _initLibraryAutoloader()
     {
+        $options = \Majisti\Application::getOptions();
+
         return new \Zend_Application_Module_Autoloader(array(
-            'basePath'  => APPLICATION_LIBRARY,
-            'namespace' => APPLICATION_NAME
+            'basePath'  => $options->application->path,
+            'namespace' => $options->application->namespace
         ));
     }
 

@@ -1,0 +1,156 @@
+/* color palette */
+.maj-red        {color: red;}
+.maj-green      {color: green;}
+.maj-blue       {color: blue;}
+.maj-brown      {color: #663333;}
+.maj-black      {color: black;}
+.maj-pink       {color: #CC3366;}
+.maj-orange     {color: #CC6633;}
+.maj-aqua       {color: aqua;}
+.maj-fuchsia    {color: fuchsia;}
+.maj-gray       {color: gray;}
+.maj-lime       {color: lime;}
+.maj-maroon     {color: maroon;}
+.maj-navy       {color: navy;}
+.maj-olive      {color: olive;}
+.maj-purple     {color: purple;}
+.maj-silver     {color: silver;}
+.maj-teal       {color: teal;}
+.maj-white      {color: white;}
+.maj-yellow     {color: yellow;}
+
+/* font-sizes */
+.maj-xx-small   {font-size: xx-small;}
+.maj-x-small    {font-size: x-small;}
+.maj-small      {font-size: small;}
+.maj-smaller    {font-size: smaller;}
+.maj-medium     {font-size: medium;}
+.maj-large      {font-size: large;}
+.maj-larger     {font-size: larger;}
+
+/* floating */
+.maj-float-left  {float: left;}
+.maj-float-right {float: right;}
+.maj-float-none  {float: none;}
+.maj-clear-left  {clear: left;}
+.maj-clear-right {clear: right;}
+.maj-clear-both  {clear: both;}
+
+/* text-decoration */
+.maj-blink                  {text-decoration: blink;}
+.maj-overline               {text-decoration: overline;}
+.maj-line-through           {text-decoration: line-through;}
+.maj-text-decoration-none   {text-decoration: none;}
+.maj-underline              {text-decoration: underline;}
+
+/* alignement */
+.maj-left       {text-align: left;}
+.maj-center     {text-align: center;}
+.maj-right      {text-align: right;}
+.maj-justify    {text-align: justify;}
+
+/* white-space */
+.maj-wrap   {white-space: normal;}
+.maj-pre    {white-space: pre;}
+.maj-nowrap {white-space: nowrap;}
+
+/* text-transform */
+.maj-uppercase              {text-transform: uppercase;}
+.maj-lowercase              {text-transform: lowercase;}
+.maj-capitalize             {text-transform: capitalize;}
+.maj-text-transform-none    {text-transform: none;}
+
+/* line height */
+.maj-line-height-normal {line-height: normal;}
+
+/* display */
+.maj-inline         {display: inline;}
+.maj-list-item      {display: list-item;}
+.maj-block          {display: block;}
+.maj-display-none   {display: none;}
+
+/* position */
+.maj-absolute   {position: absolute;}
+.maj-fixed      {position: fixed;}
+.maj-relative   {position: relative;}
+.maj-static     {position: static;}
+
+/* overflows */
+.maj-hidden         {overflow: hidden;}
+.maj-visible        {overflow: visible;}
+.maj-scroll         {overflow: scroll;}
+.maj-overflow-auto  {overflow: auto;}
+
+/* vertical-align */
+.maj-v-baseline    {vertical-align: baseline;}
+.maj-v-middle      {vertical-align: middle;}
+.maj-v-textBottom  {vertical-align: text-bottom;}
+.maj-v-textTop     {vertical-align: text-top;}
+
+/* outline */
+.maj-outline-none {outline: none;}
+
+/* margin */
+.maj-margin-none        {margin: 0;}
+.maj-margin-auto        {margin: auto;}
+.maj-margin-left-auto   {margin-left: auto;}
+.maj-margin-right-auto  {margin-right: auto;}
+.maj-margin-sides-auto  {margin-left: auto; margin-right: auto;}
+
+/* padding */
+.maj-padding-none       {padding: 0;}
+
+/* font-family */
+.maj-arial              {font-family: Arial;}
+.maj-verdana            {font-family: Verdana;}
+.maj-comic-sans-ms      {font-family: "Comic Sans MS";}
+.maj-arialblack         {font-family: "Arial Black";}
+.maj-courier-new        {font-family: "Courier New";}
+.maj-lucida-sans        {font-family: "Lucida Sans";}
+.maj-times-new-roman    {font-family: "Times New Roman";}
+
+/* font-weight */
+.maj-normal     {font-weight: normal;}
+.maj-bold       {font-weight: bold;}
+.maj-bolder     {font-weight: bolder;}
+.maj-lighter    {font-weight: lighter;}
+
+/* list-style-type */
+.maj-list-disc                  {list-style-type: disc;}
+.maj-list-circle                {list-style-type: circle;}
+.maj-list-square                {list-style-type: square;}
+.maj-list-decimal               {list-style-type: decimal;}
+.maj-list-decimal-leading-zero  {list-style-type: decimal-leading-zero;}
+.maj-list-lower-roman           {list-style-type: lower-roman;}
+.maj-list-upper-roman           {list-style-type: upper-roman;}
+.maj-list-lower-alpha           {list-style-type: lower-alpha;}
+.maj-list-upper-alpha           {list-style-type: upper-alpha;}
+.maj-list-lower-greek           {list-style-type: lower-greek;}
+.maj-list-lower-latin           {list-style-type: lower-latin;}
+.maj-list-upper-latin           {list-style-type: upper-latin;}
+.maj-list-armenian              {list-style-type: armenian;}
+.maj-list-georgian              {list-style-type: georgian;}
+
+/* mouse cursor */
+.maj-cursor-crosshair   {cursor: crosshair;}
+.maj-cursor-pointer     {cursor: pointer;}
+.maj-cursor-move        {cursor: move;}
+.maj-cursor-eResize     {cursor: e-resize;}
+.maj-cursor-neResize    {cursor: ne-resize;}
+.maj-cursor-nwResize    {cursor: nw-resize;}
+.maj-cursor-nResize     {cursor: n-resize;}
+.maj-cursor-seResize    {cursor: se-resize;}
+.maj-cursor-swResize    {cursor: sw-resize;}
+.maj-cursor-sResize     {cursor: s-resize;}
+.maj-cursor-wResize     {cursor: w-resize;}
+.maj-cursor-text        {cursor: text;}
+.maj-cursor-wait        {cursor: wait;}
+.maj-cursor-help        {cursor: help;}
+
+/* visibility */
+.maj-visibility-hidden      {visibility: hidden;}
+.maj-visibility-collapse    {visibility: collapse;}
+.maj-visibility-visible     {visibility: visible;}
+
+/* borders */
+.maj-border-none {border: none;}
