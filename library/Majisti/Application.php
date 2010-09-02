@@ -29,22 +29,27 @@ class Application
     static protected $_options;
 
     /**
-     * @desc Constructs the application based on merged configuration file
+     * @desc Constructs the application based on merged configuration files
      */
     protected function __construct(\Zend_Config $options)
     {
-        $this->defineSettings($options);
+        $this->initOptions($options);
 
         /* setup config and call parent */
-        $config = $this->loadConfiguration($options);
+        $config = $this->getConfiguration($options);
         \Zend_Registry::set('Majisti_Config', $config);
 
-        $application = new \Zend_Application($options->environment, $config);
+        $application = new \Zend_Application(
+            $options->majisti->application->environment,
+            $config
+        );
 
         /* further config handling using the ConfigHandler resource */
         $bootstrap = $application->getBootstrap();
         $bootstrap->bootstrap('ConfigHandler');
-        $config = \Zend_Registry::get('Majisti_Config');
+
+        /* set options */
+        $config      = \Zend_Registry::get('Majisti_Config');
         $configArray = $config->toArray();
 
         $application->setOptions($configArray);
@@ -54,10 +59,10 @@ class Application
         $bootstrap->bootstrap('Locale');
 
         /* declare yet more constants */
-        $this->defineConfigurableSettings($config, $options);
+        $this->initEnvironmentDependantOptions($config);
 
         if( $options->useAliases ) {
-            $this->defineSettingsAliases($options);
+            $this->defineSettingsAliases($config);
         }
 
         static::$_application = $application;
@@ -65,54 +70,21 @@ class Application
         static::$_options = $options;
     }
 
-    protected function defineSettings(\Zend_Config $settings)
+    protected function initOptions(\Zend_Config $options)
     {
         $request = new \Zend_Controller_Request_Http();
 
-        /* application paths */
-        $app = $settings->application;
-
-        $app->library     = "{$app->path}/../library";
-        $app->root        = realpath("{$app->path}/..");
-        $app->public      = "{$app->root}/public";
-
-        define('MAJISTI_APPLICATION',           $app->path);
-        define('MAJISTI_APPLICATION_NAMESPACE', $app->namespace);
-        define('MAJISTI_APPLICATION_LIBRARY',   $app->library);
-        define('MAJISTI_APPLICATION_ROOT',      $app->root);
-        define('MAJISTI_APPLICATION_PUBLIC',    $app->public);
-
-        /* environment */
-        define('MAJISTI_APPLICATION_ENVIRONMENT', $app->environment);
-
-        /* application urls */
-        $app->baseUrl     = $request->getBaseUrl();
-        $app->urlPrefix   = $request->getScheme() . '://' .  $request->getHttpHost();
-        $app->styles      = "{$app->baseUrl}/styles";
-        $app->scripts     = "{$app->baseUrl}/scripts";
-        $app->images      = "{$app->baseUrl}/images";
-
-        define('MAJISTI_APPLICATION_BASEURL',     $app->baseUrl);
-        define('MAJISTI_APPLICATION_URL',         $app->urlPrefix . $app->baseUrl);
-        define('MAJISTI_APPLICATION_URL_STYLES',  $app->styles);
-        define('MAJISTI_APPLICATION_URL_SCRIPTS', $app->scripts);
-        define('MAJISTI_APPLICATION_URL_IMAGES',  $app->images);
-
         /* majisti paths */
-        $majisti = $settings->majisti = new \Zend_Config(array(),
-            array('allowModifications' => true));
+        $majisti = $options->majisti;
 
         $majisti->path   = dirname(__FILE__);
         $majisti->root   = dirname(dirname($majisti->path));
         $majisti->public = "{$majisti->root}/public/majisti";
         $majisti->folder = basename($majisti->root);
-
-        define('MAJISTI',             $majisti->path . '/Majisti');
-        define('MAJISTI_ROOT',        $majisti->root);
-        define('MAJISTI_PUBLIC_URL',  "{$majisti->root}/public/majisti");
+        $majisti->urlPrefix   = $request->getScheme() . '://' .  $request->getHttpHost();
 
         /* majistix paths */
-        $majistix = $settings->majistix = new \Zend_Config(array(),
+        $majistix = $options->majistix = new \Zend_Config(array(),
             array('allowModifications' => true));
 
         $majistix->path       = "{$majisti->root}/library/MajistiX";
@@ -120,73 +92,116 @@ class Application
         $majistix->modules    = "{$majistix->path}/Modules";
         $majistix->extensions = "{$majistix->path}/Extensions";
 
-        define('MAJISTIX',             $majistix->path);
-        define('MAJISTIX_PUBLIC_URL',  $majistix->public);
-        define('MAJISTIX_MODULES',     $majistix->modules);
-        define('MAJISTIX_EXTENSIONS',  $majistix->extensions);
+        /* application paths */
+        $app = $majisti->application;
+
+        $app->library     = realpath("{$app->path}/../library");
+        $app->root        = realpath("{$app->path}/..");
+        $app->public      = "{$app->root}/public";
+        $app->folder      = basename($app->root);
+
+        /* application urls */
+        $app->baseUrl     = $request->getBaseUrl();
+        $app->url         = $majisti->urlPrefix . $app->baseUrl;
+
+        $this->defineConstants($options);
     }
 
-    protected function defineConfigurableSettings(\Zend_Config $config,
-        \Zend_Config $settings)
+    /**
+     * @desc Majisti is miniming the use of global constants to avoid
+     * the constantitis antipattern. Those constants represent vital
+     * constants that need to be used within an application.
+     * Those constants should not be used outside
+     * of configuration files, where this application's options cannot
+     * be reached. Using them outside this scope in this library is violating the
+     * dependency injection Majisti is trying to achieve.
+     */
+    protected function defineConstants(\Zend_Config $options)
     {
-        $selector = new \Majisti\Config\Selector($config);
-        $app      = $settings->application;
-        $majisti  = $settings->majisti;
+        $majisti  = $options->majisti;
+        $majistix = $options->majistix;
+        $app      = $majisti->application;
+
+        define('MAJISTI',         $majisti->path);
+        define('MAJISTI_ROOT',    $majisti->root);
+        define('MAJISTI_PUBLIC',  $majisti->public);
+
+        define('MAJISTIX',             $majistix->path);
+        define('MAJISTIX_PUBLIC',      $majistix->public);
+
+        /** @staticvar Majisti's application path */
+        define('MAJISTI_APPLICATION',             $app->path);
+        define('MAJISTI_APPLICATION_NAMESPACE',   $app->namespace);
+        define('MAJISTI_APPLICATION_ROOT',        $app->root);
+        define('MAJISTI_APPLICATION_PUBLIC',      $app->public);
+        define('MAJISTI_APPLICATION_LIBRARY',     $app->library);
+        define('MAJISTI_APPLICATION_ENVIRONMENT', $app->environment);
+
+        define('MAJISTI_APPLICATION_BASEURL',     $app->baseUrl);
+        define('MAJISTI_APPLICATION_URL',         $app->url);
+    }
+
+    protected function defineEnvironmentDependantConstants(\Zend_Config $options)
+    {
+
+    }
+
+    protected function defineConfigurableConstants(\Zend_Config $config)
+    {
+
+    }
+
+    protected function initEnvironmentDependantOptions(\Zend_Config $options)
+    {
+        $selector = new \Majisti\Config\Selector($options);
+        $majisti  = $options->majisti;
+        $app      = $majisti->application;
+
+        $request = new \Zend_Controller_Request_Http();
 
         /*
          * Majisti's library public directory, a static url could had been
          * provided in the configuration.
          * exemple: http://static.mydomain.com
-         *
-         * otherwise it is mapped to public/development
-         * for development and testing environments
-         * and public/production for staging and production ones.
          */
-        $majisti->public = $selector->find('majisti.public', false);
-
-        if( !$majisti->public ) {
-            $majisti->public = "{$app->urlPrefix}/{$majisti->folder}/public";
+        if( $url = $selector->find('majisti.url', false) ) {
+            $majisti->url = "{$request->getScheme()}://$url";
+        } else {
+            $majisti->url = str_replace(
+                realpath(rtrim($_SERVER['DOCUMENT_ROOT'], '/')),
+                '',
+                $majisti->public
+            );
         }
 
-        $majisti->url     = "{$majisti->public}/majisti";
-        $majisti->styles  = "{$majisti->url}/styles";
-        $majisti->scripts = "{$majisti->url}/scripts";
-        $majisti->images  = "{$majisti->url}/images";
+        define('MAJISTI_URL', $majisti->url);
 
-        define('MAJISTI_PUBLIC',      $majisti->public);
-        define('MAJISTI_URL_STYLES',  $majisti->styles);
-        define('MAJISTI_URL_SCRIPTS', $majisti->scripts);
-        define('MAJISTI_URL_IMAGES',  $majisti->images);
-
-        $majistix = $settings->majistix;
-
-        $majistix->url = "{$majisti->public}/majistix";
+//        $majistix = $majisti->majistix;
+//
+//        $majistix->url = "{$majisti->public}/majistix";
 
         /*
          * the majisti[x]'s public folders according
          * to the static url previously setup
          */
-        define('MAJISTI_URL',  MAJISTI_PUBLIC . '/majisti');
-        define('MAJISTIX_URL', MAJISTI_PUBLIC . '/majistix');
-
-        define('MAJISTIX_URL_STYLES',  MAJISTIX_URL . '/styles');
-        define('MAJISTIX_URL_SCRIPTS', MAJISTIX_URL . '/scripts');
-        define('MAJISTIX_URL_IMAGES',  MAJISTIX_URL . '/images/common');
+//        define('MAJISTIX_URL', $majistix->url);
 
         /* jQuery urls */
-        define('MAJISTI_JQUERY',          MAJISTI_PUBLIC . '/jquery');
-        define('MAJISTI_JQUERY_UI',       MAJISTI_JQUERY         . '/ui');
-        define('MAJISTIX_JQUERY_PLUGINS', MAJISTIX_URL   . '/jquery/plugins');
-        define('MAJISTIX_JQUERY_STYLES',  MAJISTIX_URL   . '/jquery/styles');
-        define('MAJISTIX_JQUERY_THEMES',  MAJISTIX_URL   . '/jquery/themes');
+//        $majisti->jquery = new \Zend_Config(array(), array('allowModifications' => true));
+//
+//        define('MAJISTI_JQUERY',          MAJISTI_PUBLIC . '/jquery');
+//        define('MAJISTI_JQUERY_UI',       MAJISTI_JQUERY . '/ui');
+//        define('MAJISTIX_JQUERY_PLUGINS', MAJISTIX_URL   . '/jquery/plugins');
+//        define('MAJISTIX_JQUERY_STYLES',  MAJISTIX_URL   . '/jquery/styles');
+//        define('MAJISTIX_JQUERY_THEMES',  MAJISTIX_URL   . '/jquery/themes');
 
         /* locales */
-        $locales        = \Majisti\Application\Locales::getInstance();
-        $currentLocale  = strtolower($locales->getCurrentLocale()->toString());
-        $defaultLocale  = strtolower($locales->getDefaultLocale()->toString());
+//        $locales        = \Majisti\Application\Locales::getInstance();
+//        $currentLocale  = strtolower($locales->getCurrentLocale()->toString());
+//        $defaultLocale  = strtolower($locales->getDefaultLocale()->toString());
 
-        define('MAJISTI_LOCALE_CURRENT', $currentLocale);
-        define('MAJISTI_LOCALE_DEFAULT', $defaultLocale);
+//        define('MAJISTI_LOCALE_CURRENT', $currentLocale);
+//        define('MAJISTI_LOCALE_DEFAULT', $defaultLocale);
     }
 
     public function defineSettingsAliases(\Zend_Config $settings)
@@ -241,9 +256,9 @@ class Application
      *
      * @return \Zend_Config
      */
-    protected function loadConfiguration(\Zend_Config $options)
+    protected function getConfiguration(\Zend_Config $options)
     {
-        $app = $options->application;
+        $app = $options->majisti->application;
 
         $defaultConfig = new \Zend_Config_Ini(dirname(__FILE__) .
             '/Application/Configs/core.ini', $app->environment, true);
@@ -254,9 +269,12 @@ class Application
                 dirname($concreteConfigPath) . "/ is mandatory!");
         }
 
-        return $defaultConfig->merge(new \Zend_Config_Ini(
-            $concreteConfigPath, $app->environment, true))->merge(
-            $options);
+        return $defaultConfig->merge($options)
+            ->merge(new \Zend_Config_Ini(
+                $concreteConfigPath,
+                $app->environment, true
+            ))
+        ;
     }
 
     static public function setOptions(array $options)

@@ -1,11 +1,13 @@
 <?php
 
+namespace Majisti\View\Helper;
+
 /**
  * @desc Retrieves a model from the model container.
  *
  * @author Majisti
  */
-class Majisti_View_Helper_Model
+class Model extends AbstractHelper
 {
     /**
      * @desc Retrieves a model from the container. If the model was a classname,
@@ -31,7 +33,7 @@ class Majisti_View_Helper_Model
     public function model($key, $namespace = 'default',
         $returnModel = null, array $args = array())
     {
-        $modelContainer = Zend_Controller_Front::getInstance()
+        $modelContainer = \Zend_Controller_Front::getInstance()
             ->getParam('bootstrap')
             ->getResource('ModelContainer');
 
