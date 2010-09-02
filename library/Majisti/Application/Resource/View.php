@@ -3,7 +3,7 @@
 namespace Majisti\Application\Resource;
 
 /**
- * @desc View resource that configurates and returns an application ready
+ * @desc View resource that configures and returns an application ready
  * view that will be used by mostly the entire application.
  *
  * @author Majisti
@@ -11,6 +11,16 @@ namespace Majisti\Application\Resource;
  */
 class View extends \Zend_Application_Resource_View
 {
+    /**
+     * @return \Zend_Config The settings needed for paths
+     */
+    private function getSettings()
+    {
+        $appSettings = $this->getBootstrap()->getApplication()->getOptions();
+
+        return new \Zend_Config($appSettings['majisti']);
+    }
+
     /**
      * @desc Returns the configured Majisti\View
      *
@@ -34,28 +44,31 @@ class View extends \Zend_Application_Resource_View
             return $this->_view;
         }
 
-        $options = $this->getOptions();
-        $view    = new \Majisti\View($options);
+        $options     = $this->getOptions();
+        $view        = new \Majisti\View($options);
+        $settings    = $this->getSettings();
 
         /* Majisti view helpers */
-        $view->addHelperPath('Majisti/View/Helper/', 'Majisti_View_Helper');
+//        $view->addHelperPath('Majisti/View/Helper/', 'Majisti_View_Helper');
         $view->addHelperPath('Majisti/View/Helper/', 'Majisti\View\Helper\\');
 
         /* MajistiX view helpers */
-        $view->addHelperPath('MajistiX/View/Helper/', 'MajistiX_View_Helper');
+//        $view->addHelperPath('MajistiX/View/Helper/', 'MajistiX_View_Helper');
         $view->addHelperPath('MajistiX/View/Helper/', 'MajistiX\View\Helper\\');
 
         /* add application's library view helpers and scripts */
-        $view->addHelperPath(MAJISTI_APPLICATION_LIBRARY . '/views/helpers',
-                MAJISTI_APPLICATION_NAMESPACE . '_View_Helper');
-        $view->addHelperPath(MAJISTI_APPLICATION_LIBRARY . '/views/helpers',
-                MAJISTI_APPLICATION_NAMESPACE . '\View\Helper\\'); /* namespaces */
-        $view->addScriptPath(MAJISTI_APPLICATION_LIBRARY . '/views/scripts');
+        $view->addHelperPath(
+            $settings->application->library    . '/views/helpers',
+            $settings->application->namespace  . '\View\Helper\\'
+        );
+
+        $view->addScriptPath($settings->application->library . '/views/scripts');
 
         /* ZendX JQuery */
         $view->addHelperPath(
-                'ZendX/JQuery/View/Helper',
-                'ZendX_JQuery_View_Helper');
+            'ZendX/JQuery/View/Helper',
+            'ZendX_JQuery_View_Helper'
+        );
 
         $view->doctype('XHTML1_STRICT');
 
@@ -77,10 +90,11 @@ class View extends \Zend_Application_Resource_View
     protected function resolveJQuery($view, $options)
     {
         $selector = new \Majisti\Config\Selector(new \Zend_Config($options));
+        $settings = $this->getSettings();
 
         /* jQuery and UI */
-        $view->jQuery()->setLocalPath(JQUERY    . '/jquery.js');
-        $view->jQuery()->setUiLocalPath(JQUERY  . '/ui.js');
+        $view->jQuery()->setLocalPath($settings->jquery    . '/jquery.js');
+        $view->jQuery()->setUiLocalPath($settings->jquery  . '/ui.js');
 
         /* paths given, enable and set paths */
         $uiLocalPath = false;
@@ -97,15 +111,15 @@ class View extends \Zend_Application_Resource_View
          * enabled or enable when jQuery is explicitely enabled but no path was
          * specified.
          */
-        $enabled    = $selector->find('jquery.enable', FALSE);
-        $uiEnabled  = $selector->find('jquery.ui.enable', FALSE);
+        $enabled    = $selector->find('jquery.enable', null);
+        $uiEnabled  = $selector->find('jquery.ui.enable', null);
 
-        /* upper case FALSE means the selection was not found */
-        if( ($localPath && FALSE === $enabled) || $enabled) {
+        /* null means the selection was not found */
+        if( ($localPath && null === $enabled) || $enabled) {
             $view->jQuery()->enable();
         }
 
-        if( ($uiLocalPath && FALSE === $uiEnabled) || $uiEnabled) {
+        if( ($uiLocalPath && null === $uiEnabled) || $uiEnabled) {
             $view->jQuery()->uiEnable();
         }
     }

@@ -1,12 +1,14 @@
 <?php
 
+namespace Majisti\View\Helper;
+
 /**
  * @desc Locale view helper to retrieve the singleton instance of
  * \Majisti\Application\Locales to help control language switching.
  *
  * @author Majisti
  */
-class Majisti_View_Helper_Locale
+class Locale extends AbstractHelper
 {
     /**
      * @var \Majisti\Application\Locales

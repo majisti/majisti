@@ -1,6 +1,8 @@
 <?php
 
-class Majisti_View_Helper_Request extends Zend_View_Helper_Abstract
+namespace Majisti\View\Helper;
+
+class Request extends AbstractHelper
 {
     public function request()
     {

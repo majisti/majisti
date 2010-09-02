@@ -22,11 +22,12 @@ class I18n extends \Zend_Application_Resource_ResourceAbstract
      */
     protected function initForm()
     {
-        $locales = \Majisti\Application\Locales::getInstance();
+        $locales     = \Majisti\Application\Locales::getInstance();
+        $appSettings = $this->getBootstrap()->getOptions();
 
         $translator = new \Zend_Translate(
             'array',
-            MAJISTI_ROOT . '/resources/languages',
+            $appSettings['majisti']['root'] . '/resources/languages',
             $locales->getCurrentLocale(),
             array('scan' => \Zend_Translate_Adapter::LOCALE_DIRECTORY)
         );
