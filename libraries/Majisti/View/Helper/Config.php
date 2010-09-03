@@ -4,7 +4,7 @@ namespace Majisti\View\Helper;
 
 class Config extends AbstractHelper
 {
-    public function config($selection)
+    public function helper($selection)
     {
         $selector = $this->getSelector();
 

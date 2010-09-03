@@ -30,7 +30,7 @@ class Model extends AbstractHelper
      * @return A laziliy loaded model if it was never instanciated, the contained
      * model if it was already loaded
      */
-    public function model($key, $namespace = 'default',
+    public function helper($key, $namespace = 'default',
         $returnModel = null, array $args = array())
     {
         $modelContainer = \Zend_Controller_Front::getInstance()

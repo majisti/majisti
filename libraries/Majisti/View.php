@@ -13,6 +13,25 @@ namespace Majisti;
  */
 class View extends \Zend_View 
 {
+    /*
+     * (non-phpDoc) 
+     * @see Inherited documentation.
+     * Workaround for ZF-7907. Namespaced view helpers
+     * must use the helper function for proxy invocation.
+     */
+    public function __call($name, $args)
+    {
+        $helper = $this->getHelper($name);
+
+        if ( method_exists($helper, $name) ) {
+            $methodName = $name;
+        } else {
+            $methodName = 'helper';
+        }
+
+        return call_user_func_array(array($helper, $methodName), $args);
+    }
+
     /**
      * @desc Traduction function that proxies to the translate view helper.
      * 
