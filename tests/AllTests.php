@@ -1,13 +1,12 @@
 <?php
 
-namespace Majisti\Test\All;
+namespace Majisti\Test\Library;
 
 require_once 'TestHelper.php';
 
 /**
  * @desc 
- * @author Majisti
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @author
  */
 class AllTests extends \Majisti\Test\TestSuite
 {
@@ -22,8 +21,7 @@ class AllTests extends \Majisti\Test\TestSuite
     {
         $suite = new self('Majisti Framework - All tests');
         
-        require_once 'library/AllTests.php';
-        $suite->addTest(\Majisti\Test\Library\AllTests::suite());
+        $suite->addTestSuite(\Majisti\AllTests::suite());
         
         return $suite;
     }
