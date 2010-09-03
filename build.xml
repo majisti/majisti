@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-   Project: Majisti Framework
+   Project: Majisti Library
    Author: Steven Rosato
    Ant file version: 1.0
    
@@ -10,7 +10,7 @@
        - First core builds: tests/code-coverage and manual
    
    This ant file is used by Majisti's Bamboo server located at:
-       http://integration.majisti.com/
+       http://ci.majisti.com/
    
    Requirements:
    
