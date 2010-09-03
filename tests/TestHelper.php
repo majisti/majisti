@@ -56,14 +56,10 @@ class TestHelper
      */
     protected function initIncludePaths()
     {
-        $majistiRoot = $this->getLibraryRoot();
+        $root = $this->getLibraryRoot();
         $includePaths = array(
-            $majistiRoot,
-            "$majistiRoot/externals",
-            "$majistiRoot/library",
-            "$majistiRoot/tests",
-            "$majistiRoot/tests/externals",
-            "$majistiRoot/tests/library",
+            "{$root}/tests",
+            "{$root}/libraries",
             get_include_path()
         );
 
@@ -74,7 +70,7 @@ class TestHelper
     {
         ini_set('memory_limit', '256M');
 
-        $_SERVER['DOCUMENT_ROOT'] = realpath(__DIR__ . '/../../');
+//        $_SERVER['DOCUMENT_ROOT'] = realpath(__DIR__ . '/../../');
     }
 
     /**
@@ -174,17 +170,17 @@ class TestHelper
 
     protected function initMiscelleneous()
     {
-        $majistiRoot = $this->getLibraryRoot();
+//        $majistiRoot = $this->getLibraryRoot();
         $request     = $this->getRequest();
 
         /* instanciate a mock application */
-        define('MAJISTI_FOLDER_NAME', dirname($majistiRoot));
-        define('APPLICATION_NAME', 'Majisti_Test');
-        define('APPLICATION_ENVIRONMENT', 'development');
+//        define('MAJISTI_FOLDER_NAME', dirname($majistiRoot));
+//        define('APPLICATION_NAME', 'Majisti_Test');
+//        define('APPLICATION_ENVIRONMENT', 'development');
 
-        \Majisti\Application::setApplicationPath(
-            $majistiRoot . '/tests/library/Majisti/Application/_project/application');
-        \Majisti\Application::getInstance()->bootstrap();
+//        \Majisti\Application::setApplicationPath(
+//            $majistiRoot . '/tests/library/Majisti/Application/_project/application');
+//        \Majisti\Application::getInstance()->bootstrap();
 
         /* be a little bit more verbose according to request param */
         if( $request->has('v') ) {
@@ -194,6 +190,7 @@ class TestHelper
         }
 
         \Zend_Session::$_unitTestEnabled = true;
+        \Zend_Session::start();
     }
 
     /**
@@ -213,6 +210,6 @@ class TestHelper
      */
     public function getLibraryRoot()
     {
-        return realpath(__DIR__ . '/../');
+        return dirname(__DIR__);
     }
 }

@@ -27,6 +27,8 @@ class LayoutSwitcherTest extends \Majisti\Test\TestCase
      */
     public $plugin;
 
+    public $appPath;
+
     /**
      * @desc Setups the test case
      */
@@ -35,11 +37,14 @@ class LayoutSwitcherTest extends \Majisti\Test\TestCase
         /* empty request object */
         $this->request = new \Zend_Controller_Request_Http();
 
+        //FIXME: use dependancy injection
+        $this->appPath = dirname(dirname(__DIR__)) . '/Application/_project/application';
+
         /*
          * mocking a concrete project Layout object with a
          * layouts path given as a string.
          */
-        $this->plugin  = new LayoutSwitcher(new \Zend_Layout(APPLICATION_PATH .
+        $this->plugin  = new LayoutSwitcher(new \Zend_Layout($this->appPath .
                 "/modules/company/views/layouts"));
 
         /* chosen module name for testing is company */
@@ -79,7 +84,7 @@ class LayoutSwitcherTest extends \Majisti\Test\TestCase
          * set
          */
         $layout = $this->plugin->getLayout();
-        $this->assertEquals(APPLICATION_PATH . 
+        $this->assertEquals($this->appPath .
                 "/modules/{$moduleName}/views/layouts",
                 $layout->getLayoutPath());
     }
