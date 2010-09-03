@@ -19,7 +19,7 @@ class Locale extends AbstractHelper
      * @desc Returns the locale session instance for locale handling.
      * @return \Majisti\Application\Locales
      */
-    public function locale()
+    public function helper()
     {
         return $this->getLocale();
     }
