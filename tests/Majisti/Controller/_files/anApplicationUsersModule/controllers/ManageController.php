@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__) . '/../../aLibraryUsersModule/controllers/ManageController.php';
+require_once __DIR__ . '/../../aLibraryUsersModule/controllers/ManageController.php';
 
 class Users_ManageController extends \aLibrary\Controllers\Users_ManageController
 {

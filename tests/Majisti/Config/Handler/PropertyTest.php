@@ -35,7 +35,7 @@ class PropertyTest extends \Majisti\Test\TestCase
      */
     public function setUp()
     {
-        $this->basePath = dirname(__FILE__) . '/../_files/property';
+        $this->basePath = __DIR__ . '/../_files/property';
         
         $this->_validProperties = new \Zend_Config_Ini(
             $this->basePath . '/validProperties.ini', 'production' ,true);

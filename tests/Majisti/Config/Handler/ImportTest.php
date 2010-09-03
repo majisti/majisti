@@ -47,10 +47,10 @@ class ImportTest extends \Majisti\Test\TestCase
      */
     public function setUp()
     {
-        $this->basePath     = dirname(__FILE__) . '/../_files/import';
+        $this->basePath     = __DIR__ . '/../_files/import';
         $this->serverDir    = getcwd();
         
-        chdir(realpath(dirname(__FILE__) . '/../..'));
+        chdir(realpath(__DIR__ . '/../..'));
         
         $this->_validImport = new \Zend_Config_Ini($this->basePath .
             '/validImports.ini', 'production' ,true);

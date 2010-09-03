@@ -111,7 +111,7 @@ class Application
         /* majisti paths */
 //        $majisti = $options->majisti;
 
-//        $majisti->path   = dirname(__FILE__);
+//        $majisti->path   = __DIR__;
 //        $majisti->root   = dirname(dirname($majisti->path));
 //        $majisti->public = "{$majisti->root}/public/majisti";
 //        $majisti->folder = basename($majisti->root);
@@ -272,7 +272,7 @@ class Application
     {
         $app = $options->majisti->app;
 
-        $defaultConfig = new \Zend_Config_Ini(dirname(__FILE__) .
+        $defaultConfig = new \Zend_Config_Ini(__DIR__ .
             '/Application/Configs/core.ini', $app->env, true);
 
         $concreteConfigPath = $app->path . '/application/configs/core.ini';

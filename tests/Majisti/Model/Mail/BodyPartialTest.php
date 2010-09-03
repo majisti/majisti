@@ -44,7 +44,7 @@ class BodyPartialTest extends \Majisti\Test\TestCase
     public function setUp()
     {
         $this->view = new \Majisti\View();
-        $this->view->addScriptPath(dirname(__FILE__) . '/_partials');
+        $this->view->addScriptPath(__DIR__ . '/_partials');
 
         $this->bodyPartial = new BodyPartial('simple.phtml', $this->view);
         $this->bodyPartialWithNoView = new BodyPartial('simple.phtml');

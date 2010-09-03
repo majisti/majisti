@@ -30,7 +30,7 @@ class ConstantsTest extends \Majisti\Test\TestCase
      */
     public function setUp()
     {
-        $this->applicationPath = dirname(__FILE__) . '/_project/application';
+        $this->applicationPath = __DIR__ . '/_project/application';
         \Zend_Registry::set('Majisti_Config', new \Zend_Config(array()));
         $this->request = new \Zend_Controller_Request_Http();
     }
