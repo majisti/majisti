@@ -32,6 +32,11 @@ class Locale extends \Zend_Application_Resource_Locale
                $locales->addLocale(new \Zend_Locale($availLocale));
             }
 
+            /* set default if given */
+            if( $defaultLocale = $selector->find('default', false) ) {
+                $locales->setDefaultLocale(new \Zend_Locale($defaultLocale));
+            }
+
             $defaultLocale = $locales->getDefaultLocale();
             \Zend_Locale::setDefault($defaultLocale);
             \Zend_Registry::set(static::DEFAULT_REGISTRY_KEY, $defaultLocale);

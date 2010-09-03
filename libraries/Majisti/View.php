@@ -13,6 +13,16 @@ namespace Majisti;
  */
 class View extends \Zend_View 
 {
+    /**
+     * @var mixed
+     */
+    protected $_return;
+    
+    /**
+     * @var bool 
+     */
+    protected $_enableOutput;
+    
     /*
      * (non-phpDoc) 
      * @see Inherited documentation.
@@ -159,5 +169,91 @@ class View extends \Zend_View
 
             throw $e;
         }
+    }
+
+    /**
+     * @desc Sets a mixed value that will be returned when the render()
+     * function will be called instead of an output buffered capture.
+     * This is particularly usefull when a view
+     * is not outputing anything but rather preparing a certain object
+     * without using the placeholders and is returning that
+     * prepared object to the caller. Note that you can still enable the output,
+     * but the ouput will be printed barely and the object will be returned after,
+     * meaning that output buffering capture should still be used in those
+     * specific use cases.
+     *
+     * @param mixed $return The returned value
+     * @param bool $enableOutput [opt] Enable output using a simple print
+     * when rendering.
+     *
+     * @return \Majisti\View this
+     */
+    public function setRenderReturn($return, $enableOutput = true)
+    {
+        $this->_return       = $return;
+        $this->_enableOutput = $enableOutput;
+
+        return $this;
+    }
+
+    /**
+     * @desc Returns whether the view will return a value upon
+     * render() call.
+     *
+     * @return bool True if the view contains a return value.
+     */
+    public function hasRenderReturn()
+    {
+        return null !== $this->_return;
+    }
+
+    /**
+     * @desc Clears the view's render value.
+     *
+     * @return \Majisti\View this
+     */
+    public function clearRenderReturn()
+    {
+        $this->_return = null;
+
+        return $this;
+    }
+
+    /**
+     * @desc Returns the view's render value.
+     *
+     * @return mixed Returns the value that gets returned
+     * upon render() call.
+     */
+    public function getRenderReturn()
+    {
+        return is_object($this->_return)
+            ? clone $this->_return
+            : $this->_return;
+    }
+
+    /**
+     * @desc Renders normally unless setRenderReturn() was previouslly called
+     * in which case the view still gets rendered, but the prepared value will
+     * be returned instead of an output buffered capture.
+     *
+     * @param string $name
+     * @return mixed
+     */
+    public function render($name)
+    {
+        $render = parent::render($name);
+
+        if( $this->hasRenderReturn() ) {
+            if( $this->_enableOutput ) {
+                print $render;
+            }
+            $return = $this->getRenderReturn();
+            $this->clearRenderReturn();
+
+            return $return;
+        }
+
+        return $render;
     }
 }
