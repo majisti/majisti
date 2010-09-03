@@ -42,7 +42,7 @@ class MinifierMock extends \Majisti\Util\Minifying\AbstractMinifier
      */
     public function minifyCss($content, $options = array())
     {
-        $dir = dirname(dirname(__FILE__)) . '/_files';
+        $dir = dirname(__DIR__) . '/_files';
 
         switch( $this->getState() ) {
             case self::ALL_STATE:

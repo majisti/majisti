@@ -27,7 +27,7 @@ class AutoloaderTest extends \Majisti\Test\TestCase
     protected function setUp()
     {
         $this->serverDir = getcwd();
-        chdir(realpath(dirname(__FILE__) . '/../'));
+        chdir(realpath(__DIR__ . '/../'));
         $this->_autoloader = new Autoloader();
     }
 

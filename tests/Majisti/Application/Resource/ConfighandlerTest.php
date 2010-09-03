@@ -5,8 +5,8 @@ namespace Majisti\Application\Resource;
 require_once 'TestHelper.php';
 
 /* additionnal classes needed for testing */
-require_once dirname(__FILE__) . '/_configHandler/Custom.php';
-require_once dirname(__FILE__) . '/_configHandler/CustomNamespace.php';
+require_once __DIR__ . '/_configHandler/Custom.php';
+require_once __DIR__ . '/_configHandler/CustomNamespace.php';
 
 /**
  * @desc ConfighandlerTest asserts that the Confighandler class
@@ -48,7 +48,7 @@ class ConfighandlerTest extends \Majisti\Test\TestCase
     public function setUp()
     {
         $this->config = new \Zend_Config_Ini(
-            dirname(__FILE__) . '/_configHandler/config.ini',
+            __DIR__ . '/_configHandler/config.ini',
             'production',
             array('allowModifications' => true)
         );

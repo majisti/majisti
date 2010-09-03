@@ -60,8 +60,8 @@ class XmlTest extends \Majisti\Test\TestCase
     {
        $this->useBBCodeMarkup  = true;
 
-       $this->fooPath = dirname(__FILE__) . '/_files/foo.xml';
-       $this->barPath = dirname(__FILE__) . '/_files/bar.xml';
+       $this->fooPath = __DIR__ . '/_files/foo.xml';
+       $this->barPath = __DIR__ . '/_files/bar.xml';
 
        $this->xmlWithFr     = new Xml($this->fooPath);
        $this->xmlWithoutFr  = new Xml($this->barPath);

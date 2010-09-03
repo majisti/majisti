@@ -72,7 +72,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
 
     public function __construct()
     {
-        $this->filesPath = realpath(dirname(__FILE__) . '/../_files');
+        $this->filesPath = realpath(__DIR__ . '/../_files');
         $this->filesUrl  = '/majisti/tests/library/Majisti/View/Helper/_files';
     }
 

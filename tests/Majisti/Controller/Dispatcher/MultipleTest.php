@@ -27,7 +27,7 @@ class MultipleTest extends \Zend_Controller_Dispatcher_StandardTest
     public function __construct($name = null)
     {
         parent::__construct($name);
-        $this->_filesPath = realpath(dirname(__FILE__) . '/../_files');
+        $this->_filesPath = realpath(__DIR__ . '/../_files');
     }
 
     static public function runAlone()

@@ -123,7 +123,7 @@ final class Loader
      */
     private function searchMajistiFolderName($maxDepth)
     {
-        $upDir = dirname(dirname(__FILE__));
+        $upDir = dirname(__DIR__);
 
         $foundDir = false;
         while( !$foundDir && $maxDepth > 0 ) {
@@ -151,7 +151,7 @@ final class Loader
     static public function getApplication()
     {
         if( null === self::$_application ) {
-            \Majisti\Application::setApplicationPath(dirname(__FILE__));
+            \Majisti\Application::setApplicationPath(__DIR__);
             self::$_application = \Majisti\Application::getInstance();
         }
 

@@ -131,7 +131,7 @@ class Auth_IndexController extends Zend_Controller_Action
     protected function _createAdapter($postData)
     {
         return new Zend_Auth_Adapter_Digest(
-            dirname(__FILE__) . '/../models/identities.txt',
+            __DIR__ . '/../models/identities.txt',
             'realm',
             $postData['login'],
             $postData['pass']

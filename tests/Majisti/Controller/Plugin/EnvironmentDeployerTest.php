@@ -34,7 +34,7 @@ class EnvironmentDeployerTest extends \Majisti\Test\TestCase
     {
         $this->envDeployer  = new EnvironmentDeployer();
         $this->headLink     = new \Zend_View_Helper_HeadLink();
-        $this->filesPath    = dirname(__FILE__) . '/_files';
+        $this->filesPath    = __DIR__ . '/_files';
 
         $this->prepareCss();
     }
