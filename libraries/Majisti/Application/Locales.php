@@ -260,6 +260,8 @@ class Locales
      *
      * @param Zend_Locale $locale The locale
      * @throws Exeption if the default locale is not an available locale
+     *
+     * @return Locales Provides fluent interface
      */
     public function setDefaultLocale(\Zend_Locale $locale)
     {
@@ -268,13 +270,16 @@ class Locales
         }
 
         $this->_defaultLocale = $locale;
+
+        return $this;
     }
 
     /**
      * @desc Adds a locale to this list of available locales.
      *
      * @param \Zend_Locale $locale The locale
-     * @return Locales this
+     *
+     * @return Locales Provides fluent interface
      */
     public function addLocale(\Zend_Locale $locale)
     {
@@ -289,7 +294,8 @@ class Locales
      * @desc Add multiple locales at once to the list of available locales.
      *
      * @param array $locales An array of \Zend_Locales
-     * @return Locales this
+     *
+     * @return Locales Provides fluent interface
      */
     public function addLocales(array $locales)
     {
@@ -302,10 +308,14 @@ class Locales
 
     /**
      * @desc Clears all the available locales
+     *
+     * @return Locales Provides fluent interface
      */
     public function clearLocales()
     {
         $this->_locales = array();
+
+        return $this;
     }
 
     /**
