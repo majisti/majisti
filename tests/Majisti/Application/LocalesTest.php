@@ -61,20 +61,11 @@ class LocalesTest extends \Majisti\Test\TestCase
     public $altLocales;
 
     /**
-     * @desc Namespace cleanup since an application was already
-     * instantiated in the test helper
-     */
-    public function __construct()
-    {
-        \Zend_Session::namespaceUnset('Majisti_Locale');
-    }
-    
-    /**
      * @desc Setups the test case
      */
     public function setUp()
     {
-        \Zend_Session::start();
+        $this->restartSession();
 
         $this->en = new \Zend_Locale('en');
         $this->fr = new \Zend_Locale('fr');
@@ -90,7 +81,10 @@ class LocalesTest extends \Majisti\Test\TestCase
         $this->locales->setLocales($this->mainLocales);
         $this->locales->reset();
     }
-    
+
+    /**
+     * @desc Restarts the session
+     */
     protected function restartSession()
     {
         \Zend_Session::writeClose();

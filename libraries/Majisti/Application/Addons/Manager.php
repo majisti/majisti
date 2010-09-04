@@ -167,7 +167,7 @@ class Manager
      * @param string $namespace The namespace it operates under
      * @return undetermined yet
      * @throws Exception If the modules's controllers directory is not
-     * readable or existant.
+     * readable or inexistant.
      */
     public function loadModule($name, $namespace)
     {

@@ -1,4 +1,5 @@
 <?php
+
 namespace Majisti;
 
 require_once 'TestHelper.php';
@@ -18,7 +19,7 @@ class AllTests extends \Majisti\Test\TestSuite
      */
     public static function suite()
     {
-        $suite = new self('Majisti Framework - All tests');
+        $suite = new self('Majisti Library - All tests');
         
         $suite->addTest(Folder\AllTests::suite());
         $suite->addTestSuite(__NAMESPACE__ . '\FooTest');

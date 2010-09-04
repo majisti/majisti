@@ -8,7 +8,7 @@ class AllTests extends \Majisti\Test\TestSuite
 {
     public static function suite()
     {
-        $suite = new self('Majisti Framework - Util - Model - All tests');
+        $suite = new self('Majisti Library - Util - Model - All tests');
 
         $suite->addTestCase(__NAMESPACE__ . '\ConfigTest');
         $suite->addTestCase(__NAMESPACE__ . '\ViewTest');

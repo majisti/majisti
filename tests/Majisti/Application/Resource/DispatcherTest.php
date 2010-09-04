@@ -21,8 +21,7 @@ class DispatcherTest extends \Majisti\Test\TestCase
     public function setUp()
     {
         $this->dispatcher = new Dispatcher(array(
-            'bootstrap' => new \Majisti\Application\Bootstrap(
-                \Majisti\Application::getInstance())
+            'bootstrap' => $this->getHelper()->createBootstrapInstance()
         ));
 
         $this->dispatcher->setOptions(array('fallback' => array(

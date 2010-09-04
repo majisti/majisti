@@ -12,7 +12,7 @@ namespace Majisti\Test;
  */
 class TestCase extends \PHPUnit_Framework_TestCase
 {
-    static protected $_class = __CLASS__;
+    static protected $_class;
 
     /**
      * @desc Retrieves the extending class via late static binding.
@@ -24,14 +24,23 @@ class TestCase extends \PHPUnit_Framework_TestCase
      * extending class or if the $_class is null. setClass() can also
      * be used.
      */
+//    static public function getClass()
+//    {
+//        if( __CLASS__ === static::$_class || null === static::$_class ) {
+//            throw new Exception('You must override with late static binding ' .
+//                'the protected static variable $_class with __CLASS__ or ' .
+//                'through the setClass function');
+//        }
+//
+//        return static::$_class;
+//    }
+
     static public function getClass()
     {
-        if( __CLASS__ === static::$_class || null === static::$_class ) {
-            throw new Exception('You must override with late static binding ' . 
-                'the protected static variable $_class with __CLASS__ or ' .
-                'through the setClass function');
+        if( null === static::$_class ) {
+            static::$_class = get_called_class();
         }
-        
+
         return static::$_class;
     }
 
@@ -60,9 +69,14 @@ class TestCase extends \PHPUnit_Framework_TestCase
             if( !count($arguments) ) {
                 $arguments = \Majisti\Test\Runner::getDefaultArguments();
             }
-            
+
             \Majisti\Test\Runner::run(
                 new TestSuite(static::getClass()), $arguments);
         }
+    }
+
+    public function getHelper()
+    {
+        return \Majisti\Test\Helper::getInstance();
     }
 }

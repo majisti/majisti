@@ -23,7 +23,10 @@ class BootstrapTest extends \Zend_Application_Bootstrap_BootstrapTest
     {
         parent::setUp();
 
-        $this->majistiBootstrap = new Bootstrap($this->application);
+        $helper = \Majisti\Test\Helper::getInstance();
+
+        $helper->initAutoloaders();
+        $this->majistiBootstrap = $helper->createBootstrapInstance();
     }
 
     static public function runAlone()
@@ -42,7 +45,7 @@ class BootstrapTest extends \Zend_Application_Bootstrap_BootstrapTest
         $autoloader  = \Zend_Loader_Autoloader::getInstance();
         $autoloaders = $autoloader->getAutoloaders();
 
-        $this->assertEquals(1, count($autoloaders));
+        $this->assertEquals(2, count($autoloaders));
         $this->assertType('Zend_Application_Module_Autoloader', $autoloaders[0]);
     }
 

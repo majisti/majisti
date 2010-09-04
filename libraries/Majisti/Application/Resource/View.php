@@ -49,11 +49,9 @@ class View extends \Zend_Application_Resource_View
         $settings    = $this->getSettings();
 
         /* Majisti view helpers */
-//        $view->addHelperPath('Majisti/View/Helper/', 'Majisti_View_Helper');
         $view->addHelperPath('Majisti/View/Helper/', 'Majisti\View\Helper\\');
 
         /* MajistiX view helpers */
-//        $view->addHelperPath('MajistiX/View/Helper/', 'MajistiX_View_Helper');
         $view->addHelperPath('MajistiX/View/Helper/', 'MajistiX\View\Helper\\');
 
         /* add application's library view helpers and scripts */

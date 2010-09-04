@@ -18,9 +18,9 @@ class AllTests extends \Majisti\Test\TestSuite
      */
     public static function suite()
     {
-        $suite = new self('Majisti Framework - View - Helper - All tests');
+        $suite = new self('Majisti Library - View - Helper - All tests');
 
-        $suite->addTestSuite(Head\AllTests::suite());
+//        $suite->addTestSuite(Head\AllTests::suite());
 
         return $suite;
     }

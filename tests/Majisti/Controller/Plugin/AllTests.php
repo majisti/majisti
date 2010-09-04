@@ -20,7 +20,7 @@ class AllTests extends \Majisti\Test\TestSuite
      */
     public static function suite()
     {
-        $suite = new self('Majisti Framework - Controller - Plugin - All tests');
+        $suite = new self('Majisti Library - Controller - Plugin - All tests');
         
         $suite->addTestCase(__NAMESPACE__ . '\I18nTest');
         $suite->addTestCase(__NAMESPACE__ . '\LayoutSwitcherTest');

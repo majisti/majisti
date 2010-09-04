@@ -6,15 +6,11 @@ require_once 'TestHelper.php';
 
 class I18nTest extends \Majisti\Test\TestCase
 {
-    static protected $_class = __CLASS__;
-
     public function setUp()
     {
-        $this->helper = \Majisti\Test\TestHelper::getInstance();
-
         $this->resource = new I18n();
         $this->resource->setBootstrap(
-            $this->helper->createBootstrapInstance()
+            $this->getHelper()->createBootstrapInstance()
         );
 
         $this->locales = \Majisti\Application\Locales::getInstance();
@@ -32,7 +28,7 @@ class I18nTest extends \Majisti\Test\TestCase
         $options = (object)$t->getOptions();
         $locales = \Majisti\Application\Locales::getInstance();
 
-        $this->assertEquals($this->helper->getMajistiPath() . '/resources/languages',
+        $this->assertEquals($this->getHelper()->getMajistiPath() . '/resources/languages',
                 $options->content);
         $this->assertEquals($this->locales->getCurrentLocale()->getLanguage(),
                 $options->locale);
