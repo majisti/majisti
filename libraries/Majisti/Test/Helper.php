@@ -220,6 +220,8 @@ class Helper
         if( 'cli' === PHP_SAPI ) {
             /* exclude those directories */
             $dirs = array(
+                'libraries/Zend',
+                'libraries/ZendX',
                 'resources',
                 'tests',
             );
@@ -242,9 +244,7 @@ class Helper
             }
 
             /* exclude specific files */
-            $files = array(
-                $majistiPath . '/library/Majisti/Application/Constants.php',
-            );
+            $files = array();
 
             foreach( $files as $file ) {
                 \PHPUnit_Util_Filter::addFileToFilter($file);
