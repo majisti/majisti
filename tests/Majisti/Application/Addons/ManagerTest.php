@@ -45,13 +45,17 @@ class ManagerTest extends \Majisti\Test\TestCase
        $this->manager     = new Manager();
        $this->basePath    = 'path0';
        $this->namespace   = 'namespace0';
+       $options           = $this->getHelper()->getOptions();
+
+       \Zend_Controller_Front::getInstance()->setDispatcher(
+           new \Majisti\Controller\Dispatcher\Multiple());
 
        $this->addonsPaths = array('namespace1' => 'path1',
                                   'namespace2' => 'path2',
                                   'namespace3' => 'path3'
                             );
-       $this->testMajistiXPath = realpath(MAJISTI_ROOT .
-                                    "/tests/library/MajistiX/_addons");
+       $this->testMajistiXPath = realpath(
+           $options['majisti']['path']  . "/tests/MajistiX/_addons");
 
        $this->manager->registerAddonsPath($this->basePath, $this->namespace);
     }

@@ -25,15 +25,6 @@ class TestCaseTest extends \Majisti\Test\TestCase
     }
     
     /**
-     * @expectedException Exception
-     */
-    public function testGetClassWithNoLateStaticBinding()
-    {
-        self::$_class = null;
-        self::getClass();
-    }
-
-    /**
      * @desc Assets that getClass returns the correct class value.
      */
     public function testGetClass()

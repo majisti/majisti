@@ -18,7 +18,7 @@ class AllTests extends \Majisti\Test\TestSuite
      */
     public static function suite()
     {
-        $suite = new self('Majisti Framework - All tests');
+        $suite = new self('Majisti Library - All tests');
 
         $suite->addTestCase(__NAMESPACE__ . '\XmlTest');
 

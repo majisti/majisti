@@ -19,7 +19,7 @@ class AllTests extends \Majisti\Test\TestSuite
      */
     public static function suite()
     {
-        $suite = new self('Majisti Framework - Test - PHPUnit - All tests');
+        $suite = new self('Majisti Library - Test - PHPUnit - All tests');
         
         $suite->addTestCase(__NAMESPACE__ . '\TestCaseTest');
         

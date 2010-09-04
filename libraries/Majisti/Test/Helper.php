@@ -3,12 +3,12 @@
 namespace Majisti\Test;
 
 /**
- * @desc This test helper is the singleton for every test case.
+ * @desc This test helper is the singleton helper for every test case.
  *
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-class TestHelper
+class Helper
 {
     static protected $_instance;
 
@@ -17,14 +17,25 @@ class TestHelper
      */
     protected $_request;
 
+    /**
+     * @var string
+     */
     protected $_testPath;
 
+    /**
+     * @var string
+     */
     protected $_majistiPath;
 
+    /**
+     * @var array
+     */
     protected $_options = array();
 
     /**
-     * @return TestHelper
+     * @desc Returns the helper's singleton instance.
+     *
+     * @return Helper
      */
     static public function getInstance()
     {
@@ -35,56 +46,88 @@ class TestHelper
         return static::$_instance;
     }
 
+    /**
+     * @desc Factory method to create a Majisti application instance.
+     *
+     * @return \Zend_Application The application instance
+     */
     public function createApplicationInstance()
     {
         $options = $this->getOptions();
-        $app = new \Zend_Application($options['majisti']['app']['path']);
+        $app = new \Zend_Application($this->getOption('majisti.app.path'));
         $app->setOptions($options);
 
         return $app;
     }
 
+    /**
+     * @desc Factory method to create a Majisti boostrap instance.
+     *
+     * @return \Majisti\Application\Bootstrap The bootstrap instance
+     */
     public function createBootstrapInstance()
     {
-        return new \Zend_Application_Bootstrap_Bootstrap(
+        return new \Majisti\Application\Bootstrap(
             $this->createApplicationInstance()
         );
     }
 
+    /**
+     * @desc Returns an option according to a CSS like selection.
+     *
+     * @param string $selection The selection
+     *
+     * @throws \Majisti\Config\Exception If the option cannot be found.
+     *
+     * @return string The option
+     */
+    public function getOption($selection)
+    {
+        $selector = new \Majisti\Config\Selector(
+            new \Zend_Config($this->getOptions()));
+
+        return $selector->find($selection);
+    }
+
+    /**
+     * @desc Returns all the helper's options as an array.
+     *
+     * @return array The options
+     */
     public function getOptions()
     {
         return $this->_options;
     }
 
-    public function setOptions($options)
+    /**
+     * @desc Sets the helper's options.
+     *
+     * @param array $options The options
+     */
+    public function setOptions(array $options)
     {
         $this->_options = $options;
     }
 
+    /**
+     * @desc Inits the helper, calling every init methods contained
+     * in the class.
+     */
     public function init()
     {
-        $this->initErrorReporting();
-        $this->initIncludePaths();
-        $this->initPhpSettings();
-        $this->initDependencies();
-        $this->initAutoloaders();
-        $this->initXdebug();
-        $this->initCodeCoverage();
-        $this->initMiscelleneous();
-    }
+        $methods = get_class_methods($this);
 
-    /**
-     * @desc set error reporting to the level to which the code must comply.
-     */
-    protected function initErrorReporting()
-    {
-        error_reporting( E_ALL | E_STRICT );
+        foreach ( $methods as $method ) {
+            if (4 < strlen($method) && 'init' === substr($method, 0, 4)) {
+                $this->$method();
+            }
+        }
     }
 
     /**
      * @desc Sets the required include paths
      */
-    protected function initIncludePaths()
+    public function initIncludePaths()
     {
         $includePaths = array(
             $this->getTestsPath(),
@@ -95,17 +138,41 @@ class TestHelper
         set_include_path(implode(PATH_SEPARATOR, $includePaths));
     }
 
-    protected function initPhpSettings()
+    /**
+     * @desc Inits the php settings
+     */
+    public function initPhpSettings()
     {
         ini_set('memory_limit', '256M');
+    }
 
-//        $_SERVER['DOCUMENT_ROOT'] = realpath(__DIR__ . '/../../');
+    /**
+     * @desc set error reporting to the level to which the code must comply.
+     */
+    public function initErrorReporting()
+    {
+        error_reporting( E_ALL | E_STRICT );
+    }
+
+    /**
+     * @desc Init autoloaders
+     */
+    public function initAutoloaders()
+    {
+        /* Zend */
+        require_once 'Zend/Loader/Autoloader.php';
+        \Zend_Loader_Autoloader::resetInstance();
+        $loader = \Zend_Loader_Autoloader::getInstance();
+
+        /* Majisti */
+        require_once 'Majisti/Loader/Autoloader.php';
+        $loader->pushAutoloader(new \Majisti\Loader\Autoloader());
     }
 
     /**
      * @desc Include all required dependencies
      */
-    protected function initDependencies()
+    public function initDependencies()
     {
         /* PHPUnit */
         $phpunit = array('Framework', 'Framework/IncompleteTestError',
@@ -118,20 +185,9 @@ class TestHelper
     }
 
     /**
-     * @desc Init autoloaders
+     * @desc Inits xdebug.
      */
-    protected function initAutoloaders()
-    {
-        /* Zend */
-        require_once 'Zend/Loader/Autoloader.php';
-        $loader = $toUnset[] = \Zend_Loader_Autoloader::getInstance();
-
-        /* Majisti */
-        require_once 'Majisti/Loader/Autoloader.php';
-        $loader->pushAutoloader(new \Majisti\Loader\Autoloader());
-    }
-
-    protected function initXdebug()
+    public function initXdebug()
     {
         /* configure xdebug for performance, if the module is enabled */
         $request = $this->getRequest();
@@ -143,7 +199,7 @@ class TestHelper
                     'xdebug.collect_params'             => 300,
                     'xdebug.var_display_max_data'       => 300,
                     'xdebug.var_display_max_children'   => 300,
-                    'xdebug.var_display_max_depth'      => 300,
+                    'xdebug.var_display_max_depth'      => 3,
                 );
 
                 foreach ($params as $key => $value) {
@@ -157,7 +213,7 @@ class TestHelper
      * @desc Code coverage filtering. Works only using
      * the command line.
      */
-    protected function initCodeCoverage()
+    public function initCodeCoverage()
     {
         $majistiPath = $this->getMajistiPath();
 
@@ -196,19 +252,12 @@ class TestHelper
         }
     }
 
-    protected function initMiscelleneous()
+    /**
+     * @desc Inits uncategorized
+     */
+    public function initMiscelleneous()
     {
-//        $majistiRoot = $this->getLibraryRoot();
         $request     = $this->getRequest();
-
-        /* instanciate a mock application */
-//        define('MAJISTI_FOLDER_NAME', dirname($majistiRoot));
-//        define('APPLICATION_NAME', 'Majisti_Test');
-//        define('APPLICATION_ENVIRONMENT', 'development');
-
-//        \Majisti\Application::setApplicationPath(
-//            $majistiRoot . '/tests/library/Majisti/Application/_project/application');
-//        \Majisti\Application::getInstance()->bootstrap();
 
         /* be a little bit more verbose according to request param */
         if( $request->has('v') ) {
@@ -217,8 +266,8 @@ class TestHelper
             ));
         }
 
-        \Zend_Session::$_unitTestEnabled = true;
         \Zend_Session::start();
+        \Zend_Session::$_unitTestEnabled = true;
     }
 
     /**
@@ -233,6 +282,11 @@ class TestHelper
         return $this->_request;
     }
 
+    /**
+     * @desc Returns Majisti's directory path.
+     *
+     * @return string Majisti's dir path
+     */
     public function getMajistiPath()
     {
         if( null === $this->_majistiPath ) {
@@ -242,13 +296,18 @@ class TestHelper
         return $this->_majistiPath;
     }
 
+    /**
+     * @desc Sets Majisti's dir path.
+     * @param string $majistiPath The dir path
+     */
     public function setMajistiPath($majistiPath)
     {
         $this->_majistiPath = $majistiPath;
     }
 
     /**
-     * @return string The test dir location.
+     * @desc Returns Majisti's directory path.
+     * @return string The test dir path.
      */
     public function getTestsPath()
     {
@@ -259,6 +318,11 @@ class TestHelper
         return $this->_testPath;
     }
 
+    /**
+     * @desc Sets Majisti's directory path.
+     *
+     * @param string $testPath The test path
+     */
     public function setTestPath($testPath)
     {
         $this->_testPath = $testPath;

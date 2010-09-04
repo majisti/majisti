@@ -3,6 +3,7 @@
 namespace Majisti\Controller\ActionHelper;
 
 require_once 'TestHelper.php';
+
 include_once 'Majisti/Controller/ActionHelper/Model.php';
 
 /**
@@ -25,6 +26,10 @@ class ModelTest extends \Majisti\Test\TestCase
 
     public function setUp()
     {
+        //FIXME: class is not using dependancy injection
+        \Zend_Registry::set('Majisti_ModelContainer',
+            new \Majisti\Model\Container());
+
         $this->_modelContainerExpected  = new \Majisti\Model\Container();
         $this->_modelContainerActual    
             = new \Majisti_Controller_ActionHelper_Model();

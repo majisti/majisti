@@ -7,7 +7,7 @@ class AllTests extends \Majisti\Test\TestSuite
 {
     public static function suite()
     {
-        $suite = new self('Majisti Framework - Util - All tests');
+        $suite = new self('Majisti Library - Util - All tests');
         
         $suite->addTestSuite(Model\AllTests::suite());
         

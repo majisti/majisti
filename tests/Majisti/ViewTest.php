@@ -129,6 +129,13 @@ class ViewTest extends \Zend_ViewTest
      * @desc Not needed to run this test class. Output buffering fails.
      */
     public function testZf995UndefinedPropertiesReturnNull() {}
+
+    public function testAddingStreamSchemeAsScriptPathShouldNotReverseSlashesOnWindows()
+    {
+        if (true === strstr(strtolower(PHP_OS), 'windows')) {
+            parent::testAddingStreamSchemeAsScriptPathShouldNotReverseSlashesOnWindows();
+        }
+    }
 }
 
 ViewTest::runAlone();
