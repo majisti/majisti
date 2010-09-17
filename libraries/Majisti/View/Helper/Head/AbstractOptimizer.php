@@ -101,6 +101,8 @@ abstract class AbstractOptimizer implements IOptimizer
 
     protected $_parseHeaderCallback;
 
+    protected $_environment;
+
     /**
      * @desc Constructs the optimizer by using the view with a sets of
      * options that will override any default options
@@ -122,20 +124,20 @@ abstract class AbstractOptimizer implements IOptimizer
     {
         if( null === $this->_defaultOptions ) {
             $this->_defaultOptions = array(
-                'path'                      => APPLICATION_PUBLIC_PATH,
                 'cacheFile'                 => '.cache',
+                'environment'               => 'production',
                 'cacheEnabled'              => true,
                 'appendInline'              => true,
                 'remappedUris'              => array(
-                    MAJISTI_URL_STYLES      => MAJISTI_PUBLIC_PATH  . '/styles',
-                    MAJISTIX_URL_STYLES     => MAJISTIX_PUBLIC_PATH . '/styles',
-
-                    MAJISTI_URL_SCRIPTS     => MAJISTI_PUBLIC_PATH . '/scripts',
-                    MAJISTIX_URL_SCRIPTS    => MAJISTIX_PUBLIC_PATH . '/scripts',
-
-                    JQUERY_PLUGINS          => MAJISTIX_PUBLIC_PATH . '/jquery/plugins',
-                    JQUERY_STYLES           => MAJISTIX_PUBLIC_PATH . '/jquery/styles',
-                    JQUERY_THEMES           => MAJISTIX_PUBLIC_PATH . '/jquery/themes',
+//                    MAJISTI_URL_STYLES      => MAJISTI_PUBLIC_PATH  . '/styles',
+//                    MAJISTIX_URL_STYLES     => MAJISTIX_PUBLIC_PATH . '/styles',
+//
+//                    MAJISTI_URL_SCRIPTS     => MAJISTI_PUBLIC_PATH  . '/scripts',
+//                    MAJISTIX_URL_SCRIPTS    => MAJISTIX_PUBLIC_PATH . '/scripts',
+//
+//                    JQUERY_PLUGINS          => MAJISTIX_PUBLIC_PATH . '/jquery/plugins',
+//                    JQUERY_STYLES           => MAJISTIX_PUBLIC_PATH . '/jquery/styles',
+//                    JQUERY_THEMES           => MAJISTIX_PUBLIC_PATH . '/jquery/themes',
                 ),
             );
         }
@@ -174,6 +176,7 @@ abstract class AbstractOptimizer implements IOptimizer
         $this->_bundlingEnabled  = $selector->find('bundlingEnabled',  null);
         $this->_minifyingEnabled = $selector->find('minifyingEnabled', null);
         $this->_remappedUris     = $selector->find('remappedUris', array(), true);
+        $this->_environment      = $selector->find('environment');
 
         /* instanciate a minifier if one is provided */
         $minifier = $selector->find('minifier', false);
@@ -194,14 +197,13 @@ abstract class AbstractOptimizer implements IOptimizer
      * @desc Returns whether bundling is enabled. By default, when this
      * function is called without first using {@link setBundlingEnabled()}
      * (therefore lazily called) it will return true if the current
-     * application environment is set to production or staging (as
-     * defined in the APPLICATION_ENVIRONMENT constant.
+     * application environment is set to production or staging .
      *
      * @return bool Whether bundling is enabled or not
      */
     public function isBundlingEnabled()
     {
-        if( null == $this->_bundlingEnabled ) {
+        if( null === $this->_bundlingEnabled ) {
             $this->_bundlingEnabled = $this->isProductionEnvironment();
         }
 
@@ -231,9 +233,9 @@ abstract class AbstractOptimizer implements IOptimizer
         /*
          * production and staging are enabled by default
          */
-        return defined('APPLICATION_ENVIRONMENT')
-                && 'production' === APPLICATION_ENVIRONMENT
-                || 'staging' === APPLICATION_ENVIRONMENT;
+        $env = $this->_environment;
+
+        return 'production' === $env || 'staging' === $env;
     }
 
     /**
@@ -523,7 +525,7 @@ abstract class AbstractOptimizer implements IOptimizer
     {
         if( count($environments) ) {
             foreach( $environments as $env ) {
-                if( APPLICATION_ENVIRONMENT === $env ) {
+                if( $this->_environment === $env ) {
                     $this->_bundlingEnabled = (bool) $flag;
                     return $this;
                 }
@@ -543,7 +545,7 @@ abstract class AbstractOptimizer implements IOptimizer
     {
         if( count($environments) ) {
             foreach( $environments as $env ) {
-                if( APPLICATION_ENVIRONMENT === $env ) {
+                if( $this->_environment === $env ) {
                     $this->_minifyingEnabled = (bool) $flag;
                     return $this;
                 }
@@ -826,16 +828,16 @@ abstract class AbstractOptimizer implements IOptimizer
      */
     public function bundle($path, $url)
     {
+        if( !$this->isBundlingEnabled() ) {
+            return false;
+        }
+
         $this->_masterUrl  = $this->unversionizeQuery($url);
         $this->_masterPath = $path;
 
         $pathinfo = pathinfo($this->_masterPath);
 
         $this->setCacheNamespace($pathinfo['filename']);
-
-        if( !$this->isBundlingEnabled() ) {
-            return false;
-        }
 
         $header = $this->getHeader();
         $this->_bundledContent =  '';

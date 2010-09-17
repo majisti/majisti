@@ -12,7 +12,6 @@ require_once 'TestHelper.php';
  */
 abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
 {
-
     static protected $_class = __CLASS__;
 
     /**
@@ -73,7 +72,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
     public function __construct()
     {
         $this->filesPath = realpath(__DIR__ . '/../_files');
-        $this->filesUrl  = '/majisti/tests/library/Majisti/View/Helper/_files';
+        $this->filesUrl  = '/majisti/tests/Majisti/View/Helper/_files';
     }
 
     /**
@@ -94,8 +93,6 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
         foreach( $this->outputFiles as $file ) {
             @unlink( $this->filesPath . "/{$folder}/{$file}" );
         }
-
-        $this->optimizer->clearCache();
 
         $this->clearHead();
     }
@@ -142,8 +139,8 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
                 }
 
                 $return = $optimizer->$action(
-                            $path . "/{$output}{$ext}",
-                            $url  . "/{$output}{$ext}"
+                    $path . "/{$output}{$ext}",
+                    $url  . "/{$output}{$ext}"
                 );
             } else if ('minify' === $action) {
                 $optimizer->setMinifyingEnabled();
@@ -180,15 +177,15 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
 
         /* file link should contain only the bundled file */
         $this->assertEquals($this->getHeaderOutput($filename),
-                $headObj->__toString());
+            $headObj->__toString());
 
-        /* files should  exist and contain the correct content */
+        /* files should exist and contain the correct content */
         $this->assertTrue(file_exists($path .
-                "/{$filename}{$ext}"));
+            "/{$filename}{$ext}"));
 
         $this->assertEquals(
-                file_get_contents($path .  "/{$filename}.bundled.expected{$ext}"),
-                file_get_contents($path .  "/{$filename}{$ext}")
+            file_get_contents($path . "/{$filename}.bundled.expected{$ext}"),
+            file_get_contents($path . "/{$filename}{$ext}")
         );
     }
 
@@ -205,14 +202,15 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
        $url         = $this->filesUrl;
        $ext         = $this->extension;
        $path        = $this->filesPath;
+       $folder      = $this->folder;
 
        $request = \Zend_Controller_Front::getInstance()->getRequest();
        $uri     = $request->getScheme() . ':/' . $url;
 
        $files = $this->getFilesObjects(array("file1{$ext}", "file2{$ext}"));
 
-       $optimizer->uriRemap($uri . "/{$this->folder}/file1{$ext}",
-               $path  . "/{$this->folder}/file1{$ext}");
+//       $optimizer->uriRemap("{$url}/{$folder}/file1{$ext}",
+//           "{$path}/{$folder}/file1{$ext}");
 
        $this->appendFilesAndExecute('bundle', 'files', $files);
        $this->assertBundled('files');
@@ -234,9 +232,9 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
 
         /* optimize() function returns absolute paths from server root */
         $cachedFilesPaths = array(
-                "{$path}/{$this->folder}/core{$ext}",
-                "{$path}/{$this->folder}/file1{$ext}",
-                "{$path}/{$this->folder}/file2{$ext}"
+            "{$path}/{$this->folder}/core{$ext}",
+            "{$path}/{$this->folder}/file1{$ext}",
+            "{$path}/{$this->folder}/file2{$ext}"
         );
 
         /*
@@ -259,9 +257,9 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
         /* files should contain the correct content */
         $this->assertTrue(file_exists($path . "/{$filename}.min{$ext}"));
         $this->assertEquals(
-                file_get_contents($path .
-                    "/{$filename}.optimized.expected{$ext}"),
-                file_get_contents($path . "/{$filename}.min{$ext}")
+            file_get_contents($path .
+                "/{$filename}.optimized.expected{$ext}"),
+            file_get_contents($path . "/{$filename}.min{$ext}")
         );
      }
 
@@ -271,10 +269,10 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
      public function testUriRemappingGettersAndSetters()
      {
          $optimizer = $this->optimizer;
-         $uris      = array('http://www.foo.com/uri1'   => 'path/to/file/A',
-                            'http://www.foo.com/uri2'   => 'path/to/file/B',
-                            'http://www.majisti.com/testing/foo/uri3' => 'path/to/file/C',
-                            'http://www.majisti.com/testing/bar/uri4' => 'path/to/file/D'
+         $uris      = array('http://www.foo.com/uri1' => 'path/to/file/A',
+            'http://www.foo.com/uri2'                 => 'path/to/file/B',
+            'http://www.majisti.com/testing/foo/uri3' => 'path/to/file/C',
+            'http://www.majisti.com/testing/bar/uri4' => 'path/to/file/D'
          );
 
          foreach( $uris as $uri => $path) {
@@ -307,6 +305,10 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
      {
          $optimizer = $this->optimizer;
 
+         /* since production is default, it should be enabled */
+         $this->assertTrue($optimizer->isBundlingEnabled());
+         $this->assertTrue($optimizer->isMinifyingEnabled());
+
          $optimizer->setBundlingEnabled();
          $optimizer->setMinifyingEnabled();
 
@@ -318,6 +320,13 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
 
          $this->assertFalse($optimizer->isBundlingEnabled());
          $this->assertFalse($optimizer->isMinifyingEnabled());
+
+         $optimizer->setBundlingEnabled(true);
+         $optimizer->setMinifyingEnabled(true);
+
+         $this->assertTrue($optimizer->isBundlingEnabled());
+         $this->assertTrue($optimizer->isMinifyingEnabled());
+
      }
 
      /**
@@ -450,17 +459,19 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
         $path      = $this->filesPath;
         $ext       = $this->extension;
 
+        $optimizer->setOptimizationEnabled(false);
+
         /*
          * not supposed to do anything except returning false since nothing
          * is enabled
          */
         $urlOptimize = $optimizer->optimize(
-                   $path .  "/all{$ext}",
-                   $url  . "/all{$ext}"
+           $path .  "/all{$ext}",
+           $url  . "/all{$ext}"
         );
         $urlBundle   = $optimizer->bundle(
-                   $path .  "/all{$ext}",
-                   $url  . "/all{$ext}"
+           $path .  "/all{$ext}",
+           $url  . "/all{$ext}"
         );
         $urlMinify   = $optimizer->minify('all');
 
