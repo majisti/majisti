@@ -45,12 +45,6 @@ class HeadScriptOptimizerTest extends AbstractHeadOptimizerTest
 
         \Zend_Controller_Front::getInstance()->setRequest(
             new \Zend_Controller_Request_Http());
-
-        /* setting optimizer jarfile and temporary directory */
-        require_once 'Majisti/Util/Minifying/Yui/Yui.php';
-        \Yui::$jarFile = MAJISTI_ROOT .
-             '/../externals/yuicompressor-2.4.2.jar';
-        \Yui::$tempDir = '/tmp';
     }
 
     /**

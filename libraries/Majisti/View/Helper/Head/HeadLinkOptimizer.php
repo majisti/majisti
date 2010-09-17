@@ -12,11 +12,14 @@ namespace Majisti\View\Helper\Head;
  */
 class HeadLinkOptimizer extends AbstractOptimizer
 {
+    /**
+     * @var string
+     */
     protected $_inlineContent;
 
-    /**
-     * @desc Returns the default options
-     * @return array The default options
+    /*
+     * (non-phpDoc)
+     * @see Inherited documentation.
      */
     public function getDefaultOptions()
     {
@@ -26,7 +29,6 @@ class HeadLinkOptimizer extends AbstractOptimizer
                 $defaultOptions,
                 array(
                     'cacheFile' => '.stylesheets-cache',
-                    'path'      => $defaultOptions['path'] . '/styles'
                 )
             );
         }
@@ -45,9 +47,9 @@ class HeadLinkOptimizer extends AbstractOptimizer
         return $head->href;
     }
 
-    /**
-     * @desc Appends data to the header
-     * @param string $data The data to append
+    /*
+     * (non-phpDoc)
+     * @see Inherited documentation.
      */
     protected function appendToHeader($data)
     {
@@ -85,9 +87,9 @@ class HeadLinkOptimizer extends AbstractOptimizer
         return $this->_inlineContent;
     }
 
-    /**
-     * @desc Returns the header object
-     * @return \Zend_View_Helper_HeadLink An instance of the headlink header
+    /*
+     * (non-phpDoc)
+     * @see Inherited documentation.
      */
     public function getHeader()
     {
@@ -108,18 +110,19 @@ class HeadLinkOptimizer extends AbstractOptimizer
                'screen'     === $head->media;
     }
 
-    /**
-     * @desc Returns if the given head is an inline head
-     *
-     * @param object $head The head
-     *
-     * @return True if it is an inline head
+    /*
+     * (non-phpDoc)
+     * @see Inherited documentation.
      */
     protected function isInlineHead($head)
     {
         return false;
     }
 
+    /*
+     * (non-phpDoc)
+     * @see Inherited documentation.
+     */
     protected function getContentToBundle($filepath)
     {
         $content = file_get_contents($filepath);

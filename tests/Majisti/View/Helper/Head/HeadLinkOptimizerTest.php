@@ -19,10 +19,12 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
      */
     public function setUp()
     {
-        /* Needed concrete variables */
+        /* needed concrete variables */
         $this->folder      = 'styles';
-        $this->files       = $this->getFilesObjects(array('core.css', 'file1.css', 'file2.css'));
-        $this->outputFiles = array('file1.min.css', 'file2.min.css', 'core.min.css');
+        $this->files       = $this->getFilesObjects(array(
+            'core.css', 'file1.css', 'file2.css'));
+        $this->outputFiles = array(
+            'file1.min.css', 'file2.min.css', 'core.min.css');
         $this->options     = array('path' => $this->filesPath . '/styles');
         $this->extension   = '.css';
         $this->cacheName   = '.stylesheets-cache';
@@ -96,7 +98,7 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
         return '<link href="' . $this->filesUrl .
                 "/{$filename}{$this->extension}?v=" . filemtime($this->filesPath .
                 "/{$filename}{$this->extension}")   .
-                '" media="screen" rel="stylesheet" type="text/css" />';
+                '" media="screen" rel="stylesheet" type="text/css" >';
     }
 
     protected function appendInvalidFiles($headObj)

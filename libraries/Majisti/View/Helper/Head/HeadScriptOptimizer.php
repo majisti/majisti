@@ -24,7 +24,6 @@ class HeadScriptOptimizer extends AbstractOptimizer
                 $defaultOptions,
                 array(
                     'cacheFile' => '.scripts-cache',
-                    'path'      => $defaultOptions['path'] . '/scripts'
                 )
             );
         }
