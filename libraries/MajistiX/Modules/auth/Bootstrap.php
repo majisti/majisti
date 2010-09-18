@@ -6,10 +6,10 @@ class Auth_Bootstrap extends \Majisti\Application\ModuleBootstrap
     {
         parent::__construct($application);
 
-        $this->_loadConfiguration();
+        $this->loadConfiguration();
     }
 
-    protected function _loadConfiguration()
+    protected function loadConfiguration()
     {
         $selector = new \Majisti\Config\Selector(new Zend_Config($this->getOptions()));
 
@@ -19,10 +19,16 @@ class Auth_Bootstrap extends \Majisti\Application\ModuleBootstrap
             $container = $this->getResource('ModelContainer');
 
             $loginForm = $container->getModel('login',
-                                              'Majistix_Auth_Forms',
-                                              'Auth_Form_Login');
+              'Majistix_Auth_Forms', //FIXME: deprecated namespacing standard
+              'MajistiX\Module\Auth\Form\Login');
 
             $loginForm->setUseAjax($useAjax);
         }
+    }
+
+    public function getAppNamespace()
+    {
+        //FIXME: abstract this
+        return 'MajistiX\Module\\' . $this->getModuleName();
     }
 }
