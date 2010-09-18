@@ -8,7 +8,10 @@
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-class Auth_Form_Login extends Zend_Form
+
+namespace MajistiX\Module\Auth\Form;
+
+class Login extends \Zend_Form
 {
     protected   $_useAjax       = false;
     private     $_ajaxAttached  = false;
@@ -32,7 +35,7 @@ class Auth_Form_Login extends Zend_Form
         //TODO: add CSS classes for more flexibility and ajax capabilities
 
         /* login */
-        $tf_login = new Zend_Form_Element_Text('login');
+        $tf_login = new \Zend_Form_Element_Text('login');
         $tf_login
             ->setLabel('Login' . ':')
             ->setRequired()
@@ -41,7 +44,7 @@ class Auth_Form_Login extends Zend_Form
         $this->addElement($tf_login);
 
         /* password */
-        $tf_pass = new Zend_Form_Element_Password('pass');
+        $tf_pass = new \Zend_Form_Element_Password('pass');
         $tf_pass
             ->setLabel('Password' . ':')
             ->setRequired()
@@ -51,10 +54,10 @@ class Auth_Form_Login extends Zend_Form
 
         /* submit button */
         $this->addElement(
-            new Zend_Form_Element_Submit('submit', 'Submit'));
+            new \Zend_Form_Element_Submit('submit', 'Submit'));
     }
 
-    public function render(Zend_View_Interface $view = null)
+    public function render(\Zend_View_Interface $view = null)
     {
         /* use ajax for form submition */
         if( $this->isAjaxUsed() && !$this->_ajaxAttached ) {
