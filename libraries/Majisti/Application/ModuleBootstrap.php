@@ -83,13 +83,28 @@ class ModuleBootstrap extends \Majisti\Application\Bootstrap
         if (null === $this->_resourceLoader) {
             $r    = new \ReflectionClass($this);
             $path = $r->getFileName();
-            $this->setResourceLoader(new \Zend_Application_Module_Autoloader(array(
-                'namespace' => $this->getModuleName(),
+            $this->setResourceLoader(new ModuleAutoloader(array(
+                'namespace' => $this->getAppNamespace(),
                 'basePath'  => dirname($path),
             )));
         }
         return $this->_resourceLoader;
     }
+
+    /**
+     * Get default application namespace
+     *
+     * Proxies to {@link getModuleName()}, and returns the current module
+     * name
+     *
+     * @return string
+     */
+    public function getAppNamespace()
+    {
+        $options = $this->getApplication()->getOptions();
+        return $options['appnamespace'] . '\\' . $this->getModuleName();
+    }
+
 
     /**
      * Ensure resource loader is loaded
