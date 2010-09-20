@@ -10,20 +10,23 @@ namespace Majisti\Application;
  */
 class Bootstrap extends \Zend_Application_Bootstrap_Bootstrap
 {
-    /**
-     * @desc Inits the application's library autoloader
-     * which is basically the same as a module autoloader.
-     *
-     * @return \Zend_Application_Module_Autoloader
+    /*
+     * (non-phpDoc) 
+     * @see Inherited documentation.
      */
-    protected function _initLibraryAutoloader()
+    public function getResourceLoader()
     {
-        $options = $this->getApplication()->getOptions();
-
-        return new \Zend_Application_Module_Autoloader(array(
-            'namespace' => $options['majisti']['app']['namespace'],
-            'basePath'  => $options['majisti']['app']['path'] . '/library',
-        ));
+        if ((null === $this->_resourceLoader)
+            && (false !== ($namespace = $this->getAppNamespace()))
+        ) {
+            $r    = new \ReflectionClass($this);
+            $path = $r->getFileName();
+            $this->setResourceLoader(new ModuleAutoloader(array(
+                'namespace' => $namespace,
+                'basePath'  => realpath(dirname($path) . '/../library'),
+            )));
+        }
+        return $this->_resourceLoader;
     }
 
     /**
