@@ -336,11 +336,15 @@ class Zend_Loader_Autoloader
             if ('' == $ns) {
                 continue;
             }
+
             if (0 === strpos($class, $ns)) {
-                $namespace   = $ns;
-                $autoloaders = $autoloaders + $this->getNamespaceAutoloaders($ns);
-                break;
+                $namespace = $ns;
+                // ZF-8529: now looping the entire array in case of subpackages
             }
+        }
+
+        if( $namespace ) {
+            $autoloaders = $autoloaders + $this->getNamespaceAutoloaders($namespace);
         }
 
         // Add internal namespaced autoloader
