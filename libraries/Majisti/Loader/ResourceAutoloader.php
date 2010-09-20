@@ -226,8 +226,10 @@ class ResourceAutoloader extends \Zend_Loader_Autoloader_Resource
 
         if (!empty($prefixTopLevel)) {
             $prefix = array_shift($segments);
-            if ($prefix != $prefixTopLevel) {
-                // wrong prefix? we're done
+
+            /* support for subpackages namespaces ZF-8529 */
+            if ( strpos($prefix, $prefixTopLevel) !== 0 ) {
+                // wrong namespace? we're done
                 return false;
             }
         }
