@@ -20,7 +20,7 @@ class Bootstrap extends \Zend_Application_Bootstrap_Bootstrap
     {
         $options = $this->getApplication()->getOptions();
 
-        return new \Zend_Application_Module_Autoloader(array(
+        return new ModuleAutoloader(array(
             'namespace' => $options['majisti']['app']['namespace'],
             'basePath'  => $options['majisti']['app']['path'] . '/library',
         ));
