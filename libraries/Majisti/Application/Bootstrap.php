@@ -11,6 +11,24 @@ namespace Majisti\Application;
 class Bootstrap extends \Zend_Application_Bootstrap_Bootstrap
 {
     /*
+     * (non-phpDoc)
+     * @see Inherited documentation.
+     */
+    public function __construct($application)
+    {
+        parent::__construct($application);
+
+        /* add resources path */
+        $options = $this->getOptions();
+        $app     = $options['majisti']['app'];
+
+        $options['pluginPaths'][$app['namespace'] . '\Application\Resource\\']
+            = $app['path'] . '/library/resources/';
+
+        $this->setOptions($options);
+    }
+
+    /*
      * (non-phpDoc) 
      * @see Inherited documentation.
      */
