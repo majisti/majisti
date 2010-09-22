@@ -175,12 +175,14 @@ class Helper
     public function initDependencies()
     {
         /* PHPUnit */
-        $phpunit = array('Framework', 'Framework/IncompleteTestError',
-                         'Framework/TestCase', 'Framework/TestSuite',
-                         'Runner/Version', 'TextUI/TestRunner', 'Util/Filter');
+        if( !class_exists('PHPUnit_TextUI_Command') ) {
+            $phpunit = array('Framework', 'Framework/IncompleteTestError',
+                             'Framework/TestCase', 'Framework/TestSuite',
+                             'Runner/Version', 'TextUI/TestRunner', 'Util/Filter');
 
-        foreach ($phpunit as $file) {
-            require_once 'PHPUnit/' . $file . '.php';
+            foreach ($phpunit as $file) {
+                require_once 'PHPUnit/' . $file . '.php';
+            }
         }
     }
 
@@ -306,7 +308,7 @@ class Helper
     }
 
     /**
-     * @desc Returns Majisti's directory path.
+     * @desc Returns Majisti's test directory path.
      * @return string The test dir path.
      */
     public function getTestsPath()
