@@ -45,7 +45,6 @@ class BootstrapTest extends \Zend_Application_Bootstrap_BootstrapTest
         $autoloader  = \Zend_Loader_Autoloader::getInstance();
         $autoloaders = $autoloader->getAutoloaders();
 
-        $this->assertEquals(2, count($autoloaders));
         $this->assertType('Zend_Application_Module_Autoloader', $autoloaders[0]);
     }
 
