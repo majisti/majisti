@@ -13,6 +13,7 @@ class AllTests extends \Majisti\Test\TestSuite
         $suite->addTest(Addons\AllTests::suite());
         $suite->addTest(Resource\AllTests::suite());
         
+        $suite->addTestCase(__NAMESPACE__ . '\ApplicationTest');
         $suite->addTestCase(__NAMESPACE__ . '\BootstrapTest');
         $suite->addTestCase(__NAMESPACE__ . '\LocalesTest');
         

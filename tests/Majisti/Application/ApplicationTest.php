@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti;
+namespace Majisti\Application;
 
 require_once 'TestHelper.php';
 

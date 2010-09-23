@@ -45,7 +45,7 @@ class View extends \Zend_Application_Resource_View
         }
 
         $options     = $this->getOptions();
-        $view        = new \Majisti\View($options);
+        $view        = new \Majisti\View\View($options);
         $settings    = $this->getSettings();
 
         /* Majisti view helpers */
