@@ -11,7 +11,7 @@ namespace Majisti\Model\Mail;
  *
  * @author Majisti
  */
-class Message extends \Majisti\Mail
+class Message extends Mail
 {
     protected $_bodyObject;
 
