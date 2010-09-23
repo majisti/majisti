@@ -40,7 +40,7 @@ class MessageTest extends \Majisti\Test\TestCase
     {
         $this->message = new MessageMock();
 
-        $this->view = new \Majisti\View();
+        $this->view = new \Majisti\View\View();
         $this->view->addScriptPath(__DIR__ . '/_partials');
 
         $this->model = new \StdClass();
