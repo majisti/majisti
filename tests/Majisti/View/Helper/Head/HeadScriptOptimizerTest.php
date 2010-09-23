@@ -19,7 +19,9 @@ class HeadScriptOptimizerTest extends AbstractHeadOptimizerTest
      */
     public function setUp()
     {
-        /* Needed concrete variables */
+        parent::setUp();
+
+        /* needed concrete variables */
         $this->folder      = 'scripts';
         $this->files       = $this->getFilesObjects(array('core.js', 'file1.js', 'file2.js'));
         $this->outputFiles = array('file1.min.js', 'file2.min.js', 'core.min.js');

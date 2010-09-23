@@ -19,6 +19,8 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
      */
     public function setUp()
     {
+        parent::setUp();
+
         /* needed concrete variables */
         $this->folder      = 'styles';
         $this->files       = $this->getFilesObjects(array(
