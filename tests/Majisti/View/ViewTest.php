@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti;
+namespace Majisti\View;
 
 require_once 'TestHelper.php';
 
@@ -59,8 +59,7 @@ class ViewTest extends \Zend_ViewTest
     {
         parent::setUp();
         
-        $this->basePath = __DIR__ . 
-            str_replace('/', DIRECTORY_SEPARATOR, '/Controller/_files');
+        $this->basePath = __DIR__ . '/../Controller/_files';
         
         $this->front = \Zend_Controller_Front::getInstance();
             

@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti;
+namespace Majisti\Model;
 
 class Model extends    \ArrayObject
             implements \Majisti\Util\Model\Aggregator\IView

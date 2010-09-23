@@ -22,6 +22,8 @@ class AllTests extends \Majisti\Test\TestSuite
 
         $suite->addTest(Helper\AllTests::suite());
 
+        $suite->addTestCase(__NAMESPACE__ . '\ViewTest');
+
         return $suite;
     }
 }

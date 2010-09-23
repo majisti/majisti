@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti;
+namespace Majisti\View;
 
 /**
  * @desc The core view class adding more behaviour to the traditional

@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti;
+namespace Majisti\Application;
 
 /**
  * @desc Majisti's Application is the facade to rich applications where

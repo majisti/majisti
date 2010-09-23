@@ -19,9 +19,6 @@ class AllTests extends Test\TestSuite
         $suite->addTestSuite(Util\AllTests::suite());
         $suite->addTestSuite(View\AllTests::suite());
 
-        $suite->addTestCase(__NAMESPACE__ . '\ApplicationTest');
-        $suite->addTestCase(__NAMESPACE__ . '\ViewTest');
-
         return $suite;
     }
 }
