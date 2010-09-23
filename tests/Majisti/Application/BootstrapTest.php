@@ -36,20 +36,6 @@ class BootstrapTest extends \Zend_Application_Bootstrap_BootstrapTest
     }
 
     /**
-     * @desc Asserts that the library auto loader in initialized
-     */
-    public function testLibraryAutoloaderInitialized()
-    {
-        $this->majistiBootstrap->bootstrap();
-
-        $autoloader  = \Zend_Loader_Autoloader::getInstance();
-        $autoloaders = $autoloader->getAutoloaders();
-
-        $this->assertEquals(2, count($autoloaders));
-        $this->assertType('Zend_Application_Module_Autoloader', $autoloaders[0]);
-    }
-
-    /**
      * @desc Asserts that action helper is initialized
      */
     public function testActionHelperInitialized()
