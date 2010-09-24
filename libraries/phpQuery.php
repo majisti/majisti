@@ -4500,7 +4500,12 @@ abstract class phpQuery {
 	 * @return phpQueryObject|QueryTemplatesSource|QueryTemplatesParse|QueryTemplatesSourceQuery|QueryTemplatesPhpQuery|false
    * phpQuery object or false in case of error.
 	 */
-	public static function pq($arg1, $context = null) {
+	public static function pq($arg1 = null, $context = null) {
+
+        if( null === $arg1 ) {
+			return new phpQueryObject(self::$defaultDocumentID);
+        }
+
 		if ($arg1 instanceof DOMNODE && ! isset($context)) {
 			foreach(phpQuery::$documents as $documentWrapper) {
 				$compare = $arg1 instanceof DOMDocument
@@ -5682,7 +5687,7 @@ class phpQueryPlugins {
  * @author Tobiasz Cudnik <tobiasz.cudnik/gmail.com>
  * @package phpQuery
  */
-function pq($arg1, $context = null) {
+function pq($arg1 = null, $context = null) {
 	$args = func_get_args();
 	return call_user_func_array(
 		array('phpQuery', 'pq'),
