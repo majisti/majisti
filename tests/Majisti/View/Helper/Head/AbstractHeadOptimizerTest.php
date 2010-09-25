@@ -72,6 +72,9 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
     public function setUp()
     {
         $this->filesPath = realpath(__DIR__ . '/../_files');
+
+        $options = $this->getHelper()->getOptions();
+        //FIXME: url should be retrieved via helper
         $this->filesUrl  = '/majisti/tests/Majisti/View/Helper/_files';
     }
 

@@ -10,7 +10,15 @@ namespace Majisti\Test;
  */
 class Helper
 {
+    /**
+     * @var TestHelper 
+     */
     static protected $_instance;
+
+    /**
+     * @var Array
+     */
+    static protected $_defaultOptions;
 
     /**
      * @var \Zend_Controller_Request_Http
@@ -26,6 +34,16 @@ class Helper
      * @var string
      */
     protected $_majistiPath;
+
+    /**
+     * @var string
+     */
+    protected $_majistiUrl;
+
+    /**
+     * @var string
+     */
+    protected $_majistiBaseUrl;
 
     /**
      * @var array
@@ -96,7 +114,35 @@ class Helper
      */
     public function getOptions()
     {
-        return $this->_options;
+        return array_replace_recursive(static::getDefaultOptions(),
+            $this->_options);
+    }
+
+    /**
+     * @desc Returns the default options
+     *
+     * @return array The default options
+     */
+    static public function getDefaultOptions()
+    {
+        if( null === static::$_defaultOptions ) {
+            $helper = static::getInstance();
+            static::$_defaultOptions = array('majisti' => array(
+                'path' => $helper->getMajistiPath()
+            ));
+        }
+
+        return static::$_defaultOptions;
+    }
+
+    /**
+     * @desc Sets the default options
+     *
+     * @param array $options The default options
+     */
+    static public function setDefaultOptions(array $options)
+    {
+        static::$_defaultOptions = $options;
     }
 
     /**
@@ -299,7 +345,49 @@ class Helper
     }
 
     /**
+     * @desc Returns the Majisti's url.
+     *
+     * @return string The url
+     */
+    public function getMajistiUrl()
+    {
+        return $this->_majistiUrl;
+    }
+
+    /**
+     * @desc Sets teh Majisti's url.
+     *
+     * @param string $majistiUrl The url
+     */
+    public function setMajistiUrl($majistiUrl)
+    {
+        $this->_majistiUrl = $majistiUrl;
+    }
+
+    /**
+     * @desc Returns the Majisti's url.
+     *
+     * @return string The url
+     */
+    public function getMajistiBaseUrl()
+    {
+        return $this->_majistiBaseUrl;
+    }
+
+    /**
+     * @desc Sets teh Majisti's url.
+     *
+     * @param string $majistiBaseUrl The url
+     */
+    public function setMajistiBaseUrl($majistiBaseUrl)
+    {
+        $this->_majistiBaseUrl = $majistiBaseUrl;
+    }
+
+
+    /**
      * @desc Sets Majisti's dir path.
+     *
      * @param string $majistiPath The dir path
      */
     public function setMajistiPath($majistiPath)
@@ -309,12 +397,13 @@ class Helper
 
     /**
      * @desc Returns Majisti's test directory path.
+     *
      * @return string The test dir path.
      */
     public function getTestsPath()
     {
         if( null === $this->_testPath ) {
-            $this->_testPath = realpath(__DIR__ . '/../../../tests');
+            $this->_testPath = $this->getMajistiPath() . '/tests';
         }
 
         return $this->_testPath;
