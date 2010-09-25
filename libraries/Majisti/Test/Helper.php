@@ -371,7 +371,11 @@ class Helper
      */
     public function getMajistiBaseUrl()
     {
-        return $this->_majistiBaseUrl;
+        return str_replace(
+            realpath($_SERVER['DOCUMENT_ROOT']),
+            '', 
+            $this->getMajistiPath()
+        );
     }
 
     /**
