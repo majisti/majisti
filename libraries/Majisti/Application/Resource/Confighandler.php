@@ -32,7 +32,7 @@ class Confighandler extends \Zend_Application_Resource_ResourceAbstract
     public function init()
     {
         try {
-            $compositeHandler = $this->_prepareComposite();
+            $compositeHandler = $this->prepareComposite();
             $config           = $compositeHandler->handle(
                 \Zend_Registry::get('Majisti_Config'));
 
@@ -62,7 +62,7 @@ class Confighandler extends \Zend_Application_Resource_ResourceAbstract
      *
      * @return \Majisti\Config\Handler\CompositeHandler
      */
-    protected function _prepareComposite()
+    protected function prepareComposite()
     {
         if( null !== $this->_compositeHandler ) {
             return $this->_compositeHandler;
