@@ -21,6 +21,7 @@ class AllTests extends \Majisti\Test\TestSuite
         $suite = new self('MajistiP - All tests');
 
         $suite->addTestCase(__NAMESPACE__ . '\BodyPartialTest');
+        $suite->addTestCase(__NAMESPACE__ . '\MailTest');
         $suite->addTestCase(__NAMESPACE__ . '\MessageTest');
 
         return $suite;
