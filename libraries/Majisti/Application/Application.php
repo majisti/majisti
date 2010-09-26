@@ -68,7 +68,7 @@ class Application
         $request = new \Zend_Controller_Request_Http();
         $selector = new \Majisti\Config\Selector($options);
 
-        $options->path = dirname(dirname(dirname((__FILE__))));
+        $options->path = dirname(dirname(dirname(__DIR__)));
 
         $options->app->baseUrl = $request->getBaseUrl();
         $options->app->url     = "{$request->getScheme()}://" .
