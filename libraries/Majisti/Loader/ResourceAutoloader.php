@@ -392,9 +392,9 @@ class ResourceAutoloader extends \Zend_Loader_Autoloader_Resource
                 throw new MissingResourceNamespaceException('Initial definition of a resource type must include a namespace');
             }
             if (null !== $this->getNamespace()) {
-                $this->_addNamespaceResource($type, $namespace);
+                $this->addNamespaceResource($type, $namespace);
             } else {
-                $this->_addPrefixResource($type, $namespace);
+                $this->addPrefixResource($type, $namespace);
             }
         }
         if (!is_string($path)) {
@@ -414,7 +414,7 @@ class ResourceAutoloader extends \Zend_Loader_Autoloader_Resource
      * @param  string $namespace 
      * @return void
      */
-    protected function _addNamespaceResource($type, $namespace)
+    protected function addNamespaceResource($type, $namespace)
     {
         $namespaceTopLevel = $this->getNamespace();
         $namespace = ucfirst(trim($namespace, '\\'));
@@ -430,7 +430,7 @@ class ResourceAutoloader extends \Zend_Loader_Autoloader_Resource
      * @param  string $prefix 
      * @return void
      */
-    protected function _addPrefixResource($type, $prefix)
+    protected function addPrefixResource($type, $prefix)
     {
         $prefixTopLevel = $this->getPrefix();
         $prefix = ucfirst(trim($prefix, '_'));

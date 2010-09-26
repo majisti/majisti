@@ -26,7 +26,7 @@ class ApplicationTest extends \Zend_Application_ApplicationTest
     {
         parent::setUp();
 
-        $helper = \Majisti\Test\Helper::getInstance();
+        $helper = \Majisti\Test\TestCase::getDefaultHelper();
         $helper->initAutoloaders();
 
         $this->majistiApplication = $helper->createApplicationInstance();

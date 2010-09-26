@@ -15,6 +15,16 @@ class TestCase extends \PHPUnit_Framework_TestCase
     static protected $_class;
 
     /**
+     * @var Helper
+     */
+    static protected $_defaultHelper;
+
+    /**
+     * @var Helper
+     */
+    protected $_helper;
+
+    /**
      * @desc Retrieves the extending class via late static binding.
      * The protected $_class must have been set to __CLASS__, or setClass()
      * but have been used. If not an exception is thrown.
@@ -24,17 +34,6 @@ class TestCase extends \PHPUnit_Framework_TestCase
      * extending class or if the $_class is null. setClass() can also
      * be used.
      */
-//    static public function getClass()
-//    {
-//        if( __CLASS__ === static::$_class || null === static::$_class ) {
-//            throw new Exception('You must override with late static binding ' .
-//                'the protected static variable $_class with __CLASS__ or ' .
-//                'through the setClass function');
-//        }
-//
-//        return static::$_class;
-//    }
-
     static public function getClass()
     {
         if( null === static::$_class ) {
@@ -75,8 +74,52 @@ class TestCase extends \PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * @desc Returns the helper instance
+     *
+     * @return Helper
+     */
     public function getHelper()
     {
-        return \Majisti\Test\Helper::getInstance();
+        if( null === $this->_helper ) {
+            return static::getDefaultHelper();
+        }
+
+        return $this->_helper;
+    }
+
+    /**
+     * @desc Sets the helper instance
+     * 
+     * @param Helper $helper The helper
+     */
+    public function setHelper(Helper $helper)
+    {
+        $this->_helper = $helper;
+    }
+
+    /**
+     * @desc Returns the default helper. If none was set trought setDefaultHelper,
+     * Majisti's default helper singleton instance will be returned
+     * 
+     * @return Helper
+     */
+    static public function getDefaultHelper()
+    {
+        if( null === static::$_defaultHelper ) {
+            return Helper::getInstance();
+        }
+
+        return static::$_defaultHelper;
+    }
+
+    /**
+     * @desc Sets the default helper for every test case
+     *
+     * @param Helper $helper The default helper
+     */
+    static public function setDefaultHelper(Helper $helper)
+    {
+        static::$_defaultHelper = $helper;
     }
 }

@@ -10,8 +10,6 @@ require_once 'TestHelper.php';
  */
 class ClassNameTest extends \Majisti\Test\TestCase
 {
-    static protected $_class = __CLASS__;
-    
     /**
      * Setups the test case
      */

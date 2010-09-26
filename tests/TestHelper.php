@@ -13,4 +13,6 @@ $helper->setOptions(array('majisti' => array(
 
 $helper->init();
 
+\Majisti\Test\TestCase::setDefaultHelper($helper);
+
 unset($helper);

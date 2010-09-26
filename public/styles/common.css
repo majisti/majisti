@@ -115,6 +115,10 @@
 .maj-bolder     { font-weight: bolder; }
 .maj-lighter    { font-weight: lighter; }
 
+/* font-style */
+.maj-italic     { font-style: italic; }
+.maj-oblique    { font-style: oblique; }
+
 /* list-style-type */
 .maj-list-disc                  { list-style-type: disc; }
 .maj-list-circle                { list-style-type: circle; }

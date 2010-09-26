@@ -61,14 +61,14 @@ class Login extends \Zend_Form
     {
         /* use ajax for form submition */
         if( $this->isAjaxUsed() && !$this->_ajaxAttached ) {
-            $this->_attachAjax();
+            $this->attachAjax();
             $this->_ajaxAttached = true;
         }
 
         return parent::render($view);
     }
 
-    protected function _attachAjax()
+    protected function attachAjax()
     {
         $view = $this->getView();
 
