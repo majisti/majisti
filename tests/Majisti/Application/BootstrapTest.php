@@ -23,7 +23,7 @@ class BootstrapTest extends \Zend_Application_Bootstrap_BootstrapTest
     {
         parent::setUp();
 
-        $helper = \Majisti\Test\Helper::getInstance();
+        $helper = \Majisti\Test\TestCase::getDefaultHelper();
 
         $helper->initAutoloaders();
         $this->majistiBootstrap = $helper->createBootstrapInstance();
