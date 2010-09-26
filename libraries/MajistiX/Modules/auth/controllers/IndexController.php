@@ -78,12 +78,12 @@ class Auth_IndexController extends Zend_Controller_Action
         $req  = $this->_request;
 
         if( $req->isPost() && $form->isValid($req->getPost()) ) {
-            $this->_adapter = $this->_createAdapter($req->getPost());
+            $this->_adapter = $this->createAdapter($req->getPost());
             $result         = $this->_auth->authenticate($this->_adapter);
 
             /* auth success */
             if( $result->isValid() ) {
-                $this->_storeData();
+                $this->storeData();
 
                 if( $req->isXmlHttpRequest() ) {
                     $this->render('index');
@@ -128,7 +128,7 @@ class Auth_IndexController extends Zend_Controller_Action
      *
      * @return Zend_Auth_Adapter_Interface The adapter
      */
-    protected function _createAdapter($postData)
+    protected function createAdapter($postData)
     {
         return new Zend_Auth_Adapter_Digest(
             __DIR__ . '/../models/identities.txt',
@@ -141,7 +141,7 @@ class Auth_IndexController extends Zend_Controller_Action
     /**
      * @desc Stores the data in the authentifaction storage.
      */
-    protected function _storeData()
+    protected function storeData()
     {
         $adapter = $this->_adapter;
 

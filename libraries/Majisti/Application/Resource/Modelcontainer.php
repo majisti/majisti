@@ -8,7 +8,7 @@ namespace Majisti\Application\Resource;
  *
  * @author Majisti
  */
-class ModelContainer extends \Zend_Application_Resource_ResourceAbstract
+class Modelcontainer extends \Zend_Application_Resource_ResourceAbstract
 {
     /**
      * @desc Inits the model aggregator for cross application

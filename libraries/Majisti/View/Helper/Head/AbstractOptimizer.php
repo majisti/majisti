@@ -828,7 +828,7 @@ abstract class AbstractOptimizer implements IOptimizer
      */
     public function bundle($path, $url)
     {
-        if( !$this->isBundlingEnabled() ) {
+        if( !($this->isBundlingEnabled() && $this->getView()->layout()->isEnabled()) ) {
             return false;
         }
 
@@ -927,7 +927,7 @@ abstract class AbstractOptimizer implements IOptimizer
      */
     public function minify($cacheNamespace)
     {
-        if( !$this->isMinifyingEnabled() ) {
+        if( !($this->isMinifyingEnabled() && $this->getView()->layout()->isEnabled()) ) {
             return false;
         }
 

@@ -8,7 +8,7 @@ namespace Majisti\Test;
  *
  * @author Majisti
  */
-class Runner extends \PHPUnit_TextUi_TestRunner
+class Runner extends \PHPUnit_TextUI_TestRunner
 {
     protected static $_defaultArguments;
 

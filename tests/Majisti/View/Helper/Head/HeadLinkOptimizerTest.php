@@ -12,8 +12,6 @@ require_once 'TestHelper.php';
  */
 class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
 {
-    static protected $_class = __CLASS__;
-
     /**
      * Setups the test case
      */
@@ -22,34 +20,21 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
         parent::setUp();
 
         /* needed concrete variables */
-        $this->folder      = 'styles';
-        $this->files       = $this->getFilesObjects(array(
+        $this->options = array('path' => $this->filesPath . '/styles');
+        $this->folder         = 'styles';
+        $this->files          = $this->getFilesObjects(array(
             'core.css', 'file1.css', 'file2.css'));
-        $this->outputFiles = array(
+        $this->outputFiles    = array(
             'file1.min.css', 'file2.min.css', 'core.min.css');
-        $this->options     = array('path' => $this->filesPath . '/styles');
-        $this->extension   = '.css';
-        $this->cacheName   = '.stylesheets-cache';
+        $this->extension      = '.css';
+        $this->cacheName      = '.stylesheets-cache';
+        $this->headObject     = $this->view->headLink();
         $this->inclusionVar   = 'href';
-
-        $this->view = new \Zend_View();
-        $this->view->addHelperPath(
-            'Majisti/View/Helper',
-            'Majisti_View_Helper'
-        );
-
-        $this->headObject = $this->view->headLink();
-        $this->minifier = new MinifierMock();
 
         $this->optimizer = new HeadLinkOptimizer($this->view, $this->options);
         $this->optimizer->setMinifier($this->minifier);
         $this->optimizer->clearCache();
 
-        /* clearing head data */
-        $this->clearHead();
-
-        \Zend_Controller_Front::getInstance()->setRequest(
-            new \Zend_Controller_Request_Http());
     }
 
     /**

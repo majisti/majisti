@@ -12,8 +12,6 @@ require_once 'TestHelper.php';
  */
 abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
 {
-    static protected $_class = __CLASS__;
-
     /**
      * @var string
      */
@@ -69,11 +67,27 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
      */
     protected $minifier;
 
+    public function  __construct($name = NULL, array $data = array(),
+        $dataName = '')
+    {
+        parent::__construct($name, $data, $dataName);
+
+        $this->filesPath = realpath(__DIR__ . '/../_files');
+    }
+
     public function setUp()
     {
-        $this->filesPath = realpath(__DIR__ . '/../_files');
         $this->filesUrl  = $this->getHelper()->getMajistiBaseUrl() .
             '/tests/Majisti/View/Helper/_files';
+
+        $this->view     = new \Zend_View();
+        $this->minifier = new MinifierMock();
+
+        /* clearing head data */
+        $this->clearHead();
+
+        \Zend_Controller_Front::getInstance()->setRequest(
+            new \Zend_Controller_Request_Http());
     }
 
     /**
@@ -310,6 +324,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
          $this->assertTrue($optimizer->isBundlingEnabled());
          $this->assertTrue($optimizer->isMinifyingEnabled());
 
+         /* using direct methods for enabling */
          $optimizer->setBundlingEnabled();
          $optimizer->setMinifyingEnabled();
 
@@ -327,7 +342,30 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
 
          $this->assertTrue($optimizer->isBundlingEnabled());
          $this->assertTrue($optimizer->isMinifyingEnabled());
+         /* using optimization */
+         $optimizer->setOptimizationEnabled(false);
 
+         $this->assertFalse($optimizer->isBundlingEnabled());
+         $this->assertFalse($optimizer->isMinifyingEnabled());
+
+         $optimizer->setOptimizationEnabled();
+
+         $this->assertTrue($optimizer->isBundlingEnabled());
+         $this->assertTrue($optimizer->isMinifyingEnabled());
+
+         $optimizer->setOptimizationEnabled(false);
+         $optimizer->setOptimizationEnabled(true);
+
+         $this->assertTrue($optimizer->isBundlingEnabled());
+         $this->assertTrue($optimizer->isMinifyingEnabled());
+     }
+
+     public function testDisableWillNotOptimize()
+     {
+         $optimizer = $this->optimizer;
+
+         $optimizer->setOptimizationEnabled(false);
+         $this->assertFalse($optimizer->optimize('foo', 'bar'));
      }
 
      /**
@@ -446,8 +484,6 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
             $this->assertTrue(file_exists($path .  "/{$this->folder}/{$file}"));
         }
     }
-
-
 
     /**
      * @desc Tests that no action is taken if bundling, minifying or both are
@@ -610,5 +646,18 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
 
         $this->assertEquals($masterMtime, $masterMtime2);
         $this->assertEquals($file2Mtime, $file2Mtime2);
+    }
+
+    public function testThatNoLayoutViewWillNotOptimize()
+    {
+        $view      = $this->view;
+        $optimizer = $this->optimizer;
+
+        $view->layout()->disableLayout();
+        $optimizer->setOptimizationEnabled(true);
+
+        $this->assertFalse($optimizer->optimize('foo', 'bar'));
+        $this->assertFalse($optimizer->bundle('foo', 'bar'));
+        $this->assertFalse($optimizer->minify('foo'));
     }
 }

@@ -12,8 +12,6 @@ require_once 'TestHelper.php';
  */
 class HeadScriptOptimizerTest extends AbstractHeadOptimizerTest
 {
-    static protected $_class = __CLASS__;
-
     /**
      * Setups the test case
      */
@@ -22,31 +20,19 @@ class HeadScriptOptimizerTest extends AbstractHeadOptimizerTest
         parent::setUp();
 
         /* needed concrete variables */
+        $this->options = array('path' => $this->filesPath . '/scripts');
         $this->folder      = 'scripts';
-        $this->files       = $this->getFilesObjects(array('core.js', 'file1.js', 'file2.js'));
+        $this->files       = $this->getFilesObjects(array(
+            'core.js', 'file1.js', 'file2.js'));
         $this->outputFiles = array('file1.min.js', 'file2.min.js', 'core.min.js');
-        $this->options     = array('path' => $this->filesPath . '/scripts');
         $this->extension   = '.js';
         $this->cacheName   = '.scripts-cache';
-
-        $this->view = new \Zend_View();
-        $this->view->addHelperPath(
-            'Majisti/View/Helper',
-            'Majisti_View_Helper'
-        );
-
-        $this->headObject = $this->view->headScript();
-        $this->minifier   = new MinifierMock();
+        $this->headObject  = $this->view->headScript();
 
         $this->optimizer = new HeadScriptOptimizer($this->view, $this->options);
         $this->optimizer->setMinifier($this->minifier);
         $this->optimizer->clearCache();
 
-        /* clearing head data */
-        $this->clearHead();
-
-        \Zend_Controller_Front::getInstance()->setRequest(
-            new \Zend_Controller_Request_Http());
     }
 
     /**
