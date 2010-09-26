@@ -273,7 +273,7 @@ class Application
         $app = $options->majisti->app;
 
         $defaultConfig = new \Zend_Config_Ini(__DIR__ .
-            '/Application/Configs/core.ini', $app->env, true);
+            '/Configs/core.ini', $app->env, true);
 
         $concreteConfigPath = $app->path . '/application/configs/core.ini';
         if( !file_exists($concreteConfigPath) ) {
