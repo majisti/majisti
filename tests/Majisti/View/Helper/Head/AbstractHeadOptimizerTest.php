@@ -310,6 +310,7 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
          $this->assertTrue($optimizer->isBundlingEnabled());
          $this->assertTrue($optimizer->isMinifyingEnabled());
 
+         /* using direct methods for enabling */
          $optimizer->setBundlingEnabled();
          $optimizer->setMinifyingEnabled();
 
@@ -328,6 +329,30 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
          $this->assertTrue($optimizer->isBundlingEnabled());
          $this->assertTrue($optimizer->isMinifyingEnabled());
 
+         /* using optimization */
+         $optimizer->setOptimizationEnabled(false);
+
+         $this->assertFalse($optimizer->isBundlingEnabled());
+         $this->assertFalse($optimizer->isMinifyingEnabled());
+
+         $optimizer->setOptimizationEnabled();
+
+         $this->assertTrue($optimizer->isBundlingEnabled());
+         $this->assertTrue($optimizer->isMinifyingEnabled());
+
+         $optimizer->setOptimizationEnabled(false);
+         $optimizer->setOptimizationEnabled(true);
+
+         $this->assertTrue($optimizer->isBundlingEnabled());
+         $this->assertTrue($optimizer->isMinifyingEnabled());
+     }
+
+     public function testDisableWillNotOptimize()
+     {
+         $optimizer = $this->optimizer;
+
+         $optimizer->setOptimizationEnabled(false);
+         $this->assertFalse($optimizer->optimize('foo', 'bar'));
      }
 
      /**
