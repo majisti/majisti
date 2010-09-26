@@ -17,7 +17,7 @@ class Factory
      * 
      * @return \Zend_Config the config object
      */
-    static protected function _configToZendConfig($config)
+    static protected function configToZendConfig($config)
     {
         if( !($config instanceof \Zend_Config) && is_array($config) ) {
             $config = new \Zend_Config($config);

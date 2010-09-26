@@ -78,7 +78,7 @@ class Import implements IHandler
         $this->_finalConfig       = new \Zend_Config($config->toArray(), true);
         
         if( !empty($params) ) {
-            $this->_loadParams($params);
+            $this->loadParams($params);
         }
 
         $this->setConfigType($config);
@@ -89,7 +89,7 @@ class Import implements IHandler
 
         $selector = new \Majisti\Config\Selector($this->_finalConfig);
         if( $imports = $selector->find('majisti.import', false) ) {
-            $this->_resolveImports($imports);
+            $this->resolveImports($imports);
             $majistiNamespace = $this->_finalConfig->majisti;
             unset($majistiNamespace->import);
         }
@@ -113,25 +113,25 @@ class Import implements IHandler
      * merged into the final configuration object.
      * @param \Zend_Config $config
      */
-    protected function _resolveImports(\Zend_Config $config)
+    protected function resolveImports(\Zend_Config $config)
     {
         foreach( $config as $key => $path ) {
             
-            if($this->_isUnresolvedPath($path)) {
+            if($this->isUnresolvedPath($path)) {
                 
                 $this->_importPaths[] = $path;
-                $resolvedConfig = $this->_getConfigFileByPath($path);
+                $resolvedConfig = $this->getConfigFileByPath($path);
                 
                 if( null !== ($compositeHandler =
                               $this->getCompositeHandler()) ) {
                     $resolvedConfig=$compositeHandler->handle($resolvedConfig);
                 }
                 
-                $this->_mergeImports($resolvedConfig);
+                $this->mergeImports($resolvedConfig);
                 $selector = new \Majisti\Config\Selector($resolvedConfig);
                 $imports  = $selector->find('majisti.import', false);
                 if( false !== $imports ) {
-                    $this->_resolveImports($imports);
+                    $this->resolveImports($imports);
                 }
             }
         }
@@ -142,7 +142,7 @@ class Import implements IHandler
      * @param string $path
      * @return bool true if the path is unresolved
      */
-    protected function _isUnresolvedPath($path)
+    protected function isUnresolvedPath($path)
     {
         return !in_array($path, $this->_importPaths);
     }
@@ -152,7 +152,7 @@ class Import implements IHandler
      * @desc Merges given \Zend_Config with local final config object.
      * @param \Zend_Config $config
      */
-    protected function _mergeImports(\Zend_Config $config)
+    protected function mergeImports(\Zend_Config $config)
     {
             $this->_finalConfig->merge($config);
     }
@@ -163,7 +163,7 @@ class Import implements IHandler
      *          to reload it once by a child config file.
      * @param array $params
      */
-    protected function _loadParams($params)
+    protected function loadParams($params)
     {
         foreach ($params as $key => $value) {
         	switch ($key) {
@@ -183,7 +183,7 @@ class Import implements IHandler
      * @param string $configPath
      * @return \Zend_Config
      */
-    protected function _getConfigFileByPath($configPath)
+    protected function getConfigFileByPath($configPath)
     {
         try {
             $type           = $this->getConfigType();

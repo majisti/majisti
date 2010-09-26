@@ -14,7 +14,7 @@ class DbTableContainer
         $tables     = $this->getTables();
         
         if( !array_key_exists($tableName, $tables) ) {
-            $table = $this->_createTable($tableName);
+            $table = $this->createTable($tableName);
             $this->addTable($table);
             return $table;
         }
@@ -22,7 +22,7 @@ class DbTableContainer
         return $tables[$tableName];
     }
     
-    protected function _createTable($tableName)
+    protected function createTable($tableName)
     {
         return new $tableName();
     }

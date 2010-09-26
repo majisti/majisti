@@ -70,7 +70,7 @@ class InPlaceEditing extends \Majisti\Model\Storage\StorableModel
     public function getContent($key, $locale = null)
     {
         return $this->getStorageModel()->getContent( (string) $key,
-            $this->_getLocale($locale));
+            $this->getLocale($locale));
     }
 
     /**
@@ -89,7 +89,7 @@ class InPlaceEditing extends \Majisti\Model\Storage\StorableModel
     public function editContent($key, $content, $locale = null)
     {
         $this->getStorageModel()->editContent((string)$key, (string)$content,
-            $this->_getLocale($locale));
+            $this->getLocale($locale));
 
         return $this;
     }
@@ -114,7 +114,7 @@ class InPlaceEditing extends \Majisti\Model\Storage\StorableModel
      *
      * @return string The locale
      */
-    protected function _getLocale($locale)
+    protected function getLocale($locale)
     {
         if( null === $locale ) {
             $locale = \Majisti\Application\Locales::getInstance()->getCurrentLocale();
