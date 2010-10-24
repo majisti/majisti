@@ -653,8 +653,11 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
         $view      = $this->view;
         $optimizer = $this->optimizer;
 
+        /* this would normally trigger the optimizer */
+        $optimizer->setOptions($this->options + array('environment' => 'production'));
+
+        /* but this won't */
         $view->layout()->disableLayout();
-        $optimizer->setOptimizationEnabled(true);
 
         $this->assertFalse($optimizer->optimize('foo', 'bar'));
         $this->assertFalse($optimizer->bundle('foo', 'bar'));
