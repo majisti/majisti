@@ -2,6 +2,8 @@
 
 namespace Majisti\Test;
 
+use \Majisti\Application as Application;
+
 /**
  * @desc The test case serves as a simplified manner to extend PHPUnit TestCases.
  * It provides support for single running a test or running it as a part
@@ -10,7 +12,7 @@ namespace Majisti\Test;
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-class TestCase extends \PHPUnit_Framework_TestCase
+class TestCase extends \Zend_Test_PHPUnit_ControllerTestCase
 {
     static protected $_class;
 
@@ -23,6 +25,15 @@ class TestCase extends \PHPUnit_Framework_TestCase
      * @var Helper
      */
     protected $_helper;
+
+    /**
+     * @desc Enables Mvc boostraping for this TestCase
+     */
+    protected function enableMvc()
+    {
+        $manager = new Application\Manager($this->getHelper()->getOptions());
+        $this->bootstrap = $manager->getApplication();
+    }
 
     /**
      * @desc Retrieves the extending class via late static binding.
@@ -107,7 +118,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
     static public function getDefaultHelper()
     {
         if( null === static::$_defaultHelper ) {
-            return Helper::getInstance();
+            return new Helper();
         }
 
         return static::$_defaultHelper;
