@@ -21,6 +21,7 @@ class AllTests extends \Majisti\Test\TestSuite
     {
         $suite = new self('Majisti Library - Test - PHPUnit - All tests');
         
+        $suite->addTestCase(__NAMESPACE__ . '\HelperTest');
         $suite->addTestCase(__NAMESPACE__ . '\TestCaseTest');
         
         return $suite;

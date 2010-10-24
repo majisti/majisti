@@ -18,14 +18,22 @@ class Bootstrap extends \Zend_Application_Bootstrap_Bootstrap
     {
         parent::__construct($application);
 
+        $this->initResourcePaths();
+    }
+
+    /**
+     * @desc Adds the application's resource path to the plugin loader stack.
+     */
+    protected function initResourcePaths()
+    {
         /* add resources path */
         $options = $this->getOptions();
         $app     = $options['majisti']['app'];
 
-        $options['pluginPaths'][$app['namespace'] . '\Application\Resource\\']
-            = $app['path'] . '/library/resources/';
-
-        $this->setOptions($options);
+        $this->getPluginLoader()->addPrefixPath(
+            $app['namespace'] . '\Application\Resource\\',
+            $app['path']      . '/library/resources/'
+        );
     }
 
     /*

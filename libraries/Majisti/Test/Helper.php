@@ -11,11 +11,6 @@ namespace Majisti\Test;
 class Helper
 {
     /**
-     * @var TestHelper 
-     */
-    static protected $_instance;
-
-    /**
      * @var Array
      */
     static protected $_defaultOptions;
@@ -51,17 +46,13 @@ class Helper
     protected $_options = array();
 
     /**
-     * @desc Returns the helper's singleton instance.
+     * @desc Constructs the helper.
      *
-     * @return Helper
+     * @param array $options The options
      */
-    static public function getInstance()
+    public function __construct(array $options = array())
     {
-        if ( null === static::$_instance ) {
-            static::$_instance = new static();
-        }
-
-        return static::$_instance;
+        $this->setOptions($options);
     }
 
     /**
@@ -88,6 +79,16 @@ class Helper
         return new \Majisti\Application\Bootstrap(
             $this->createApplicationInstance()
         );
+    }
+
+    /**
+     * @desc Registers this helper as the default TestCase helper.
+     * Also, it will set the helper under the registry key Majisti_Test_Helper.
+     */
+    public function registerAsDefault()
+    {
+        TestCase::setDefaultHelper($this);
+        \Zend_Registry::set('Majisti_Test_Helper', $this);
     }
 
     /**
@@ -126,7 +127,7 @@ class Helper
     static public function getDefaultOptions()
     {
         if( null === static::$_defaultOptions ) {
-            $helper = static::getInstance();
+            $helper = new Helper();
             static::$_defaultOptions = array('majisti' => array(
                 'path' => $helper->getMajistiPath()
             ));
@@ -233,6 +234,21 @@ class Helper
     }
 
     /**
+     * @desc Inits the options.
+     */
+    public function initOptions()
+    {
+        $options = $this->getOptions();
+
+        /* register as the default helper */
+        if( isset($options['registerAsDefault']) &&
+            $options['registerAsDefault']
+        ) {
+            $this->registerAsDefault();
+        }
+    }
+
+    /**
      * @desc Inits xdebug.
      */
     public function initXdebug()
@@ -305,7 +321,25 @@ class Helper
      */
     public function initMiscelleneous()
     {
-        $request     = $this->getRequest();
+        $request = $this->getRequest();
+        $options = $this->getOptions();
+
+        /*
+         * The idea here is to make it appear as the unit tests are
+         * running from the application's perspective as though
+         * the request was handled on the index file.
+         */
+        $app = $options['majisti']['app'];
+        $scriptFile = realpath($app['path']) . '/public/index.php';
+        $baseUrl = str_replace(
+            realpath($_SERVER['DOCUMENT_ROOT']),
+            '',
+            realpath($app['path'])
+        ) . '/public';
+
+        $_SERVER['SCRIPT_FILENAME'] = $scriptFile;
+        $_SERVER['SCRIPT_NAME'] = $_SERVER['PHP_SELF'] = "{$baseUrl}/index.php";
+        $_SERVER['REQUEST_URI'] = $baseUrl;
 
         /* be a little bit more verbose according to request param */
         if( $request->has('v') ) {
