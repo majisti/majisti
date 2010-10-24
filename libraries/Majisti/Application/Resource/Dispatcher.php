@@ -40,7 +40,12 @@ class Dispatcher extends \Zend_Application_Resource_ResourceAbstract
             $front = $this->_bootstrap->getResource('FrontController');
 
             $dispatcher = new \Majisti\Controller\Dispatcher\Multiple();
+
             $dispatcher->setControllerDirectory($front->getControllerDirectory());
+            $dispatcher->setDefaultModule($front->getDefaultModule());
+            $dispatcher->setDefaultControllerName($front->getDefaultControllerName());
+            $dispatcher->setDefaultAction($front->getDefaultAction());
+
             $front->setDispatcher($dispatcher);
 
             $this->_dispatcher = $dispatcher;
