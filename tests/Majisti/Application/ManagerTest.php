@@ -14,7 +14,7 @@ if( !defined('PHPUnit_MAIN_METHOD') ) {
  *
  * @author Majisti
  */
-class ApplicationTest extends \Zend_Application_ApplicationTest
+class ManagerTest extends \Zend_Application_ApplicationTest
 {
     static public function runAlone()
     {
@@ -52,4 +52,4 @@ class ApplicationTest extends \Zend_Application_ApplicationTest
     {}
 }
 
-ApplicationTest::runAlone();
+ManagerTest::runAlone();
