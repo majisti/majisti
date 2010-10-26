@@ -8,7 +8,7 @@ namespace Majisti\Test\Listener\Simple;
  *
  * @author Majisti
  */
-class Html extends \Majisti\Test\DefaultListener
+class Html extends \Majisti\Test\Listener\DefaultListener
 {
     public function __construct($out = null, $verbose = false, $debug = false)
     {

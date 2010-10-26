@@ -16,6 +16,11 @@ class Helper
     static protected $_defaultOptions;
 
     /**
+     * @var Helper
+     */
+    static protected $_instance;
+
+    /**
      * @var \Zend_Controller_Request_Http
      */
     protected $_request;
@@ -50,13 +55,29 @@ class Helper
      *
      * @param array $options The options
      */
-    public function __construct(array $options = array())
+    protected function __construct(array $options = array())
     {
         $this->setOptions($options);
     }
 
     /**
-     * @desc Factory method to create a Majisti application instance.
+     * @desc Returns the single instance. If it was never instanciated,
+     * it will instanciate a new Helper with the provided options.
+     *
+     * @param array $options The options
+     * @return Helper
+     */
+    static public function getInstance(array $options = array())
+    {
+        if( null === static::$_instance ) {
+            static::$_instance = new self($options);
+        }
+
+        return static::$_instance;
+    }
+
+    /**
+     * @desc Factory method to create a Zend application instance.
      *
      * @return \Zend_Application The application instance
      */
@@ -79,16 +100,6 @@ class Helper
         return new \Majisti\Application\Bootstrap(
             $this->createApplicationInstance()
         );
-    }
-
-    /**
-     * @desc Registers this helper as the default TestCase helper.
-     * Also, it will set the helper under the registry key Majisti_Test_Helper.
-     */
-    public function registerAsDefault()
-    {
-        TestCase::setDefaultHelper($this);
-        \Zend_Registry::set('Majisti_Test_Helper', $this);
     }
 
     /**
@@ -127,10 +138,12 @@ class Helper
     static public function getDefaultOptions()
     {
         if( null === static::$_defaultOptions ) {
-            $helper = new Helper();
-            static::$_defaultOptions = array('majisti' => array(
-                'path' => $helper->getMajistiPath()
-            ));
+            static::$_defaultOptions = array(
+                'majisti' => array(
+                    'path' => realpath(__DIR__ . '/../../..'),
+                ),
+                'mvc' => false,
+            );
         }
 
         return static::$_defaultOptions;
@@ -176,11 +189,14 @@ class Helper
      */
     public function initIncludePaths()
     {
-        $includePaths = array(
-            $this->getTestsPath(),
+        $options = $this->getOptions();
+
+        $includePaths = array_unique(array(
+            $options['majisti']['app']['path'] . '/tests',
+            $this->getMajistiPath() . '/tests',
             $this->getMajistiPath() . '/libraries',
             get_include_path()
-        );
+        ));
 
         set_include_path(implode(PATH_SEPARATOR, $includePaths));
     }
@@ -214,6 +230,39 @@ class Helper
         /* Majisti */
         require_once 'Majisti/Loader/Autoloader.php';
         $loader->pushAutoloader(new \Majisti\Loader\Autoloader());
+
+        $maj = $this->getOption('majisti');
+
+        /* library autoloader */
+        if( file_exists($libPath = $maj->app->path . '/tests/library') ) {
+            new \Majisti\Application\ModuleAutoloader(
+                array(
+                    'namespace' => $maj->app->namespace,
+                    'basePath'  => $libPath,
+                )
+            );
+        }
+
+        /* application's modules autoloaders */
+        $modulesPath = $maj->app->path . '/tests/application/modules';
+
+        if( file_exists($modulesPath) ) {
+            foreach( new \DirectoryIterator($modulesPath) as $file ) {
+                if( $file->isDot() ) continue;
+
+                if( $file->isDir() ) {
+                    $filename  = $file->getFilename();
+
+                    new \Majisti\Application\ModuleAutoloader(
+                        array(
+                            'namespace' => $maj->app->namespace .
+                                '\\' . ucfirst($filename),
+                            'basePath'  => "{$modulesPath}/{$filename}",
+                        )
+                    );
+                }
+            }
+        }
     }
 
     /**
@@ -230,21 +279,6 @@ class Helper
             foreach ($phpunit as $file) {
                 require_once 'PHPUnit/' . $file . '.php';
             }
-        }
-    }
-
-    /**
-     * @desc Inits the options.
-     */
-    public function initOptions()
-    {
-        $options = $this->getOptions();
-
-        /* register as the default helper */
-        if( isset($options['registerAsDefault']) &&
-            $options['registerAsDefault']
-        ) {
-            $this->registerAsDefault();
         }
     }
 
@@ -365,20 +399,6 @@ class Helper
     }
 
     /**
-     * @desc Returns Majisti's directory path.
-     *
-     * @return string Majisti's dir path
-     */
-    public function getMajistiPath()
-    {
-        if( null === $this->_majistiPath ) {
-            $this->_majistiPath = realpath(__DIR__ . '/../../..');
-        }
-
-        return $this->_majistiPath;
-    }
-
-    /**
      * @desc Returns the Majisti's url.
      *
      * @return string The url
@@ -405,11 +425,15 @@ class Helper
      */
     public function getMajistiBaseUrl()
     {
-        return str_replace(
-            realpath($_SERVER['DOCUMENT_ROOT']),
-            '', 
-            $this->getMajistiPath()
-        );
+        if( null === $this->_majistiBaseUrl ) {
+            $this->_majistiBaseUrl =  str_replace(
+                realpath($_SERVER['DOCUMENT_ROOT']),
+                '',
+                $this->getMajistiPath()
+            );
+        }
+
+        return $this->_majistiBaseUrl;
     }
 
     /**
@@ -422,6 +446,19 @@ class Helper
         $this->_majistiBaseUrl = $majistiBaseUrl;
     }
 
+    /**
+     * @desc Returns Majisti's directory path.
+     *
+     * @return string Majisti's dir path
+     */
+    public function getMajistiPath()
+    {
+        if( null === $this->_majistiPath ) {
+            $this->_majistiPath = realpath(__DIR__ . '/../../..');
+        }
+
+        return $this->_majistiPath;
+    }
 
     /**
      * @desc Sets Majisti's dir path.
@@ -431,29 +468,5 @@ class Helper
     public function setMajistiPath($majistiPath)
     {
         $this->_majistiPath = $majistiPath;
-    }
-
-    /**
-     * @desc Returns Majisti's test directory path.
-     *
-     * @return string The test dir path.
-     */
-    public function getTestsPath()
-    {
-        if( null === $this->_testPath ) {
-            $this->_testPath = $this->getMajistiPath() . '/tests';
-        }
-
-        return $this->_testPath;
-    }
-
-    /**
-     * @desc Sets Majisti's directory path.
-     *
-     * @param string $testPath The test path
-     */
-    public function setTestPath($testPath)
-    {
-        $this->_testPath = $testPath;
     }
 }

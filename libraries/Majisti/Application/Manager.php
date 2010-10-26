@@ -88,13 +88,13 @@ class Manager
             );
         }
 
-        define('MA',             $options->path);
-        define('MA_URL',         $options->url);
-        define('MA_APP',         $options->app->path);
-        define('MA_APP_ENV',     $options->app->env);
-        define('MA_APP_NS',      $options->app->namespace);
-        define('MA_APP_URL',     $options->app->url);
-        define('MA_APP_BASEURL', $options->app->baseUrl);
+        @define('MA',             $options->path);
+        @define('MA_URL',         $options->url);
+        @define('MA_APP',         $options->app->path);
+        @define('MA_APP_ENV',     $options->app->env);
+        @define('MA_APP_NS',      $options->app->namespace);
+        @define('MA_APP_URL',     $options->app->url);
+        @define('MA_APP_BASEURL', $options->app->baseUrl);
     }
 
     /**
@@ -112,20 +112,20 @@ class Manager
         $majistix = $options->majistix;
         $app      = $majisti->application;
 
-        define('MAJISTI',         $majisti->path);
-        define('MAJISTI_ROOT',    $majisti->root);
-        define('MAJISTI_PUBLIC',  $majisti->public);
+        @define('MAJISTI',         $majisti->path);
+        @define('MAJISTI_ROOT',    $majisti->root);
+        @define('MAJISTI_PUBLIC',  $majisti->public);
 
-        define('MAJISTIX',             $majistix->path);
-        define('MAJISTIX_PUBLIC',      $majistix->public);
+        @define('MAJISTIX',             $majistix->path);
+        @define('MAJISTIX_PUBLIC',      $majistix->public);
 
         /** @staticvar Majisti's application path */
-        define('MAJISTI_APPLICATION',             $app->path);
-        define('MAJISTI_APPLICATION_NAMESPACE',   $app->namespace);
-        define('MAJISTI_APPLICATION_ROOT',        $app->root);
-        define('MAJISTI_APPLICATION_PUBLIC',      $app->public);
-        define('MAJISTI_APPLICATION_LIBRARY',     $app->library);
-        define('MAJISTI_APPLICATION_ENVIRONMENT', $app->environment);
+        @define('MAJISTI_APPLICATION',             $app->path);
+        @define('MAJISTI_APPLICATION_NAMESPACE',   $app->namespace);
+        @define('MAJISTI_APPLICATION_ROOT',        $app->root);
+        @define('MAJISTI_APPLICATION_PUBLIC',      $app->public);
+        @define('MAJISTI_APPLICATION_LIBRARY',     $app->library);
+        @define('MAJISTI_APPLICATION_ENVIRONMENT', $app->environment);
 
         define('MAJISTI_APPLICATION_BASEURL',     $app->baseUrl);
         define('MAJISTI_APPLICATION_URL',         $app->url);
