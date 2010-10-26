@@ -14,7 +14,7 @@ class Runner extends \PHPUnit_TextUI_TestRunner
 
     /**
      * @desc Returns an array of arguments. The default listener will be
-     * set according to wheter the test is running within a browser of if
+     * set according to whether the test is running within a browser of if
      * it is running within the CLI.
      *
      * @return array The arguments
@@ -26,6 +26,7 @@ class Runner extends \PHPUnit_TextUI_TestRunner
                 ? new Listener\Simple\Html()
                 : new Listener\Simple\Text()
             ;
+
             self::$_defaultArguments = array('printer' => $printer);
         }
         

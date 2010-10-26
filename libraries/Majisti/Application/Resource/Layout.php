@@ -12,7 +12,7 @@ class Layout extends \Zend_Application_Resource_Layout
 {
     /**
      * @desc Retrieves the layout class and appends it to the pluginClass
-     * option it it was never set. This will enable layout views for
+     * option if it was never set. This will enable layout views for
      * each modules.
      *
      * @return \Zend_Layout

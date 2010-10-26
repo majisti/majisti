@@ -6,7 +6,7 @@ namespace Majisti\Test\Listener\Simple;
  * @desc Text listener. Used by default by Majisti when running
  * a test within the console (CLI).
  */
-class Text extends \Majisti\Test\DefaultListener
+class Text extends \Majisti\Test\Listener\DefaultListener
 {
     public function __construct($out = null, $verbose = false, $debug = false)
     {
