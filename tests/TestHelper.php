@@ -2,10 +2,9 @@
 
 require_once __DIR__ . '/../libraries/Majisti/Test/Helper.php';
 
-$helper = new \Majisti\Test\Helper();
+$helper = \Majisti\Test\Helper::getInstance();
 
 $helper->setOptions(array(
-    'registerAsDefault' => true,
     'majisti' => array(
         'app' => array(
             'path'      => __DIR__ . '/Majisti/Application/_project',

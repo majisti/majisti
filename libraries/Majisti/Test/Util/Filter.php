@@ -17,7 +17,8 @@ class Filter extends \PHPUnit_Util_Filter
      * @param  boolean   $asString
      * @return string
      */
-    public static function getFilteredStacktrace(\Exception $e, $filterTests = true, $asString = true,
+    public static function getFilteredStacktrace(\Exception $e,
+        $filterTests = true, $asString = true,
         $fileCallback = null, $lineCallback = null)
     {
         if ($asString === true) {
@@ -35,7 +36,9 @@ class Filter extends \PHPUnit_Util_Filter
         }
 
         foreach ($eTrace as $frame) {
-            if (!self::$filter || (isset($frame['file']) && !static::isFiltered($frame['file'], $filterTests, true))) {
+            if (!self::$filter || (isset($frame['file']) && 
+                !static::isFiltered($frame['file'], $filterTests, true))
+            ) {
                 if ($asString === true) {
                     $filteredStacktrace .= sprintf(
                       "%s:%s\n",

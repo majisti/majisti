@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\Test;
+namespace Majisti\Test\Listener;
 
 /**
  * @desc Default listener for Majisti. Writes timer with miliseconds.
