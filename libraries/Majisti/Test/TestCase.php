@@ -7,43 +7,49 @@ use \Majisti\Application as Application;
 /**
  * @desc The test case serves as a simplified manner to extend PHPUnit TestCases.
  * It provides support for single running a test or running it as a part
- * of a TestSuite.
+ * of a TestSuite. Moreover, it easily enables Mvc testing with
+ * the mvc option set through the helper singleton on by calling enableMvc()
+ * in the setUp function.
  *
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class TestCase extends \Zend_Test_PHPUnit_ControllerTestCase
 {
+    /**
+     * @var string The resolved class for standalone running
+     */
     static protected $_class;
-
-    /**
-     * @var Helper
-     */
-    static protected $_defaultHelper;
-
-    /**
-     * @var Helper
-     */
-    protected $_helper;
 
     /**
      * @desc Enables Mvc boostraping for this TestCase
      */
     protected function enableMvc()
     {
-        $manager = new Application\Manager($this->getHelper()->getOptions());
-        $this->bootstrap = $manager->getApplication();
+        /* won't instanciate on multiple call but will instanciate on each test */
+        if( null === $this->bootstrap ) {
+            $manager = new Application\Manager($this->getHelper()->getOptions());
+            $this->bootstrap = $manager->getApplication();
+        }
+    }
+
+    /*
+     * (non-phpDoc)
+     * @see Inherited documentation.
+     */
+    public function run(\PHPUnit_Framework_TestResult $result = NULL)
+    {
+        if( $this->getHelper()->getOption('mvc') ) {
+            $this->enableMvc();
+        }
+
+        return parent::run($result);
     }
 
     /**
      * @desc Retrieves the extending class via late static binding.
-     * The protected $_class must have been set to __CLASS__, or setClass()
-     * but have been used. If not an exception is thrown.
      *
      * @return string The class name
-     * @throws Exception if $_class was not set to __CLASS__ in the
-     * extending class or if the $_class is null. setClass() can also
-     * be used.
      */
     static public function getClass()
     {
@@ -92,45 +98,6 @@ class TestCase extends \Zend_Test_PHPUnit_ControllerTestCase
      */
     public function getHelper()
     {
-        if( null === $this->_helper ) {
-            return static::getDefaultHelper();
-        }
-
-        return $this->_helper;
-    }
-
-    /**
-     * @desc Sets the helper instance
-     * 
-     * @param Helper $helper The helper
-     */
-    public function setHelper(Helper $helper)
-    {
-        $this->_helper = $helper;
-    }
-
-    /**
-     * @desc Returns the default helper. If none was set trought setDefaultHelper,
-     * Majisti's default helper singleton instance will be returned
-     * 
-     * @return Helper
-     */
-    static public function getDefaultHelper()
-    {
-        if( null === static::$_defaultHelper ) {
-            return new Helper();
-        }
-
-        return static::$_defaultHelper;
-    }
-
-    /**
-     * @desc Sets the default helper for every test case
-     *
-     * @param Helper $helper The default helper
-     */
-    static public function setDefaultHelper(Helper $helper)
-    {
-        static::$_defaultHelper = $helper;
+        return \Majisti\Test\Helper::getInstance();
     }
 }
