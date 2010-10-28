@@ -2,9 +2,12 @@
 
 namespace Majisti\Model;
 
+use \Doctrine\ORM\EntityManager;
+
 /**
- * @desc Container for holding single models by providing case insensitive
- * namespace access and lazy instanciation.
+ * @desc Container for holding models by providing case insensitive
+ * namespace access, lazy instanciation, aliases (todo) and automatic
+ * persistence (todo).
  *
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
@@ -15,6 +18,10 @@ class Container
      * @var \ArrayObject
      */
     protected $_registry;
+
+    protected $_entityManager;
+
+    protected $_automaticPersistence = false;
 
     /**
      * @desc Constructs the model container
@@ -157,8 +164,85 @@ class Container
 
         if( null !== $model ) {
             $this->addModel($key, $model, $namespace);
+
+            if( $this->isAutomaticPersistenceEnabled() ) {
+                $this->persistModel($model);
+            }
         }
 
         return $model;
+    }
+
+    protected function detachModel($model)
+    {
+        $manager = $this->getEntityManager();
+
+        if( null === $manager ) {
+            throw new Exception(
+                "A entity manager must be set prior to unpersisting models."
+            );
+        }
+
+        if( $manager->contains($model) ) {
+            $manager->detach($model);
+        }
+    }
+
+    protected function persistModel($model)
+    {
+        $manager = $this->getEntityManager();
+
+        if( null === $manager ) {
+            throw new Exception(
+                "A entity manager must be set prior to persisting models."
+            );
+        }
+
+        if( $manager->contains($model) ) {
+            return;
+        }
+
+        try {
+            $manager->persist($model);
+        } catch( \Doctrine\ORM\Mapping\Exception $e ) {}
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAutomaticPersistenceEnabled()
+    {
+        return $this->_automaticPersistence;
+    }
+
+    public function setAutomaticPersistenceEnabled($flag)
+    {
+        $this->_automaticPersistence = (bool) $flag;
+    }
+
+    /**
+     * @return EntityManager
+     */
+    public function getEntityManager()
+    {
+        return $this->_entityManager;
+    }
+
+    public function setEntityManager(EntityManager $manager)
+    {
+        $this->_entityManager = $manager;
+    }
+
+    public function flush()
+    {
+        $manager = $this->getEntityManager();
+
+        if( null === $manager ) {
+            throw new Exception(
+                "An entity manager must be set in order to save models"
+            );
+        }
+
+        $manager->flush();
     }
 }

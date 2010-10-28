@@ -104,9 +104,6 @@ class ContainerTest extends \Majisti\Test\TestCase
         $this->assertNull($container->getModel('model1', 'majistix'));
     }
     
-    /**
-     * 
-     */
     public function testGetModelWithObjectParams()
     {
         $container = $this->container;
