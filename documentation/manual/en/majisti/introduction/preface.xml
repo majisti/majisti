@@ -4,15 +4,43 @@
     xml:id="majisti.introduction.preface" version="5.0">
     <title>Preface</title>
     <para> Best designs come from needs and not from gaps. That is what Majisti is aiming for,
-        completely using the Zend Framework and JQuery to achieve its goals, Majisti aims to be very
+        serving as a glue and using multiple libraries to achieve its goals, Majisti aims to be very
         modular in the ways of building applications. </para>
-    <para> The need here is simple, Zend Framework is a component library, aiming to deliver
-        enterprise ready components which covers everything a web application, web service and
-        others would need. Building web applications with it is very simple and cohesive but yet
-        there is still some more needs associated to building those rich applications. </para>
-    <para> By building more and more applications, its easy to define some common abstraction that
-        could occur or at least, repetitive core modules needed in a good rich application. A good
-        rich application may include one or more of the following: </para>
+    <para>Majisti uses the following third-party libraries:<itemizedlist>
+            <listitem>
+                <para>Zend Framework (core architecture and components)</para>
+            </listitem>
+            <listitem>
+                <para>JQuery (client side scripting and plugins)</para>
+            </listitem>
+            <listitem>
+                <para>phpQuery (server side view scripting and DOM selection that eliminates php
+                    tags)</para>
+            </listitem>
+            <listitem>
+                <para>YUI compressor (for mynyfing JS and CSS)</para>
+            </listitem>
+            <listitem>
+                <para>Doctrine ORM</para>
+            </listitem>
+            <listitem>
+                <para>Sass (using the scss new syntax known  as Sass 3)</para>
+            </listitem>
+            <listitem>
+                <para>Compass (CSS framework used in conjunction with Sass)</para>
+            </listitem>
+            <listitem>
+                <para>Symfony (for its loosely coupled components) [none are used currently but may
+                    make an appearance in future versions and refactor]</para>
+            </listitem>
+        </itemizedlist></para>
+    <para> The need here is simple, full stack framework such as Zend Framework or Symfony are
+        aiming to deliver enterprise ready components which covers everything a web application, web
+        service and others would need. Building web applications with it is very simple and cohesive
+        but yet there is still some more needs associated to building those rich applications. </para>
+    <para> By building more and more applications, its easy to define some common business logic
+        abstraction that could occur or at least, repetitive core modules needed in a good rich
+        application. A good rich application may include one or more of the following: </para>
     <itemizedlist>
         <listitem>
             <para>User handling with authentification, profiles and roles.</para>
@@ -31,19 +59,18 @@
             <para>And much, much more...</para>
         </listitem>
     </itemizedlist>
-    <para> 
-        What Majisti aims for is a design primarily based on default behaviour, where the default
-        behaviour can be tweaked at anytime by rewriting or extending very specific 
-        scopes on which it must be changed. 
-    </para>
-    <para>
-        In other words, a "default behaviour" could in fact be an entire Authentification Module
-        where authentification will work based on a configuration which can be customized or used
-        as is. If that module would be accepted as part of the standard distribution, customization
-        of that module must be very easy not by extending it in one concrete application but by extending
-        it in the user's custom library for maximum flexibility. Every future applications could
-        then use, or not, that last redefined component.
-    </para>
+    <para> What Majisti aims for is a design primarily based on convention over configuration, where
+        the default behaviour can be tweaked at anytime by rewriting or extending very specific
+        scopes on which it must be changed. </para>
+    <para> In other words, a "default behaviour" could in fact be an entire Authentification Module
+        where authentification will work based on a configuration which can be customized or used as
+        is. If that module would be accepted as part of the standard distribution, customization of
+        that module must be very easy not only by extending it in one concrete application but by
+        extending it in the user's custom library for maximum flexibility. Every future applications
+        could then use, or not, that last redefined component. It makes a constrat with the
+        full-stack frameworks. Those actually help you generate or code those needed business
+        models, but Majisti aims at providing you a set of business models that you can tweak and
+        expand with minimum effort.</para>
     <para>
         The current business need could be entirely satisfied with the default pattern but
         in a realistic world that is rarely the case and a lot of customization or concrete models
