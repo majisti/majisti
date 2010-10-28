@@ -68,7 +68,7 @@
 			First level components should be submitted to the Zend Framework community.
 		</para></listitem>
 		<listitem><para>Mainly a <acronym>CMS</acronym> (A Content Management System could be part of a contributed module or set of modules)</para></listitem>
-		<listitem><para>A JQuery module creator. It uses already proven and tested JQuery modules.</para></listitem>
+		<listitem><para>A JQuery plugin creator. It uses already proven and tested JQuery plugins.</para></listitem>
 	</itemizedlist>
 	
 	<para>To sum up, Majisti is simply a module engine where everything needed for a rich application should already be defined and ready to get

@@ -63,6 +63,10 @@ class ModuleAutoloader extends ResourceAutoloader
     {
         $basePath = $this->getBasePath();
         $this->addResourceTypes(array(
+            'controllers' => array(
+                'namespace' => 'Controller',
+                'path'      => 'controllers',
+            ),
             'handlers' => array(
                 'namespace' => 'Handler',
                 'path'      => 'handlers',
