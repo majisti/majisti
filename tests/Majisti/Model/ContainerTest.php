@@ -25,7 +25,7 @@ class ContainerTest extends \Majisti\Test\TestCase
      * @var MockModel
      */
     public $mockModel;
-    
+
     /**
      * @var string
      */
@@ -36,8 +36,8 @@ class ContainerTest extends \Majisti\Test\TestCase
      */
     public function setUp()
     {
-        $this->container = new Container();
-        $this->mockModel = new MockModel();
+        $this->container              = new Container();
+        $this->mockModel              = new MockModel();
     }
     
     public function testAddModelOverridesExistingModel()
@@ -74,6 +74,11 @@ class ContainerTest extends \Majisti\Test\TestCase
         $this->assertNull($container->getModel('model1')); //default namespace
         $this->assertEquals($model, $container->getModel('model1', 'majisti'));
         $this->assertEquals($model, $container->getModel('model1', 'MaJiSti'));
+
+        $this->assertTrue($container->hasModel('model1', 'majisti'));
+        $this->assertTrue($container->hasModel('model1', 'maJiSti'));
+        $this->assertTrue($container->hasModel('moDel1', 'maJiSti'));
+        $this->assertFalse($container->hasModel('model1'));
     }
     
     public function testGetModelOnInsertedClass()
@@ -84,6 +89,7 @@ class ContainerTest extends \Majisti\Test\TestCase
         
         $model = $container->getModel('model1');
         $this->assertEquals(new MockModel(), $model);
+        $this->assertTrue($container->hasModel('model1'));
         
         $model->foo = 'foo';
         
@@ -103,21 +109,16 @@ class ContainerTest extends \Majisti\Test\TestCase
         /* existant model on non existant namespace */
         $this->assertNull($container->getModel('model1', 'majistix'));
     }
-    
+
+    /**
+     * @expectedException \Exception
+     */
     public function testGetModelWithObjectParams()
     {
         $container = $this->container;
-        $container->addModel('textfield', 'Zend_Form_Element_Text');
-        
-        /* object must not instanciate on wrong params */
-        try {
-            $container->getModel('textfield');
-            $this->fail('Should throw exception since no arguments provided');
-        } catch( \Exception $e ) {
-            
-        }
         
         $container->addModel('textfield', 'Zend_Form_Element_Text', array('tf'));
+        $this->assertTrue($container->hasModel('textfield'));
         
         /* object must instanciate with given params */
         $tf = $container->getModel('textfield');
@@ -129,6 +130,10 @@ class ContainerTest extends \Majisti\Test\TestCase
          */
         $tf = $container->getModel('textfield');
         $this->assertEquals('tf', $tf->getName());
+
+        /* object must not instanciate on wrong params */
+        $container->addModel('textfield', 'Zend_Form_Element_Text');
+        $container->getModel('textfield'); //throws exception
     }
     
     public function testRemoveModel()
@@ -141,22 +146,33 @@ class ContainerTest extends \Majisti\Test\TestCase
         /* removing from default namespace */
         $this->assertTrue($container->removeModel('model1'));
         $this->assertNull($container->getModel('model1'));
+        $this->assertFalse($container->hasModel('model1'));
         
         /* removing from namespace */
         $container->getModel('model2', 'majisti');
         $this->assertTrue($container->removeModel('model2', 'majisti'));
         $this->assertNull($container->getModel('model2', 'majisti'));
+        $this->assertFalse($container->hasModel('model2', 'majisti'));
         
         /* non existant models or namespaces */
         $this->assertFalse($container->removeModel('nonExistantModel'));
         $this->assertFalse($container->removeModel('nonExistantModel', 'majisti'));
-        $this->assertFalse($container->removeModel('nonExistantModel', 'nonExistantNamespace'));
+        $this->assertFalse($container->removeModel(
+            'nonExistantModel',
+            'nonExistantNamespace'
+        ));
+
+        $this->assertFalse($container->hasModel('nonExistantModel'));
+        $this->assertFalse($container->hasModel(
+            'nonExistantModel',
+            'nonExistantNamespace'
+        ));
     }
 }
 
 /**
  * @desc MockModel class used in the assertions
- * 
+ *
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
@@ -165,11 +181,11 @@ class MockModel extends \ArrayObject
     public function __construct($data = array())
     {
         $dataToInsert = array('default' => 'value');
-        
+
         if( !empty($data) ) {
             $dataToInsert = array_merge($dataToInsert, $data);
         }
-        
+
         parent::__construct($dataToInsert);
     }
 }
