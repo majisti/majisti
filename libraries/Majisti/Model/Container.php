@@ -2,12 +2,9 @@
 
 namespace Majisti\Model;
 
-use \Doctrine\ORM\EntityManager;
-
 /**
  * @desc Container for holding models by providing case insensitive
- * namespace access, lazy instanciation, aliases (todo) and automatic
- * persistence (todo).
+ * namespace access, and lazy instanciation.
  *
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
@@ -19,8 +16,14 @@ class Container
      */
     protected $_registry;
 
-    protected $_entityManager;
+    /**
+     * @var EntityManager
+     */
+    protected $_persistenceManager;
 
+    /**
+     * @var bool
+     */
     protected $_automaticPersistence = false;
 
     /**
@@ -28,7 +31,10 @@ class Container
      */
     public function __construct()
     {
-        $this->_registry = new \ArrayObject(array(), \ArrayObject::ARRAY_AS_PROPS);
+        $this->_registry = new \ArrayObject(
+            array(),
+            \ArrayObject::ARRAY_AS_PROPS
+        );
     }
 
     /**
@@ -44,12 +50,16 @@ class Container
      * @param $namespace [opt; def=default] The namespace key
      * @param $args [optionnal] The object arguments needed for instanciation
      */
-    public function addModel($key, $model, $namespace = 'default', array $args = array())
+    public function addModel($key, $model, $namespace = 'default',
+        array $args = array())
     {
         /* prepare params */
-        if( is_array($namespace) ) {
+        if( is_array($namespace) ) { /* args provided after model */
             $args       = $namespace;
-            $namespace  = 'default';
+            $namespace  = null;
+        } else if( is_bool($namespace) ) { /* persistence provided after model */
+            $persist   = $namespace;
+            $namespace = null;
         }
 
         if( null === $namespace ) {
@@ -58,18 +68,23 @@ class Container
 
         $registry   = $this->_registry;
         $namespace  = strtolower((string) $namespace);
-        $key        = strtolower((string)$key);
+        $key        = strtolower((string) $key);
 
         /* create namespace */
         if( !$registry->offsetExists($namespace) ) {
-            $registry->$namespace = new \ArrayObject(array(), \ArrayObject::ARRAY_AS_PROPS);
+            $registry->$namespace = new \ArrayObject(
+                array(),
+                \ArrayObject::ARRAY_AS_PROPS
+            );
         }
 
         /* add model */
         $registry->$namespace->$key = new \ArrayObject(array(
-            'model' => $model,
-            'args'  => $args
+            'model'   => $model,
+            'args'    => $args,
         ), \ArrayObject::ARRAY_AS_PROPS);
+
+        return $this;
     }
 
     /**
@@ -139,16 +154,34 @@ class Container
          * instanciate it with provided args. Once loaded,
          * the container will always return that model.
          */
-        if( $registry->offsetExists($namespace) && $registry->$namespace->offsetExists($key) ) {
-            $returnModel    = $registry->$namespace->$key->model;
-            $args           = $registry->$namespace->$key->args;
+        if( $this->hasModel($key, $namespace) ) {
+            $returnModel = $registry->$namespace->$key->model;
+            $args        = $registry->$namespace->$key->args;
         }
 
         return $this->loadModel($key, $returnModel, $namespace, $args);
     }
 
     /**
-     * @desc Loads a model with with the provided arguments
+     * @desc Returns whether the given key maps to a model within the container.
+     *
+     * @param string $key The model key
+     * @param string $namespace The namespace
+     *
+     * @return bool True if the model exists, instanciated or not
+     */
+    public function hasModel($key, $namespace = 'default')
+    {
+        $registry  =  $this->_registry;
+        $namespace = strtolower((string) $namespace);
+        $key       = strtolower((string) $key);
+
+        return $registry->offsetExists($namespace) &&
+            $registry->$namespace->offsetExists($key);
+    }
+
+    /**
+     * @desc Loads a model with the provided arguments
      *
      * @param string|object $model The classname or object
      * @param array $args The args
@@ -164,85 +197,8 @@ class Container
 
         if( null !== $model ) {
             $this->addModel($key, $model, $namespace);
-
-            if( $this->isAutomaticPersistenceEnabled() ) {
-                $this->persistModel($model);
-            }
         }
 
         return $model;
-    }
-
-    protected function detachModel($model)
-    {
-        $manager = $this->getEntityManager();
-
-        if( null === $manager ) {
-            throw new Exception(
-                "A entity manager must be set prior to unpersisting models."
-            );
-        }
-
-        if( $manager->contains($model) ) {
-            $manager->detach($model);
-        }
-    }
-
-    protected function persistModel($model)
-    {
-        $manager = $this->getEntityManager();
-
-        if( null === $manager ) {
-            throw new Exception(
-                "A entity manager must be set prior to persisting models."
-            );
-        }
-
-        if( $manager->contains($model) ) {
-            return;
-        }
-
-        try {
-            $manager->persist($model);
-        } catch( \Doctrine\ORM\Mapping\Exception $e ) {}
-    }
-
-    /**
-     * @return bool
-     */
-    public function isAutomaticPersistenceEnabled()
-    {
-        return $this->_automaticPersistence;
-    }
-
-    public function setAutomaticPersistenceEnabled($flag)
-    {
-        $this->_automaticPersistence = (bool) $flag;
-    }
-
-    /**
-     * @return EntityManager
-     */
-    public function getEntityManager()
-    {
-        return $this->_entityManager;
-    }
-
-    public function setEntityManager(EntityManager $manager)
-    {
-        $this->_entityManager = $manager;
-    }
-
-    public function flush()
-    {
-        $manager = $this->getEntityManager();
-
-        if( null === $manager ) {
-            throw new Exception(
-                "An entity manager must be set in order to save models"
-            );
-        }
-
-        $manager->flush();
     }
 }
