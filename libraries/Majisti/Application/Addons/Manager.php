@@ -71,7 +71,8 @@ class Manager
     public function getAddonsPath($namespace)
     {
         if( !array_key_exists($namespace, $this->_paths) ) {
-            throw new Exception("Namespace $namespace was never used");
+            throw new Exception("Namespace $namespace was never used" .
+                " in the provided paths. (" . implode(':', $this->_paths) .")");
         }
 
         return $this->_paths[$namespace];
