@@ -22,11 +22,6 @@ class Manager
     protected $_application;
 
     /**
-     * @var Application\AddonsManager
-     */
-    protected $_addonsManager;
-
-    /**
      * @desc Constructs the application based on merged configuration files
      */
     public function __construct(array $options)
@@ -156,48 +151,5 @@ class Manager
                 $app->env, true
             ))
         ;
-    }
-
-    /**
-     * @desc Returns the addons manager.
-     * @return Application\Addons\Manager The addons manager
-     */
-    public function getAddonsManager()
-    {
-        if( null === $this->_addonsManager ) {
-            $addonsManager = new Application\Addons\Manager();
-            $addonsManager->registerAddonsPath(MAJISTIX_PATH, 'majistix');
-            $this->_addonsManager = $addonsManager;
-        }
-
-        return $this->_addonsManager;
-    }
-
-    /**
-     * @desc Loads an extension for this application.
-     *
-     * @param string $name The extension name
-     * @param string $namespace[opt; def=MajistiX] The namespace it operates under
-     * @return undertermined yet
-     * @throws Exception If the bootstrap file is not readable, non existant,
-     * has wrong namespaced class name or is not implementing IAddonsBoostrapper
-     */
-    public function loadExtension($name, $namespace = 'MajistiX')
-    {
-        return $this->getAddonsManager()->loadExtension($name, $namespace);
-    }
-
-    /**
-     * @desc Loads a fallback module for this application.
-     *
-     * @param string $name The module name
-     * @param string $namespace[opt; def=MajistiX] The namespace it operates under
-     * @return undetermined yet
-     * @throws Exception If the modules's controllers directory is not
-     * readable or existant.
-     */
-    public function loadModule($name, $namespace = 'MajistiX')
-    {
-        return $this->getAddonsManager()->loadModule($name, $namespace);
     }
 }

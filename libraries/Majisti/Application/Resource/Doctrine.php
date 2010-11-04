@@ -46,10 +46,11 @@ class Doctrine extends \Zend_Application_Resource_ResourceAbstract
         $config->setProxyNamespace($maj['app']['namespace'] . '\Doctrine\Proxies');
         $config->setAutoGenerateProxyClasses(true);
 
+        $dbConfig = $db->getConfig();
         $connectionOptions = array(
             'driver' => 'pdo_mysql',
-
-        ) + $db->getConfig();
+            'user'   => $dbConfig['username'],
+        ) + $dbConfig;
 
         $em = EntityManager::create($connectionOptions, $config);
 
