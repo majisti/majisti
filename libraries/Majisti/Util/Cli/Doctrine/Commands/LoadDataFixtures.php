@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\View\Cli\Doctrine\Commands;
+namespace Majisti\Util\Cli\Doctrine\Commands;
 
 use Symfony\Component\Console\Input\InputArgument,
     Symfony\Component\Console\Input\InputOption,
@@ -43,7 +43,7 @@ EOT
         $loader = new DataFixtures\Loader();
         $purger = new DataFixtures\Purger\ORMPurger($em);
 
-        $maj = $app->getOptions('majisti');
+        $maj = $app->getOption('majisti');
         $path = $maj['app']['path'] .  '/library/models/doctrine/fixtures';
         $loader->loadFromDirectory($path);
 

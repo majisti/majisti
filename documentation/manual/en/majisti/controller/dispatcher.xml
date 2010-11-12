@@ -77,5 +77,6 @@ $dispatcher->addFallbackControllerDirectory('\MajistiX\Modules',
     MAJISTIX_MODULES . '/users/controllers', 'users');</programlisting>
         <programlisting>If the third parameter is not specified, which is the module, 
 Majisti assumes the default controller</programlisting>
+        <para>TODO: fallback restrictions section</para>
     </example>
 </section>

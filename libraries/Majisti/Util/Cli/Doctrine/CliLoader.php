@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\View\Cli\Doctrine;
+namespace Majisti\Util\Cli\Doctrine;
 
 use \Doctrine\DBAL\Migrations\Tools\Console\Command as MigrationCommand,
     \Doctrine\ORM\Tools\Console\ConsoleRunner,
