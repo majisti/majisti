@@ -30,17 +30,17 @@ class Addons extends \Zend_Application_Resource_ResourceAbstract
     protected function getAddons()
     {
         $app        = $this->getBootstrap()->getApplication();
-        $addons     = $app->getAddonsManager();
+        $manager    = new \Majisti\Application\Addons\Manager();
         $options    = new \Zend_Config($this->getOptions());
 
-        $addons->setAddonsPaths($options->paths->toArray());
+        $manager->setAddonsPaths($options->paths->toArray());
 
         /* load extensions */
         foreach( $options->ext as $namespace => $name ) {
             if( is_int($namespace) ) {
                 $namespace = static::DEFAULT_NAMESPACE;
             }
-            $addons->loadExtension($name, $namespace);
+            $manager->loadExtension($name, $namespace);
         }
 
         /* load modules */
@@ -48,9 +48,9 @@ class Addons extends \Zend_Application_Resource_ResourceAbstract
             if( is_int($namespace) ) {
                 $namespace = static::DEFAULT_NAMESPACE;
             }
-            $addons->loadModule($name, $namespace);
+            $manager->loadModule($name, $namespace);
         }
 
-        return $addons;
+        return $manager;
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-//namespace MajistiX\View\Helper;
-//TODO: this will move in its actual namespace when plugin bootstraping will work
+namespace MajistiX\View\Helper;
 
 /**
  * @desc InPlaceEditing view helper. Renders the default in place content editor
@@ -11,7 +10,7 @@
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-class MajistiX_View_Helper_InPlaceEditing extends Majisti_View_Helper_Abstract
+class InPlaceEditing extends \Majisti\View\Helper\AbstractHelper
 {
     protected $_inPlaceEditingModel;
 
@@ -21,7 +20,7 @@ class MajistiX_View_Helper_InPlaceEditing extends Majisti_View_Helper_Abstract
      * @param $key The storage key
      * @param $options the options
      */
-    public function inPlaceEditing($key, $options = array())
+    public function helper($key, $options = array())
     {
         return $this->getModel()->render($key);
     }
