@@ -1,6 +1,6 @@
 <?php
 
-namespace MajistiX\Extensions\InPlaceEditing\Model\Editor;
+namespace MajistiX\Extension\InPlaceEditing\View\Editor;
 
 /**
  * @desc Editor implementation of the very popular CkEditor.
@@ -20,8 +20,10 @@ class CkEditor implements IEditor
      */
     public function __construct()
     {
-        $view = \Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer')->view;
-        $view->headScript()->appendFile(MAJISTIX_URL . '/editing/scripts/editors/ckeditor/ckeditor.js');
+//        $view = \Zend_Controller_Action_HelperBroker::getStaticHelper(
+//            'viewRenderer')->view;
+//        $view->headScript()->appendFile(
+//            MAJISTIX_URL . '/editing/scripts/editors/ckeditor/ckeditor.js');
     }
 
     /**

@@ -98,40 +98,6 @@ class Manager
     }
 
     /**
-     * @desc Majisti is miniming the use of global constants to avoid
-     * the constantitis antipattern. Those constants represent vital
-     * constants that need to be used within an application.
-     * Those constants should not be used outside
-     * of configuration files, where this application's options cannot
-     * be reached. Using them outside this scope in this library is violating the
-     * dependency injection Majisti is trying to achieve.
-     */
-    protected function defineConstants(\Zend_Config $options)
-    {
-        $majisti  = $options->majisti;
-        $majistix = $options->majistix;
-        $app      = $majisti->application;
-
-        @define('MAJISTI',         $majisti->path);
-        @define('MAJISTI_ROOT',    $majisti->root);
-        @define('MAJISTI_PUBLIC',  $majisti->public);
-
-        @define('MAJISTIX',             $majistix->path);
-        @define('MAJISTIX_PUBLIC',      $majistix->public);
-
-        /** @staticvar Majisti's application path */
-        @define('MAJISTI_APPLICATION',             $app->path);
-        @define('MAJISTI_APPLICATION_NAMESPACE',   $app->namespace);
-        @define('MAJISTI_APPLICATION_ROOT',        $app->root);
-        @define('MAJISTI_APPLICATION_PUBLIC',      $app->public);
-        @define('MAJISTI_APPLICATION_LIBRARY',     $app->library);
-        @define('MAJISTI_APPLICATION_ENVIRONMENT', $app->environment);
-
-        define('MAJISTI_APPLICATION_BASEURL',     $app->baseUrl);
-        define('MAJISTI_APPLICATION_URL',         $app->url);
-    }
-
-    /**
      * @desc Returns a merged Majisti's default configuration with
      * the application's configuration, the later overwriting the former.
      *
