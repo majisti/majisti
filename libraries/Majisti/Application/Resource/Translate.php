@@ -13,16 +13,55 @@ namespace Majisti\Application\Resource;
  */
 class Translate extends \Zend_Application_Resource_Translate
 {
+    protected $_adapter;
+
     /**
-     * @desc Inits a null translator.
+     * @desc Inits a gettext translator when language is different from default.
      *
      * @return \Zend_Translate_Adapter_Abstract
      */
-    public function init()
+    public function getTranslate()
     {
-        return $this->getTranslate();
+        if( null !== $this->_adapter ) {
+            return $this->_adapter;
+        }
+
+        $locale = \Majisti\Application\Locales::getInstance();
+        $options = new \Zend_Config(
+            $this->getBootstrap()->getApplication()->getOptions());
+        $options = $options->majisti;
+
+        $currentLocale = $locale->getCurrentLocale();
+        $moPath = $options->app->path . "/library/models/i18n/{$currentLocale}.mo";
+
+        if( !file_exists($moPath) ) {
+            return $this->getNullTranslate();
+        }
+
+        /* add application's translation file */
+        $adapter = new \Zend_Translate_Adapter_Gettext(
+            $moPath,
+            $locale->getCurrentLocale()
+        );
+
+        /* add majp mo file, provided the application is not already en */
+        $majpMo = $options->path . "/resources/i18n/{$currentLocale}.mo";
+        if( !$locale->getCurrentLocale()->equals(new \Zend_Locale('en'))
+            && file_exists($majpMo) )
+        {
+            $adapter->addTranslation(array(
+                'content' => $majpMo,
+                'locale'  => $currentLocale,
+            ));
+        }
+
+        \Zend_Registry::set('Zend_Translate', $adapter);
+
+        $this->_adapter = $adapter;
+
+        return $adapter;
     }
-    
+
     /**
      * @desc Returns a empty translator for this application if nothing
      * was setup in the configuration. Any string will be returned with it.
@@ -30,7 +69,7 @@ class Translate extends \Zend_Application_Resource_Translate
      *
      * @return \Zend_Translate_Adapter
      */
-    public function getTranslate()
+    protected function getNullTranslate()
     {
         if( !array_key_exists('data', $this->getOptions()) ) {
             \Zend_Registry::set('Zend_Translate',

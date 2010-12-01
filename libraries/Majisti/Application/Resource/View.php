@@ -91,8 +91,8 @@ class View extends \Zend_Application_Resource_View
         $settings = $this->getSettings();
 
         /* jQuery and UI */
-        $view->jQuery()->setLocalPath($settings->url    . '/scripts/jquery.js');
-        $view->jQuery()->setUiLocalPath($settings->url  . '/scripts/jquery.ui.js');
+        $view->jQuery()->setLocalPath($settings->url    . '/jquery/jquery.js');
+        $view->jQuery()->setUiLocalPath($settings->url  . '/jquery/jquery.ui.js');
 
         /* paths given, enable and set paths */
         $uiLocalPath = false;
