@@ -1,6 +1,6 @@
 <?php
 
-namespace MajistiX\Extensions\InPlaceEditing\Model\Editor;
+namespace MajistiX\Extension\InPlaceEditing\View\Editor;
 
 /**
  * @desc An editor is a component used to render InPlaceEditing content.

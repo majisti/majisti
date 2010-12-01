@@ -81,13 +81,12 @@ class Helper
      *
      * @return \Zend_Application The application instance
      */
-    public function createApplicationInstance()
+    public function createApplicationInstance($options = array())
     {
-        $options = $this->getOptions();
-        $app = new \Zend_Application($this->getOption('majisti.app.path'));
-        $app->setOptions($options);
+        $options = array_merge_recursive($this->getOptions(), $options);
+        $manager = new \Majisti\Application\Manager($options);
 
-        return $app;
+        return $manager->getApplication();
     }
 
     /**
@@ -95,11 +94,9 @@ class Helper
      *
      * @return \Majisti\Application\Bootstrap The bootstrap instance
      */
-    public function createBootstrapInstance()
+    public function createBootstrapInstance($options = array())
     {
-        return new \Majisti\Application\Bootstrap(
-            $this->createApplicationInstance()
-        );
+        return $this->createApplicationInstance($options)->getBootstrap();
     }
 
     /**

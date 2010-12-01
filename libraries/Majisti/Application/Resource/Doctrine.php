@@ -7,8 +7,19 @@ use Doctrine\ORM\EntityManager,
 
 class Doctrine extends \Zend_Application_Resource_ResourceAbstract
 {
+    protected $_em;
+
     public function init()
     {
+        return $this->getEntityManager();
+    }
+
+    public function getEntityManager()
+    {
+        if( null !== $this->_em ) {
+            return $this->_em;
+        }
+
         $bootstrap = $this->getBootstrap();
         $maj = $bootstrap->getApplication()->getOption('majisti');
 
@@ -25,7 +36,9 @@ class Doctrine extends \Zend_Application_Resource_ResourceAbstract
         $config->setMetadataCacheImpl($cache);
 
         //FIXME: change MA_APP
+        $chain = new \Doctrine\ORM\Mapping\Driver\DriverChain();
         $driverImpl = $config->newDefaultAnnotationDriver();
+        $chain->addDriver($driverImpl, $maj['app']['namespace'] . '\Model');
 
         $paths = array(
             $maj['app']['path'] . '/library/models',
@@ -40,7 +53,7 @@ class Doctrine extends \Zend_Application_Resource_ResourceAbstract
 
         $driverImpl->addPaths($paths);
 
-        $config->setMetadataDriverImpl($driverImpl);
+        $config->setMetadataDriverImpl($chain);
         $config->setQueryCacheImpl($cache);
         $config->setProxyDir(MA_APP . '/application/doctrine/proxies');
         $config->setProxyNamespace($maj['app']['namespace'] . '\Doctrine\Proxies');
@@ -55,6 +68,8 @@ class Doctrine extends \Zend_Application_Resource_ResourceAbstract
         $em = EntityManager::create($connectionOptions, $config);
 
         \Zend_Registry::set('Doctrine_EntityManager', $em);
+
+        $this->_em = $em;
 
         return $em;
     }
