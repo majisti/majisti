@@ -13,23 +13,16 @@ class AddonsTest extends \Majisti\Test\TestCase
              ->createBootstrapInstance());
     }
 
-    public function testInit()
+    /**
+     * Test that loading a single extension works without throwing exceptions
+     */
+    public function testValidApplicationLibraryExtensionLoading()
     {
-        $appPath  = $this->getHelper()->getOption('majisti.app.path');
         $resource = $this->resource;
 
         $resource->setOptions(array(
-            'ext' => array(
-                'paths' => array(
-                    $appPath . '/library/extensions'
-                ),
-                'FooExtension'
-            ),
-            'modules' => array(
-                'paths' => array(
-                    $appPath . '/library/modules'
-                ),
-                'auth'
+            'extension' => array(
+                'Foo',
             )
         ));
 

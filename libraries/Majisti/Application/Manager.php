@@ -48,7 +48,7 @@ class Manager
         $config      = \Zend_Registry::get('Majisti_Config');
         $configArray = $config->toArray();
 
-        $application->setOptions($configArray);
+//        $application->setOptions($configArray);
         $bootstrap->setOptions($configArray);
 
         /* add locales to the application */
@@ -57,6 +57,11 @@ class Manager
         $this->_application = $application;
     }
 
+    /**
+     * Returns the application.
+     *
+     * @return \Zend_Application The application
+     */
     public function getApplication()
     {
         return $this->_application;

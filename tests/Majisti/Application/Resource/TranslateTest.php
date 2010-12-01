@@ -23,6 +23,7 @@ class TranslateTest extends \Majisti\Test\TestCase
     public function setUp()
     {
         $this->resource = new Translate();
+        $this->resource->setBootstrap($this->getHelper()->createBootstrapInstance());
     }
 
     public function testNullTranslatorIsRegistered()
