@@ -1,0 +1,61 @@
+/**
+ * @desc Theme CSS layout
+ * @author Steven Rosato, graphic designs by JF Hamelin
+ */
+
+body {
+    background-color: #DDDDDD;
+    font-family: Verdana;
+    font-size: 14px;
+    text-align: center;
+    height: 100%;
+    width: 977px;
+    padding: 0 0 0 0;
+    margin: 10px auto 10px auto;
+}
+
+/************************
+*         Generic
+*************************/
+h1, h2, h3, h4, h5, h6 { color: white; }
+
+p { text-align: justify; }
+
+/************************
+*      Common classes
+*************************/
+.italic { font-style: italic; }
+
+
+/************************
+*         Theme
+*************************/
+#container {
+    background-color: #DDEEFF;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #336699;
+    text-align: left;
+    width: 977px;
+    margin: 0 auto 0 auto;
+}
+
+#container #header {
+    background-color: #336699;
+    color: white;
+    height: 110px;
+    margin: 0 0 0 0;
+    text-align: center;
+    padding: 10px;
+}
+
+#container #content {
+    min-height: 400px;
+    padding: 10px;
+}
+
+#container #footer {
+    clear: both;
+    padding: 5px;
+    text-align: center;
+}

@@ -12,7 +12,7 @@ namespace Majisti\Application\Resource;
 class Addons extends \Zend_Application_Resource_ResourceAbstract
 {
     /**
-     * @desc Inits the extensions resource
+     * @desc Inits the addons resource
      */
     public function init()
     {
@@ -34,6 +34,9 @@ class Addons extends \Zend_Application_Resource_ResourceAbstract
                 'paths' => array(array(
                     'namespace' => $maj['app']['namespace'],
                     'path'      => $maj['app']['path'] . '/library/extensions',
+                ), array(
+                    'namespace' => 'MajistiX',
+                    'path'      => $maj['path'] . '/libraries/MajistiX/Extension'
                 )),
             ),
         );
@@ -43,12 +46,12 @@ class Addons extends \Zend_Application_Resource_ResourceAbstract
      * @desc Loads the extensions and modules (addons) and
      * returns the addons manager.
      *
-     * @return Array the loaded addons
+     * @return \Majisti\Application\Addons\Manager The addons manager.
      */
     protected function getAddons()
     {
         $app        = $this->getBootstrap()->getApplication();
-        $manager    = new \Majisti\Application\Addons\Manager();
+        $manager    = new \Majisti\Application\Addons\Manager($app);
 
         $this->getDefaultOptions();
 

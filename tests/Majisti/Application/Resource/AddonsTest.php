@@ -28,6 +28,19 @@ class AddonsTest extends \Majisti\Test\TestCase
 
         $resource->init();
     }
+
+    public function testValidMajistixExtensionLoading()
+    {
+        $resource = $this->resource;
+
+        $resource->setOptions(array(
+            'extension' => array(
+                'InPlaceEditing'
+            )
+        ));
+
+        $resource->init();
+    }
 }
 
 AddonsTest::runAlone();

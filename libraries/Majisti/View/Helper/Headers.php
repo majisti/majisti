@@ -23,6 +23,9 @@ class Headers extends AbstractHelper
         $view->headLink()->appendStylesheet($maj->url . '/styles/common.css');
         $view->headLink()->appendStylesheet($maj->app->url .
             '/styles/default/default.css');
+
+        $view->headMeta()->appendHttpEquiv(
+            'Content-Type', 'text/html; charset=UTF-8');
     }
 
     public function toString()

@@ -24,15 +24,8 @@ class ManagerTest extends \Majisti\Test\TestCase
        $options           = $this->getHelper()->getOptions();
        $maj               = $options['majisti'];
 
-       \Zend_Controller_Front::getInstance()->setDispatcher(
-           new \Majisti\Controller\Dispatcher\Multiple());
-
-       $this->manager->setExtensionPaths(array(
-           array(
-               'namespace' => $maj['app']['namespace'],
-               'path'      => $maj['app']['path'] . '/library/extensions',
-           ),
-       ));
+//       \Zend_Controller_Front::getInstance()->setDispatcher(
+//           new \Majisti\Controller\Dispatcher\Multiple());
     }
 
     /**

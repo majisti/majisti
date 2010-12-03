@@ -11,6 +11,7 @@ class Doctrine extends \Zend_Application_Resource_ResourceAbstract
 
     public function init()
     {
+        $this->getBootstrap()->bootstrap('frontController');
         return $this->getEntityManager();
     }
 
@@ -32,10 +33,10 @@ class Doctrine extends \Zend_Application_Resource_ResourceAbstract
 
         $config = new Configuration();
 
+        /* FIXME: which cache to use? */
         $cache = new \Doctrine\Common\Cache\ArrayCache();
         $config->setMetadataCacheImpl($cache);
 
-        //FIXME: change MA_APP
         $chain = new \Doctrine\ORM\Mapping\Driver\DriverChain();
         $driverImpl = $config->newDefaultAnnotationDriver();
         $chain->addDriver($driverImpl, $maj['app']['namespace'] . '\Model');
@@ -55,22 +56,39 @@ class Doctrine extends \Zend_Application_Resource_ResourceAbstract
 
         $config->setMetadataDriverImpl($chain);
         $config->setQueryCacheImpl($cache);
-        $config->setProxyDir(MA_APP . '/application/doctrine/proxies');
+        $config->setProxyDir($maj['app']['path'] . '/application/doctrine/proxies');
         $config->setProxyNamespace($maj['app']['namespace'] . '\Doctrine\Proxies');
         $config->setAutoGenerateProxyClasses(true);
 
         $dbConfig = $db->getConfig();
-        $connectionOptions = array(
-            'driver' => 'pdo_mysql',
-            'user'   => $dbConfig['username'],
-        ) + $dbConfig;
+        $dbConfig['user'] = $dbConfig['username'];
+        $dbConfig['driver'] = $this->adapterToDoctrineDriver($db);
 
-        $em = EntityManager::create($connectionOptions, $config);
+        $em = EntityManager::create($dbConfig, $config);
 
         \Zend_Registry::set('Doctrine_EntityManager', $em);
 
         $this->_em = $em;
 
         return $em;
+    }
+
+    protected function adapterToDoctrineDriver(\Zend_Db_Adapter_Abstract $db)
+    {
+        /* get Zend adapter name */
+        $adapter = strtolower(str_replace(
+            'Zend_Db_Statement_',
+            '' ,
+            $db->getStatementClass()
+        ));
+
+        /* transform to corresponding Doctrine driver */
+        $driver = str_replace(array(
+            'mysqli',
+        ), array(
+            'pdo_mysql',
+        ), $adapter);
+
+        return $driver;
     }
 }
