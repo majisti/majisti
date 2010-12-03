@@ -3,7 +3,7 @@
 namespace MajistiX\Extension\Editing\View\Editor;
 
 /**
- * @desc An editor is a component used to render InPlaceEditing content.
+ * @desc An editor is a component used to render a content model.
  * The editor should be able to render the content given to it. Even if
  * no content is given, it should render itself so that content can be
  * posted. The editor should provide post or AJAX methods to post values

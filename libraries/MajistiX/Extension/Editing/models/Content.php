@@ -51,7 +51,6 @@ class Content
      */
     public static function loadMetadata(ClassMetadata $metadata)
     {
-        $metadata->setTableName(static::$_tableName);
         $metadata->mapField(array(
            'id' => true,
            'fieldName' => 'id',
@@ -73,10 +72,10 @@ class Content
            'type' => 'string'
         ));
 
-        $metadata->setCustomRepositoryClass(
-                'MajistiX\Extension\Editing\Model\ContentRepository');
-
+        $metadata->setTableName(static::$_tableName);
         $metadata->setIdGeneratorType(ClassMetadata::GENERATOR_TYPE_AUTO);
+        $metadata->setCustomRepositoryClass(
+                __NAMESPACE__ . '\ContentRepository');
     }
 
     /**

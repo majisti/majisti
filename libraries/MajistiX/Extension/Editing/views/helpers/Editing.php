@@ -13,7 +13,7 @@ use Majisti\Application\Locales,
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-class InPlaceEditing extends \Majisti\View\Helper\AbstractHelper
+class Editing extends \Majisti\View\Helper\AbstractHelper
 {
     protected $_inPlaceEditingModel;
 
