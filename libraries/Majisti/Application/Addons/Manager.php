@@ -7,14 +7,36 @@ namespace Majisti\Application\Addons;
  * Addons consists of two different concepts: the Extensions and
  * the Modules. Extensions are simply code addition to the library
  * that may contain controller plugins, view helpers, models, controllers,
- * etc. whereas Modules are simply standard Zend modules that can be
- * dispatched. Any added modules are considered a fallback module dispatchable
- * by Majisti's Multiple Dispatcher.
+ * etc. whereas Modules are pretty much the same as Extensions, but with
+ * the addition of being dispatchable. Any added modules are considered
+ * a fallback module dispatchable by Majisti's Multiple Dispatcher.
  *
  * @author Majisti
  */
 class Manager
 {
+    protected $_application;
+
+    /**
+     * @desc Constructs the addons manager.
+     *
+     * @param \Zend_Application $application The application
+     */
+    public function __construct(\Zend_Application $application)
+    {
+        $this->_application = $application;
+    }
+
+    /**
+     * @desc Returns the application.
+     *
+     * @return \Zend_Application The application
+     */
+    public function getApplication()
+    {
+        return $this->_application;
+    }
+
     /** @var Array */
     protected $_extensionPaths;
 
@@ -74,9 +96,16 @@ class Manager
 
         foreach( $paths as $pathInfo ) {
             $triedPaths[]   = $pathInfo['path'];
-            $bootstrapFile  = "{$pathInfo['path']}/{$name}/Bootstrap.php";
+            $extensionPath  = "{$pathInfo['path']}/{$name}";
 
-            /* file existance */
+            /* extension dir existance */
+            if( !file_exists($extensionPath) ) {
+                continue;
+            }
+
+            $bootstrapFile = "{$extensionPath}/Bootstrap.php";
+
+            /* bootstrap file existance */
             if( !\Zend_Loader::isReadable($bootstrapFile) ) {
                 throw new Exception("Bootstrap file not found " .
                     "for extension {$name}, using {$bootstrapFile}.");
@@ -94,17 +123,17 @@ class Manager
             }
 
             /** @var $bootstrap IAddonsBootstrapper */
-            $bootstrap = new $className();
+            $bootstrap = new $className($this->getApplication());
 
             /* must comply to the interface for dependency resolving */
-            if ( !($bootstrap instanceof IAddonsBootstrapper) ) {
+            if ( !($bootstrap instanceof AbstractBootstrap) ) {
                 throw new Exception("Bootstrap class not an instance of " .
-                    "\Majisti\Application\Addons\IAddonsBoostrapper " .
+                    "\Majisti\Application\Addons\IBootstrapper " .
                     "for extension {$name} " .
                     "in namespace {$pathInfo['namespace']}");
             }
 
-            return $bootstrap->load();
+            return $bootstrap->bootstrap()->run();
         }
 
         throw new Exception("Extension {$name} not found using the provided

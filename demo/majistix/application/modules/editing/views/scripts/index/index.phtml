@@ -1,0 +1,13 @@
+<?
+/**
+ * @desc The index action
+ *
+ * @author Majisti
+ */
+
+$content = pq('<div />')
+    ->append($this->inPlaceEditing('foo'))
+    ->append($this->inPlaceEditing('foo2'))
+;
+
+$this->setRenderReturn($content);

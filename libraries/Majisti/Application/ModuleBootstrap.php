@@ -55,10 +55,6 @@ class ModuleBootstrap extends \Majisti\Application\Bootstrap
         if (!$this->hasPluginResource('FrontController')) {
             $this->registerPluginResource('FrontController');
         }
-        
-        if( !$this->hasPluginResource('ModelContainer') ) {
-            $this->registerPluginResource('ModelContainer');
-        }
     }
 
     /**

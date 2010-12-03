@@ -11,7 +11,17 @@ $helper->setOptions(array(
             'namespace' => 'MajistiT',
             'env'       => 'development'
         ),
-    )
+    ),
+    'resources' => array('db' => array(
+        'params' => array(
+            'dbname' => 'majisti',
+            'username' => 'root',
+            'password' => '',
+            'host'    => 'localhost',
+        ),
+        'adapter' => 'mysqli',
+        'isDefaultTableAdapter' => true,
+    ))
 ));
 
 $helper->init();
