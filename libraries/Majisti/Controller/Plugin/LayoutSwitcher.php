@@ -21,7 +21,7 @@ class LayoutSwitcher extends \Zend_Layout_Controller_Plugin_Layout
      * where moduleName is the same module name dispatched with the request
      * where layoutName is the name of the layout script (e.g default)
      * where layoutPath is the path to the layout dir, if none is provided it
-     * assumes APPLICATION_PATH/moduleName/views/layouts
+     * assumes MA_APP/application/moduleName/views/layouts
      *
      * @param Zend_Controller_Request_Abstract $request The request object
      */
