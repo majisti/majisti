@@ -1,0 +1,27 @@
+<?
+/**
+ * @desc Language bar.
+ *
+ * @author Majisti
+ */
+
+$localeSession = \Majisti\Application\Locales::getInstance();
+
+$content = pq('<div />')
+    ->addClass('language-bar')
+;
+
+/* @var $locale \Zend_Locale */
+foreach ($localeSession->getLocales() as $locale) {
+    if( $locale->equals($localeSession->getCurrentLocale()) ) {
+        continue;
+    }
+
+    $content->append(pq('<a />')
+        ->attr('href', $this->url(array('lang' => $locale->toString())))
+        ->html(ucfirst($locale->getTranslation($locale->getLanguage(), 'language',
+            $locale->getLanguage())))
+    );
+}
+
+$this->setRenderReturn($content);
