@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2003-2009, CKSource - Frederico Knabben. All rights reserved.
+Copyright (c) 2003-2010, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
 
@@ -87,13 +87,18 @@ CKEDITOR.dom.event.prototype =
 			$.returnValue = false;
 
 		if ( stopPropagation )
-		{
-			if ( $.stopPropagation )
-				$.stopPropagation();
-			else
-				$.cancelBubble = true;
-		}
+			this.stopPropagation();
 	},
+
+	stopPropagation : function()
+	{
+		var $ = this.$;
+		if ( $.stopPropagation )
+			$.stopPropagation();
+		else
+			$.cancelBubble = true;
+	},
+
 	/**
 	 * Returns the DOM node where the event was targeted to.
 	 * @returns {CKEDITOR.dom.node} The target DOM node.

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2003-2009, CKSource - Frederico Knabben. All rights reserved.
+Copyright (c) 2003-2010, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
 
@@ -28,14 +28,10 @@ CKEDITOR.plugins.add( 'keystrokes',
 			blockedKeystrokes	= editor.keystrokeHandler.blockedKeystrokes;
 
 		for ( var i = 0 ; i < keystrokesConfig.length ; i++ )
-		{
 			keystrokes[ keystrokesConfig[i][0] ] = keystrokesConfig[i][1];
-		}
 
 		for ( i = 0 ; i < blockedConfig.length ; i++ )
-		{
 			blockedKeystrokes[ blockedConfig[i] ] = 1;
-		}
 	}
 });
 
@@ -202,6 +198,7 @@ CKEDITOR.config.keystrokes =
 	[ CKEDITOR.ALT + 122 /*F11*/, 'elementsPathFocus' ],
 
 	[ CKEDITOR.SHIFT + 121 /*F10*/, 'contextMenu' ],
+	[ CKEDITOR.CTRL + CKEDITOR.SHIFT + 121 /*F10*/, 'contextMenu' ],
 
 	[ CKEDITOR.CTRL + 90 /*Z*/, 'undo' ],
 	[ CKEDITOR.CTRL + 89 /*Y*/, 'redo' ],
@@ -213,5 +210,16 @@ CKEDITOR.config.keystrokes =
 	[ CKEDITOR.CTRL + 73 /*I*/, 'italic' ],
 	[ CKEDITOR.CTRL + 85 /*U*/, 'underline' ],
 
-	[ CKEDITOR.ALT + 109 /*-*/, 'toolbarCollapse' ]
+	[ CKEDITOR.ALT + 109 /*-*/, 'toolbarCollapse' ],
+	[ CKEDITOR.ALT + 48 /*0*/, 'a11yHelp' ]
 ];
+
+/**
+ * Fired when any keyboard key (or combination) is pressed into the editing area.
+ * @name CKEDITOR#key
+ * @event
+ * @param {Number} data.keyCode A number representing the key code (or
+ *		combination). It is the sum of the current key code and the
+ *		{@link CKEDITOR.CTRL}, {@link CKEDITOR.SHIFT} and {@link CKEDITOR.ALT}
+ *		constants, if those are pressed.
+ */

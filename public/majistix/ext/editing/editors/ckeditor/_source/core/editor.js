@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2003-2009, CKSource - Frederico Knabben. All rights reserved.
+Copyright (c) 2003-2010, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
 
@@ -33,6 +33,8 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 		if ( !customConfig )
 			return false;
 
+		customConfig = CKEDITOR.getUrl( customConfig );
+
 		var loadedConfig = loadConfigLoaded[ customConfig ] || ( loadConfigLoaded[ customConfig ] = {} );
 
 		// If the custom config has already been downloaded, reuse it.
@@ -44,7 +46,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 
 			// If there is no other customConfig in the chain, fire the
 			// "configLoaded" event.
-			if ( editor.config.customConfig == customConfig || !loadConfig( editor ) )
+			if ( CKEDITOR.getUrl( editor.config.customConfig ) == customConfig || !loadConfig( editor ) )
 				editor.fireOnce( 'customConfigLoaded' );
 		}
 		else
@@ -113,25 +115,80 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 		var skin = editor.config.skin.split( ',' ),
 			skinName = skin[ 0 ],
 			skinPath = CKEDITOR.getUrl( skin[ 1 ] || (
+				'_source/' +	// @Packager.RemoveLine
 				'skins/' + skinName + '/' ) );
 
+		/**
+		 * The name of the skin used by this editor instance. The skin name can
+		 * be set though the {@link CKEDITOR.config.skin} setting.
+		 * @name CKEDITOR.editor.prototype.skinName
+		 * @type String
+		 * @example
+		 * alert( editor.skinName );  // "kama" (e.g.)
+		 */
 		editor.skinName = skinName;
+
+		/**
+		 * The full URL of the skin directory.
+		 * @name CKEDITOR.editor.prototype.skinPath
+		 * @type String
+		 * @example
+		 * alert( editor.skinPath );  // "http://example.com/ckeditor/skins/kama/" (e.g.)
+		 */
 		editor.skinPath = skinPath;
+
+		/**
+		 * The CSS class name used for skin identification purposes.
+		 * @name CKEDITOR.editor.prototype.skinClass
+		 * @type String
+		 * @example
+		 * alert( editor.skinClass );  // "cke_skin_kama" (e.g.)
+		 */
 		editor.skinClass = 'cke_skin_' + skinName;
+
+		/**
+		 * The <a href="http://en.wikipedia.org/wiki/Tabbing_navigation">tabbing
+		 * navigation</a> order that has been calculated for this editor
+		 * instance. This can be set by the {@link CKEDITOR.config.tabIndex}
+		 * setting or taken from the "tabindex" attribute of the
+		 * {@link #element} associated to the editor.
+		 * @name CKEDITOR.editor.prototype.tabIndex
+		 * @type Number
+		 * @default 0 (zero)
+		 * @example
+		 * alert( editor.tabIndex );  // "0" (e.g.)
+		 */
+		editor.tabIndex = editor.config.tabIndex || editor.element.getAttribute( 'tabindex' ) || 0;
 
 		// Fire the "configLoaded" event.
 		editor.fireOnce( 'configLoaded' );
 
 		// Load language file.
-		loadLang( editor );
+		loadSkin( editor );
 	};
 
 	var loadLang = function( editor )
 	{
 		CKEDITOR.lang.load( editor.config.language, editor.config.defaultLanguage, function( languageCode, lang )
 			{
+				/**
+				 * The code for the language resources that have been loaded
+				 * for the user internface elements of this editor instance.
+				 * @name CKEDITOR.editor.prototype.langCode
+				 * @type String
+				 * @example
+				 * alert( editor.langCode );  // "en" (e.g.)
+				 */
 				editor.langCode = languageCode;
 
+				/**
+				 * An object holding all language strings used by the editor
+				 * interface.
+				 * @name CKEDITOR.editor.prototype.lang
+				 * @type CKEDITOR.lang
+				 * @example
+				 * alert( editor.lang.bold );  // "Negrito" (e.g. if language is Portuguese)
+				 */
 				// As we'll be adding plugin specific entries that could come
 				// from different language code files, we need a copy of lang,
 				// not a direct reference to it.
@@ -140,6 +197,9 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 				// We're not able to support RTL in Firefox 2 at this time.
 				if ( CKEDITOR.env.gecko && CKEDITOR.env.version < 10900 && editor.lang.dir == 'rtl' )
 					editor.lang.dir = 'ltr';
+
+				var config = editor.config;
+				config.contentsLangDirection == 'ui' && ( config.contentsLangDirection = editor.lang.dir );
 
 				loadPlugins( editor );
 			});
@@ -180,7 +240,14 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 				// The list of URLs to language files.
 				var languageFiles = [];
 
-				// Cache the loaded plugin names.
+				/**
+				 * And object holding references to all plugins used by this
+				 * editor istance.
+				 * @name CKEDITOR.editor.prototype.plugins
+				 * @type Object
+				 * @example
+				 * alert( editor.plugins.dialog.path );  // "http://example.com/ckeditor/plugins/dialog/" (e.g.)
+				 */
 				editor.plugins = plugins;
 
 				// Loop through all plugins, to build the list of language
@@ -245,7 +312,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 
 						// Load the editor skin.
 						editor.fire( 'pluginsLoaded' );
-						loadSkin( editor );
+						loadTheme( editor );
 					});
 			});
 	};
@@ -254,7 +321,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 	{
 		CKEDITOR.skins.load( editor, 'editor', function()
 			{
-				loadTheme( editor );
+				loadLang( editor );
 			});
 	};
 
@@ -263,6 +330,13 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 		var theme = editor.config.theme;
 		CKEDITOR.themes.load( theme, function()
 			{
+				/**
+				 * The theme used by this editor instance.
+				 * @name CKEDITOR.editor.prototype.theme
+				 * @type CKEDITOR.theme
+				 * @example
+				 * alert( editor.theme );  "http://example.com/ckeditor/themes/default/" (e.g.)
+				 */
 				var editorTheme = editor.theme = CKEDITOR.themes.get( theme );
 				editorTheme.path = CKEDITOR.themes.getPath( theme );
 				editorTheme.build( editor );
@@ -326,7 +400,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 		for ( var name in commands )
 		{
 			command = commands[ name ];
-			command[ command.modes[ mode ] ? 'enable' : 'disable' ]();
+			command[ command.startDisabled ? 'disable' : command.modes[ mode ] ? 'enable' : 'disable' ]();
 		}
 	}
 
@@ -373,6 +447,13 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 
 			if ( this.name in CKEDITOR.instances )
 				throw '[CKEDITOR.editor] The instance "' + this.name + '" already exists.';
+
+			/**
+			 * A unique random string assigned to each editor instance in the page.
+			 * @name CKEDITOR.editor.prototype.id
+			 * @type String
+			 */
+			this.id = CKEDITOR.tools.getNextId();
 
 			/**
 			 * The configurations for this editor instance. It inherits all
@@ -435,6 +516,13 @@ CKEDITOR.tools.extend( CKEDITOR.editor.prototype,
 			return this._.commands[ commandName ] = new CKEDITOR.command( this, commandDefinition );
 		},
 
+		/**
+		 * Add a trunk of css text to the editor which will be applied to the wysiwyg editing document.
+		 * Note: This function should be called before editor is loaded to take effect.
+		 * @param css {String} CSS text.
+		 * @example
+		 * editorInstance.addCss( 'body { background-color: grey; }' );
+		 */
 		addCss : function( css )
 		{
 			this._.styles.push( css );
@@ -456,9 +544,46 @@ CKEDITOR.tools.extend( CKEDITOR.editor.prototype,
 			if ( !noUpdate )
 				this.updateElement();
 
+			if ( this.mode )
+			{
+				// ->		currentMode.unload( holderElement );
+				this._.modes[ this.mode ].unload( this.getThemeSpace( 'contents' ) );
+			}
+
 			this.theme.destroy( this );
+
+			var toolbars,
+				index = 0,
+				j,
+				items,
+				instance;
+
+			if ( this.toolbox )
+			{
+				toolbars = this.toolbox.toolbars;
+				for ( ; index < toolbars.length ; index++ )
+				{
+					items = toolbars[ index ].items;
+					for ( j = 0 ; j < items.length ; j++ )
+					{
+						instance = items[ j ];
+						if ( instance.clickFn ) CKEDITOR.tools.removeFunction( instance.clickFn );
+						if ( instance.keyDownFn ) CKEDITOR.tools.removeFunction( instance.keyDownFn );
+
+						if ( instance.index ) CKEDITOR.ui.button._.instances[ instance.index ] = null;
+					}
+				}
+			}
+
+			if ( this.contextMenu )
+				CKEDITOR.tools.removeFunction( this.contextMenu._.functionId );
+
+			if ( this._.filebrowserFn )
+				CKEDITOR.tools.removeFunction( this._.filebrowserFn );
+
 			this.fire( 'destroy' );
 			CKEDITOR.remove( this );
+			CKEDITOR.fire( 'instanceDestroyed', null, this );
 		},
 
 		/**
@@ -544,6 +669,16 @@ CKEDITOR.tools.extend( CKEDITOR.editor.prototype,
 			return eventData.dataValue;
 		},
 
+		/**
+		 * Gets the "raw data" currently available in the editor. This is a
+		 * fast method which return the data as is, without processing, so it's
+		 * not recommended to use it on resulting pages. It can be used instead
+		 * combined with the {@link #loadSnapshot} so one can automatic save
+		 * the editor data from time to time while the user is using the
+		 * editor, to avoid data loss, without risking performance issues.
+		 * @example
+		 * alert( editor.getSnapshot() );
+		 */
 		getSnapshot : function()
 		{
 			var data = this.fire( 'getSnapshot' );
@@ -558,19 +693,48 @@ CKEDITOR.tools.extend( CKEDITOR.editor.prototype,
 			return data;
 		},
 
+		/**
+		 * Loads "raw data" in the editor. This data is loaded with processing
+		 * straight to the editing area. It should not be used as a way to load
+		 * any kind of data, but instead in combination with
+		 * {@link #getSnapshot} produced data.
+		 * @example
+		 * var data = editor.getSnapshot();
+		 * editor.<b>loadSnapshot( data )</b>;
+		 */
 		loadSnapshot : function( snapshot )
 		{
 			this.fire( 'loadSnapshot', snapshot );
 		},
 
 		/**
-		 * Sets the editor data. The data must be provided in raw format.
-		 * @param {String} data HTML code to replace the curent content in the editor.
+		 * Sets the editor data. The data must be provided in raw format (HTML).<br />
+		 * <br />
+		 * Note that this menthod is asynchronous. The "callback" parameter must
+		 * be used if interaction with the editor is needed after setting the data.
+		 * @param {String} data HTML code to replace the curent content in the
+		 *		editor.
+		 * @param {Function} callback Function to be called after the setData
+		 *		is completed.
 		 * @example
-		 * CKEDITOR.instances.editor1.<b>setData( '&lt;p&gt;This is the editor data.&lt;/p&gt;' )</b>;
+		 * CKEDITOR.instances.editor1.<b>setData</b>( '&lt;p&gt;This is the editor data.&lt;/p&gt;' );
+		 * @example
+		 * CKEDITOR.instances.editor1.<b>setData</b>( '&lt;p&gt;Some other editor data.&lt;/p&gt;', function()
+		 *     {
+		 *         this.checkDirty();    // true
+		 *     });
 		 */
-		setData : function( data )
+		setData : function( data , callback )
 		{
+			if( callback )
+			{
+				this.on( 'dataReady', function( evt )
+				{
+					evt.removeListener();
+					callback.call( evt.editor );
+				} );
+			}
+
 			// Fire "setData" so data manipulation may happen.
 			var eventData = { dataValue : data };
 			this.fire( 'setData', eventData );
@@ -605,11 +769,38 @@ CKEDITOR.tools.extend( CKEDITOR.editor.prototype,
 			this.fire( 'insertElement', element );
 		},
 
+		/**
+		 * Checks whether the current editor contents present changes when
+		 * compared to the contents loaded into the editor at startup, or to
+		 * the contents available in the editor when {@link #resetDirty} has
+		 * been called.
+		 * @returns {Boolean} "true" is the contents present changes.
+		 * @example
+		 * function beforeUnload( e )
+		 * {
+		 *     if ( CKEDITOR.instances.editor1.<b>checkDirty()</b> )
+		 * 	        return e.returnValue = "You'll loose the changes made in the editor.";
+		 * }
+		 *
+		 * if ( window.addEventListener )
+		 *     window.addEventListener( 'beforeunload', beforeUnload, false );
+		 * else
+		 *     window.attachEvent( 'onbeforeunload', beforeUnload );
+		 */
 		checkDirty : function()
 		{
 			return ( this.mayBeDirty && this._.previousValue !== this.getSnapshot() );
 		},
 
+		/**
+		 * Resets the "dirty state" of the editor so subsequent calls to
+		 * {@link #checkDirty} will return "false" if the user will not make
+		 * further changes to the contents.
+		 * @example
+		 * alert( editor.checkDirty() );  // "true" (e.g.)
+		 * editor.<b>resetDirty()</b>;
+		 * alert( editor.checkDirty() );  // "false"
+		 */
 		resetDirty : function()
 		{
 			if ( this.mayBeDirty )
@@ -628,10 +819,15 @@ CKEDITOR.tools.extend( CKEDITOR.editor.prototype,
 			var element = this.element;
 			if ( element && this.elementMode == CKEDITOR.ELEMENT_MODE_REPLACE )
 			{
+				var data = this.getData();
+
+				if ( this.config.htmlEncodeOutput )
+					data = CKEDITOR.tools.htmlEncode( data );
+
 				if ( element.is( 'textarea' ) )
-					element.setValue( this.getData() );
+					element.setValue( data );
 				else
-					element.setHtml( this.getData() );
+					element.setHtml( data );
 			}
 		}
 	});
@@ -648,3 +844,81 @@ CKEDITOR.on( 'loaded', function()
 				pending[ i ]._init();
 		}
 	});
+
+/**
+ * Whether escape HTML when editor update original input element.
+ * @name CKEDITOR.config.htmlEncodeOutput
+ * @since 3.1
+ * @type Boolean
+ * @default false
+ * @example
+ * config.htmlEncodeOutput = true;
+ */
+
+/**
+ * Fired when a CKEDITOR instance is created, but still before initializing it.
+ * To interact with a fully initialized instance, use the
+ * {@link CKEDITOR#instanceReady} event instead.
+ * @name CKEDITOR#instanceCreated
+ * @event
+ * @param {CKEDITOR.editor} editor The editor instance that has been created.
+ */
+
+/**
+ * Fired when a CKEDITOR instance is destroyed.
+ * @name CKEDITOR#instanceDestroyed
+ * @event
+ * @param {CKEDITOR.editor} editor The editor instance that has been destroyed.
+ */
+
+/**
+ * Fired when all plugins are loaded and initialized into the editor instance.
+ * @name CKEDITOR#pluginsLoaded
+ * @event
+ * @param {CKEDITOR.editor} editor The editor instance that has been destroyed.
+ */
+
+/**
+ * Fired before the command execution when {@link #execCommand} is called.
+ * @name CKEDITOR.editor#beforeCommandExec
+ * @event
+ * @param {CKEDITOR.editor} editor This editor instance.
+ * @param {String} data.name The command name.
+ * @param {Object} data.commandData The data to be sent to the command. This
+ *		can be manipulated by the event listener.
+ * @param {CKEDITOR.command} data.command The command itself.
+ */
+
+/**
+ * Fired after the command execution when {@link #execCommand} is called.
+ * @name CKEDITOR.editor#afterCommandExec
+ * @event
+ * @param {CKEDITOR.editor} editor This editor instance.
+ * @param {String} data.name The command name.
+ * @param {Object} data.commandData The data sent to the command.
+ * @param {CKEDITOR.command} data.command The command itself.
+ * @param {Object} data.returnValue The value returned by the command execution.
+ */
+
+/**
+ * Fired every custom configuration file is loaded, before the final
+ * configurations initialization.<br />
+ * <br />
+ * Custom configuration files can be loaded thorugh the
+ * {@link CKEDITOR.config.customConfig} setting. Several files can be loading
+ * by chaning this setting.
+ * @name CKEDITOR.editor#customConfigLoaded
+ * @event
+ * @param {CKEDITOR.editor} editor This editor instance.
+ * @example
+ */
+
+/**
+ * Fired once the editor configuration is ready (loaded and processed).
+ * @name CKEDITOR.editor#configLoaded
+ * @event
+ * @param {CKEDITOR.editor} editor This editor instance.
+ * @example
+ * if( editor.config.fullPage )
+ *     alert( 'This is a full page editor' );
+ */
