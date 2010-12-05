@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2003-2009, CKSource - Frederico Knabben. All rights reserved.
+Copyright (c) 2003-2010, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
 CKEDITOR.dialog.add( 'button', function( editor )
@@ -12,10 +12,10 @@ CKEDITOR.dialog.add( 'button', function( editor )
 		{
 			delete this.button;
 			var element = this.getParentEditor().getSelection().getSelectedElement();
-			if ( element && element.getName() == "input" )
+			if ( element && element.is( 'input' ) )
 			{
 				var type = element.getAttribute( 'type' );
-				if ( type == "button" || type == "reset" || type == "submit" )
+				if ( type in { button:1, reset:1, submit:1 } )
 				{
 					this.button = element;
 					this.setupContent( element );

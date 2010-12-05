@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2003-2009, CKSource - Frederico Knabben. All rights reserved.
+Copyright (c) 2003-2010, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
 
@@ -15,6 +15,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
  * @example
  */
 CKEDITOR.plugins = new CKEDITOR.resourceManager(
+	'_source/' +	// @Packager.RemoveLine
 	'plugins/', 'plugin' );
 
 // PACKAGER_RENAME( CKEDITOR.plugins )
@@ -77,6 +78,8 @@ CKEDITOR.plugins.load = CKEDITOR.tools.override( CKEDITOR.plugins.load, function
 
 CKEDITOR.plugins.setLang = function( pluginName, languageCode, languageEntries )
 {
-	var plugin = this.get( pluginName );
-	plugin.lang[ languageCode ] = languageEntries;
+	var plugin = this.get( pluginName ),
+		pluginLang = plugin.lang || ( plugin.lang = {} );
+
+	pluginLang[ languageCode ] = languageEntries;
 };

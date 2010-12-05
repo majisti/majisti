@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2003-2009, CKSource - Frederico Knabben. All rights reserved.
+Copyright (c) 2003-2010, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
 CKEDITOR.dialog.add( 'checkbox', function( editor )
@@ -14,7 +14,7 @@ CKEDITOR.dialog.add( 'checkbox', function( editor )
 
 			var element = this.getParentEditor().getSelection().getSelectedElement();
 
-			if ( element && element.getAttribute( 'type' ) == "checkbox" )
+			if ( element && element.getAttribute( 'type' ) == 'checkbox' )
 			{
 				this.checkbox = element;
 				this.setupContent( element );
@@ -31,10 +31,8 @@ CKEDITOR.dialog.add( 'checkbox', function( editor )
 				editor = this.getParentEditor();
 				element = editor.document.createElement( 'input' );
 				element.setAttribute( 'type', 'checkbox' );
-			}
-
-			if ( isInsertMode )
 				editor.insertElement( element );
+			}
 			this.commitContent( { element : element } );
 		},
 		contents : [
@@ -79,16 +77,31 @@ CKEDITOR.dialog.add( 'checkbox', function( editor )
 						accessKey : 'V',
 						setup : function( element )
 						{
-							this.setValue( element.getAttribute( 'value' ) || '' );
+							var value = element.getAttribute( 'value' );
+							// IE Return 'on' as default attr value.
+							this.setValue(  CKEDITOR.env.ie && value == 'on' ? '' : value  );
 						},
 						commit : function( data )
 						{
-							var element = data.element;
+							var element = data.element,
+								value = this.getValue();
 
-							if ( this.getValue() )
-								element.setAttribute( 'value', this.getValue() );
+							if ( value && !( CKEDITOR.env.ie && value == 'on' ) )
+								element.setAttribute( 'value', value );
 							else
-								element.removeAttribute( 'value' );
+							{
+								if ( CKEDITOR.env.ie )
+								{
+									// Remove attribute 'value' of checkbox (#4721).
+									var checkbox = new CKEDITOR.dom.element( 'input', element.getDocument() );
+									element.copyAttributes( checkbox, { value: 1 } );
+									checkbox.replace( element );
+									editor.getSelection().selectElement( checkbox );
+									data.element = checkbox;
+								}
+								else
+									element.removeAttribute( 'value' );
+							}
 						}
 					},
 					{
@@ -108,14 +121,15 @@ CKEDITOR.dialog.add( 'checkbox', function( editor )
 
 							if ( CKEDITOR.env.ie )
 							{
-								var isElementChecked = !!element.getAttribute( 'checked' );
-								var isChecked = !!this.getValue();
+								var isElementChecked = !!element.getAttribute( 'checked' ),
+									isChecked = !!this.getValue();
 
 								if ( isElementChecked != isChecked )
 								{
 									var replace = CKEDITOR.dom.element.createFromHtml( '<input type="checkbox"'
 										   + ( isChecked ? ' checked="checked"' : '' )
-										   + '></input>', editor.document );
+										   + '/>', editor.document );
+
 									element.copyAttributes( replace, { type : 1, checked : 1 } );
 									replace.replace( element );
 									editor.getSelection().selectElement( replace );
@@ -124,8 +138,9 @@ CKEDITOR.dialog.add( 'checkbox', function( editor )
 							}
 							else
 							{
-								if ( this.getValue() )
-									element.setAttribute( 'checked', this.getValue() );
+								var value = this.getValue();
+								if ( value )
+									element.setAttribute( 'checked', 'checked' );
 								else
 									element.removeAttribute( 'checked' );
 							}

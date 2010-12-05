@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2003-2009, CKSource - Frederico Knabben. All rights reserved.
+Copyright (c) 2003-2010, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
 
@@ -31,7 +31,11 @@ CKEDITOR.lang['da'] =
 	 * Screenreader titles. Please note that screenreaders are not always capable
 	 * of reading non-English words. So be careful while translating it.
 	 */
-	editorTitle		: 'Rich text editor, %1', // MISSING
+	editorTitle : 'Rich text editor, %1, press ALT 0 for help.', // MISSING
+
+	// ARIA descriptions.
+	toolbar	: 'Toolbar', // MISSING
+	editor	: 'Rich Text Editor', // MISSING
 
 	// Toolbar buttons without dialogs.
 	source			: 'Kilde',
@@ -39,7 +43,7 @@ CKEDITOR.lang['da'] =
 	save			: 'Gem',
 	preview			: 'Vis eksempel',
 	cut				: 'Klip',
-	copy			: 'Kopier',
+	copy			: 'Kopiér',
 	paste			: 'Indsæt',
 	print			: 'Udskriv',
 	underline		: 'Understreget',
@@ -47,14 +51,14 @@ CKEDITOR.lang['da'] =
 	italic			: 'Kursiv',
 	selectAll		: 'Vælg alt',
 	removeFormat	: 'Fjern formatering',
-	strike			: 'Overstreget',
+	strike			: 'Gennemstreget',
 	subscript		: 'Sænket skrift',
 	superscript		: 'Hævet skrift',
-	horizontalrule	: 'Indsæt vandret linie',
+	horizontalrule	: 'Indsæt vandret streg',
 	pagebreak		: 'Indsæt sideskift',
 	unlink			: 'Fjern hyperlink',
 	undo			: 'Fortryd',
-	redo			: 'Annuller fortryd',
+	redo			: 'Annullér fortryd',
 
 	// Common messages and labels.
 	common :
@@ -65,15 +69,15 @@ CKEDITOR.lang['da'] =
 		upload			: 'Upload',
 		uploadSubmit	: 'Upload',
 		image			: 'Indsæt billede',
-		flash			: 'Flash',
+		flash			: 'Indsæt Flash',
 		form			: 'Indsæt formular',
 		checkbox		: 'Indsæt afkrydsningsfelt',
-		radio		: 'Indsæt alternativknap',
+		radio			: 'Indsæt alternativknap',
 		textField		: 'Indsæt tekstfelt',
 		textarea		: 'Indsæt tekstboks',
 		hiddenField		: 'Indsæt skjult felt',
 		button			: 'Indsæt knap',
-		select	: 'Indsæt liste',
+		select			: 'Indsæt liste',
 		imageButton		: 'Indsæt billedknap',
 		notSet			: '<intet valgt>',
 		id				: 'Id',
@@ -83,67 +87,80 @@ CKEDITOR.lang['da'] =
 		langDirRtl		: 'Fra højre mod venstre (RTL)',
 		langCode		: 'Sprogkode',
 		longDescr		: 'Udvidet beskrivelse',
-		cssClass		: 'Typografiark',
+		cssClass		: 'Typografiark (CSS)',
 		advisoryTitle	: 'Titel',
-		cssStyle		: 'Typografi',
+		cssStyle		: 'Typografi (CSS)',
 		ok				: 'OK',
-		cancel			: 'Annuller',
+		cancel			: 'Annullér',
+		close			: 'Close', // MISSING
+		preview			: 'Preview', // MISSING
 		generalTab		: 'Generelt',
 		advancedTab		: 'Avanceret',
-		validateNumberFailed	: 'This value is not a number.', // MISSING
-		confirmNewPage	: 'Any unsaved changes to this content will be lost. Are you sure you want to load new page?', // MISSING
-		confirmCancel	: 'Some of the options have been changed. Are you sure to close the dialog?', // MISSING
+		validateNumberFailed : 'Værdien er ikke et tal.',
+		confirmNewPage	: 'Alt indhold, der ikke er blevet gemt, vil gå tabt. Er du sikker på, at du vil indlæse en ny side?',
+		confirmCancel	: 'Nogle af indstillingerne er blevet ændret. Er du sikker på, at du vil lukke vinduet?',
+		options			: 'Options', // MISSING
+		target			: 'Target', // MISSING
+		targetNew		: 'New Window (_blank)', // MISSING
+		targetTop		: 'Topmost Window (_top)', // MISSING
+		targetSelf		: 'Same Window (_self)', // MISSING
+		targetParent	: 'Parent Window (_parent)', // MISSING
+		langDirLTR		: 'Left to Right (LTR)', // MISSING
+		langDirRTL		: 'Right to Left (RTL)', // MISSING
+		styles			: 'Style', // MISSING
+		cssClasses		: 'Stylesheet Classes', // MISSING
 
 		// Put the voice-only part of the label in the span.
-		unavailable		: '%1<span class="cke_accessibility">, unavailable</span>' // MISSING
+		unavailable		: '%1<span class="cke_accessibility">, ikke tilgængelig</span>'
+	},
+
+	contextmenu :
+	{
+		options : 'Context Menu Options' // MISSING
 	},
 
 	// Special char dialog.
 	specialChar		:
 	{
 		toolbar		: 'Indsæt symbol',
-		title		: 'Vælg symbol'
+		title		: 'Vælg symbol',
+		options : 'Special Character Options' // MISSING
 	},
 
 	// Link dialog.
 	link :
 	{
-		toolbar		: 'Indsæt/rediger hyperlink',
-		menu		: 'Rediger hyperlink',
+		toolbar		: 'Indsæt/redigér hyperlink',
+		other 		: '<anden>',
+		menu		: 'Redigér hyperlink',
 		title		: 'Egenskaber for hyperlink',
 		info		: 'Generelt',
 		target		: 'Mål',
 		upload		: 'Upload',
 		advanced	: 'Avanceret',
-		type		: 'Hyperlink type',
+		type		: 'Type',
+		toUrl		: 'URL', // MISSING
 		toAnchor	: 'Bogmærke på denne side',
 		toEmail		: 'E-mail',
-		target		: 'Mål',
-		targetNotSet	: '<intet valgt>',
-		targetFrame	: '<ramme>',
-		targetPopup	: '<popup vindue>',
-		targetNew	: 'Nyt vindue (_blank)',
-		targetTop	: 'Hele vinduet (_top)',
-		targetSelf	: 'Samme vindue (_self)',
-		targetParent	: 'Overordnet ramme (_parent)',
+		targetFrame		: '<ramme>',
+		targetPopup		: '<popup vindue>',
 		targetFrameName	: 'Destinationsvinduets navn',
-		targetPopupName	: 'Pop-up vinduets navn',
-		popupFeatures	: 'Egenskaber for pop-up',
-		popupResizable	: 'Resizable', // MISSING
+		targetPopupName	: 'Popup vinduets navn',
+		popupFeatures	: 'Egenskaber for popup',
+		popupResizable	: 'Justérbar',
 		popupStatusBar	: 'Statuslinje',
-		popupLocationBar	: 'Adresselinje',
+		popupLocationBar: 'Adresselinje',
 		popupToolbar	: 'Værktøjslinje',
 		popupMenuBar	: 'Menulinje',
 		popupFullScreen	: 'Fuld skærm (IE)',
-		popupScrollBars	: 'Scrollbars',
+		popupScrollBars	: 'Scrollbar',
 		popupDependent	: 'Koblet/dependent (Netscape)',
 		popupWidth		: 'Bredde',
 		popupLeft		: 'Position fra venstre',
 		popupHeight		: 'Højde',
 		popupTop		: 'Position fra toppen',
-		id				: 'Id', // MISSING
+		id				: 'Id',
 		langDir			: 'Tekstretning',
-		langDirNotSet	: '<intet valgt>',
 		langDirLTR		: 'Fra venstre mod højre (LTR)',
 		langDirRTL		: 'Fra højre mod venstre (RTL)',
 		acccessKey		: 'Genvejstast',
@@ -158,22 +175,46 @@ CKEDITOR.lang['da'] =
 		selectAnchor	: 'Vælg et anker',
 		anchorName		: 'Efter anker navn',
 		anchorId		: 'Efter element Id',
-		emailAddress	: 'E-mailadresse',
+		emailAddress	: 'E-mail adresse',
 		emailSubject	: 'Emne',
-		emailBody		: 'Brødtekst',
-		noAnchors		: '(Ingen bogmærker dokumentet)',
+		emailBody		: 'Besked',
+		noAnchors		: '(Ingen bogmærker i dokumentet)',
 		noUrl			: 'Indtast hyperlink URL!',
-		noEmail			: 'Indtast e-mailaddresse!'
+		noEmail			: 'Indtast e-mail adresse!'
 	},
 
 	// Anchor dialog
 	anchor :
 	{
-		toolbar		: 'Indsæt/rediger bogmærke',
+		toolbar		: 'Indsæt/redigér bogmærke',
 		menu		: 'Egenskaber for bogmærke',
 		title		: 'Egenskaber for bogmærke',
 		name		: 'Bogmærke navn',
-		errorName	: 'Indtast bogmærke navn!'
+		errorName	: 'Indtast bogmærke navn'
+	},
+
+	// List style dialog
+	list:
+	{
+		numberedTitle		: 'Numbered List Properties', // MISSING
+		bulletedTitle		: 'Bulleted List Properties', // MISSING
+		type				: 'Type', // MISSING
+		start				: 'Start', // MISSING
+		validateStartNumber				:'List start number must be a whole number.', // MISSING
+		circle				: 'Circle', // MISSING
+		disc				: 'Disc', // MISSING
+		square				: 'Square', // MISSING
+		none				: 'None', // MISSING
+		notset				: '<not set>', // MISSING
+		armenian			: 'Armenian numbering', // MISSING
+		georgian			: 'Georgian numbering (an, ban, gan, etc.)', // MISSING
+		lowerRoman			: 'Lower Roman (i, ii, iii, iv, v, etc.)', // MISSING
+		upperRoman			: 'Upper Roman (I, II, III, IV, V, etc.)', // MISSING
+		lowerAlpha			: 'Lower Alpha (a, b, c, d, e, etc.)', // MISSING
+		upperAlpha			: 'Upper Alpha (A, B, C, D, E, etc.)', // MISSING
+		lowerGreek			: 'Lower Greek (alpha, beta, gamma, etc.)', // MISSING
+		decimal				: 'Decimal (1, 2, 3, etc.)', // MISSING
+		decimalLeadingZero	: 'Decimal leading zero (01, 02, 03, etc.)' // MISSING
 	},
 
 	// Find And Replace Dialog
@@ -184,18 +225,18 @@ CKEDITOR.lang['da'] =
 		replace				: 'Erstat',
 		findWhat			: 'Søg efter:',
 		replaceWith			: 'Erstat med:',
-		notFoundMsg			: 'Søgeteksten blev ikke fundet!',
+		notFoundMsg			: 'Søgeteksten blev ikke fundet',
 		matchCase			: 'Forskel på store og små bogstaver',
 		matchWord			: 'Kun hele ord',
-		matchCyclic			: 'Match cyclic', // MISSING
+		matchCyclic			: 'Match cyklisk',
 		replaceAll			: 'Erstat alle',
-		replaceSuccessMsg	: '%1 occurrence(s) replaced.' // MISSING
+		replaceSuccessMsg	: '%1 forekomst(er) erstattet.'
 	},
 
 	// Table Dialog
 	table :
 	{
-		toolbar		: 'Table',
+		toolbar		: 'Tabel',
 		title		: 'Egenskaber for tabel',
 		menu		: 'Egenskaber for tabel',
 		deleteTable	: 'Slet tabel',
@@ -203,30 +244,30 @@ CKEDITOR.lang['da'] =
 		columns		: 'Kolonner',
 		border		: 'Rammebredde',
 		align		: 'Justering',
-		alignNotSet	: '<intet valgt>',
 		alignLeft	: 'Venstrestillet',
 		alignCenter	: 'Centreret',
 		alignRight	: 'Højrestillet',
 		width		: 'Bredde',
 		widthPx		: 'pixels',
 		widthPc		: 'procent',
+		widthUnit	: 'width unit', // MISSING
 		height		: 'Højde',
 		cellSpace	: 'Celleafstand',
 		cellPad		: 'Cellemargen',
 		caption		: 'Titel',
-		summary		: 'Resume',
-		headers		: 'Headers', // MISSING
-		headersNone		: 'None', // MISSING
-		headersColumn	: 'First column', // MISSING
-		headersRow		: 'First Row', // MISSING
-		headersBoth		: 'Both', // MISSING
-		invalidRows		: 'Number of rows must be a number greater than 0.', // MISSING
-		invalidCols		: 'Number of columns must be a number greater than 0.', // MISSING
-		invalidBorder	: 'Border size must be a number.', // MISSING
-		invalidWidth	: 'Table width must be a number.', // MISSING
-		invalidHeight	: 'Table height must be a number.', // MISSING
-		invalidCellSpacing	: 'Cell spacing must be a number.', // MISSING
-		invalidCellPadding	: 'Cell padding must be a number.', // MISSING
+		summary		: 'Resumé',
+		headers		: 'Header',
+		headersNone		: 'Ingen',
+		headersColumn	: 'Første kolonne',
+		headersRow		: 'Første række',
+		headersBoth		: 'Begge',
+		invalidRows		: 'Antallet af rækker skal være større end 0.',
+		invalidCols		: 'Antallet af kolonner skal være større end 0.',
+		invalidBorder	: 'Rammetykkelse skal være et tal.',
+		invalidWidth	: 'Tabelbredde skal være et tal.',
+		invalidHeight	: 'Tabelhøjde skal være et tal.',
+		invalidCellSpacing	: 'Celleafstand skal være et tal.',
+		invalidCellPadding	: 'Cellemargen skal være et tal.',
 
 		cell :
 		{
@@ -239,27 +280,28 @@ CKEDITOR.lang['da'] =
 			mergeDown		: 'Flet nedad',
 			splitHorizontal	: 'Del celle vandret',
 			splitVertical	: 'Del celle lodret',
-			title			: 'Cell Properties', // MISSING
-			cellType		: 'Cell Type', // MISSING
-			rowSpan			: 'Rows Span', // MISSING
-			colSpan			: 'Columns Span', // MISSING
-			wordWrap		: 'Word Wrap', // MISSING
-			hAlign			: 'Horizontal Alignment', // MISSING
-			vAlign			: 'Vertical Alignment', // MISSING
-			alignTop		: 'Top', // MISSING
-			alignMiddle		: 'Middle', // MISSING
-			alignBottom		: 'Bottom', // MISSING
-			alignBaseline	: 'Baseline', // MISSING
-			bgColor			: 'Background Color', // MISSING
-			borderColor		: 'Border Color', // MISSING
-			data			: 'Data', // MISSING
-			header			: 'Header', // MISSING
-			yes				: 'Yes', // MISSING
-			no				: 'No', // MISSING
-			invalidWidth	: 'Cell width must be a number.', // MISSING
-			invalidHeight	: 'Cell height must be a number.', // MISSING
-			invalidRowSpan	: 'Rows span must be a whole number.', // MISSING
-			invalidColSpan	: 'Columns span must be a whole number.' // MISSING
+			title			: 'Celleegenskaber',
+			cellType		: 'Celletype',
+			rowSpan			: 'Række span (rows span)',
+			colSpan			: 'Kolonne span (columns span)',
+			wordWrap		: 'Tekstombrydning',
+			hAlign			: 'Vandret justering',
+			vAlign			: 'Lodret justering',
+			alignTop		: 'Top',
+			alignMiddle		: 'Midt',
+			alignBottom		: 'Bund',
+			alignBaseline	: 'Grundlinje',
+			bgColor			: 'Baggrundsfarve',
+			borderColor		: 'Rammefarve',
+			data			: 'Data',
+			header			: 'Header',
+			yes				: 'Ja',
+			no				: 'Nej',
+			invalidWidth	: 'Cellebredde skal være et tal.',
+			invalidHeight	: 'Cellehøjde skal være et tal.',
+			invalidRowSpan	: 'Række span skal være et heltal.',
+			invalidColSpan	: 'Kolonne span skal være et heltal.',
+			chooseColor		: 'Choose' // MISSING
 		},
 
 		row :
@@ -305,14 +347,8 @@ CKEDITOR.lang['da'] =
 		title		: 'Egenskaber for formular',
 		menu		: 'Egenskaber for formular',
 		action		: 'Handling',
-		method		: 'Metod',
-		encoding	: 'Encoding', // MISSING
-		target		: 'Mål',
-		targetNotSet	: '<intet valgt>',
-		targetNew	: 'Nyt vindue (_blank)',
-		targetTop	: 'Hele vinduet (_top)',
-		targetSelf	: 'Samme vindue (_self)',
-		targetParent	: 'Overordnet ramme (_parent)'
+		method		: 'Metode',
+		encoding	: 'Kodning (encoding)'
 	},
 
 	// Select Field Dialog.
@@ -323,12 +359,12 @@ CKEDITOR.lang['da'] =
 		opAvail		: 'Valgmuligheder',
 		value		: 'Værdi',
 		size		: 'Størrelse',
-		lines		: 'linier',
+		lines		: 'Linjer',
 		chkMulti	: 'Tillad flere valg',
 		opText		: 'Tekst',
 		opValue		: 'Værdi',
 		btnAdd		: 'Tilføj',
-		btnModify	: 'Rediger',
+		btnModify	: 'Redigér',
 		btnUp		: 'Op',
 		btnDown		: 'Ned',
 		btnSetValue : 'Sæt som valgt',
@@ -350,7 +386,7 @@ CKEDITOR.lang['da'] =
 		name		: 'Navn',
 		value		: 'Værdi',
 		charWidth	: 'Bredde (tegn)',
-		maxChars	: 'Max antal tegn',
+		maxChars	: 'Max. antal tegn',
 		type		: 'Type',
 		typeText	: 'Tekst',
 		typePass	: 'Adgangskode'
@@ -370,132 +406,132 @@ CKEDITOR.lang['da'] =
 		title		: 'Egenskaber for billede',
 		titleButton	: 'Egenskaber for billedknap',
 		menu		: 'Egenskaber for billede',
-		infoTab	: 'Generelt',
+		infoTab		: 'Generelt',
 		btnUpload	: 'Upload',
-		url		: 'URL',
-		upload	: 'Upload',
-		alt		: 'Alternativ tekst',
+		upload		: 'Upload',
+		alt			: 'Alternativ tekst',
 		width		: 'Bredde',
-		height	: 'Højde',
+		height		: 'Højde',
 		lockRatio	: 'Lås størrelsesforhold',
+		unlockRatio	: 'Unlock Ratio', // MISSING
 		resetSize	: 'Nulstil størrelse',
-		border	: 'Ramme',
-		hSpace	: 'HMargen',
-		vSpace	: 'VMargen',
+		border		: 'Ramme',
+		hSpace		: 'Vandret margen',
+		vSpace		: 'Lodret margen',
 		align		: 'Justering',
 		alignLeft	: 'Venstre',
-		alignAbsBottom: 'Absolut nederst',
-		alignAbsMiddle: 'Absolut centreret',
-		alignBaseline	: 'Grundlinje',
-		alignBottom	: 'Nederst',
-		alignMiddle	: 'Centreret',
 		alignRight	: 'Højre',
-		alignTextTop	: 'Toppen af teksten',
-		alignTop	: 'Øverst',
-		preview	: 'Vis eksempel',
 		alertUrl	: 'Indtast stien til billedet',
-		linkTab	: 'Hyperlink',
-		button2Img	: 'Do you want to transform the selected image button on a simple image?', // MISSING
-		img2Button	: 'Do you want to transform the selected image on a image button?' // MISSING
+		linkTab		: 'Hyperlink',
+		button2Img	: 'Vil du lave billedknappen om til et almindeligt billede?',
+		img2Button	: 'Vil du lave billedet om til en billedknap?',
+		urlMissing	: 'Image source URL is missing.', // MISSING
+		validateWidth	: 'Width must be a whole number.', // MISSING
+		validateHeight	: 'Height must be a whole number.', // MISSING
+		validateBorder	: 'Border must be a whole number.', // MISSING
+		validateHSpace	: 'HSpace must be a whole number.', // MISSING
+		validateVSpace	: 'VSpace must be a whole number.' // MISSING
 	},
 
 	// Flash Dialog
 	flash :
 	{
 		properties		: 'Egenskaber for Flash',
-		propertiesTab	: 'Properties', // MISSING
-		title		: 'Egenskaber for Flash',
-		chkPlay		: 'Automatisk afspilning',
-		chkLoop		: 'Gentagelse',
-		chkMenu		: 'Vis Flash menu',
-		chkFull		: 'Allow Fullscreen', // MISSING
- 		scale		: 'Skalér',
+		propertiesTab	: 'Egenskaber',
+		title			: 'Egenskaber for Flash',
+		chkPlay			: 'Automatisk afspilning',
+		chkLoop			: 'Gentagelse',
+		chkMenu			: 'Vis Flash menu',
+		chkFull			: 'Tillad fuldskærm',
+ 		scale			: 'Skalér',
 		scaleAll		: 'Vis alt',
 		scaleNoBorder	: 'Ingen ramme',
 		scaleFit		: 'Tilpas størrelse',
-		access			: 'Script Access', // MISSING
-		accessAlways	: 'Always', // MISSING
-		accessSameDomain	: 'Same domain', // MISSING
-		accessNever	: 'Never', // MISSING
-		align		: 'Justering',
-		alignLeft	: 'Venstre',
-		alignAbsBottom: 'Absolut nederst',
-		alignAbsMiddle: 'Absolut centreret',
+		access			: 'Script adgang',
+		accessAlways	: 'Altid',
+		accessSameDomain: 'Samme domæne',
+		accessNever		: 'Aldrig',
+		align			: 'Justering',
+		alignLeft		: 'Venstre',
+		alignAbsBottom	: 'Absolut nederst',
+		alignAbsMiddle	: 'Absolut centreret',
 		alignBaseline	: 'Grundlinje',
-		alignBottom	: 'Nederst',
-		alignMiddle	: 'Centreret',
-		alignRight	: 'Højre',
+		alignBottom		: 'Nederst',
+		alignMiddle		: 'Centreret',
+		alignRight		: 'Højre',
 		alignTextTop	: 'Toppen af teksten',
-		alignTop	: 'Øverst',
-		quality		: 'Quality', // MISSING
-		qualityBest		 : 'Best', // MISSING
-		qualityHigh		 : 'High', // MISSING
-		qualityAutoHigh	 : 'Auto High', // MISSING
-		qualityMedium	 : 'Medium', // MISSING
-		qualityAutoLow	 : 'Auto Low', // MISSING
-		qualityLow		 : 'Low', // MISSING
-		windowModeWindow	 : 'Window', // MISSING
-		windowModeOpaque	 : 'Opaque', // MISSING
-		windowModeTransparent	 : 'Transparent', // MISSING
-		windowMode	: 'Window mode', // MISSING
-		flashvars	: 'Variables for Flash', // MISSING
-		bgcolor	: 'Baggrundsfarve',
-		width	: 'Bredde',
-		height	: 'Højde',
-		hSpace	: 'HMargen',
-		vSpace	: 'VMargen',
-		validateSrc : 'Indtast hyperlink URL!',
-		validateWidth : 'Width must be a number.', // MISSING
-		validateHeight : 'Height must be a number.', // MISSING
-		validateHSpace : 'HSpace must be a number.', // MISSING
-		validateVSpace : 'VSpace must be a number.' // MISSING
+		alignTop		: 'Øverst',
+		quality			: 'Kvalitet',
+		qualityBest		: 'Bedste',
+		qualityHigh		: 'Høj',
+		qualityAutoHigh	: 'Auto høj',
+		qualityMedium	: 'Medium',
+		qualityAutoLow	: 'Auto lav',
+		qualityLow		: 'Lav',
+		windowModeWindow: 'Vindue',
+		windowModeOpaque: 'Gennemsigtig (opaque)',
+		windowModeTransparent : 'Transparent',
+		windowMode		: 'Vinduestilstand',
+		flashvars		: 'Variabler for Flash',
+		bgcolor			: 'Baggrundsfarve',
+		width			: 'Bredde',
+		height			: 'Højde',
+		hSpace			: 'Vandret margen',
+		vSpace			: 'Lodret margen',
+		validateSrc		: 'Indtast hyperlink URL!',
+		validateWidth	: 'Bredde skal være et tal.',
+		validateHeight	: 'Højde skal være et tal.',
+		validateHSpace	: 'Vandret margen skal være et tal.',
+		validateVSpace	: 'Lodret margen skal være et tal.'
 	},
 
 	// Speller Pages Dialog
 	spellCheck :
 	{
 		toolbar			: 'Stavekontrol',
-		title			: 'Spell Check', // MISSING
-		notAvailable	: 'Sorry, but service is unavailable now.', // MISSING
-		errorLoading	: 'Error loading application service host: %s.', // MISSING
+		title			: 'Stavekontrol',
+		notAvailable	: 'Stavekontrol er desværre ikke tilgængelig.',
+		errorLoading	: 'Fejl ved indlæsning af host: %s.',
 		notInDic		: 'Ikke i ordbogen',
 		changeTo		: 'Forslag',
-		btnIgnore		: 'Ignorer',
-		btnIgnoreAll	: 'Ignorer alle',
+		btnIgnore		: 'Ignorér',
+		btnIgnoreAll	: 'Ignorér alle',
 		btnReplace		: 'Erstat',
 		btnReplaceAll	: 'Erstat alle',
 		btnUndo			: 'Tilbage',
-		noSuggestions	: '- ingen forslag -',
-		progress		: 'Stavekontrolen arbejder...',
+		noSuggestions	: '(ingen forslag)',
+		progress		: 'Stavekontrollen arbejder...',
 		noMispell		: 'Stavekontrol færdig: Ingen fejl fundet',
 		noChanges		: 'Stavekontrol færdig: Ingen ord ændret',
 		oneChange		: 'Stavekontrol færdig: Et ord ændret',
 		manyChanges		: 'Stavekontrol færdig: %1 ord ændret',
-		ieSpellDownload	: 'Stavekontrol ikke installeret.<br>Vil du hente den nu?'
+		ieSpellDownload	: 'Stavekontrol ikke installeret. Vil du installere den nu?'
 	},
 
 	smiley :
 	{
 		toolbar	: 'Smiley',
-		title	: 'Vælg smiley'
+		title	: 'Vælg smiley',
+		options : 'Smiley Options' // MISSING
 	},
 
 	elementsPath :
 	{
-		eleTitle : '%1 element' // MISSING
+		eleLabel : 'Elements path', // MISSING
+		eleTitle : '%1 element'
 	},
 
-	numberedlist : 'Talopstilling',
-	bulletedlist : 'Punktopstilling',
-	indent : 'Forøg indrykning',
-	outdent : 'Formindsk indrykning',
+	numberedlist	: 'Talopstilling',
+	bulletedlist	: 'Punktopstilling',
+	indent			: 'Forøg indrykning',
+	outdent			: 'Formindsk indrykning',
 
 	justify :
 	{
-		left : 'Venstrestillet',
-		center : 'Centreret',
-		right : 'Højrestillet',
-		block : 'Lige margener'
+		left	: 'Venstrestillet',
+		center	: 'Centreret',
+		right	: 'Højrestillet',
+		block	: 'Lige margener'
 	},
 
 	blockquote : 'Blokcitat',
@@ -503,172 +539,220 @@ CKEDITOR.lang['da'] =
 	clipboard :
 	{
 		title		: 'Indsæt',
-		cutError	: 'Din browsers sikkerhedsindstillinger tillader ikke editoren at klippe tekst automatisk!<br>Brug i stedet tastaturet til at klippe teksten (Ctrl+X).',
-		copyError	: 'Din browsers sikkerhedsindstillinger tillader ikke editoren at kopiere tekst automatisk!<br>Brug i stedet tastaturet til at kopiere teksten (Ctrl+C).',
-		pasteMsg	: 'Indsæt i feltet herunder (<STRONG>Ctrl+V</STRONG>) og klik <STRONG>OK</STRONG>.',
-		securityMsg	: 'På grund af browserens sikkerhedsindstillinger kan editoren ikke tilgå udklipsholderen direkte. Du skal indsætte udklipsholderens indhold i dette vindue igen.'
+		cutError	: 'Din browsers sikkerhedsindstillinger tillader ikke editoren at få automatisk adgang til udklipsholderen.<br><br>Brug i stedet tastaturet til at klippe teksten (Ctrl/Cmd+X).',
+		copyError	: 'Din browsers sikkerhedsindstillinger tillader ikke editoren at få automatisk adgang til udklipsholderen.<br><br>Brug i stedet tastaturet til at kopiere teksten (Ctrl/Cmd+C).',
+		pasteMsg	: 'Indsæt i feltet herunder (<STRONG>Ctrl/Cmd+V</STRONG>) og klik på <STRONG>OK</STRONG>.',
+		securityMsg	: 'Din browsers sikkerhedsindstillinger tillader ikke editoren at få automatisk adgang til udklipsholderen.<br><br>Du skal indsætte udklipsholderens indhold i dette vindue igen.',
+		pasteArea	: 'Paste Area' // MISSING
 	},
 
 	pastefromword :
 	{
-		toolbar : 'Indsæt fra Word',
-		title : 'Indsæt fra Word',
-		advice : 'Indsæt i feltet herunder (<STRONG>Ctrl+V</STRONG>) og klik <STRONG>OK</STRONG>.',
-		ignoreFontFace : 'Ignorer font definitioner',
-		removeStyle : 'Ignorer typografi'
+		confirmCleanup	: 'Den tekst du forsøger at indsætte ser ud til at komme fra Word. Vil du rense teksten før den indsættes?',
+		toolbar			: 'Indsæt fra Word',
+		title			: 'Indsæt fra Word',
+		error			: 'It was not possible to clean up the pasted data due to an internal error' // MISSING
 	},
 
 	pasteText :
 	{
-		button : 'Indsæt som ikke-formateret tekst',
-		title : 'Indsæt som ikke-formateret tekst'
+		button	: 'Indsæt som ikke-formateret tekst',
+		title	: 'Indsæt som ikke-formateret tekst'
 	},
 
 	templates :
 	{
-		button : 'Skabeloner',
-		title : 'Indholdsskabeloner',
-		insertOption: 'Erstat det faktiske indhold',
-		selectPromptMsg: 'Vælg den skabelon, som skal åbnes i editoren.<br>(Nuværende indhold vil blive overskrevet!):',
-		emptyListMsg : '(Der er ikke defineret nogen skabelon!)'
+		button			: 'Skabeloner',
+		title			: 'Indholdsskabeloner',
+		options : 'Template Options', // MISSING
+		insertOption	: 'Erstat det faktiske indhold',
+		selectPromptMsg	: 'Vælg den skabelon, som skal åbnes i editoren (nuværende indhold vil blive overskrevet):',
+		emptyListMsg	: '(Der er ikke defineret nogen skabelon)'
 	},
 
-	showBlocks : 'Show Blocks', // MISSING
+	showBlocks : 'Vis afsnitsmærker',
 
 	stylesCombo :
 	{
-		label : 'Typografi',
-		voiceLabel : 'Styles', // MISSING
-		panelVoiceLabel : 'Select a style', // MISSING
-		panelTitle1 : 'Block Styles', // MISSING
-		panelTitle2 : 'Inline Styles', // MISSING
-		panelTitle3 : 'Object Styles' // MISSING
+		label		: 'Typografi',
+		panelTitle	: 'Formatting Styles', // MISSING
+		panelTitle1	: 'Block typografi',
+		panelTitle2	: 'Inline typografi',
+		panelTitle3	: 'Object typografi'
 	},
 
 	format :
 	{
-		label : 'Formatering',
-		voiceLabel : 'Format', // MISSING
-		panelTitle : 'Formatering',
-		panelVoiceLabel : 'Select a paragraph format', // MISSING
+		label		: 'Formatering',
+		panelTitle	: 'Formatering',
 
-		tag_p : 'Normal',
-		tag_pre : 'Formateret',
-		tag_address : 'Adresse',
-		tag_h1 : 'Overskrift 1',
-		tag_h2 : 'Overskrift 2',
-		tag_h3 : 'Overskrift 3',
-		tag_h4 : 'Overskrift 4',
-		tag_h5 : 'Overskrift 5',
-		tag_h6 : 'Overskrift 6',
-		tag_div : 'Normal (DIV)'
+		tag_p		: 'Normal',
+		tag_pre		: 'Formateret',
+		tag_address	: 'Adresse',
+		tag_h1		: 'Overskrift 1',
+		tag_h2		: 'Overskrift 2',
+		tag_h3		: 'Overskrift 3',
+		tag_h4		: 'Overskrift 4',
+		tag_h5		: 'Overskrift 5',
+		tag_h6		: 'Overskrift 6',
+		tag_div		: 'Normal (DIV)'
 	},
+
+	div :
+	{
+		title				: 'Create Div Container', // MISSING
+		toolbar				: 'Create Div Container', // MISSING
+		cssClassInputLabel	: 'Stylesheet Classes', // MISSING
+		styleSelectLabel	: 'Style', // MISSING
+		IdInputLabel		: 'Id', // MISSING
+		languageCodeInputLabel	: ' Language Code', // MISSING
+		inlineStyleInputLabel	: 'Inline Style', // MISSING
+		advisoryTitleInputLabel	: 'Advisory Title', // MISSING
+		langDirLabel		: 'Language Direction', // MISSING
+		langDirLTRLabel		: 'Left to Right (LTR)', // MISSING
+		langDirRTLLabel		: 'Right to Left (RTL)', // MISSING
+		edit				: 'Edit Div', // MISSING
+		remove				: 'Remove Div' // MISSING
+  	},
 
 	font :
 	{
-		label : 'Skrifttype',
-		voiceLabel : 'Font', // MISSING
-		panelTitle : 'Skrifttype',
-		panelVoiceLabel : 'Select a font' // MISSING
+		label		: 'Skrifttype',
+		voiceLabel	: 'Skrifttype',
+		panelTitle	: 'Skrifttype'
 	},
 
 	fontSize :
 	{
-		label : 'Skriftstørrelse',
-		voiceLabel : 'Font Size', // MISSING
-		panelTitle : 'Skriftstørrelse',
-		panelVoiceLabel : 'Select a font size' // MISSING
+		label		: 'Skriftstørrelse',
+		voiceLabel	: 'Skriftstørrelse',
+		panelTitle	: 'Skriftstørrelse'
 	},
 
 	colorButton :
 	{
-		textColorTitle : 'Tekstfarve',
-		bgColorTitle : 'Baggrundsfarve',
-		auto : 'Automatisk',
-		more : 'Flere farver...'
+		textColorTitle	: 'Tekstfarve',
+		bgColorTitle	: 'Baggrundsfarve',
+		panelTitle		: 'Colors', // MISSING
+		auto			: 'Automatisk',
+		more			: 'Flere farver...'
 	},
 
 	colors :
 	{
-		'000' : 'Black',
-		'800000' : 'Maroon',
-		'8B4513' : 'Saddle Brown',
-		'2F4F4F' : 'Dark Slate Gray',
-		'008080' : 'Teal',
-		'000080' : 'Navy',
-		'4B0082' : 'Indigo',
-		'696969' : 'Dim Gray',
-		'B22222' : 'Fire Brick',
-		'A52A2A' : 'Brown',
-		'DAA520' : 'Golden Rod',
-		'006400' : 'Dark Green',
-		'40E0D0' : 'Turquoise',
-		'0000CD' : 'Medium Blue',
-		'800080' : 'Purple',
-		'808080' : 'Gray',
-		'F00' : 'Red',
-		'FF8C00' : 'Dark Orange',
-		'FFD700' : 'Gold',
-		'008000' : 'Green',
-		'0FF' : 'Cyan',
-		'00F' : 'Blue',
-		'EE82EE' : 'Violet',
-		'A9A9A9' : 'Dark Gray',
-		'FFA07A' : 'Light Salmon',
-		'FFA500' : 'Orange',
-		'FFFF00' : 'Yellow',
-		'00FF00' : 'Lime',
-		'AFEEEE' : 'Pale Turquoise',
-		'ADD8E6' : 'Light Blue',
-		'DDA0DD' : 'Plum',
-		'D3D3D3' : 'Light Grey',
-		'FFF0F5' : 'Lavender Blush',
-		'FAEBD7' : 'Antique White',
-		'FFFFE0' : 'Light Yellow',
-		'F0FFF0' : 'Honeydew',
-		'F0FFFF' : 'Azure',
-		'F0F8FF' : 'Alice Blue',
-		'E6E6FA' : 'Lavender',
-		'FFF' : 'White'
+		'000' : 'Black', // MISSING
+		'800000' : 'Maroon', // MISSING
+		'8B4513' : 'Saddle Brown', // MISSING
+		'2F4F4F' : 'Dark Slate Gray', // MISSING
+		'008080' : 'Teal', // MISSING
+		'000080' : 'Navy', // MISSING
+		'4B0082' : 'Indigo', // MISSING
+		'696969' : 'Dark Gray', // MISSING
+		'B22222' : 'Fire Brick', // MISSING
+		'A52A2A' : 'Brown', // MISSING
+		'DAA520' : 'Golden Rod', // MISSING
+		'006400' : 'Dark Green', // MISSING
+		'40E0D0' : 'Turquoise', // MISSING
+		'0000CD' : 'Medium Blue', // MISSING
+		'800080' : 'Purple', // MISSING
+		'808080' : 'Gray', // MISSING
+		'F00' : 'Red', // MISSING
+		'FF8C00' : 'Dark Orange', // MISSING
+		'FFD700' : 'Gold', // MISSING
+		'008000' : 'Green', // MISSING
+		'0FF' : 'Cyan', // MISSING
+		'00F' : 'Blue', // MISSING
+		'EE82EE' : 'Violet', // MISSING
+		'A9A9A9' : 'Dim Gray', // MISSING
+		'FFA07A' : 'Light Salmon', // MISSING
+		'FFA500' : 'Orange', // MISSING
+		'FFFF00' : 'Yellow', // MISSING
+		'00FF00' : 'Lime', // MISSING
+		'AFEEEE' : 'Pale Turquoise', // MISSING
+		'ADD8E6' : 'Light Blue', // MISSING
+		'DDA0DD' : 'Plum', // MISSING
+		'D3D3D3' : 'Light Grey', // MISSING
+		'FFF0F5' : 'Lavender Blush', // MISSING
+		'FAEBD7' : 'Antique White', // MISSING
+		'FFFFE0' : 'Light Yellow', // MISSING
+		'F0FFF0' : 'Honeydew', // MISSING
+		'F0FFFF' : 'Azure', // MISSING
+		'F0F8FF' : 'Alice Blue', // MISSING
+		'E6E6FA' : 'Lavender', // MISSING
+		'FFF' : 'White' // MISSING
 	},
 
 	scayt :
 	{
-		title : 'Spell Check As You Type', // MISSING
-		enable : 'Enable SCAYT', // MISSING
-		disable : 'Disable SCAYT', // MISSING
-		about : 'About SCAYT', // MISSING
-		toggle : 'Toggle SCAYT', // MISSING
-		options : 'Options', // MISSING
-		langs : 'Languages', // MISSING
-		moreSuggestions : 'More suggestions', // MISSING
-		ignore : 'Ignore', // MISSING
-		ignoreAll : 'Ignore All', // MISSING
-		addWord : 'Add Word', // MISSING
-		emptyDic : 'Dictionary name should not be empty.', // MISSING
-		optionsTab : 'Options', // MISSING
-		languagesTab : 'Languages', // MISSING
-		dictionariesTab : 'Dictionaries', // MISSING
-		aboutTab : 'About' // MISSING
+		title			: 'Stavekontrol mens du skriver',
+		opera_title		: 'Not supported by Opera', // MISSING
+		enable			: 'Aktivér SCAYT',
+		disable			: 'Deaktivér SCAYT',
+		about			: 'Om SCAYT',
+		toggle			: 'Skift/toggle SCAYT',
+		options			: 'Indstillinger',
+		langs			: 'Sprog',
+		moreSuggestions	: 'Flere forslag',
+		ignore			: 'Ignorér',
+		ignoreAll		: 'Ignorér alle',
+		addWord			: 'Tilføj ord',
+		emptyDic		: 'Ordbogsnavn må ikke være tom.',
+
+		optionsTab		: 'Indstillinger',
+		allCaps			: 'Ignore All-Caps Words', // MISSING
+		ignoreDomainNames : 'Ignore Domain Names', // MISSING
+		mixedCase		: 'Ignore Words with Mixed Case', // MISSING
+		mixedWithDigits	: 'Ignore Words with Numbers', // MISSING
+
+		languagesTab	: 'Sprog',
+
+		dictionariesTab	: 'Ordbøger',
+		dic_field_name	: 'Dictionary name', // MISSING
+		dic_create		: 'Create', // MISSING
+		dic_restore		: 'Restore', // MISSING
+		dic_delete		: 'Delete', // MISSING
+		dic_rename		: 'Rename', // MISSING
+		dic_info		: 'Initially the User Dictionary is stored in a Cookie. However, Cookies are limited in size. When the User Dictionary grows to a point where it cannot be stored in a Cookie, then the dictionary may be stored on our server. To store your personal dictionary on our server you should specify a name for your dictionary. If you already have a stored dictionary, please type its name and click the Restore button.', // MISSING
+
+		aboutTab		: 'Om'
 	},
 
 	about :
 	{
-		title : 'About CKEditor', // MISSING
-		dlgTitle : 'About CKEditor', // MISSING
-		moreInfo : 'For licensing information please visit our web site:', // MISSING
-		copy : 'Copyright &copy; $1. All rights reserved.' // MISSING
+		title		: 'Om CKEditor',
+		dlgTitle	: 'Om CKEditor',
+		moreInfo	: 'For informationer omkring licens, se venligst vores hjemmeside (på engelsk):',
+		copy		: 'Copyright &copy; $1. Alle rettigheder forbeholdes.'
 	},
 
-	maximize : 'Maximize', // MISSING
+	maximize : 'Maximér',
+	minimize : 'Minimize', // MISSING
 
 	fakeobjects :
 	{
-		anchor : 'Anchor', // MISSING
-		flash : 'Flash Animation', // MISSING
-		div : 'Page Break', // MISSING
-		unknown : 'Unknown Object' // MISSING
+		anchor	: 'Anker',
+		flash	: 'Flashanimation',
+		div		: 'Sideskift',
+		unknown	: 'Ukendt objekt'
 	},
 
-	resize : 'Drag to resize' // MISSING
+	resize : 'Træk for at skalere',
+
+	colordialog :
+	{
+		title		: 'Select color', // MISSING
+		options	:	'Color Options', // MISSING
+		highlight	: 'Highlight', // MISSING
+		selected	: 'Selected Color', // MISSING
+		clear		: 'Clear' // MISSING
+	},
+
+	toolbarCollapse	: 'Collapse Toolbar', // MISSING
+	toolbarExpand	: 'Expand Toolbar', // MISSING
+
+	bidi :
+	{
+		ltr : 'Text direction from left to right', // MISSING
+		rtl : 'Text direction from right to left' // MISSING
+	}
 };

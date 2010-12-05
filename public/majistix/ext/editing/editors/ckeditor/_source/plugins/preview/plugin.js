@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2003-2009, CKSource - Frederico Knabben. All rights reserved.
+Copyright (c) 2003-2010, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
 
@@ -16,19 +16,29 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 		exec : function( editor )
 		{
 			var sHTML,
-				isCustomDomain = CKEDITOR.env.ie && document.domain != window.location.hostname;
-			if ( editor.config.fullPage )
-				sHTML = editor.getData();
+				config = editor.config,
+				baseTag = config.baseHref ? '<base href="' + config.baseHref + '"/>' : '',
+				isCustomDomain = CKEDITOR.env.isCustomDomain();
+
+			if ( config.fullPage )
+			{
+				sHTML = editor.getData()
+						.replace( /<head>/, '$&' + baseTag )
+						.replace( /[^>]*(?=<\/title>)/, editor.lang.preview );
+			}
 			else
 			{
 				var bodyHtml = '<body ',
-					body = CKEDITOR.document.getBody(),
-					baseTag = ( editor.config.baseHref.length > 0 ) ? '<base href="' + editor.config.baseHref + '" _cktemp="true"></base>' : '';
+						body = editor.document && editor.document.getBody();
 
-				if ( body.getAttribute( 'id' ) )
-					bodyHtml += 'id="' + body.getAttribute( 'id' ) + '" ';
-				if ( body.getAttribute( 'class' ) )
-					bodyHtml += 'class="' + body.getAttribute( 'class' ) + '" ';
+				if ( body )
+				{
+					if ( body.getAttribute( 'id' ) )
+						bodyHtml += 'id="' + body.getAttribute( 'id' ) + '" ';
+					if ( body.getAttribute( 'class' ) )
+						bodyHtml += 'class="' + body.getAttribute( 'class' ) + '" ';
+				}
+
 				bodyHtml += '>';
 
 				sHTML =
@@ -37,7 +47,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 					'<head>' +
 					baseTag +
 					'<title>' + editor.lang.preview + '</title>' +
-					'<link href="' + editor.config.contentsCss + '" type="text/css" rel="stylesheet" _cktemp="true"/>' +
+					CKEDITOR.tools.buildStyleHtml( editor.config.contentsCss ) +
 					'</head>' + bodyHtml +
 					editor.getData() +
 					'</body></html>';
@@ -73,6 +83,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 
 			if ( !isCustomDomain )
 			{
+				oWindow.document.open();
 				oWindow.document.write( sHTML );
 				oWindow.document.close();
 			}
