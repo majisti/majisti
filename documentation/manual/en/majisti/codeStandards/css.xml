@@ -36,11 +36,15 @@
                     unless it should be used as a 'generic' class attribute.
                     Generic class attributes should be used with care as they
                     influence every other decending class elements.</para>
-                <programlisting>.clear-left {
+                <programlisting>.clear-left { //This is generic enough, but MUST be namespaced
     clear: left;
 }
 
-.what-we-do {} // might not be generic enough</programlisting>
+.myapp_clear-left { //This is the correct way
+    clear: left;
+}
+
+.myapp_what-we-do {} // might not be generic enough</programlisting>
             </listitem>
             <listitem>
                 <para>Wrappers</para>
