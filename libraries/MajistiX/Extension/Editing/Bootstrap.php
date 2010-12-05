@@ -16,9 +16,13 @@ class Bootstrap extends \Majisti\Application\Addons\AbstractBootstrap
      */
     protected $_em;
 
+    /**
+     * @desc Inits the entity manager
+     */
     protected function _initEntityManager()
     {
         $bootstrap = $this->getApplication()->getBootstrap();
+
         /* doctrine is mendatory for this extension to work */
         if( !$bootstrap->hasPluginResource('Doctrine') ) {
             $bootstrap->registerPluginResource('Doctrine');
