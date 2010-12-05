@@ -1,10 +1,10 @@
 <?php
 
-namespace MajistiX\Extension\Editing\Model;
+namespace MajistiX\Editing\Model;
 
 use \Doctrine\ORM\Mapping\ClassMetadata,
-     \Doctrine\ORM\EntityRepository,
-    \MajistiX\Extension\Editing\View\Editor;
+    \Doctrine\ORM\EntityRepository,
+    \MajistiX\Editing\View\Editor;
 
 /**
  * @desc InPlaceEditing entity model.
@@ -60,7 +60,7 @@ class Content
 
         $metadata->mapField(array(
            'fieldName' => 'content',
-           'type' => 'string'
+           'type' => 'text'
         ));
 
         $metadata->mapField(array(
@@ -100,7 +100,7 @@ class Content
      */
     public function getContent()
     {
-        return $this->content;
+        return stripslashes($this->content);
     }
 
     /**

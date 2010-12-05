@@ -1,6 +1,6 @@
 <?php
 
-namespace MajistiX\Extension\Editing\View\Editor\CkEditor\Preset;
+namespace MajistiX\Editing\View\Editor\CkEditor\Preset;
 
 class Basic extends \Zend_Config
 {

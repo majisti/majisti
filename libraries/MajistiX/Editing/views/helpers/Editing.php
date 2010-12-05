@@ -1,9 +1,10 @@
 <?php
 
-namespace MajistiX\Extension\Editing\View\Helper;
+namespace MajistiX\Editing\View\Helper;
 
 use Majisti\Application\Locales,
-    MajistiX\Extension\Editing\View\Editor;
+    MajistiX\Editing\Model\Content,
+    MajistiX\Editing\View\Editor;
 
 /**
  * @desc InPlaceEditing view helper. Renders the default in place content editor
@@ -35,7 +36,11 @@ class Editing extends \Majisti\View\Helper\AbstractHelper
             $editor->setOptions($options);
         }
 
-        return $editor->render($this->getModel($key));
+        $model = $key instanceof Content
+               ? $key
+               : $this->getModel($key);
+
+        return $editor->render($model);
     }
 
     /**
@@ -47,7 +52,7 @@ class Editing extends \Majisti\View\Helper\AbstractHelper
         $em = \Zend_Registry::get('Doctrine_EntityManager');
 
         $repo = $em->getRepository(
-            'MajistiX\Extension\Editing\Model\Content');
+            'MajistiX\Editing\Model\Content');
         $model = $repo->findOrCreate($key,
             Locales::getInstance()->getCurrentLocale());
 
