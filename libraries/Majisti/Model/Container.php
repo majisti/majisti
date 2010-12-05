@@ -141,9 +141,15 @@ class Container
     public function getModel($key, $namespace = 'default',
         $returnModel = null, array $args = array())
     {
+        //MA-50 suppress warning before searching for key
+        $autoloader = \Zend_Loader_Autoloader::getInstance();
+        $warnings   = $autoloader->suppressNotFoundWarnings();
+
+        $autoloader->suppressNotFoundWarnings(true);
         if( class_exists($key, true) && null === $returnModel) {
             $returnModel = $key;
         }
+        $autoloader->suppressNotFoundWarnings($warnings);
 
         $registry   = $this->_registry;
         $namespace  = strtolower((string) $namespace);

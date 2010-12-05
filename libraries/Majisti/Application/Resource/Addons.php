@@ -65,8 +65,16 @@ class Addons extends \Zend_Application_Resource_ResourceAbstract
         unset($options['extension']['paths']);
 
         /* load extensions */
-        foreach( $options['extension'] as $name ) {
-            $manager->loadExtension($name);
+        foreach( $options['extension'] as $key => $name ) {
+            if( !is_int($key) ) {
+                continue;
+            }
+
+            $extOptions = isset($options['extension'][$name])
+                ? $options['extension'][$name]
+                : array();
+
+            $manager->loadExtension($name, $extOptions);
         }
 
         /* load modules */

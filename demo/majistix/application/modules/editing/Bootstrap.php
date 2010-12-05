@@ -7,5 +7,4 @@
  */
 class Editing_Bootstrap extends \Majisti\Application\ModuleBootstrap
 {
-
 }

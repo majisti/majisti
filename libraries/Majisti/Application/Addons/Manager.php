@@ -17,6 +17,8 @@ class Manager
 {
     protected $_application;
 
+    protected $_loadedExtensions = array();
+
     /**
      * @desc Constructs the addons manager.
      *
@@ -89,7 +91,7 @@ class Manager
      * @throws Exception If the bootstrap file is not readable, non existant,
      * has wrong namespaced class name or is not implementing IAddonsBoostrapper
      */
-    public function loadExtension($name)
+    public function loadExtension($name, array $options = array())
     {
         $paths = $this->getExtensionPaths();
         $triedPaths = array();
@@ -122,22 +124,30 @@ class Manager
                     "not found for extension {$name}.");
             }
 
-            /** @var $bootstrap IAddonsBootstrapper */
             $bootstrap = new $className($this->getApplication());
 
             /* must comply to the interface for dependency resolving */
             if ( !($bootstrap instanceof AbstractBootstrap) ) {
                 throw new Exception("Bootstrap class not an instance of " .
-                    "\Majisti\Application\Addons\IBootstrapper " .
+                    "\Majisti\Application\Addons\AbstractBootstrap " .
                     "for extension {$name} " .
                     "in namespace {$pathInfo['namespace']}");
             }
 
-            return $bootstrap->bootstrap()->run();
+            $bootstrap->setOptions($options);
+
+            $this->_loadedExtensions[$name] = $pathInfo;
+
+            return $bootstrap->bootstrap();
         }
 
         throw new Exception("Extension {$name} not found using the provided
          paths " . implode(':', $triedPaths));
+    }
+
+    public function getLoadedExtensions()
+    {
+        return $this->_loadedExtensions;
     }
 
     /**
