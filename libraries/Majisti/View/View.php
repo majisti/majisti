@@ -62,6 +62,8 @@ class View extends \Zend_View
     /*
      * (non-phpDoc)
      * @see Inherited documentation.
+     *
+     * Fixes MA-46
      */
     public function addBasePath($path, $classPrefix = 'Zend_View')
     {

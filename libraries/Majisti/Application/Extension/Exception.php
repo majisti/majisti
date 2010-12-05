@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\Application\Addons;
+namespace Majisti\Application\Extension;
 
 class Exception extends \Majisti\Exception
 {

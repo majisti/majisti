@@ -9,7 +9,7 @@ use \Doctrine\ORM;
  *
  * @author Majisti
  */
-class Bootstrap extends \Majisti\Application\Addons\AbstractBootstrap
+class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
 {
     /**
      * @var ORM\EntityManager 
@@ -80,13 +80,15 @@ class Bootstrap extends \Majisti\Application\Addons\AbstractBootstrap
         $maj     = $this->getApplication()->getBootstrap()->getOption('majisti');
         $options = new \Majisti\Config\Selector(new \Zend_Config($this->getOptions()));
 
+        /* view helper paths */
         $view = new \Zend_View();
         $view->addHelperPath('ZendX/JQuery/View/Helper', 'ZendX_JQuery_View_Helper');
         $view->addHelperPath('Majisti/View/Helper', 'Majisti\View\Helper\\');
 
+        /* setup provider singleton */
         $provider = View\Editor\Provider::getInstance()
             ->setView($view)
-            ->setEditorsUrl($maj['url'] . '/majistix/ext/editing/editors')
+            ->setEditorsUrl($maj['url'] . '/majistix/editing/editors')
             ->setEditorType($options->find('editor', 'CkEditor'))
             ->preloadEditor();
     }
