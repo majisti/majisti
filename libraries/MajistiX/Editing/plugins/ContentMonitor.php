@@ -36,7 +36,6 @@ class ContentMonitor extends \Majisti\Controller\Plugin\AbstractPlugin
 
                 $em->persist($model);
 
-
                 $model->setContent(current($post));
                 \Zend_Debug::dump($post);
                 \Zend_Debug::dump($model);

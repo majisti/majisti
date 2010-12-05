@@ -9,14 +9,14 @@ namespace Majisti\Application\Resource;
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-class Addons extends \Zend_Application_Resource_ResourceAbstract
+class Extensions extends \Zend_Application_Resource_ResourceAbstract
 {
     /**
      * @desc Inits the addons resource
      */
     public function init()
     {
-        return $this->getAddons();
+        return $this->getExtensions();
     }
 
     /**
@@ -30,15 +30,13 @@ class Addons extends \Zend_Application_Resource_ResourceAbstract
         $maj = $app->getOption('majisti');
 
         return array(
-            'extension' => array(
-                'paths' => array(array(
-                    'namespace' => $maj['app']['namespace'],
-                    'path'      => $maj['app']['path'] . '/library/extensions',
-                ), array(
-                    'namespace' => 'MajistiX',
-                    'path'      => $maj['path'] . '/libraries/MajistiX/Extension'
-                )),
-            ),
+            'paths' => array(array(
+                'namespace' => $maj['app']['namespace'],
+                'path'      => $maj['app']['path'] . '/library/extensions',
+            ), array(
+                'namespace' => 'MajistiX',
+                'path'      => $maj['path'] . '/libraries/MajistiX'
+            )),
         );
     }
 
@@ -48,10 +46,10 @@ class Addons extends \Zend_Application_Resource_ResourceAbstract
      *
      * @return \Majisti\Application\Addons\Manager The addons manager.
      */
-    protected function getAddons()
+    protected function getExtensions()
     {
         $app        = $this->getBootstrap()->getApplication();
-        $manager    = new \Majisti\Application\Addons\Manager($app);
+        $manager    = new \Majisti\Application\Extension\Manager($app);
 
         $this->getDefaultOptions();
 
@@ -60,18 +58,18 @@ class Addons extends \Zend_Application_Resource_ResourceAbstract
             $this->getOptions()
         );
 
-        $manager->setExtensionPaths($options['extension']['paths']);
+        $manager->setExtensionPaths($options['paths']);
 
-        unset($options['extension']['paths']);
+        unset($options['paths']);
 
         /* load extensions */
-        foreach( $options['extension'] as $key => $name ) {
+        foreach( $options as $key => $name ) {
             if( !is_int($key) ) {
                 continue;
             }
 
-            $extOptions = isset($options['extension'][$name])
-                ? $options['extension'][$name]
+            $extOptions = isset($options[$name])
+                ? $options[$name]
                 : array();
 
             $manager->loadExtension($name, $extOptions);

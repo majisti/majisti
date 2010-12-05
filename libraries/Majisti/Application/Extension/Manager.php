@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\Application\Addons;
+namespace Majisti\Application\Extension;
 
 /**
  * @desc Addons manager that provides control for loading addons.

@@ -68,6 +68,7 @@ class Bootstrap extends \Zend_Application_Bootstrap_Bootstrap
 
     /**
      * @desc Inits the action helper broker
+     * FIXME: this seems to load on every bootstrap class, even modules, should it?
      */
     protected function initActionHelper()
     {

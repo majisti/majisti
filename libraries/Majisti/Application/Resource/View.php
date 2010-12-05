@@ -60,11 +60,14 @@ class View extends \Zend_Application_Resource_View
         $view->addFilterPath('Majisti/View/Filter/', 'Majisti\View\Filter\\');
 
         /* add all loaded extensions' base paths */
-        $this->getBootstrap()->bootstrap('addons');
-        $manager = $this->getBootstrap()->getResource('addons');
-        foreach( $manager->getLoadedExtensions() as $name => $pathInfo ) {
-            $view->addBasePath("{$pathInfo['path']}/{$name}/views",
-                "{$pathInfo['namespace']}\Extension\\{$name}\View\\");
+        $bootstrap = $this->getBootstrap();
+        if( $bootstrap->hasPluginResource('extensions') ) {
+            $bootstrap->bootstrap('extensions');
+            $manager = $bootstrap->getResource('extensions');
+            foreach( $manager->getLoadedExtensions() as $name => $pathInfo ) {
+                $view->addBasePath("{$pathInfo['path']}/{$name}/views",
+                    "{$pathInfo['namespace']}\Extension\\{$name}\View\\");
+            }
         }
 
         /* add application's library base path */

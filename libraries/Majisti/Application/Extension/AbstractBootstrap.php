@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\Application\Addons;
+namespace Majisti\Application\Extension;
 
 abstract class AbstractBootstrap extends \Majisti\Application\ModuleBootstrap
 {
