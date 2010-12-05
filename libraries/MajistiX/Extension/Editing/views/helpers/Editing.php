@@ -27,27 +27,15 @@ class Editing extends \Majisti\View\Helper\AbstractHelper
      */
     public function helper($key, $options = array())
     {
-        return $this->getModel($key)->render($this->getEditor());
-    }
+        $editor = Editor\Provider::getInstance()->provideEditor();
 
-    /**
-     *
-     * @return Editor\IEditor The editor
-     */
-    public function getEditor()
-    {
-        if( null === $this->_editor ) {
-            $this->_editor = new Editor\CkEditor($this->view,
-            $this->getSelector()->find('majisti.url') .
-               '/majistix/ext/editing/editors' );
+        if( !is_array($options) ) {
+            $editor->preset($options);
+        } else {
+            $editor->setOptions($options);
         }
 
-        return $this->_editor;
-    }
-
-    public function setEditor(Editor\IEditor $editor)
-    {
-        $this->_editor = $editor;
+        return $editor->render($this->getModel($key));
     }
 
     /**

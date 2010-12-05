@@ -1,6 +1,6 @@
 <?php
 
-namespace MajistiX\Extension\InPlaceEditing\View\Editor;
+namespace MajistiX\Extension\Editing\View\Editor;
 
 /**
  * @desc Exception class for editors.

@@ -17,8 +17,13 @@ interface IEditor
     /**
      * @desc Renders the editor with the given content.
      * 
-     * @param $content The content
-     * @param $params The params
+     * @param \MajistiX\Extension\Editing\Model\Content The content
      */
-    public function render($content, array $params = array());
+    public function render(\MajistiX\Extension\Editing\Model\Content $content);
+
+    public function setOptions(array $options);
+
+    public function preset($preset);
+
+    static public function preload(array $options);
 }

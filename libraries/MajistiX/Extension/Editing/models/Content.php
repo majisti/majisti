@@ -3,6 +3,7 @@
 namespace MajistiX\Extension\Editing\Model;
 
 use \Doctrine\ORM\Mapping\ClassMetadata,
+     \Doctrine\ORM\EntityRepository,
     \MajistiX\Extension\Editing\View\Editor;
 
 /**
@@ -13,11 +14,6 @@ use \Doctrine\ORM\Mapping\ClassMetadata,
  */
 class Content
 {
-    /**
-     * @var Editor\IEditor
-     */
-    protected $_editor;
-
     protected $id;
 
     protected $name;
@@ -128,15 +124,6 @@ class Content
     }
 
     /**
-     * @desc Renders the content using a provided editor.
-     */
-    public function render(Editor\IEditor $editor)
-    {
-        return $editor->render($this->getContent(),
-            array('key' => $this->getName()));
-    }
-
-    /**
      * @desc Returns the current locale if the locale is null.
      *
      * @return \Zend_Locale The locale
@@ -154,7 +141,7 @@ class Content
     }
 }
 
-class ContentRepository extends \Doctrine\ORM\EntityRepository
+class ContentRepository extends EntityRepository
 {
     public function findOrCreate($name, \Zend_Locale $locale)
     {

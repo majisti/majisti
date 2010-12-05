@@ -22,7 +22,7 @@ class View extends \Zend_View
      * @var bool 
      */
     protected $_enableOutput;
-    
+
     /*
      * (non-phpDoc) 
      * @see Inherited documentation.
@@ -57,6 +57,23 @@ class View extends \Zend_View
         } else {
             return $this->getHelper('Translate')->translate($messageId, $locale);
         }
+    }
+
+    /*
+     * (non-phpDoc)
+     * @see Inherited documentation.
+     */
+    public function addBasePath($path, $classPrefix = 'Zend_View')
+    {
+        $path        = rtrim($path, '/');
+        $path        = rtrim($path, '\\');
+        $path       .= DIRECTORY_SEPARATOR;
+        $classPrefix = str_replace('_', '\\', $classPrefix);
+        $classPrefix = rtrim($classPrefix, '\\') . '\\';
+        $this->addScriptPath($path . 'scripts');
+        $this->addHelperPath($path . 'helpers', $classPrefix . 'Helper\\');
+        $this->addFilterPath($path . 'filters', $classPrefix . 'Filter\\');
+        return $this;
     }
     
     /**

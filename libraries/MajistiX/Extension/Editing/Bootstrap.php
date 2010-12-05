@@ -16,30 +16,12 @@ class Bootstrap extends \Majisti\Application\Addons\AbstractBootstrap
      */
     protected $_em;
 
-    /*
-     * (non-phpDoc) 
-     * @see Inherited documentation.
-     */
-    protected function _bootstrap($resource = null)
+    protected function _initEntityManager()
     {
-        /* prepare table prefix according to app namespace */
-        //TODO: configurable table name
-        $maj = $this->getApplication()->getBootstrap()->getOption('majisti');
-        Model\Content::setTableName(
-            strtolower($maj['app']['namespace']) . '_content');
-
-        return parent::_bootstrap($resource);
-    }
-
-    /*
-     * (non-phpDoc)
-     * @see Inherited documentation.
-     */
-    public function run()
-    {
+        $bootstrap = $this->getApplication()->getBootstrap();
         /* doctrine is mendatory for this extension to work */
-        if( !$this->hasPluginResource('Doctrine') ) {
-            $this->registerPluginResource('Doctrine');
+        if( !$bootstrap->hasPluginResource('Doctrine') ) {
+            $bootstrap->registerPluginResource('Doctrine');
         }
 
         /* @var $em ORM\EntityManager */
@@ -48,18 +30,12 @@ class Bootstrap extends \Majisti\Application\Addons\AbstractBootstrap
                           ->bootstrap('Doctrine')
                           ->getPluginResource('Doctrine')
                           ->getEntityManager();
-
-        /* add metadata driver for this extension's persistent models */
-        $this->addMetadataDriver();
-
-        /* content monitoring */
-        $this->registerPlugin();
     }
 
     /**
      * @desc Adds the metadata driver to the driver chain.
      */
-    protected function addMetadataDriver()
+    protected function _initMetadataDriver()
     {
         /* @var $driverChain ORM\Mapping\Driver\DriverChain */
         $driverChain = $this->_em->getConfiguration()->getMetadataDriverImpl();
@@ -85,9 +61,41 @@ class Bootstrap extends \Majisti\Application\Addons\AbstractBootstrap
     /**
      * @desc Registers the needed plugin for content monitoring
      */
-    protected function registerPlugin()
+    protected function _initPlugin()
     {
-        $front = $this->getResource('Frontcontroller');
+        $this->bootstrap('FrontController');
+        $front = $this->getResource('FrontController');
         $front->registerPlugin(new Plugin\ContentMonitor());
+    }
+
+    /**
+     * @desc Inits the editor provider singleton.
+     */
+    protected function _initProvider()
+    {
+        $maj     = $this->getApplication()->getBootstrap()->getOption('majisti');
+        $options = new \Majisti\Config\Selector(new \Zend_Config($this->getOptions()));
+
+        $view = new \Zend_View();
+        $view->addHelperPath('ZendX/JQuery/View/Helper', 'ZendX_JQuery_View_Helper');
+        $view->addHelperPath('Majisti/View/Helper', 'Majisti\View\Helper\\');
+
+        $provider = View\Editor\Provider::getInstance()
+            ->setView($view)
+            ->setEditorsUrl($maj['url'] . '/majistix/ext/editing/editors')
+            ->setEditorType($options->find('editor', 'CkEditor'))
+            ->preloadEditor();
+    }
+
+    /**
+     * @desc Inits the table name.
+     */
+    protected function _initTableName()
+    {
+        //TODO: configurable table name
+        $maj = $this->getApplication()->getBootstrap()->getOption('majisti');
+
+        Model\Content::setTableName(
+            strtolower($maj['app']['namespace']) . '_content');
     }
 }

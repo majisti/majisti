@@ -68,6 +68,7 @@ final class Loader
         $autoloader = \Zend_Loader_Autoloader::getInstance();
 
         $autoloader->setFallbackAutoloader(true);
+        $autoloader->suppressNotFoundWarnings(true);
 
         require_once 'Majisti/Loader/Autoloader.php';
         $autoloader->pushAutoloader(new \Majisti\Loader\Autoloader());

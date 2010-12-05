@@ -31,12 +31,15 @@ class ContentMonitor extends \Majisti\Controller\Plugin\AbstractPlugin
             if( array_search('##MAJISTIX_EDITING##', $post) ) {
                 $repo = $em->getRepository(
                     'MajistiX\Extension\Editing\Model\Content');
-                $model = $repo->findOrCreate(key($post),
+                $model = $repo->findOrCreate(key($post), //FIXME: key/current is not adequate
                     Locales::getInstance()->getCurrentLocale());
 
                 $em->persist($model);
 
+
                 $model->setContent(current($post));
+                \Zend_Debug::dump($post);
+                \Zend_Debug::dump($model);
 
                 $em->flush();
 
