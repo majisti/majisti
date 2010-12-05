@@ -1,6 +1,6 @@
 <?php
 
-namespace MajistiX\Extension\Editing\View\Editor\CkEditor;
+namespace MajistiX\Editing\View\Editor\CkEditor;
 
 class Exception extends \Majisti\Exception
 {

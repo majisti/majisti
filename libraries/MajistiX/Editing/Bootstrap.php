@@ -1,6 +1,6 @@
 <?php
 
-namespace MajistiX\Extension\Editing;
+namespace MajistiX\Editing;
 
 use \Doctrine\ORM;
 

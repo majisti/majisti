@@ -1,6 +1,6 @@
 <?php
 
-namespace MajistiX\Extension\Editing\Plugin;
+namespace MajistiX\Editing\Plugin;
 
 use \Majisti\Application\Locales;
 
@@ -30,7 +30,7 @@ class ContentMonitor extends \Majisti\Controller\Plugin\AbstractPlugin
 
             if( array_search('##MAJISTIX_EDITING##', $post) ) {
                 $repo = $em->getRepository(
-                    'MajistiX\Extension\Editing\Model\Content');
+                    'MajistiX\Editing\Model\Content');
                 $model = $repo->findOrCreate(key($post), //FIXME: key/current is not adequate
                     Locales::getInstance()->getCurrentLocale());
 

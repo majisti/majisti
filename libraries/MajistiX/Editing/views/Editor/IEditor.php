@@ -1,6 +1,6 @@
 <?php
 
-namespace MajistiX\Extension\Editing\View\Editor;
+namespace MajistiX\Editing\View\Editor;
 
 /**
  * @desc An editor is a component used to render a content model.
@@ -19,7 +19,7 @@ interface IEditor
      * 
      * @param \MajistiX\Extension\Editing\Model\Content The content
      */
-    public function render(\MajistiX\Extension\Editing\Model\Content $content);
+    public function render(\MajistiX\Editing\Model\Content $content);
 
     public function setOptions(array $options);
 

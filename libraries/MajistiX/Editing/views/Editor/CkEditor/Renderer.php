@@ -1,9 +1,9 @@
 <?php
 
-namespace MajistiX\Extension\Editing\View\Editor\CkEditor;
+namespace MajistiX\Editing\View\Editor\CkEditor;
 
-use MajistiX\Extension\Editing\Model\Content,
-    MajistiX\Extension\Editing\View\Editor\IEditor;
+use MajistiX\Editing\Model\Content,
+    MajistiX\Editing\View\Editor\IEditor;
 
 /**
  * @desc Editor implementation of the very popular CkEditor.

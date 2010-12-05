@@ -66,7 +66,7 @@ class View extends \Zend_Application_Resource_View
             $manager = $bootstrap->getResource('extensions');
             foreach( $manager->getLoadedExtensions() as $name => $pathInfo ) {
                 $view->addBasePath("{$pathInfo['path']}/{$name}/views",
-                    "{$pathInfo['namespace']}\Extension\\{$name}\View\\");
+                    "{$pathInfo['namespace']}\\{$name}\View\\");
             }
         }
 

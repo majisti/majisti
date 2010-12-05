@@ -79,7 +79,7 @@ class Manager
      */
     protected function getExtensionBootstrapClass($extName, $namespace)
     {
-        return "\\$namespace\\Extension\\$extName\\Bootstrap";
+        return "\\$namespace\\$extName\\Bootstrap";
     }
 
     /**
@@ -129,7 +129,7 @@ class Manager
             /* must comply to the interface for dependency resolving */
             if ( !($bootstrap instanceof AbstractBootstrap) ) {
                 throw new Exception("Bootstrap class not an instance of " .
-                    "\Majisti\Application\Addons\AbstractBootstrap " .
+                    "\Majisti\Application\Extension\AbstractBootstrap " .
                     "for extension {$name} " .
                     "in namespace {$pathInfo['namespace']}");
             }

@@ -45,7 +45,10 @@ EOT
 
         $maj = $app->getOption('majisti');
         $path = $maj['app']['path'] .  '/library/models/doctrine/fixtures';
-        $loader->loadFromDirectory($path);
+
+        if( file_exists($path) ) {
+            $loader->loadFromDirectory($path);
+        }
 
         $cont = $app->getBootstrap()->getResource('frontController');
         /* load modules fixtures */

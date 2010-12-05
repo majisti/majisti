@@ -15,6 +15,13 @@ class Editing_IndexController extends Zend_Controller_Action
     }
 
     /**
+     * @desc Shows an editing method called "In Place Editing"
+     */
+    public function staticInPlaceAction()
+    {
+    }
+
+    /**
      * @desc Resets the schema
      */
     public function resetAction()
