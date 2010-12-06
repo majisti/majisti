@@ -60,9 +60,12 @@ class Doctrine extends \Zend_Application_Resource_ResourceAbstract
         $config->setProxyNamespace($maj['app']['namespace'] . '\Doctrine\Proxies');
         $config->setAutoGenerateProxyClasses(true);
 
+
+        $adapterClass = get_class($db);
         $dbConfig = $db->getConfig();
         $dbConfig['user'] = $dbConfig['username'];
-        $dbConfig['driver'] = $this->adapterToDoctrineDriver($db);
+        $dbConfig['driver'] = strtolower(substr(
+            $adapterClass, 16, strlen($adapterClass)));
 
         $em = EntityManager::create($dbConfig, $config);
 
@@ -77,10 +80,14 @@ class Doctrine extends \Zend_Application_Resource_ResourceAbstract
     {
         /* get Zend adapter name */
         $adapter = strtolower(str_replace(
-            'Zend_Db_Statement_',
+            'Zend_Db_Adapter_',
             '' ,
-            $db->getStatementClass()
+            get_class($db)
         ));
+
+    \Zend_Debug::dump($adapter);
+
+        return $adapter;
 
         /* transform to corresponding Doctrine driver */
         $driver = str_replace(array(

@@ -26,11 +26,11 @@ class Bootstrap extends \Zend_Application_Bootstrap_Bootstrap
      * (non-phpDoc)
      * @see Inherited documentation.
      */
-    public function run()
-    {
-        $this->initMail();
-        parent::run();
-    }
+//    public function run()
+//    {
+//        $this->initMail();
+//        parent::run();
+//    }
 
     /**
      * @desc Adds the application's resource path to the plugin loader stack.
@@ -68,6 +68,7 @@ class Bootstrap extends \Zend_Application_Bootstrap_Bootstrap
 
     /**
      * @desc Inits the action helper broker
+     * FIXME: this seems to load on every bootstrap class, even modules, should it?
      */
     protected function initActionHelper()
     {
@@ -79,14 +80,15 @@ class Bootstrap extends \Zend_Application_Bootstrap_Bootstrap
     /**
      * @desc Inits mail subject prefix
      */
-    protected function initMail()
-    {
-        $t = $this->bootstrap('Translate');
-        $t = $this->getPluginResource('Translate')->getTranslate();
-
-        \Majisti\Model\Mail\Mail::setDefaultSubjectPrefix(
-            $t->_('[Majisti Solutions]') . ' ');
-        \Zend_Mail::setDefaultFrom('noreply@majisti.com');
-        \Zend_Mail::setDefaultReplyTo('contact@majisti.com', 'Majisti');
-    }
+//    protected function initMail()
+//    {
+//        //FIXME: this should not be here, but as a private resource
+//        $t = $this->bootstrap('Translate');
+//        $t = $this->getPluginResource('Translate')->getTranslate();
+//
+//        \Majisti\Model\Mail\Mail::setDefaultSubjectPrefix(
+//            $t->_('[Majisti Solutions]') . ' ');
+//        \Zend_Mail::setDefaultFrom('noreply@majisti.com');
+//        \Zend_Mail::setDefaultReplyTo('contact@majisti.com', 'Majisti');
+//    }
 }
