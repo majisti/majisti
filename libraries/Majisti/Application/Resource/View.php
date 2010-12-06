@@ -16,27 +16,27 @@ class View extends \Zend_Application_Resource_View
      */
     private function getSettings()
     {
-        $appSettings = $this->getBootstrap()->getApplication()->getOptions();
-
-        return new \Zend_Config($appSettings['majisti']);
+        return new \Zend_Config($this->getBootstrap()->getOptions());
     }
 
-    /**
-     * @desc Returns the configured Majisti\View
-     *
-     * The view will be setup with the following:
-     *
-     * - Majisti's view helpers added to the pluginloader
-     * - MajistiX' view helpers asdded to the pluginloader
-     * - ZendX JQuery view helpers added to the pluginloader
-     * - Zend's static helper viewRenderer will aggregate the created view
-     * - The Zend_View registry key will be setup with that view
-     * - Default doctype: XHTML1_STRICT
-     * - JQuery loaded according to configuration
-     *
-     * For more details, see the reference manual
-     *
-     * @return \Zend_View
+    /*
+     * (non-phpDoc)
+     * @see Inherited documentation.
+     */
+    public function init()
+    {
+        $view = $this->getView();
+
+        $viewRenderer = new \Majisti_Controller_ActionHelper_ViewRenderer(
+            $view, $this->getSettings()->toArray());
+        \Zend_Controller_Action_HelperBroker::addHelper($viewRenderer);
+
+        return $view;
+    }
+
+    /*
+     * (non-phpDoc)
+     * @see Inherited documentation.
      */
     public function getView()
     {
@@ -46,18 +46,7 @@ class View extends \Zend_Application_Resource_View
 
         $options     = $this->getOptions();
         $view        = new \Majisti\View\View($options);
-        $settings    = $this->getSettings();
-
-        /* Majisti view helpers */
-        $view->addHelperPath('Majisti/View/Helper/', 'Majisti\View\Helper\\');
-
-        /* add application's library view helpers and scripts */
-        $view->addHelperPath(
-            $settings->app->path      . '/library/views/helpers',
-            $settings->app->namespace . '\View\Helper\\'
-        );
-
-        $view->addScriptPath($settings->app->path . '/library/views/scripts');
+        $settings    = $this->getSettings()->majisti;
 
         /* ZendX JQuery */
         $view->addHelperPath(
@@ -65,7 +54,31 @@ class View extends \Zend_Application_Resource_View
             'ZendX_JQuery_View_Helper'
         );
 
-        $view->doctype('XHTML1_STRICT');
+        /* majisti's base path */
+        $view->addScriptPath($settings->path . '/libraries/Majisti/View/scripts');
+        $view->addHelperPath('Majisti/View/Helper/', 'Majisti\View\Helper\\');
+        $view->addFilterPath('Majisti/View/Filter/', 'Majisti\View\Filter\\');
+
+        /* add all loaded extensions' base paths */
+        $bootstrap = $this->getBootstrap();
+        if( $bootstrap->hasPluginResource('extensions') ) {
+            $bootstrap->bootstrap('extensions');
+            $manager = $bootstrap->getResource('extensions');
+            foreach( $manager->getLoadedExtensions() as $name => $pathInfo ) {
+                $view->addBasePath("{$pathInfo['path']}/{$name}/views",
+                    "{$pathInfo['namespace']}\\{$name}\View\\");
+            }
+        }
+
+        /* add application's library base path */
+        $view->addBasePath($settings->app->path . '/library/views',
+            $settings->app->namespace . '\View\\');
+
+        if( isset($options['doctype']) ) {
+            $view->doctype(strtoupper($options['doctype']));
+        } else {
+            $view->doctype('XHTML1_STRICT');
+        }
 
         $this->resolveJQuery($view, $options);
 
@@ -85,7 +98,7 @@ class View extends \Zend_Application_Resource_View
     protected function resolveJQuery($view, $options)
     {
         $selector = new \Majisti\Config\Selector(new \Zend_Config($options));
-        $settings = $this->getSettings();
+        $settings = $this->getSettings()->majisti;
 
         /* jQuery and UI */
         $view->jQuery()->setLocalPath($settings->url    . '/jquery/jquery.js');

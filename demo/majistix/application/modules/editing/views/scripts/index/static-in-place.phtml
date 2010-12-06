@@ -1,0 +1,9 @@
+<?php
+
+$content = pq('<div />')
+    ->addClass('introduction')
+    ->html($this->editing('choosingUs_introduction', 'basic'))
+    ->add($this->editing('choosingUs_unique'))
+;
+
+$this->setRenderReturn($content);

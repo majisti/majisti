@@ -224,6 +224,9 @@ class Helper
         \Zend_Loader_Autoloader::resetInstance();
         $loader = \Zend_Loader_Autoloader::getInstance();
 
+        $loader->setFallbackAutoloader(true);
+        $loader->suppressNotFoundWarnings(true);
+
         /* Majisti */
         require_once 'Majisti/Loader/Autoloader.php';
         $loader->pushAutoloader(new \Majisti\Loader\Autoloader());

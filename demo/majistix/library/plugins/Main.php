@@ -4,7 +4,7 @@ namespace MajistiX\Plugin;
 
 class Main extends \Zend_Controller_Plugin_Abstract
 {
-    public function preDispatch(\Zend_Controller_Request_Abstract $request)
+    public function postDispatch(\Zend_Controller_Request_Abstract $request)
     {
         $this->getView()->headers()->prepare();
     }

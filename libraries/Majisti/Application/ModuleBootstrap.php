@@ -7,6 +7,7 @@ namespace Majisti\Application;
  * copy of Zend's ModuleBoostrap, but since \Majisti\Application\Bootstrap
  * needed to get inherited, an entire copy was needed. DO NOT MODIFY,
  * this file is untested.
+ * FIXME: decorator pattern??
  *
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
