@@ -10,7 +10,7 @@ class AllTests extends \Majisti\Test\TestSuite
     {
         $suite = new self('Majisti Library - Application - All tests');
         
-        $suite->addTest(Addons\AllTests::suite());
+        $suite->addTest(Extension\AllTests::suite());
         $suite->addTest(Resource\AllTests::suite());
         
 //        $suite->addTestCase(__NAMESPACE__ . '\ManagerTest');
