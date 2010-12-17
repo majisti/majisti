@@ -2,9 +2,9 @@
 
 namespace MajistiT\Extension\Foo;
 
-class Bootstrap implements \Majisti\Application\Addons\IBootstrapper
+class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
 {
-    public function load()
+    public function run()
     {
         return true;
     }

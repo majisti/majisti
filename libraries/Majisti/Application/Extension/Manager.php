@@ -19,6 +19,9 @@ class Manager
 
     protected $_loadedExtensions = array();
 
+    /** @var Array */
+    protected $_extensionPaths = array();
+
     /**
      * @desc Constructs the addons manager.
      *
@@ -38,9 +41,6 @@ class Manager
     {
         return $this->_application;
     }
-
-    /** @var Array */
-    protected $_extensionPaths;
 
     /**
      * @desc Returns all the addons path in a $namespace => $path key/value
@@ -93,8 +93,12 @@ class Manager
      */
     public function loadExtension($name, array $options = array())
     {
-        $paths = $this->getExtensionPaths();
+        $paths      = $this->getExtensionPaths();
         $triedPaths = array();
+
+        if( empty($paths) ) {
+            throw new Exception("No paths provided.");
+        }
 
         foreach( $paths as $pathInfo ) {
             $triedPaths[]   = $pathInfo['path'];
@@ -149,29 +153,4 @@ class Manager
     {
         return $this->_loadedExtensions;
     }
-
-    /**
-     * @desc Loads a module.
-     *
-     * @param string $name The module name
-     * @param string $namespace The namespace it operates under
-     * @return undetermined yet
-     * @throws Exception If the modules's controllers directory is not
-     * readable or inexistant.
-     */
-//    public function loadModule($name, $namespace)
-//    {
-//        $dispatcher = \Zend_Controller_Front::getInstance()->getDispatcher();
-//        $path       = $this->getExtensionPath($namespace) .
-//                      "/Modules/$name/controllers";
-//
-//        /* checks whether path is readable */
-//        if( !\Zend_Loader::isReadable($path) ) {
-//            throw new Exception("Module $name is not " .
-//                    "existant for namespace $namespace");
-//        }
-//
-//        /** @var $dispatcher \Majisti\Controller\Dispatcher\Multiple */
-//        $dispatcher->addFallbackControllerDirectory($namespace, $path, $name);
-//    }
 }

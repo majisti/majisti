@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\Application\Addons;
+namespace Majisti\Application\Extension;
 
 require_once 'TestHelper.php';
 
@@ -20,9 +20,17 @@ class ManagerTest extends \Majisti\Test\TestCase
      */
     public function setUp()
     {
-       $this->manager     = new Manager();
-       $options           = $this->getHelper()->getOptions();
+       $helper            = $this->getHelper();
+       $this->manager     = new Manager($helper->createApplicationInstance());
+       $options           = $helper->getOptions();
        $maj               = $options['majisti'];
+
+       $this->manager->setExtensionPaths(array(
+           array(
+               'namespace' => $maj['app']['namespace'] . '\Extension',
+               'path'      => $maj['app']['path'] . '/library/extensions'
+           )
+       ));
 
 //       \Zend_Controller_Front::getInstance()->setDispatcher(
 //           new \Majisti\Controller\Dispatcher\Multiple());
@@ -82,7 +90,9 @@ class ManagerTest extends \Majisti\Test\TestCase
      */
     public function testThatLoadingExtensionCallsLoadFunction()
     {
-       $this->assertTrue($this->manager->loadExtension('Foo'));
+       $bootstrap = $this->manager->loadExtension('Foo');
+       $this->assertEquals('MajistiT\Extension\Foo\Bootstrap', get_class($bootstrap));
+       $this->assertTrue($bootstrap->run());
     }
 
     /**

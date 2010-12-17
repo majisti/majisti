@@ -22,10 +22,9 @@ class ViewTest extends \Majisti\Test\TestCase
      */
     public $expectedPaths = array(
         'Zend_View_Helper_'             => array('Zend/View/Helper/'),
-        'Majisti\View\Helper\\'         => array('Majisti/View/Helper/'),
-        'MajistiX\View\Helper\\'        => array('MajistiX/View/Helper/'),
-        'MajistiT\View\Helper\\'        => array('/views/helpers/'),
         'ZendX_JQuery_View_Helper_'     => array('ZendX/JQuery/View/Helper/'),
+        'Majisti\View\Helper\\'         => array('Majisti/View/Helper/'),
+        'MajistiT\View\Helper\\'        => array('/views/helpers/'),
     );
 
     /**
