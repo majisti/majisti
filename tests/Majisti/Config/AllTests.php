@@ -21,6 +21,7 @@ class AllTests extends \Majisti\Test\TestSuite
         $suite->addTestSuite(Handler\AllTests::suite());
 
         $suite->addTestCase(__NAMESPACE__ . '\SelectorTest');
+        $suite->addTestCase(__NAMESPACE__ . '\ConfigurationTest');
         
         return $suite;
     }
