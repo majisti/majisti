@@ -14,7 +14,8 @@ class Selector
 {
     /**
      * @desc Serves as a void argument when the returnConfigAsArray is used
-     * but an exception still wants to be thrown
+     * but an exception still wants to be thrown. Also, it lets the user
+     * provide any type of return value to avoid exceptions.
      */
     const VOID = 'MAJISTI_CONFIG_SELECTOR_VOID';
 
@@ -40,8 +41,9 @@ class Selector
      *
      * @param string $selection The CSS like selector (e.g foo.bar.baz)
      * @param string [opt; def=Selector::VOID] $returnDefault The default
-     * return value, keeping null will throw an exception when the value
-     * is not found with the specified selector.
+     * return value, keeping VOID will throw an exception when the value
+     * is not found with the specified selector. Use any other value
+     * to avoid exceptions.
      * @param bool $returnConfigAsArray [opt; def=false] Return the parent
      * element as an array instead of a \Zend_Config.
      *
@@ -57,7 +59,7 @@ class Selector
         $parts              = explode('.' , (string)$selection);
         $currentSelection   = '';
 
-        /* recursively search and return default value if not found and not null */
+        /* recursively search and return default value if not found and not VOID */
         foreach ($parts as $part) {
             $currentSelection .= $part . '.';
         	if( !isset($config->$part)) {
@@ -74,6 +76,7 @@ class Selector
         	$config = $config->$part;
         }
 
+        //FIXME: violates IE GRASP pattern?
         if( $returnConfigAsArray && $config instanceof \Zend_Config ) {
             $config = $config->toArray();
         }
