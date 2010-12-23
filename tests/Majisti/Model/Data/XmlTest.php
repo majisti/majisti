@@ -3,7 +3,7 @@
 namespace Majisti\Model\Data;
 use Majisti\Application\Locales as Locales;
 
-require_once 'TestHelper.php';
+require_once __DIR__ . '/TestHelper.php';
 
 /**
  * @desc Test case for Xml class

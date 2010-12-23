@@ -2,7 +2,7 @@
 
 namespace Majisti\Config;
 
-require_once 'TestHelper.php';
+require_once __DIR__ . '/TestHelper.php';
 
 /**
  * @desc Test class for the Configuration class.

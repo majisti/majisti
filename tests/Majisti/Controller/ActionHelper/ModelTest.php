@@ -2,7 +2,7 @@
 
 namespace Majisti\Controller\ActionHelper;
 
-require_once 'TestHelper.php';
+require_once __DIR__ . '/TestHelper.php';
 
 include_once 'Majisti/Controller/ActionHelper/Model.php';
 

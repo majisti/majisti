@@ -2,7 +2,7 @@
 
 namespace Majisti\Test;
 
-require_once 'TestHelper.php';
+require_once __DIR__ . '/TestHelper.php';
 
 /**
  * @desc Test case for the TestCase. Which one came first,

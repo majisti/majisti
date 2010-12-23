@@ -2,7 +2,7 @@
 
 namespace Majisti\Application\Resource;
 
-require_once 'TestHelper.php';
+require_once __DIR__ . '/TestHelper.php';
 
 /* additionnal classes needed for testing */
 require_once __DIR__ . '/_configHandler/Custom.php';

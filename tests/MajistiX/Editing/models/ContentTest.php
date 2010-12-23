@@ -2,7 +2,7 @@
 
 namespace MajistiX\Editing\Model;
 
-require_once 'TestHelper.php';
+require_once __DIR__ . '/TestHelper.php';
 
 class ContentTest extends \Majisti\Test\TestCase
 {

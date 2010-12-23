@@ -1,7 +1,7 @@
 <?php
 namespace Majisti\Util;
 
-require_once 'TestHelper.php';
+require_once __DIR__ . '/TestHelper.php';
 
 class AllTests extends \Majisti\Test\TestSuite
 {

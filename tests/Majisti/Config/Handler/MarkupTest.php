@@ -2,7 +2,7 @@
 
 namespace Majisti\Config\Handler;
 
-require_once 'TestHelper.php';
+require_once __DIR__ . '/TestHelper.php';
 
 /**
  * @desc Tests the markup class.

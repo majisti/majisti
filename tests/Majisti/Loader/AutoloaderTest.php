@@ -2,7 +2,7 @@
 
 namespace Majisti\Loader;
 
-require_once 'TestHelper.php';
+require_once __DIR__ . '/TestHelper.php';
 
 /**
  * @desc Autoloader test case.

@@ -2,7 +2,7 @@
 
 namespace Majisti\Application;
 
-require_once 'TestHelper.php';
+require_once __DIR__ . '/TestHelper.php';
 
 /**
  * @desc Tests that the locale session can switch session through multiple
