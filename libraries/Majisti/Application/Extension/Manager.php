@@ -15,11 +15,19 @@ namespace Majisti\Application\Extension;
  */
 class Manager
 {
+    /**
+     * @var \Zend_Application
+     */
     protected $_application;
 
+    /**
+     * @var Array
+     */
     protected $_loadedExtensions = array();
 
-    /** @var Array */
+    /**
+     * @var Array
+     */
     protected $_extensionPaths = array();
 
     /**
@@ -149,6 +157,11 @@ class Manager
          paths " . implode(':', $triedPaths));
     }
 
+    /**
+     * @desc Returns the loaded extensions.
+     *
+     * @return Array Loaded extensions
+     */
     public function getLoadedExtensions()
     {
         return $this->_loadedExtensions;

@@ -2,7 +2,8 @@
 
 namespace MajistiX\Editing;
 
-use \Doctrine\ORM;
+use \Doctrine\ORM,
+    \Majisti\Config\Configuration;
 
 /**
  * @desc Editing extension bootstrap.
@@ -15,6 +16,11 @@ class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
      * @var ORM\EntityManager 
      */
     protected $_em;
+
+    /**
+     * @var Configuration
+     */
+    protected $_configuration;
 
     /**
      * @desc Inits the entity manager
@@ -77,8 +83,7 @@ class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
      */
     protected function _initProvider()
     {
-        $maj     = $this->getApplication()->getBootstrap()->getOption('majisti');
-        $options = new \Majisti\Config\Selector(new \Zend_Config($this->getOptions()));
+        $config = $this->getConfiguration();
 
         /* view helper paths */
         $view = new \Zend_View();
@@ -88,8 +93,8 @@ class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
         /* setup provider singleton */
         $provider = View\Editor\Provider::getInstance()
             ->setView($view)
-            ->setEditorsUrl($maj['url'] . '/majistix/editing/editors')
-            ->setEditorType($options->find('editor', 'CkEditor'))
+            ->setEditorsUrl($config->find('majisti.url') . '/majistix/editing/editors')
+            ->setEditorType($config->find('editor'))
             ->preloadEditor();
     }
 
@@ -98,10 +103,45 @@ class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
      */
     protected function _initTableName()
     {
-        //TODO: configurable table name
-        $maj = $this->getApplication()->getBootstrap()->getOption('majisti');
+        $config = $this->getConfiguration();
 
         Model\Content::setTableName(
-            strtolower($maj['app']['namespace']) . '_content');
+            $config->find(
+                'table',
+                strtolower($config->find('majisti.app.namespace')) . '_content'
+            )
+        );
+    }
+
+    /**
+     * @desc Returns the configuration.
+     *
+     * @return Configuration The configuration
+     */
+    protected function getConfiguration()
+    {
+        if( null === $this->_configuration ) {
+            $maj     = $this->getApplication()->getBootstrap()->getOptions();
+            $config  = new Configuration($maj);
+
+            $config->extend($this->getDefaultConfiguration())
+                   ->extend($this->getOptions());
+
+            $this->_configuration = $config;
+        }
+
+        return $this->_configuration;
+    }
+
+    /**
+     * @desc Returns the default configuration.
+     *
+     * @return Configuration The default configuration
+     */
+    protected function getDefaultConfiguration()
+    {
+        return new Configuration(array(
+            'editor' => 'CkEditor'
+        ));
     }
 }

@@ -20,6 +20,7 @@ class Majisti_Controller_ActionHelper_Model
      */
     public function direct()
     {
+        //FIXME: wrong coupling
         return Zend_Registry::get('Majisti_ModelContainer');
     }
 }

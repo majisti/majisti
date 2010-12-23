@@ -31,9 +31,6 @@ class ManagerTest extends \Majisti\Test\TestCase
                'path'      => $maj['app']['path'] . '/library/extensions'
            )
        ));
-
-//       \Zend_Controller_Front::getInstance()->setDispatcher(
-//           new \Majisti\Controller\Dispatcher\Multiple());
     }
 
     /**
