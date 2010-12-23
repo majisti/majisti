@@ -19,7 +19,7 @@ $helper->setOptions(array(
             'password' => '',
             'host'    => 'localhost',
         ),
-        'adapter' => 'mysqli',
+        'adapter' => 'pdo_mysql',
         'isDefaultTableAdapter' => true,
     ))
 ));

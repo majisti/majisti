@@ -8,7 +8,7 @@ use \Doctrine\ORM,
 /**
  * @desc Editing extension bootstrap.
  *
- * @author Majisti
+ * @author Steven Rosato
  */
 class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
 {
@@ -23,7 +23,7 @@ class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
     protected $_configuration;
 
     /**
-     * @desc Inits the entity manager
+     * @desc Inits the entity manager.
      */
     protected function _initEntityManager()
     {
