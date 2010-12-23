@@ -4,6 +4,11 @@ namespace Majisti\Config;
 
 require_once 'TestHelper.php';
 
+/**
+ * @desc Test class for the Configuration class.
+ *
+ * @author Steven Rosato
+ */
 class ConfigurationTest extends \Majisti\Test\TestCase
 {
     public $options = array(
@@ -117,12 +122,13 @@ class ConfigurationTest extends \Majisti\Test\TestCase
 
     public function testReset()
     {
-        $config = new Configuration($this->options);
+        $config = new Configuration($this->options, $this->defaultOptions);
 
         $config->extend(array('test' => 'test'))
-               ->reset();
+               ->clearOptions();
 
-        $this->assertEquals($this->options, $config->getOptions()->toArray());
+        $this->assertEquals($this->defaultOptions,
+            $config->getOptions()->toArray());
     }
 
     /**
