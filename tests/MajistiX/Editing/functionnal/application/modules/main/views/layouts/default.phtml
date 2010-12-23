@@ -1,0 +1,25 @@
+<?
+/**
+ * @desc Default layout for the entire module
+ * @author Majisti
+ */
+
+$html = pq('<html />')
+    ->append(pq('<head />')
+        ->html($this->headers()))
+    ->append(pq('<body />')
+        ->append(pq('<div />')
+            ->attr('id', 'container')
+            ->append(pq('<div />')
+                ->attr('id', 'header')
+            )
+            ->append(pq('<div />')
+                ->attr('id', 'content')
+                ->append($this->layout()->content)
+            )
+        )
+        ->append($this->inlineScript()->__toString())
+    )
+;
+
+print $this->doctype() . PHP_EOL . $html;

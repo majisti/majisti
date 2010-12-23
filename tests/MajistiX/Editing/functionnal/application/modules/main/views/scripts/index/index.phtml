@@ -1,0 +1,15 @@
+<?
+/**
+ * @desc The index action
+ *
+ * @author Majisti
+ */
+
+$content = pq('<div />')
+    ->append(pq('<a />')
+        ->attr('href', MA_APP_BASEURL . '/editing')
+        ->html('Editing')
+    )
+;
+
+$this->setRenderReturn($content);
