@@ -8,7 +8,7 @@ class ContentTest extends \Majisti\Test\TestCase
 {
     public function testFoo()
     {
-
+        $this->assertTrue(true);
     }
 }
 

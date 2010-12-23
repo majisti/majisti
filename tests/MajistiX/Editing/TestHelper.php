@@ -1,7 +1,11 @@
 <?php
 
-/* fallsback to parent test helper */
-require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'TestHelper.php';
+namespace MajistiX\Editing;
 
-//TODO: module testing, will instanciate Module autoloaders?
-//\Majisti\Test\Helper::getInstance()->addModuleDirectory(__DIR__);
+/* fallsback to parent test helper */
+require_once dirname(__DIR__) . '/TestHelper.php';
+
+\Majisti\Test\Helper::getInstance()->addTestModuleDirectory(
+    __NAMESPACE__,
+    __DIR__
+);
