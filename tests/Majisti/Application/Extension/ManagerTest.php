@@ -2,7 +2,7 @@
 
 namespace Majisti\Application\Extension;
 
-require_once 'TestHelper.php';
+require_once __DIR__ . '/TestHelper.php';
 
 /**
  * @desc Test case for Manager class.

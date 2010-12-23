@@ -2,7 +2,7 @@
 
 namespace Majisti\Util\Model\Aggregator;
 
-require_once 'TestHelper.php';
+require_once __DIR__ . '/TestHelper.php';
 
 /**
  * @desc Test the config class.

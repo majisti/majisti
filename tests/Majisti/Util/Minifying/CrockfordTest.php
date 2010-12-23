@@ -2,7 +2,7 @@
 
 namespace Majisti\Util\Minifying;
 
-require_once 'TestHelper.php';
+require_once __DIR__ . '/TestHelper.php';
 
 /**
  * @desc

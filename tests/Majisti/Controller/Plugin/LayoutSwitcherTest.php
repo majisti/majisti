@@ -2,7 +2,7 @@
 
 namespace Majisti\Controller\Plugin;
 
-require_once 'TestHelper.php';
+require_once __DIR__ . '/TestHelper.php';
 
 /**
  * @desc Test case used to validate LayoutSwitcher's behaviour. This means it

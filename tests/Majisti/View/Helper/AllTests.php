@@ -1,7 +1,7 @@
 <?php
 namespace Majisti\View\Helper;
 
-require_once 'TestHelper.php';
+require_once __DIR__ . '/TestHelper.php';
 
 /**
  * @desc

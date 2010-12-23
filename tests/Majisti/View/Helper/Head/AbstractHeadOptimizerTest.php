@@ -2,7 +2,7 @@
 
 namespace Majisti\View\Helper\Head;
 
-require_once 'TestHelper.php';
+require_once __DIR__ . '/TestHelper.php';
 
 /**
  * @desc Tests that the stylesheet optimizer can bundle and minify
