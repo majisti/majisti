@@ -77,6 +77,21 @@ class Helper
     }
 
     /**
+     * @desc Adds a test module directory that will register a module
+     * autoloader. The directory must follow the module file structure.
+     *
+     * @param string $namespace The namespace
+     * @param string $basePath  The base path
+     */
+    public function addTestModuleDirectory($namespace, $basePath)
+    {
+        new \Majisti\Application\ModuleAutoloader(array(
+            'namespace' => $namespace,
+            'basePath'  => $basePath,
+        ));
+    }
+
+    /**
      * @desc Factory method to create a Zend application instance.
      *
      * @return \Zend_Application The application instance
