@@ -2,7 +2,8 @@
 
 namespace MajistiX\Editing\Plugin;
 
-use \Majisti\Application\Locales;
+use \Majisti\Application\Locales,
+    \Zend_Controller_Action_HelperBroker as HelperBroker;
 
 /**
  * @desc InPlaceEditing controller plugin that listens for a special
@@ -28,22 +29,27 @@ class ContentMonitor extends \Majisti\Controller\Plugin\AbstractPlugin
             /* @var $em \Doctrine\ORM\EntityManager */
             $em   = \Zend_Registry::get('Doctrine_EntityManager');
 
-            if( array_search('##MAJISTIX_EDITING##', $post) ) {
+            if( $key = array_search('##MAJISTIX_EDITING##', $post) ) {
+
+                $key = str_replace('majistix_editing_', '', $key);
+
                 $repo = $em->getRepository(
                     'MajistiX\Editing\Model\Content');
-                $model = $repo->findOrCreate(key($post), //FIXME: key/current is not adequate
+                $model = $repo->findOrCreate($key,
                     Locales::getInstance()->getCurrentLocale());
 
                 $em->persist($model);
 
-                $model->setContent(current($post));
+                $model->setContent($post[$key]);
 
                 $em->flush();
 
                 if( $request->isXmlHttpRequest() ) {
                     //TODO: send response success
                 } else {
-                    header('Location: ' . $this->getView()->url());
+                    /* @var $redirector \Zend_Controller_Action_Helper_Redirector */
+                    $redirector = HelperBroker::getStaticHelper('redirector');
+                    $redirector->gotoUrl($this->getView()->url());
                 }
                 return;
             }

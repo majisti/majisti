@@ -45,7 +45,7 @@ abstract class AbstractPlugin
         if( null === $this->_view ) {
             $this->_view = \Zend_Registry::isRegistered('Zend_View')
                 ? \Zend_Registry::get('Zend_View')
-                : new \Majisti\View();
+                : new \Majisti\View\View();
         }
         
         return $this->_view;

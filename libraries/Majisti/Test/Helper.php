@@ -77,18 +77,72 @@ class Helper
     }
 
     /**
-     * @desc Adds a test module directory that will register a module
+     * @desc Adds a test module directory(ies) that will register a module
      * autoloader. The directory must follow the module file structure.
      *
      * @param string $namespace The namespace
-     * @param string $basePath  The base path
+     * @param string|array $basePath The base path(s)
      */
     public function addTestModuleDirectory($namespace, $basePath)
     {
-        new \Majisti\Application\ModuleAutoloader(array(
-            'namespace' => $namespace,
-            'basePath'  => $basePath,
+        if( !is_array($basePath) ) {
+            $basePath = array($basePath);
+        }
+
+        foreach( $basePath as $path) {
+            new \Majisti\Application\ModuleAutoloader(array(
+                'namespace' => $namespace,
+                'basePath'  => $path,
+            ));
+        }
+
+        return $this;
+    }
+
+    /**
+     * @desc Adds an extension by adding required module autoloaders
+     * for the extension namespace and test directory.
+     * @param string $namespace The full extension namespace, such as
+     * MajistiX\ExtensionName
+     * @param string $directory The extension's test root directory
+     *
+     * @return Helper
+     */
+    public function addExtension($namespace, $directory)
+    {
+        /*
+         * path resides in include path, therefore the path is relative
+         * (such as MajistiX/ExtensionName)
+         */
+        $this->addTestModuleDirectory(
+            $namespace,
+           array($directory, str_replace('\\', '/', $namespace))
+        );
+
+        /* last part of namespace */
+        $this->addApplicationExtension(substr(strrchr($namespace, '\\'), 1));
+
+        return $this;
+    }
+
+    /**
+     * @desc Adds an extension to bootstrap.
+     * @param string $extension The extension name
+     *
+     * @return Helper
+     */
+    public function addApplicationExtension($extension)
+    {
+        $newOptions = array_merge_recursive(
+            $this->getOptions(),
+            array('resources' => array(
+                'extensions' => array($extension)
+            )
         ));
+
+        $this->setOptions($newOptions);
+
+        return $this;
     }
 
     /**
@@ -105,7 +159,7 @@ class Helper
     }
 
     /**
-     * @desc Factory method to create a Majisti boostrap instance.
+     * @desc Factory method to create a Majisti bootstrap instance.
      *
      * @return \Majisti\Application\Bootstrap The bootstrap instance
      */
