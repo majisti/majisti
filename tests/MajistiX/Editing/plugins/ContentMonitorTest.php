@@ -42,16 +42,17 @@ class ContentMonitorTest extends \Majisti\Test\TestCase
 
     public function tearDown()
     {
-//        foreach( $this->repo->findAll() as $entity ) {
-//            $this->em->remove($entity);
-//        }
+        foreach( $this->repo->findAll() as $entity ) {
+            $this->em->remove($entity);
+        }
 
-//        $this->em->flush();
-
-        $this->schema->dropSchema($this->em->getMetadataFactory()->getAllMetadata());
+        $this->em->flush();
     }
 
-    public function testRedirect()
+    /**
+     * @return \Zend_Controller_Request_HttpTestCase
+     */
+    private function getBestScenarioRequest()
     {
         $request = $this->getRequest();
 
@@ -59,11 +60,20 @@ class ContentMonitorTest extends \Majisti\Test\TestCase
                 ->setPost(array(
                     'foo'                  => 'bar',
                     'majistix_editing_foo' => '##MAJISTIX_EDITING##',
-                )
-        );
-        $this->dispatch();
+                ))
+        ;
 
-        $this->assertRedirect();
+        return $request;
+    }
+
+    public function testBestScenarioWillRedirectAndUpdateContent()
+    {
+        $request = $this->getBestScenarioRequest();
+
+        $this->dispatch('/');
+        $this->assertRedirectTo('/');
+
+        //TODO: test content created/updated
     }
 
     public function testNoPostWillNotRedirect()
@@ -75,8 +85,8 @@ class ContentMonitorTest extends \Majisti\Test\TestCase
                 'majistix_editing_foo' => '##MAJISTIX_EDITING##',
             )
         );
-        $this->dispatch();
 
+        $this->dispatch();
         $this->assertNotRedirect();
     }
 
@@ -101,9 +111,13 @@ class ContentMonitorTest extends \Majisti\Test\TestCase
         $this->assertEquals('bar', $model->getContent());
     }
 
+    /**
+     * @desc Test XmlHttpRequest will get a json response
+     */
     public function testXmlHttpRequest()
     {
-        //TOOD: test xml http request
+        $request = $this->getBestScenarioRequest();
+        //TODO: test xml http request
     }
 }
 
