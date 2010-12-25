@@ -41,10 +41,12 @@ class Autoloader implements \Zend_Loader_Autoloader_Interface
             }
         }
 
-        if( !$loaded ) {
-            require_once __DIR__ . '/Exception.php';
-            throw new Exception($this->_includeFileErrorStr);
-        }
+//        if( !$loaded ) {
+//            require_once __DIR__ . '/Exception.php';
+//            throw new Exception($this->_includeFileErrorStr);
+//        }
+
+        return $loaded;
     }
 
     public function includeFileErrorHandler($errno, $errstr, $errfile, $errline)
