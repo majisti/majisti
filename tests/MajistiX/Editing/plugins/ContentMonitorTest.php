@@ -32,18 +32,23 @@ class ContentMonitorTest extends \Majisti\Test\TestCase
                   ->bootstrap('Extensions')
         ;
 
-        $this->em   = \Zend_Registry::get('Doctrine_EntityManager');
-
+        //TODO: abstract test db manipulation
+        $this->em   = $bootstrap->getPluginResource('Doctrine')->getEntityManager();
         $this->repo = $this->em->getRepository('MajistiX\Editing\Model\Content');
+
+        $this->schema  = new \Doctrine\ORM\Tools\SchemaTool($this->em);
+        $this->schema->updateSchema($this->em->getMetadataFactory()->getAllMetadata());
     }
 
     public function tearDown()
     {
-        foreach( $this->repo->findAll() as $entity ) {
-            $this->em->remove($entity);
-        }
+//        foreach( $this->repo->findAll() as $entity ) {
+//            $this->em->remove($entity);
+//        }
 
-        $this->em->flush();
+//        $this->em->flush();
+
+        $this->schema->dropSchema($this->em->getMetadataFactory()->getAllMetadata());
     }
 
     public function testRedirect()

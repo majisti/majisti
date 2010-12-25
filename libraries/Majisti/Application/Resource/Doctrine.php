@@ -67,9 +67,11 @@ class Doctrine extends \Zend_Application_Resource_ResourceAbstract
         $dbConfig['driver'] = strtolower(substr(
             $adapterClass, 16, strlen($adapterClass)));
 
+        $evm = new \Doctrine\Common\EventManager();
+
         $em = EntityManager::create($dbConfig, $config);
 
-        \Zend_Registry::set('Doctrine_EntityManager', $em);
+        \Zend_Registry::set('Doctrine_EntityManager', $em, $evm);
 
         $this->_em = $em;
 
