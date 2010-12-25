@@ -49,9 +49,12 @@ class ContentMonitor extends \Majisti\Controller\Plugin\AbstractPlugin
                 } else {
                     /* @var $redirector \Zend_Controller_Action_Helper_Redirector */
                     $redirector = HelperBroker::getStaticHelper('redirector');
-                    $redirector->gotoUrl($this->getView()->url());
+                    $redirector->gotoSimple(
+                        $request->getActionName(),
+                        $request->getControllerName(),
+                        $request->getModuleName()
+                    );
                 }
-                return;
             }
         }
     }
