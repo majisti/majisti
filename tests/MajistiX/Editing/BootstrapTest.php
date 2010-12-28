@@ -26,10 +26,8 @@ class BootstrapTest extends \Majisti\Test\TestCase
      */
     public function setUp()
     {
-        /* ensure doctrine is loaded as a resource */
-        $bootstrap = $this->getHelper()->createBootstrapInstance();
-        $bootstrap->registerPluginResource('Doctrine');
-        $bootstrap->bootstrap('Doctrine');
+        $bootstrap = $this->getHelper()->createBootstrapInstance()
+            ->bootstrap('Doctrine');
 
         /* retrieve entity manager */
         $this->em = $bootstrap->getPluginResource('Doctrine')->getEntityManager();

@@ -12,16 +12,19 @@ $helper->setOptions(array(
             'env'       => 'development'
         ),
     ),
-    'resources' => array('db' => array(
-        'params' => array(
-            'dbname' => 'majisti',
-            'username' => 'root',
-            'password' => '',
-            'host'    => 'localhost',
-        ),
-        'adapter' => 'pdo_mysql',
-        'isDefaultTableAdapter' => true,
-    ))
+    'resources' => array(
+        'doctrine' => true,
+        'db' => array(
+            'params' => array(
+                'dbname' => 'majisti_test',
+                'username' => 'root',
+                'password' => '',
+                'host'    => 'localhost',
+            ),
+            'adapter' => 'pdo_mysql',
+            'isDefaultTableAdapter' => true,
+        )
+    )
 ));
 
 $helper->init();
