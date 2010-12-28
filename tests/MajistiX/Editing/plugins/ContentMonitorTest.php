@@ -73,7 +73,11 @@ class ContentMonitorTest extends \Majisti\Test\TestCase
         $this->dispatch('/');
         $this->assertRedirectTo('/');
 
-        //TODO: test content created/updated
+        /* @var $model \MajistiX\Editing\Model\Content */
+        $model = $this->repo->findOneByName('foo');
+
+        $this->assertNotNull($model, 'Post data was incorrectly read.');
+        $this->assertEquals('bar', $model->getContent());
     }
 
     public function testNoPostWillNotRedirect()
