@@ -5,7 +5,7 @@ namespace MajistiX\Editing\Plugin;
 require_once __DIR__ . '/TestHelper.php';
 
 /**
- * @desc Tests the content monitor class.
+ * @desc Tests the content monitor plugin.
  *
  * @author Steven Rosato
  */
@@ -21,32 +21,21 @@ class ContentMonitorTest extends \Majisti\Test\TestCase
      */
     public $repo;
 
+    /**
+     * @desc Setups the test case.
+     */
     public function setUp()
     {
         $this->plugin = new ContentMonitor();
-        $bootstrap = $this->getHelper()->createBootstrapInstance();
 
-        $bootstrap->registerPluginResource('Doctrine')
-                  ->bootstrap('Doctrine')
-                  ->registerPluginResource('Extensions') //FIXME: DRY violation
-                  ->bootstrap('Extensions')
-        ;
+        $helper   = $this->getHelper();
+        $dbHelper = $helper->getDatabaseHelper();
+        $this->em = $dbHelper->getEntityManager();
 
-        //TODO: abstract test db manipulation
-        $this->em   = $bootstrap->getPluginResource('Doctrine')->getEntityManager();
         $this->repo = $this->em->getRepository('MajistiX\Editing\Model\Content');
 
-        $this->schema  = new \Doctrine\ORM\Tools\SchemaTool($this->em);
-        $this->schema->updateSchema($this->em->getMetadataFactory()->getAllMetadata());
-    }
-
-    public function tearDown()
-    {
-        foreach( $this->repo->findAll() as $entity ) {
-            $this->em->remove($entity);
-        }
-
-        $this->em->flush();
+        $dbHelper->updateSchema()
+                 ->truncateTables(array($this->repo));
     }
 
     /**
