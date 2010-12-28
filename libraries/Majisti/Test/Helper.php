@@ -51,6 +51,11 @@ class Helper
     protected $_options = array();
 
     /**
+     * @var DatabaseHelper
+     */
+    protected $_dbHelper;
+
+    /**
      * @desc Constructs the helper.
      *
      * @param array $options The options
@@ -166,6 +171,77 @@ class Helper
     public function createBootstrapInstance($options = array())
     {
         return $this->createApplicationInstance($options)->getBootstrap();
+    }
+
+    /**
+     * @desc Returns the database helper.
+     *
+     * @return Database\Helper The database helper
+     */
+    public function getDatabaseHelper()
+    {
+        if( null === $this->_dbHelper ) {
+            $this->_dbHelper = new Database\DoctrineHelper($this);
+        }
+
+        return $this->_dbHelper;
+    }
+
+    /**
+     * @desc Sets the database helper.
+     *
+     * @param Database\Helper $helper The database helper
+     */
+    public function setDatabaseHelper(Database\Helper $helper)
+    {
+        $this->_dbHelper = $helper;
+    }
+
+    /**
+     * @desc Creates the database schema.
+     *
+     * @return Helper this
+     */
+    public function createDatabaseSchema()
+    {
+        $this->getDatabaseHelper()->createSchema();
+        return $this;
+    }
+
+    /**
+     * @desc Drops the database schema.
+     *
+     * @return Helper this
+     */
+    public function dropDatabaseSchema()
+    {
+        $this->getDatabaseHelper()->dropSchema();
+        return $this;
+    }
+
+    /**
+     * @desc Updates the database schema.
+     *
+     * @return Helper this
+     */
+    public function updateDatabaseSchema()
+    {
+        $this->getDatabaseHelper()->updateSchema();
+        return $this;
+    }
+
+    /**
+     * @desc Truncates the provided database tables.
+     *
+     * @param array $tables Array of mixed tables, could be either
+     * table name, repositories, depending on the database helper used.
+     *
+     * @return Helper this
+     */
+    public function truncateDatabaseTables(array $tables)
+    {
+        $this->getDatabaseHelper()->truncateTables($tables);
+        return $this;
     }
 
     /**
