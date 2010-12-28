@@ -9,7 +9,7 @@ use Majisti\Application\Locales,
 /**
  * @desc InPlaceEditing view helper. Renders the default in place content editor
  * setup in the configuration. Check documentation for more information on how
- * to configure a in place editor.
+ * to configure an in place editor.
  *
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
