@@ -2,13 +2,11 @@
 
 namespace MajistiX\Editing\View\Editor;
 
+use MajistiX\Editing\Model\Content;
+
 class Provider
 {
     static protected $_instance;
-
-    protected $_editorType;
-
-    protected $_editorsUrl;
 
     protected $_view;
 
@@ -45,26 +43,14 @@ class Provider
         return $this;
     }
 
-    public function getEditorsUrl()
+    public function setAjaxEnabled($flag)
     {
-        return $this->_editorsUrl;
+
     }
 
-    /**
-     *
-     * @param <type> $url
-     * @return Provider
-     */
-    public function setEditorsUrl($url)
+    public function isAjaxEnabled()
     {
-        $this->_editorsUrl = $url;
 
-        return $this;
-    }
-
-    public function getEditorType()
-    {
-        return $this->_editorType;
     }
 
     /**
@@ -72,41 +58,53 @@ class Provider
      * @param <type> $editor
      * @return Provider
      */
-    public function setEditorType($editor)
+    public function setEditor($editor, $options = null)
     {
-        $this->_editorType = $editor;
+        if( !($editor instanceof IEditor) ) {
+            $editor = __NAMESPACE__ . '\\' . (string) $editor . '\Renderer';
+        }
+
+        $editor = new $editor();
+
+        $this->loadPublicFiles($editor, $options);
+
+        $this->_editor = $editor;
 
         return $this;
     }
 
-    /**
-     *
-     * @param <type> $options
-     * @return Provider
-     */
-    public function preloadEditor($options = array())
+    protected function loadPublicFiles($editor, $options = null)
     {
-        $editor = __NAMESPACE__ . '\\' . $this->_editorType . '\Renderer';
+        $view = $this->getView();
+        $files = $editor->getPublicFiles($options);
 
-        $options['view'] = $this->getView();
-        $options['url']  = $this->getEditorsUrl();
-
-        $editor::preload($options);
-
-        return $this;
+        if( $files->has('scripts') ) {
+            foreach( $files->find('scripts') as $jsFile ) {
+                $view->headScript()->appendFile($jsFile);
+            }
+        }
     }
 
     /**
      *
      * @return IEditor The editor
      */
-    public function provideEditor($options = array())
+    public function getEditor($options = array())
     {
-        $editor = __NAMESPACE__ . '\\' . $this->_editorType . '\Renderer';
-        $editor = new $editor();
-        $editor->setOptions($options);
-        $editor->setView($this->getView());
+        return $this->_editor;
+    }
 
-        return $editor;
+    public function createEditorDisplay(Content $model, $options = array(),
+        $screen = Display::SCREEN_DEFAULT)
+    {
+        $editor = $this->getEditor();
+
+        if( is_string($options) ) {
+            $editor->preset($options);
+        } else {
+            $editor->setOptions($options);
+        }
+
+        return new Display($model, $editor, $this->getView());
     }
 }

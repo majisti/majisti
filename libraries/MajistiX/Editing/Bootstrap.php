@@ -23,6 +23,11 @@ class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
     protected $_configuration;
 
     /**
+     * @var \Zend_View
+     */
+    protected $_view;
+
+    /**
      * @desc Inits the entity manager.
      */
     protected function _initEntityManager()
@@ -85,17 +90,45 @@ class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
     {
         $config = $this->getConfiguration();
 
-        /* view helper paths */
-        $view = new \Zend_View();
-        $view->addHelperPath('ZendX/JQuery/View/Helper', 'ZendX_JQuery_View_Helper');
-        $view->addHelperPath('Majisti/View/Helper', 'Majisti\View\Helper\\');
+        $view = $this->getView();
 
         /* setup provider singleton */
         $provider = View\Editor\Provider::getInstance()
             ->setView($view)
-            ->setEditorsUrl($config->find('majisti.url') . '/majistix/editing/editors')
-            ->setEditorType($config->find('editor'))
-            ->preloadEditor();
+            ->setEditor($config->find('editor'), 
+                new Configuration($config->find('majisti')));
+    }
+
+    /**
+     * @desc Returns a configured view with needed helper paths.
+     *
+     * @return \Majisti\View\View The configured view
+     */
+    protected function getView()
+    {
+        if( null === $this->_view ) {
+            /* view helper paths */
+            $view = new \Majisti\View\View();
+            $view->addHelperPath('ZendX/JQuery/View/Helper', 'ZendX_JQuery_View_Helper');
+            $view->addHelperPath('Majisti/View/Helper', 'Majisti\View\Helper\\');
+            $view->addHelperPath('MajistiX/Editing/views/helpers',
+                'MajistiX\Editing\View\Helper\\');
+
+            $this->_view = $view;
+        }
+
+        return $this->_view;
+    }
+
+    /**
+     * @desc Inits the configurable public files needed for this extension.
+     */
+    protected function _initPublicFiles()
+    {
+        $view   = $this->getView();
+        $config = $this->getConfiguration();
+
+        $view->publicFiles(new Configuration($config->find('publicFiles')));
     }
 
     /**
@@ -124,7 +157,7 @@ class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
             $maj     = $this->getApplication()->getBootstrap()->getOptions();
             $config  = new Configuration($maj);
 
-            $config->extend($this->getDefaultConfiguration())
+            $config->extend($this->getDefaultConfiguration($config))
                    ->extend($this->getOptions());
 
             $this->_configuration = $config;
@@ -138,10 +171,17 @@ class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
      *
      * @return Configuration The default configuration
      */
-    protected function getDefaultConfiguration()
+    protected function getDefaultConfiguration($maj)
     {
+        $pubUrl = $maj->find('majisti.url') . '/majistix/editing';
+
         return new Configuration(array(
-            'editor' => 'CkEditor'
+            'editor' => 'CkEditor',
+            'publicFiles' => array(
+                'styles' => array(
+                    'default' => $pubUrl . '/styles/default.css'
+                )
+            )
         ));
     }
 }

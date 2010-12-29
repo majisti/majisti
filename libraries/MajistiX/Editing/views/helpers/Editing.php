@@ -28,19 +28,15 @@ class Editing extends \Majisti\View\Helper\AbstractHelper
      */
     public function helper($key, $options = array())
     {
-        $editor = Editor\Provider::getInstance()->provideEditor();
-
-        if( !is_array($options) ) {
-            $editor->preset($options);
-        } else {
-            $editor->setOptions($options);
-        }
+        $provider = Editor\Provider::getInstance();
 
         $model = $key instanceof Content
                ? $key
                : $this->getModel($key);
 
-        return $editor->render($model);
+        $display = $provider->createEditorDisplay($model, $options);
+
+        return $display->render();
     }
 
     /**

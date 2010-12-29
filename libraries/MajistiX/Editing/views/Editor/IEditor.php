@@ -15,15 +15,14 @@ namespace MajistiX\Editing\View\Editor;
 interface IEditor
 {
     /**
-     * @desc Renders the editor with the given content.
+     * @desc Returns a form with the given content.
      * 
      * @param \MajistiX\Extension\Editing\Model\Content The content
      */
-    public function render(\MajistiX\Editing\Model\Content $content);
+    public function getForm(\MajistiX\Editing\Model\Content $content);
 
-    public function setOptions(array $options);
+    public function getOptions();
+    public function setOptions($options);
 
-    public function preset($preset);
-
-    static public function preload(array $options);
+    public function getActivationJavascript($key);
 }
