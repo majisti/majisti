@@ -7,6 +7,7 @@ function majisti_init(conf)
             appUrl: conf.appUrl,
             baseUrl: conf.baseUrl,
             currentUrl: conf.currentUrl
-        }
+        },
+        ext : {}
     };
 }
