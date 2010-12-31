@@ -98,19 +98,16 @@ class Display
 
         $js = <<<EOT
 $(function() {
-    $("#majistix_editing_form_edit_{$key}").submit(function() {
-        $("#{$editForm->getName()}").hide();
-        {$activationJs}
-        $("#{$editorForm->getName()}").show();
-        return false;
-    });
+   editing = majisti.ext.editing;
+   editor = editing.editor('{$key}');
+   editor.activate({$activationJs});
 });
 EOT;
         $view->inlineScript()->appendScript($js);
 
         return '<div class="majistix-editing-content-container">' .
                 $editForm->render() .
-                   '<div class="majisti-editing-content-text">' .
+                   '<div id="majistix-editing-content-text-' . $key . '">' .
                        $content->getContent() .
                    '</div>' .
                '</div>' . $editorForm->render();

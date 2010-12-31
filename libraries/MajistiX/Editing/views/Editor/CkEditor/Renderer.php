@@ -21,12 +21,14 @@ class Renderer extends AbstractEditor
      */
     public function getPublicFiles(Configuration $majisti)
     {
-        $jsUrl = $majisti->find('url') . '/majistix/editing/editors/ckeditor';
+        $jsUrl       = $majisti->find('url') . '/majistix/editing';
+        $ckeditorUrl = $jsUrl . '/editors/ckeditor';
 
         return new Configuration(array(
             'scripts' => array(
-                $jsUrl . '/ckeditor.js',
-                $jsUrl . '/adapters/jquery.js'
+                'ckeditor'          => $ckeditorUrl . '/ckeditor.js',
+                'ckeditor-jquery'   => $ckeditorUrl . '/adapters/jquery.js',
+                'ckeditor-concrete' => $jsUrl       . '/scripts/ckeditor.js'
             )
         ));
     }
@@ -38,7 +40,7 @@ class Renderer extends AbstractEditor
     public function getActivationJavascript($key)
     {
         $options = \Zend_Json::encode($this->getOptions());
-        $js      = "$(\"#{$key}\").ckeditor({$options})";
+        $js      = 'function($textarea){$textarea.ckeditor(' . $options . ')}';
 
         return $js;
     }
