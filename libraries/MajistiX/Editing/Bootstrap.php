@@ -84,6 +84,17 @@ class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
     }
 
     /**
+     * @desc Inits the configurable public files needed for this extension.
+     */
+    protected function _initPublicFiles()
+    {
+        $view   = $this->getView();
+        $config = $this->getConfiguration();
+
+        $view->publicFiles(new Configuration($config->find('publicFiles')));
+    }
+
+    /**
      * @desc Inits the editor provider singleton.
      */
     protected function _initProvider()
@@ -118,17 +129,6 @@ class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
         }
 
         return $this->_view;
-    }
-
-    /**
-     * @desc Inits the configurable public files needed for this extension.
-     */
-    protected function _initPublicFiles()
-    {
-        $view   = $this->getView();
-        $config = $this->getConfiguration();
-
-        $view->publicFiles(new Configuration($config->find('publicFiles')));
     }
 
     /**
@@ -179,7 +179,11 @@ class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
             'editor' => 'CkEditor',
             'publicFiles' => array(
                 'styles' => array(
-                    'default' => $pubUrl . '/styles/default.css'
+                    'default' => $pubUrl . '/styles/default.css',
+                ),
+                'scripts' => array(
+                    'mootools' => $pubUrl . '/scripts/mootools.js',
+                    'default' => $pubUrl . '/scripts/default.js',
                 )
             )
         ));
