@@ -27,7 +27,7 @@ class Table implements ILayout
 
         $buttonDecorators = array(
             'ViewHelper',
-            array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')),
+            array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element button')),
             array(array('label' => 'HtmlTag'), array('tag' => 'td', 'placement' => 'prepend')),
             array(array('row' => 'HtmlTag'), array('tag' => 'tr')),
         );
@@ -52,7 +52,10 @@ class Table implements ILayout
         foreach( $form->getElements() as $element ) {
             if( 'Zend_Form_Element_Captcha' === $element->getType() ) {
                 $element->setDecorators($captchaDecorators);
-            } elseif( 'Zend_Form_Element_Submit' === $element->getType() ) {
+            } elseif( 'Zend_Form_Element_Submit' === $element->getType()
+                || 'Zend_Form_Element_Reset' === $element->getType() 
+                || 'Zend_Form_Element_Hidden' === $element->getType() )
+            {
                 $element->setDecorators($buttonDecorators);
             }
         }
