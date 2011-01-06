@@ -47,8 +47,8 @@ class ContentMonitorTest extends \Majisti\Test\TestCase
 
         $request->setMethod('post')
                 ->setPost(array(
-                    'foo'                  => 'bar',
-                    'majistix_editing_foo' => '##MAJISTIX_EDITING##',
+                    'foo' => 'bar',
+                    'maj_editing_editor_hidden_foo' => '##MAJISTIX_EDITING##',
                 ))
         ;
 
@@ -74,8 +74,8 @@ class ContentMonitorTest extends \Majisti\Test\TestCase
         $request = $this->getRequest();
 
         $request->setPost(array(
-                'foo'                  => 'bar',
-                'majistix_editing_foo' => '##MAJISTIX_EDITING##',
+                'foo' => 'bar',
+                'maj_editing_editor_hidden_foo' => '##MAJISTIX_EDITING##',
             )
         );
 
@@ -89,9 +89,9 @@ class ContentMonitorTest extends \Majisti\Test\TestCase
 
         $request->setMethod('post')
                 ->setPost(array(
-                    'email'                => 'foo@bar.com',
-                    'foo'                  => 'bar', //content to store
-                    'majistix_editing_foo' => '##MAJISTIX_EDITING##',
+                    'email' => 'foo@bar.com',
+                    'foo'   => 'bar', //content to store
+                    'maj_editing_editor_hidden_foo' => '##MAJISTIX_EDITING##',
                 )
         );
 
@@ -110,7 +110,16 @@ class ContentMonitorTest extends \Majisti\Test\TestCase
     public function testXmlHttpRequest()
     {
         $request = $this->getBestScenarioRequest();
-        //TODO: test xml http request
+        $request->setHeader('X-Requested-With', 'XMLHttpRequest');
+
+        $this->dispatch('/');
+        $this->assertNotRedirectTo('/');
+        $this->assertNotQuery('div#container');
+        $this->assertHeaderContains(
+            'content-type', 'Content-Type: application/json');
+        $this->assertEquals(\Zend_Json::encode(array(
+            'message' => 'Content successfully updated.'
+        )), $this->getResponse()->getBody());
     }
 }
 

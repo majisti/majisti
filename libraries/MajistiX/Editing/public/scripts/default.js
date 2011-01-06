@@ -1,37 +1,53 @@
 $.extend(majisti.ext, {
    editing: {
        Editor : new Class({
+           Implements: [Options],
            key: null,
-           initialize: function(key) {
-               this.key = key;
+           editorOptions: null,
+           initialContent: null,
+           $container: null,
+           options: {
+               livePreview: true
            },
 
-           getKey: function() {
-               return this.key;
+           initialize: function(key, editorOptions, options) {
+               this.key           = key;
+               this.editorOptions = editorOptions;
+
+               this.setOptions(options);
+               this.init();
            },
 
-           activate: function(editorCallback) {
-               $editForm   = $('#majistix_editing_form_edit_' + this.key);
-               $editorForm = $('#majistix_editing_form_' + this.key);
+           init: function() {
+               $trigger    = $('.maj-editing-container a[rel=' + this.key + ']');
+               $editorForm = $('#maj_editing_editor_' + this.key);
 
-               this.bindEdit($editForm, $editorForm, editorCallback);
-               this.bindSave($editForm, $editorForm);
+               this.$container = $trigger.parent().parent();
+
+               this.bindEdit($trigger, $editorForm);
+               this.bindSave($trigger, $editorForm);
            },
 
-           bindEdit: function($editForm, $editorForm, editorCallback) {
-               $editForm.submit(function() {
-                   $(this).hide();
-                   $editorForm.show();
-                   if( editorCallback ) {
-                       editorCallback($editorForm.find('textarea'));
+           bindEdit: function($trigger, $editorForm) {
+               var self = this;
+               $trigger.click(function() {
+                   self.activate($editorForm, self.editorOptions);
+                   self.initialContent = self.getData();
+
+                   if( self.options.livePreview ) {
+                       self.bindLivePreview($editorForm.prev());
                    }
+
+                   self.$container.find('.text').toggleClass('being-edited');
+
+                   $editorForm.show();
+
                    return false;
                });
            }.protect(),
 
-           bindSave: function($editForm, $editorForm) {
-               self = this;
-               var key = this.key;
+           bindSave: function($trigger, $editorForm) {
+               var self = this;
                $editorForm.submit(function() {
                    $(this).hide();
 
@@ -41,28 +57,59 @@ $.extend(majisti.ext, {
                        type:       'post',
                        dataType:   'json',
                        success: function(data) {
-                           console.log('success');
+                           $message = self.$container.find('.message');
+                           $message.html(data.message);
+
+                           setTimeout(function() {
+                               $message.fadeOut();
+                           }, 3000);
+
+                           self.$container.find('.text')
+                               .html(self.getData())
+                               .toggleClass('being-edited');
                        }
                    });
 
-                   $('#majistix-editing-content-text-' + key).html(
-                       self.getData(key)
-                   );
-
-                   $editForm.show();
                    return false;
+               }).bind('reset', function() {
+                   $(this).hide();
+                   self.setData(self.initialContent);
+                   self.$container.find('.text')
+                       .html(self.initialContent)
+                       .toggleClass('being-edited');
                });
            }.protect(),
 
            /**
+            * @desc
             * @abstract
-            * @param string key The key
             */
-           getData: null
+           activate: null,
+
+           /**
+            * @desc
+            * @abstract
+            * @return string Data the data.
+            */
+           getData: null,
+
+           /**
+            * @desc
+            * @abstract
+            * @param string data The data
+            */
+           setData: null,
+
+           /**
+            * @desc
+            * @abstract
+            * @param jquery $text The text object
+            */
+           bindLivePreview: null
        }),
 
-       editor: function(key) { //TODO: protect accidental double instanciation
-           return new this.Editor(key);
+       createEditor: function(key, editorOptions, options) {
+           return new this.Editor(key, editorOptions, options);
        }
    }
 });

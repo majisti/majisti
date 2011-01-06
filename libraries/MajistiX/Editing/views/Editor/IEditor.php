@@ -19,10 +19,8 @@ interface IEditor
      * 
      * @param \MajistiX\Extension\Editing\Model\Content The content
      */
-    public function getForm(\MajistiX\Editing\Model\Content $content);
+    public function createForm(\MajistiX\Editing\Model\Content $content);
 
     public function getOptions();
     public function setOptions($options);
-
-    public function getActivationJavascript($key);
 }

@@ -6,6 +6,11 @@ use MajistiX\Editing\Model\Content;
 
 abstract class AbstractEditor implements IEditor
 {
+    /**
+     * @var \Zend_Form 
+     */
+    protected $_form;
+
     /*
      * (non-phpDoc)
      * @see Inherited documentation.
@@ -48,14 +53,14 @@ abstract class AbstractEditor implements IEditor
      * (non-phpDoc)
      * @see Inherited documentation.
      */
-    public function getForm(Content $content)
+    public function createForm(Content $content)
     {
         $form = new \Majisti\Model\Form();
         $key  = $content->getName();
-        $form->setName('majistix_editing_form_' . $key);
-        $form->setAttrib('class', 'majistix-editing-form');
+        $form->setName('maj_editing_editor_' . $key);
+        $form->setAttrib('class', 'editor');
 
-        /* insert textarea that will be changed to CkEditor */
+        /* content */
         $textArea = new \Zend_Form_Element_Textarea($key);
         $textArea
             ->setValue($content->getContent())
@@ -64,20 +69,25 @@ abstract class AbstractEditor implements IEditor
 
         /* hidden field for post recognition of the controller plugin */
         $hiddenField = new \Zend_Form_Element_Hidden(
-            'majistix_editing_' . $key);
+            'maj_editing_editor_hidden_' . $key);
         $hiddenField->setValue('##MAJISTIX_EDITING##');
         $form->addElement($hiddenField);
 
-        /* insert submit button */
+        //TODO: render all buttons in a display group
+        //http://zend-framework-community.634137.n4.nabble.com/Zend-Form-submit-and-reset-decorators-td647799.html
+
+        /* submit button */
         $btn_submit = new \Zend_Form_Element_Submit(
-            'majistix_editing_submit_' . $key, 'Save'); //TODO: PO translator?
-        $btn_submit->setAttrib('class', 'majistix-editing-submit-save');
+            'maj_editing_editor_save_' . $key, 'Save'); //TODO: PO translator?
+        $btn_submit->setAttrib('class', 'save');
         $form->addElement($btn_submit);
 
         /* cancel button */
-        $btn_cancel = new \Zend_Form_Element_Submit(
-            'majistix_editing_submit_cancel_' . $key, 'Cancel'); //TODO: PO translator?
-        $btn_cancel->setAttrib('class', 'majistix-editing-submit-cancel');
+        $btn_cancel = new \Zend_Form_Element_Reset(
+            'maj_editing_editor_cancel_' . $key); //TODO: PO translator?
+        $btn_cancel
+            ->removeDecorator('label')
+            ->setAttrib('class', 'cancel');
         $form->addElement($btn_cancel);
 
         $form->setLayout(new \Majisti\Model\Form\Layout\Table());

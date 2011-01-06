@@ -117,6 +117,7 @@ class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
      */
     protected function getView()
     {
+        //FIXME: MA-67: View should be retrievable via the master bootstrap
         if( null === $this->_view ) {
             /* view helper paths */
             $view = new \Majisti\View\View();
@@ -124,6 +125,8 @@ class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
             $view->addHelperPath('Majisti/View/Helper', 'Majisti\View\Helper\\');
             $view->addHelperPath('MajistiX/Editing/views/helpers',
                 'MajistiX\Editing\View\Helper\\');
+
+            $view->addBasePath(__DIR__ . '/views');
 
             $this->_view = $view;
         }

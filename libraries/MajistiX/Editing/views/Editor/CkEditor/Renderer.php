@@ -32,16 +32,4 @@ class Renderer extends AbstractEditor
             )
         ));
     }
-
-    /*
-     * (non-phpDoc)
-     * @see Inherited documentation.
-     */
-    public function getActivationJavascript($key)
-    {
-        $options = \Zend_Json::encode($this->getOptions());
-        $js      = 'function($textarea){$textarea.ckeditor(' . $options . ')}';
-
-        return $js;
-    }
 }

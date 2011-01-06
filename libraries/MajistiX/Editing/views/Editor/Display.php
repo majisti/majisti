@@ -2,20 +2,10 @@
 
 namespace MajistiX\Editing\View\Editor;
 
-use MajistiX\Editing\Model\Content;
+use MajistiX\Editing\Model;
 
 class Display
 {
-    const MODE_DISPLAY_THEN_EDIT = 1;
-    const MODE_DISPLAY           = 2;
-    const MODE_EDIT              = 3;
-
-    const SCREEN_DEFAULT         = 1;
-
-    protected $_mode = self::MODE_DISPLAY_THEN_EDIT;
-
-    protected $_ajaxEnabled = true;
-
     protected $_acl; //TODO: acl
 
     protected $_auth; //TODO: auth
@@ -25,31 +15,24 @@ class Display
      */
     protected $_editor;
 
+    /**
+     * @var Content
+     */
     protected $_content;
 
+    /**
+     * @var \Zend_View
+     */
     protected $_view;
 
-    public function __construct(Content $content, IEditor $editor,
+    protected $_panelFactory;
+
+    public function __construct(Model\Content $content, IEditor $editor,
         \Zend_View $view)
     {
         $this->_content = $content;
         $this->_editor  = $editor;
         $this->_view    = $view;
-    }
-
-    public function setAjaxEnabled($flag)
-    {
-        $this->_ajaxEnabled = (bool) $flag;
-    }
-
-    public function isAjaxEnabled()
-    {
-        return $this->_ajaxEnabled;
-    }
-
-    public function getMode()
-    {
-        return $this->_mode;
     }
 
     public function getContent()
@@ -67,19 +50,26 @@ class Display
         return $this->_editor;
     }
 
-    public function getEditForm($key)
+    protected function getJavascript(Model\Content $content, IEditor $editor)
     {
-        $form   = new \Majisti\Model\Form();
-        $form->setAttrib('class', 'majistix-editing-form');
-        $form->setName('majistix_editing_form_edit_' . $key);
+        $options = \Zend_Json::encode($editor->getOptions());
 
-        $submit = new \Zend_Form_Element_Submit('majistix_editing_submit_edit_' . $key, 'Edit');
-        $submit->setAttrib('class', 'majistix-editing-submit-edit');
-        $form->addElement($submit);
+        $js = <<<EOT
+$(function() {
+   majisti.ext.editing.createEditor('{$content->getName()}', {$options});
+});
+EOT;
+        return $js;
+    }
 
-        $form->setLayout(new \Majisti\Model\Form\Layout\Table());
+    public function setPanelFactory(PanelFactory $panelFactory)
+    {
+        $this->_panelFactory = $panelFactory;
+    }
 
-        return $form;
+    public function getPanelFactory()
+    {
+        return $this->_panelFactory;
     }
 
     public function render()
@@ -88,33 +78,18 @@ class Display
         $view    = $this->getView();
         $content = $this->getContent();
 
-        $key = $content->getName();
+        if( null === ($panelFactory = $this->getPanelFactory()) ) {
+            $panelFactory = new PanelFactory($content->getName());
+            $this->setPanelFactory($panelFactory);
+        }
 
-        $editForm = $this->getEditForm($key);
-        $activationJs = $editor->getActivationJavascript($key);
+        $view->inlineScript()->appendScript(
+            $this->getJavascript($content, $editor));
 
-        $editorForm = $editor->getForm($content);
-        $editorForm->setAttrib('style', 'display: none;');
-
-        $js = <<<EOT
-$(function() {
-   editing = majisti.ext.editing;
-   editor = editing.editor('{$key}');
-   editor.activate({$activationJs});
-});
-EOT;
-        $view->inlineScript()->appendScript($js);
-
-        return '<div class="majistix-editing-content-container">' .
-                $editForm->render() .
-                   '<div id="majistix-editing-content-text-' . $key . '">' .
-                       $content->getContent() .
-                   '</div>' .
-               '</div>' . $editorForm->render();
-
-//        $view->inlineScript()->appendScript($editor->getActivationJavascript(
-//            $content->getName()));
-
-//        return $editor->getForm($content)->render();
+        return $view->partial('majistix/editing/editor.phtml', array(
+            'panel'   => $panelFactory->createEditPanel(),
+            'editor'  => $editor,
+            'content' => $content,
+        ));
     }
 }
