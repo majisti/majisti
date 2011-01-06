@@ -1,0 +1,55 @@
+@import "compass/utilities/sprites";
+
+$sprite-default-size: 16px;
+$sprite-image-default-width: 16px;
+
+@mixin icons {
+    @include sprite-background('icons-16x16.png');
+}
+
+.maj-editing-container {
+    > .panel {
+        display: none;
+        @include icons;
+        .edit {
+            @include sprite-column(1);
+        }
+        a {
+            width:  $sprite-default-size;
+            height: $sprite-default-size;
+            display: block;
+        }
+    }
+    //TODO: handle hovering with javascript
+    &:Hover {
+        .panel {
+            display: block;
+        }
+    }
+    > .message {
+        color: green;
+        font-weight: bold;
+    }
+    > .text {
+        &.being-edited {
+            border: 2px dashed black;
+        }
+    }
+    > .editor {
+        display: none;
+        input[type=submit], input[type=reset] {
+            @include icons;
+            border: none;
+            text-indent: -999px; //hide text
+            cursor: pointer;
+            outline: none;
+            &.save {
+                @include sprite-column(2);
+            }
+            &.cancel {
+                @include sprite-column(3);
+            }
+        }
+    }
+}
+

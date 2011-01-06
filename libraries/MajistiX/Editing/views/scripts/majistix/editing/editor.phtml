@@ -1,0 +1,34 @@
+<?php
+
+/* @var $panel \Majisti\Model\Form */
+/* @var $content \MajistiX\Editing\Model\Content */
+/* @var $editor \MajistiX\Editing\View\Editor\IEditor */
+
+$panel   = $this->panel;
+$content = $this->content;
+$editor  = $this->editor;
+
+$container = pq('<div />')
+    ->addClass('maj-editing-container')
+    /* panel */
+    ->append(pq('<div />')
+        ->addClass('panel')
+        ->append(pq('<a />')
+            ->addClass('edit')
+            ->attr('href', '#')
+            ->attr('rel', $content->getName())
+        )
+    )
+    ->append(pq('<div />')
+        ->addClass('message')
+    )
+    /* content */
+    ->append(pq('<div />')
+        ->addClass('text')
+        ->html($content->getContent())
+    )
+    /* editor */
+    ->append($editor->createForm($content)->render())
+;
+
+$this->setRenderReturn($container);

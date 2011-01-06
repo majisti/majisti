@@ -31,7 +31,7 @@ class ContentMonitor extends \Majisti\Controller\Plugin\AbstractPlugin
 
             if( $key = array_search('##MAJISTIX_EDITING##', $post) ) {
 
-                $key = str_replace('majistix_editing_', '', $key);
+                $key = str_replace('maj_editing_editor_hidden_', '', $key);
 
                 $repo = $em->getRepository(
                     'MajistiX\Editing\Model\Content');
@@ -45,7 +45,11 @@ class ContentMonitor extends \Majisti\Controller\Plugin\AbstractPlugin
                 $em->flush();
 
                 if( $request->isXmlHttpRequest() ) {
-                    //TODO: send response success
+                    /* @var $json \Zend_Controller_Action_Helper_Json */
+                    $json = HelperBroker::getStaticHelper('json');
+                    $json->direct(array(
+                        'message' => 'Content successfully updated.'
+                    ));
                 } else {
                     /* @var $redirector \Zend_Controller_Action_Helper_Redirector */
                     $redirector = HelperBroker::getStaticHelper('redirector');

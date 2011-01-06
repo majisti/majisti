@@ -94,8 +94,7 @@ class Provider
         return $this->_editor;
     }
 
-    public function createEditorDisplay(Content $model, $options = array(),
-        $screen = Display::SCREEN_DEFAULT)
+    public function createEditorDisplay(Content $model, $options = array())
     {
         $editor = $this->getEditor();
 
