@@ -10,6 +10,8 @@ class Provider
 
     protected $_view;
 
+    protected $_editor;
+
     protected function __construct()
     {}
 
@@ -43,16 +45,6 @@ class Provider
         return $this;
     }
 
-    public function setAjaxEnabled($flag)
-    {
-
-    }
-
-    public function isAjaxEnabled()
-    {
-
-    }
-
     /**
      *
      * @param <type> $editor
@@ -73,23 +65,17 @@ class Provider
         return $this;
     }
 
-    protected function loadPublicFiles($editor, $options = null)
+    protected function loadPublicFiles(IEditor $editor, $options = null)
     {
         $view = $this->getView();
-        $files = $editor->getPublicFiles($options);
-
-        if( $files->has('scripts') ) {
-            foreach( $files->find('scripts') as $jsFile ) {
-                $view->headScript()->appendFile($jsFile);
-            }
-        }
+        $view->publicFiles($editor->getPublicFiles($options));
     }
 
     /**
      *
      * @return IEditor The editor
      */
-    public function getEditor($options = array())
+    public function getEditor()
     {
         return $this->_editor;
     }
