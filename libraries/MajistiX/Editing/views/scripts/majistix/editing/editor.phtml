@@ -10,22 +10,25 @@ $editor  = $this->editor;
 
 $container = pq('<div />')
     ->addClass('maj-editing-container')
-    /* panel */
+    /* content */
     ->append(pq('<div />')
-        ->addClass('panel')
-        ->append(pq('<a />')
-            ->addClass('edit')
-            ->attr('href', '#')
-            ->attr('rel', $content->getName())
+        ->addClass('text-wrapper')
+        ->append(pq('<div />')
+            ->addClass('text')
+            ->html($content->getContent())
+        )
+        /* panel */
+        ->append(pq('<div />')
+            ->addClass('panel')
+            ->append(pq('<a />')
+                ->addClass('edit')
+                ->attr('href', '#')
+                ->attr('rel', $content->getName())
+            )
         )
     )
     ->append(pq('<div />')
         ->addClass('message')
-    )
-    /* content */
-    ->append(pq('<div />')
-        ->addClass('text')
-        ->html($content->getContent())
     )
     /* editor */
     ->append($editor->createForm($content)->render())

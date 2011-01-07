@@ -6,6 +6,7 @@ $.extend(majisti.ext, {
            editorOptions: null,
            initialContent: null,
            $container: null,
+           lastResult: '',
            options: {
                livePreview: true
            },
@@ -22,7 +23,7 @@ $.extend(majisti.ext, {
                $trigger    = $('.maj-editing-container a[rel=' + this.key + ']');
                $editorForm = $('#maj_editing_editor_' + this.key);
 
-               this.$container = $trigger.parent().parent();
+               this.$container = $trigger.closest('.maj-editing-container');
 
                this.bindEdit($trigger, $editorForm);
                this.bindSave($trigger, $editorForm);
@@ -30,15 +31,23 @@ $.extend(majisti.ext, {
 
            bindEdit: function($trigger, $editorForm) {
                var self = this;
+
+               self.$container.find('.text-wrapper').hover(function() {
+                   self.$container.find('.panel').show();
+               }, function() {
+                   self.$container.find('.panel').hide();
+               });
+
                $trigger.click(function() {
+
                    self.activate($editorForm, self.editorOptions);
                    self.initialContent = self.getData();
 
                    if( self.options.livePreview ) {
-                       self.bindLivePreview($editorForm.prev());
+                       self.bindLivePreview(self.$container.find('.text'));
                    }
 
-                   self.$container.find('.text').toggleClass('being-edited');
+                   self.$container.find('.text').addClass('being-edited');
 
                    $editorForm.show();
 
@@ -51,14 +60,25 @@ $.extend(majisti.ext, {
                $editorForm.submit(function() {
                    $(this).hide();
 
+                   $message = self.$container.find('.message');
+                   $message
+                       .html('')
+                       .addClass('loading')
+                       .show();
+
                    $.ajax({
                        url:        majisti.app.url,
                        data:       $editorForm.serialize(),
                        type:       'post',
                        dataType:   'json',
                        success: function(data) {
-                           $message = self.$container.find('.message');
-                           $message.html(data.message);
+                           $message
+                               .removeClass('loading')
+                               .removeClass(self.lastResult)
+                               .addClass(data.result)
+                               .html(data.message);
+
+                           self.lastResult = data.result;
 
                            setTimeout(function() {
                                $message.fadeOut();
@@ -76,7 +96,7 @@ $.extend(majisti.ext, {
                    self.setData(self.initialContent);
                    self.$container.find('.text')
                        .html(self.initialContent)
-                       .toggleClass('being-edited');
+                       .removeClass('being-edited');
                });
            }.protect(),
 

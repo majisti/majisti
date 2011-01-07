@@ -90,6 +90,15 @@ abstract class AbstractEditor implements IEditor
             ->setAttrib('class', 'cancel');
         $form->addElement($btn_cancel);
 
+        $form->addDisplayGroup(array(
+            'maj_editing_editor_hidden_' . $key,
+            'maj_editing_editor_save_'   . $key,
+            'maj_editing_editor_cancel_' . $key,
+        ), 'buttons');
+        $dg = $form->getDisplayGroup('buttons');
+        $dg->removeDecorator('Fieldset');
+        $dg->removeDecorator('HtmlTag');
+
         $form->setLayout(new \Majisti\Model\Form\Layout\Table());
 
         return $form;
