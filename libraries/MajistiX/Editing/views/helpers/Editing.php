@@ -16,10 +16,6 @@ use Majisti\Application\Locales,
  */
 class Editing extends \Majisti\View\Helper\AbstractHelper
 {
-    protected $_inPlaceEditingModel;
-
-    protected $_editor;
-
     /**
      * @desc Renders content based on storage key.
      *

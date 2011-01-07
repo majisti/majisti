@@ -25,7 +25,10 @@ class Display
      */
     protected $_view;
 
-    protected $_panelFactory;
+    /**
+     * @var string
+     */
+    protected $_partial = 'majistix/editing/editor.phtml';
 
     public function __construct(Model\Content $content, IEditor $editor,
         \Zend_View $view)
@@ -62,14 +65,14 @@ EOT;
         return $js;
     }
 
-    public function setPanelFactory(PanelFactory $panelFactory)
+    public function setPartial($partial)
     {
-        $this->_panelFactory = $panelFactory;
+        $this->_partial = $partial;
     }
 
-    public function getPanelFactory()
+    public function getPartial()
     {
-        return $this->_panelFactory;
+        return $this->_partial;
     }
 
     public function render()
@@ -78,16 +81,10 @@ EOT;
         $view    = $this->getView();
         $content = $this->getContent();
 
-        if( null === ($panelFactory = $this->getPanelFactory()) ) {
-            $panelFactory = new PanelFactory($content->getName());
-            $this->setPanelFactory($panelFactory);
-        }
-
         $view->inlineScript()->appendScript(
             $this->getJavascript($content, $editor));
 
-        return $view->partial('majistix/editing/editor.phtml', array(
-            'panel'   => $panelFactory->createEditPanel(),
+        return $view->partial($this->getPartial(), array(
             'editor'  => $editor,
             'content' => $content,
         ));
