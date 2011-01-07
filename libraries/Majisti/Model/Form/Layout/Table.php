@@ -20,16 +20,16 @@ class Table implements ILayout
                 'ViewHelper',
                 'Errors',
                 array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')),
-                array('Label', array('tag' => 'td')),
+                array('Label', array('tag' => 'td', 'class' => 'label')),
                 array('Description', array('tag' => 'td')),
-                array(array('row' => 'HtmlTag'), array('tag' => 'tr')),
+                array(array('row' => 'HtmlTag'), array('tag' => 'tr', 'class' => 'row')),
         );
 
         $buttonDecorators = array(
             'ViewHelper',
             array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element button')),
-            array(array('label' => 'HtmlTag'), array('tag' => 'td', 'placement' => 'prepend')),
-            array(array('row' => 'HtmlTag'), array('tag' => 'tr')),
+            array(array('label' => 'HtmlTag'), array('tag' => 'td', 'placement' => 'prepend', 'class' => 'label')),
+            array(array('row' => 'HtmlTag'), array('tag' => 'tr', 'class' => 'row')),
         );
 
         $form->setDecorators(array(
@@ -44,7 +44,7 @@ class Table implements ILayout
         $captchaDecorators = array(
                 'Errors',
                 array(array('td' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element captcha')),
-                array('Label', array('tag' => 'td')),
+                array('Label', array('tag' => 'td', 'class' => 'label')),
                 array('Description', array('tag' => 'td')),
                 array(array('tr' => 'HtmlTag'), array('tag' => 'tr')),
         );
@@ -59,6 +59,19 @@ class Table implements ILayout
                 $element->setDecorators($buttonDecorators);
             }
         }
+
+        foreach( $form->getDisplayGroups() as $dg ) {
+            $dg->setDecorators(array(
+//                array(array('row' => 'HtmlTag'), array('tag' => 'tr', 'class' => 'row')),
+                'FormElements',
+                array('HtmlTag', array('tag' => 'table', 'class' => 'group')),
+                array(array('td' => 'HtmlTag'), array('tag' => 'td', 'class' => 'group')),
+                array(array('label' => 'HtmlTag'), array('tag' => 'td', 'placement' => 'prepend', 'class' => 'label')),
+                array(array('row' => 'HtmlTag'), array('tag' => 'tr', 'class' => 'row group')),
+//                'Fieldset',
+            ));
+        }
+
     }
 
     /**
