@@ -22,16 +22,6 @@ class Bootstrap extends \Zend_Application_Bootstrap_Bootstrap
         $this->initActionHelper();
     }
 
-    /*
-     * (non-phpDoc)
-     * @see Inherited documentation.
-     */
-//    public function run()
-//    {
-//        $this->initMail();
-//        parent::run();
-//    }
-
     /**
      * @desc Adds the application's resource path to the plugin loader stack.
      */
