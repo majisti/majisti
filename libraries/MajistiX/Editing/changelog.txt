@@ -1,3 +1,6 @@
-0.1.0
-    First component version. Basic editing defined with acl
-    and/or authentication using ajax.
+majisti-0.4.x - compatible
+    v0.1.0
+        First component version. Basic editing defined with acl
+        and/or authentication using ajax.
+        CkEditor as default Editor along with CkFinder setup to work
+        in every environment without any change to configuration.

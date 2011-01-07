@@ -28,7 +28,7 @@ class Renderer extends AbstractEditor
             'scripts' => array(
                 'ckeditor'          => $ckeditorUrl . '/ckeditor.js',
                 'ckeditor-jquery'   => $ckeditorUrl . '/adapters/jquery.js',
-                'ckeditor-concrete' => $jsUrl       . '/scripts/ckeditor.js'
+                'ckeditor-concrete' => $jsUrl       . '/scripts/editor/ckeditor.js'
             )
         ));
     }
