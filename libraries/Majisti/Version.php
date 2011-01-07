@@ -2,7 +2,7 @@
 
 namespace Majisti;
 
-final class Version
+class Version
 {
     /**
      * Majisti Framework version identification - see compareVersion()
@@ -23,6 +23,6 @@ final class Version
     {
         $version = strtolower($version);
         $version = preg_replace('/(\d)pr(\d?)/', '$1a$2', $version);
-        return version_compare($version, strtolower(self::VERSION));
+        return version_compare($version, strtolower(static::VERSION));
     }
 }
