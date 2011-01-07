@@ -48,6 +48,7 @@ class ContentMonitor extends \Majisti\Controller\Plugin\AbstractPlugin
                     /* @var $json \Zend_Controller_Action_Helper_Json */
                     $json = HelperBroker::getStaticHelper('json');
                     $json->direct(array(
+                        'result'  => 'success',
                         'message' => 'Content successfully updated.'
                     ));
                 } else {

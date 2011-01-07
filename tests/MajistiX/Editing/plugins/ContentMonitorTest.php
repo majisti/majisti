@@ -118,6 +118,7 @@ class ContentMonitorTest extends \Majisti\Test\TestCase
         $this->assertHeaderContains(
             'content-type', 'Content-Type: application/json');
         $this->assertEquals(\Zend_Json::encode(array(
+            'result'  => 'success',
             'message' => 'Content successfully updated.'
         )), $this->getResponse()->getBody());
     }

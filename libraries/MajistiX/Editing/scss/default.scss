@@ -8,35 +8,50 @@ $sprite-image-default-width: 16px;
 }
 
 .maj-editing-container {
-    > .panel {
-        display: none;
-        @include icons;
-        .edit {
-            @include sprite-column(1);
-        }
-        a {
-            width:  $sprite-default-size;
-            height: $sprite-default-size;
-            display: block;
-        }
-    }
     //TODO: handle hovering with javascript
-    &:Hover {
-        .panel {
-            display: block;
+    > .message {
+        font-weight: bold;
+        &.success {
+            @include icons;
+            @include sprite-column(4);
+            width: auto;
+            height: auto;
+            color: green;
+            padding: 0 0 0 $sprite-default-size + 5;
+        }
+        &.loading {
+            background: inline-image('ajax-loader.gif');
+            width: 200px;
+            height: 19px;
         }
     }
-    > .message {
-        color: green;
-        font-weight: bold;
-    }
-    > .text {
-        &.being-edited {
-            border: 2px dashed black;
+    > .text-wrapper {
+        min-height: 20px;
+        > .text {
+            &.being-edited {
+                border: 2px dashed black;
+                padding: 0 5px;
+                margin: 5px 0;
+            }
+        }
+        > .panel {
+            display: none;
+            @include icons;
+            .edit {
+                @include sprite-column(1);
+            }
+            a {
+                width:  $sprite-default-size;
+                height: $sprite-default-size;
+                display: block;
+            }
         }
     }
     > .editor {
         display: none;
+        table.group tr {
+            float: left;
+        }
         input[type=submit], input[type=reset] {
             @include icons;
             border: none;
