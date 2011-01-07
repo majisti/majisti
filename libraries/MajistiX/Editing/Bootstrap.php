@@ -135,7 +135,8 @@ class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
     }
 
     /**
-     * @desc Inits the table name.
+     * @desc Inits the table name. Assumes majisti.app.namespace . _content
+     * if no table name given in the configuration.
      */
     protected function _initTableName()
     {
@@ -182,11 +183,11 @@ class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
             'editor' => 'CkEditor',
             'publicFiles' => array(
                 'styles' => array(
-                    'default' => $pubUrl . '/styles/default.css',
+                    'default' => $pubUrl . '/styles/editing.css',
                 ),
                 'scripts' => array(
                     'mootools' => $pubUrl . '/scripts/mootools.js',
-                    'default' => $pubUrl . '/scripts/default.js',
+                    'default'  => $pubUrl . '/scripts/editing.js',
                 )
             )
         ));
