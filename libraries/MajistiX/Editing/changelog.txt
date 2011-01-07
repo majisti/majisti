@@ -1,0 +1,3 @@
+0.1.0
+    First component version. Basic editing defined with acl
+    and/or authentication using ajax.
