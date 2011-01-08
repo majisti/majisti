@@ -73,12 +73,14 @@ $.extend(majisti.ext, {
                    self.activate($editorForm, self.editorOptions);
                    self.initialContent = self.getData();
 
+                   $text = $trigger.parent().prev();
+
                    /* live preview */
                    if( self.options.livePreview ) {
-                       self.bindLivePreview(self.$container.find('.text'));
+                       self.bindLivePreview($text);
                    }
 
-                   self.$container.find('.text').addClass('being-edited');
+                   $text.addClass('being-edited');
 
                    $editorForm.show();
 
