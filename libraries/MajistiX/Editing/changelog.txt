@@ -1,6 +1,11 @@
 majisti-0.4.x - compatible
     v0.1.0
-        First component version. Basic editing defined with acl
-        and/or authentication using ajax.
-        CkEditor as default Editor along with CkFinder setup to work
-        in every environment without any change to configuration.
+        - Basic editing, using ajax and intuitive ui.
+        - CkEditor as default Editor.
+        - ACL integration and/or authentication.
+
+To come:
+- CkFinder setup to work in every environment without any change to configuration
+integrated with CkEditor.
+- Environment agnostic image urls.
+- WMD Editor implementation

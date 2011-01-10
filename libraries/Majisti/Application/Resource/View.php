@@ -48,12 +48,6 @@ class View extends \Zend_Application_Resource_View
         $view        = new \Majisti\View\View($options);
         $settings    = $this->getSettings()->majisti;
 
-        /* ZendX JQuery */
-        $view->addHelperPath(
-            'ZendX/JQuery/View/Helper',
-            'ZendX_JQuery_View_Helper'
-        );
-
         /* majisti's base path */
         $view->addScriptPath($settings->path . '/libraries/Majisti/View/scripts');
         $view->addHelperPath('Majisti/View/Helper/', 'Majisti\View\Helper\\');
@@ -80,8 +74,6 @@ class View extends \Zend_Application_Resource_View
             $view->doctype('XHTML1_STRICT');
         }
 
-        $this->resolveJQuery($view, $options);
-
         \Zend_Registry::set('Zend_View', $view);
 
         $this->_view = $view;
@@ -89,46 +81,4 @@ class View extends \Zend_Application_Resource_View
         return $view;
     }
 
-    /**
-     * @desc Resolves if jQuery should be enabled according to the options
-     *
-     * @param View $view The view
-     * @param Array $options The options
-     */
-    protected function resolveJQuery($view, $options)
-    {
-        $selector = new \Majisti\Config\Selector(new \Zend_Config($options));
-        $settings = $this->getSettings()->majisti;
-
-        /* jQuery and UI */
-        $view->jQuery()->setLocalPath($settings->url    . '/jquery/jquery.js');
-        $view->jQuery()->setUiLocalPath($settings->url  . '/jquery/jquery.ui.js');
-
-        /* paths given, enable and set paths */
-        $uiLocalPath = false;
-        if( $localPath = $selector->find('jquery.localPath', false) ) {
-            $view->jQuery()->setLocalPath($localPath);
-
-            if( $uiLocalPath = $selector->find('jquery.ui.localPath', false) ) {
-                $view->jQuery()->setUiLocalPath($uiLocalPath);
-            }
-        }
-
-        /*
-         * Enable when a local path is specified but jQuery is not explicitely
-         * enabled or enable when jQuery is explicitely enabled but no path was
-         * specified.
-         */
-        $enabled    = $selector->find('jquery.enable', null);
-        $uiEnabled  = $selector->find('jquery.ui.enable', null);
-
-        /* null means the selection was not found */
-        if( ($localPath && null === $enabled) || $enabled) {
-            $view->jQuery()->enable();
-        }
-
-        if( ($uiLocalPath && null === $uiEnabled) || $uiEnabled) {
-            $view->jQuery()->uiEnable();
-        }
-    }
 }

@@ -41,12 +41,10 @@ class AutoloaderTest extends \Majisti\Test\TestCase
 
     /**
      * @desc Tests Autoloader->autoload()
-     *
-     * @expectedException \Majisti\Loader\Exception
      */
-    public function testAutoloadShouldThrowException()
+    public function testAutoloadShouldReturnFalseOnNonExistantNamespacedClass()
     {
-        $this->_autoloader->autoload('\Some\Non\Existant\Namespace\Class');
+        $this->assertFalse($this->_autoloader->autoload('\Some\Non\Existant\Namespace\Class'));
     }
 
     /**
