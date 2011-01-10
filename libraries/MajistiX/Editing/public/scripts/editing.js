@@ -50,6 +50,8 @@ $.extend(majisti.ext, {
 
                this.$container = $trigger.closest('.maj-editing-container');
 
+               this.initDialogs();
+
                this.bindEdit($trigger, $editorForm);
                this.bindSave($editorForm);
            },
@@ -62,8 +64,10 @@ $.extend(majisti.ext, {
 
                /* show editor's panel when text is hovered */
                self.$container.find('.text-wrapper').hover(function() {
+                   self.$container.find('.text').addClass('editable');
                    self.$container.find('.panel').show();
                }, function() {
+                   self.$container.find('.text').removeClass('editable');
                    self.$container.find('.panel').hide();
                });
 
@@ -73,7 +77,7 @@ $.extend(majisti.ext, {
                    self.activate($editorForm, self.editorOptions);
                    self.initialContent = self.getData();
 
-                   $text = $trigger.parent().prev();
+                   $text = $trigger.parent().parent().find('.text');
 
                    /* live preview */
                    if( self.options.livePreview ) {
@@ -116,15 +120,44 @@ $.extend(majisti.ext, {
 
                    return false;
                }).bind('reset', function() { /* cancel trigger */
-                   $(this).hide();
-                   self.setData(self.initialContent);
-
-                   /* text no longer being edited, replace last known state */
-                   self.$container.find('.text')
-                       .html(self.initialContent)
-                       .removeClass('being-edited');
+                   if( self.getData() === self.initialContent ) {
+                       self.closeEditor();
+                   } else {
+                       $('#majistix-editing-cancel-dialog-' + self.key).dialog("open");
+                   }
+                   return false;
                });
            }.protect(),
+
+           initDialogs: function() {
+               /* cancel dialog */
+               var self = this;
+               $('#majistix-editing-cancel-dialog-' + this.key).dialog({
+                   modal: true,
+                   autoOpen: false,
+                   buttons: {
+                       //TODO: i18n
+                       "Yes": function() {
+                           self.closeEditor();
+                           $(this).dialog("close");
+                       },
+                       "No": function() {
+                           $(this).dialog("close");
+                       }
+                   }
+               });
+           },
+
+           closeEditor: function() {
+               this.$container.find('.editor').hide();
+
+               this.setData(this.initialContent);
+
+               /* text no longer being edited, replace last known state */
+               this.$container.find('.text')
+                   .html(this.initialContent)
+                   .removeClass('being-edited');
+           },
 
            /**
             * @desc Shows a message in the message container.
