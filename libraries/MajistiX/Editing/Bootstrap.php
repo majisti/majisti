@@ -186,7 +186,6 @@ class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
                     'default' => $pubUrl . '/styles/editing.css',
                 ),
                 'scripts' => array(
-                    'mootools' => $pubUrl . '/scripts/mootools.js',
                     'default'  => $pubUrl . '/scripts/editing.js',
                 )
             )

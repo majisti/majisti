@@ -17,11 +17,6 @@ $.extend(majisti.ext, {
 
            Implements: [Options],
 
-           key: null,
-           editorOptions: null,
-           initialContent: null,
-           $container: null,
-           lastClass: '',
            options: {
                livePreview: true,
                messageDuration: 3000
@@ -34,8 +29,11 @@ $.extend(majisti.ext, {
             * @param object The options
             */
            initialize: function(key, editorOptions, options) {
-               this.key           = key;
-               this.editorOptions = editorOptions;
+               this.key            = key;
+               this.editorOptions  = editorOptions;
+
+               this.initialContent = '';
+               this.lastClass      = '';
 
                this.setOptions(options);
                this.init();
@@ -45,39 +43,60 @@ $.extend(majisti.ext, {
             * @desc Inits the editor by binding its edit and save buttons.
             */
            init: function() {
-               $trigger    = $('.maj-editing-container a[rel=' + this.key + ']');
-               $editorForm = $('#maj_editing_editor_' + this.key);
-
-               this.$container = $trigger.closest('.maj-editing-container');
+               this.$container = $('#maj-editing-container-' + this.key);
 
                this.initDialogs();
 
-               this.bindEdit($trigger, $editorForm);
-               this.bindSave($editorForm);
+               this.bindEdit();
+               this.bindSave();
+           },
+
+            /**
+             * @desc Inits the needed dialogs.
+             */
+           initDialogs: function() {
+               /* cancel dialog */
+               var self = this;
+               this.$container.find('.dialog').dialog({
+                   modal: true,
+                   autoOpen: false,
+                   buttons: {
+                       //TODO: i18n
+                       "Yes": function() {
+                           self.closeEditor();
+                           $(this).dialog("close");
+                       },
+                       "No": function() {
+                           $(this).dialog("close");
+                       }
+                   }
+               });
            },
 
            /**
             * @desc Binds the edit trigger.
             */
-           bindEdit: function($trigger, $editorForm) {
-               var self = this;
+           bindEdit: function() {
+               var self  = this;
+               var $cont = this.$container;
 
                /* show editor's panel when text is hovered */
-               self.$container.find('.text-wrapper').hover(function() {
-                   self.$container.find('.text').addClass('editable');
-                   self.$container.find('.panel').show();
+               $cont.find('.text-wrapper').hover(function() {
+                   $cont.find('.text').addClass('editable');
+                   $cont.find('.panel').show();
                }, function() {
-                   self.$container.find('.text').removeClass('editable');
-                   self.$container.find('.panel').hide();
+                   $cont.find('.text').removeClass('editable');
+                   $cont.find('.panel').hide();
                });
 
                /* activate the editor when clicking the edit button */
-               $trigger.click(function() {
+               $cont.find('.edit').click(function() {
+                   var $editor = $cont.find('.editor');
 
-                   self.activate($editorForm, self.editorOptions);
+                   self.activate($editor, self.editorOptions);
                    self.initialContent = self.getData();
 
-                   $text = $trigger.parent().parent().find('.text');
+                   var $text = $cont.find('.text');
 
                    /* live preview */
                    if( self.options.livePreview ) {
@@ -86,7 +105,7 @@ $.extend(majisti.ext, {
 
                    $text.addClass('being-edited');
 
-                   $editorForm.show();
+                   $editor.show();
 
                    return false;
                });
@@ -95,17 +114,17 @@ $.extend(majisti.ext, {
            /**
             * @desc Binds the save trigger
             */
-           bindSave: function($editorForm) {
+           bindSave: function() {
                var self = this;
 
                /* save trigger */
-               $editorForm.submit(function() {
+               this.$container.find('.editor').submit(function() {
                    $(this).hide();
                    self.showLoading();
 
                    $.ajax({
                        url:        majisti.app.url,
-                       data:       $editorForm.serialize(),
+                       data:       $(this).serialize(),
                        type:       'post',
                        dataType:   'json',
                        success: function(data) {
@@ -123,30 +142,12 @@ $.extend(majisti.ext, {
                    if( self.getData() === self.initialContent ) {
                        self.closeEditor();
                    } else {
+                       /* must use id selector, class selector won't work */
                        $('#majistix-editing-cancel-dialog-' + self.key).dialog("open");
                    }
                    return false;
                });
            }.protect(),
-
-           initDialogs: function() {
-               /* cancel dialog */
-               var self = this;
-               $('#majistix-editing-cancel-dialog-' + this.key).dialog({
-                   modal: true,
-                   autoOpen: false,
-                   buttons: {
-                       //TODO: i18n
-                       "Yes": function() {
-                           self.closeEditor();
-                           $(this).dialog("close");
-                       },
-                       "No": function() {
-                           $(this).dialog("close");
-                       }
-                   }
-               });
-           },
 
            closeEditor: function() {
                this.$container.find('.editor').hide();
@@ -169,7 +170,7 @@ $.extend(majisti.ext, {
            showMessage: function(message, cssClass, useTimeout) {
                useTimeout = useTimeout || true;
 
-               $message = this.$container.find('.message');
+               var $message = this.$container.find('.message');
                $message
                    .removeClass(this.lastClass)
                    .addClass(cssClass)
