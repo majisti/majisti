@@ -22,7 +22,7 @@ majisti.ext.editing.Editor.implement({
      * @see Inherited implementation
      */
     bindLivePreview: function($text) {
-        editor = this.getEditor();
+        var editor = this.getEditor();
 
         /*
          * preview setup as a greedy interval watcher since
@@ -31,7 +31,7 @@ majisti.ext.editing.Editor.implement({
          * instance, at least to save up some resource.
          */
 
-        intervalId = null;
+        var intervalId = null;
         editor.on('focus', function() {
             intervalId = setInterval(function() {
                 $text.html(editor.getData());
