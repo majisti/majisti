@@ -22,11 +22,13 @@ class I18n extends AbstractPlugin
     {
          $selector = new \Majisti\Config\Selector($this->getConfig());
 
-         if( $config = $selector->find('plugins.i18n', false) ) {
+         $exception = new Exception("resources.frontController.plugins.i18n.requestParam" .
+                 " is mendatory in the configuration");
+
+         if( $config = $selector->find('resources.frontController.plugins.i18n', false) ) {
              /* requestParam must be set */
-             if( !$selector->find('plugins.i18n.requestParam', false) ) {
-                throw new Exception("Request parameter is mandatory
-                    in the configuration");
+             if( !$selector->find('resources.frontController.plugins.i18n.requestParam', false) ) {
+                throw $exception;
              }
 
              $locales = \Majisti\Application\Locales::getInstance();
@@ -62,8 +64,7 @@ class I18n extends AbstractPlugin
                 }
              }
          } else {
-             throw new Exception("Request parameter is mandatory
-             in the configuration");
+             throw $exception;
          }
     }
 }

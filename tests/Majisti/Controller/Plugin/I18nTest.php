@@ -73,11 +73,15 @@ class I18nTest extends \Majisti\Test\TestCase
 
         /* request config */
         $this->config = new \Zend_Config(array(
-            'plugins' => array(
-                'i18n' => array(
-                    'requestParam' => 'lang'
+            'resources' => array(
+                'frontController' => array(
+                    'plugins' => array(
+                        'i18n' => array(
+                            'requestParam' => 'lang'
+                        )
+                     )
                 )
-             )
+            )
         ));
     }
 
