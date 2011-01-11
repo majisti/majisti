@@ -20,7 +20,6 @@ class Headers extends AbstractHelper
 
         $maj = $this->getConfig()->majisti;
 
-        $view->headLink()->appendStylesheet($maj->url . '/styles/majisti.css');
         $view->headLink()->appendStylesheet($maj->app->url .
             '/styles/main/main.css');
 
