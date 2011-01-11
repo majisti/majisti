@@ -1,7 +1,3 @@
-/*
- * Generic
- */
-
 /* headers */
 h1 {font-size: 200%;padding: 0px; margin: 0px;}
 h2 {font-size: 185%;padding: 0px; margin: 0px;}
@@ -9,7 +5,6 @@ h3 {font-size: 160%;padding: 0px; margin: 0px;}
 h4 {font-size: 145%;padding: 0px; margin: 0px;}
 h5 {font-size: 130%;padding: 0px; margin: 0px;}
 h6 {font-size: 120%;padding: 0px; margin: 0px;}
-h7 {font-size: 110%;padding: 0px; margin: 0px;}
 
 /* img */
 img {border: none;padding: 0px; margin: 0px;}
@@ -18,9 +13,6 @@ img {border: none;padding: 0px; margin: 0px;}
 a       {color: #006699; font-weight:bold; text-decoration: none;}
 a:hover {color: #FF9900; text-decoration: underline;}
 
-/*
- * Template 
- */
 #container {
     width: 1000px;
     min-height: 600px;
@@ -30,8 +22,8 @@ a:hover {color: #FF9900; text-decoration: underline;}
     border: 1px solid black;
 }
 
-#header > .banner {
-    background: url('default/banner.jpg') no-repeat black;
+#header {
+    background: image-url('majisti/themes/default/banner.jpg') no-repeat black;
     color: white;
     min-height: 150px;
     height: auto;

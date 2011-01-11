@@ -81,11 +81,7 @@ class Manager
         if( $url = $selector->find("url.{$options->app->env}", false) ) {
             $options->url = $url;
         } else {
-            $options->url = str_replace(
-                realpath(rtrim($_SERVER['DOCUMENT_ROOT'], '/')),
-                '',
-                $options->path . '/public'
-            );
+            $options->url = $options->app->baseUrl . '/majisti';
         }
 
         @define('MA',             $options->path);

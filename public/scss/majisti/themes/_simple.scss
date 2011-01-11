@@ -1,0 +1,53 @@
+@mixin theme-almond {
+    @include theme(#ddd, #340000, white);
+}
+
+@mixin theme-darkSky {
+    @include theme(#ddd, #000034, white);
+}
+
+@mixin theme($bodyColor, $mainColor, $secColor) {
+    body {
+        background-color: $bodyColor;
+        font-family: Verdana;
+        font-size: 14px;
+        text-align: center;
+        height: 100%;
+        width: 977px;
+        padding: 0 0 0 0;
+        margin: 10px auto 10px auto;
+    }
+
+    #container {
+        background-color: $secColor;
+        border-width: 2px 2px 2px 2px;
+        border-style: solid;
+        border-color: black;
+        text-align: left;
+        width: 977px;
+        margin: 0 auto 0 auto;
+    }
+
+    #container #header {
+        padding: 10px;
+        text-align: center;
+        background: $mainColor;
+    }
+
+    #container #content {
+        min-height: 200px;
+        height: auto !important; /* FF and others */
+        height: 200px; /* IE 6 */
+        padding: 10px;
+    }
+
+    #container #footer {
+        clear: both;
+        padding: 5px;
+        text-align: center;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        color: white;
+    }
+}

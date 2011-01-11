@@ -1,0 +1,13 @@
+<?
+/**
+ * @desc Default layout for the entire application
+ * @author Steven Rosato
+ */
+
+$html = $this->render('majisti/layouts/default.phtml');
+
+//FIXME: pq find() is broken...
+$html->children('body')->children('#container')->children('#header')
+    ->append($this->render('majisti/layouts/simple/header.phtml'));
+
+$this->setRenderReturn($html);

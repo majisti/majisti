@@ -66,19 +66,4 @@ class Bootstrap extends \Zend_Application_Bootstrap_Bootstrap
             'Majisti/Controller/ActionHelper',
             'Majisti_Controller_ActionHelper');
     }
-
-    /**
-     * @desc Inits mail subject prefix
-     */
-//    protected function initMail()
-//    {
-//        //FIXME: this should not be here, but as a private resource
-//        $t = $this->bootstrap('Translate');
-//        $t = $this->getPluginResource('Translate')->getTranslate();
-//
-//        \Majisti\Model\Mail\Mail::setDefaultSubjectPrefix(
-//            $t->_('[Majisti Solutions]') . ' ');
-//        \Zend_Mail::setDefaultFrom('noreply@majisti.com');
-//        \Zend_Mail::setDefaultReplyTo('contact@majisti.com', 'Majisti');
-//    }
 }
