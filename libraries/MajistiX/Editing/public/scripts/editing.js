@@ -123,7 +123,7 @@ $.extend(majisti.ext, {
                    self.showLoading();
 
                    $.ajax({
-                       url:        majisti.app.url,
+                       url:        majisti.app.currentUrl,
                        data:       $(this).serialize(),
                        type:       'post',
                        dataType:   'json',
