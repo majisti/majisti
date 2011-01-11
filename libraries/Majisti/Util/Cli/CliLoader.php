@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\Util\Cli\Doctrine;
+namespace Majisti\Util\Cli;
 
 use \Doctrine\DBAL\Migrations\Tools\Console\Command as MigrationCommand,
     \Doctrine\ORM\Tools\Console\ConsoleRunner,
@@ -37,14 +37,14 @@ class CliLoader
     {
         /* create the cli */
         $cli = new \Symfony\Component\Console\Application(
-            'Doctrine Command Line Interface',
-            \Doctrine\ORM\Version::VERSION
+            'Majisti Command Line Interface',
+            \Majisti\Version::VERSION
         );
 
         $cli->setCatchExceptions(true);
 
         $app = $this->_application;
-        $em = $app->getBootstrap()->getResource('Doctrine');
+        $em  = $app->getBootstrap()->getResource('Doctrine');
 
         $helperSet = new SymfonyHelper\HelperSet(array(
             'db' => new ConnectionHelper($em->getConnection()),
@@ -68,7 +68,7 @@ class CliLoader
         ));
 
         /* data fixtures loading */
-        $cli->addCommand(new Commands\LoadDataFixtures($app));
+        $cli->addCommand(new Doctrine\Commands\LoadDataFixtures($app));
 
         $this->_cli = $cli;
     }

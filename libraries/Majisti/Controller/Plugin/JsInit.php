@@ -14,7 +14,7 @@ class JsInit extends AbstractPlugin
                       + array('currentUrl' => $view->url()),
             'url'  => $config->url,
             'path' => $config->path,
-            'ext'  => array(),
+            'ext'  => new \ArrayObject(),
         ));
 
         if( !('production' === $config->app->env && 'staging' === $config->app->env) ) {
