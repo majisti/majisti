@@ -26,25 +26,25 @@
         text-align: left;
         width: 977px;
         margin: 0 auto 0 auto;
-    }
 
-    #container #header {
-        padding: 10px;
-        text-align: center;
-        background: $mainColor;
-    }
+        #header {
+            padding: 10px;
+            text-align: center;
+            background: $mainColor;
+            min-height: 100px;
+        }
 
-    #container #content {
-        min-height: 200px;
-        height: auto !important; /* FF and others */
-        height: 200px; /* IE 6 */
-        padding: 10px;
-    }
-
-    #container #footer {
-        clear: both;
-        padding: 5px;
-        text-align: center;
+        #content {
+            min-height: 200px;
+            height: auto !important; /* FF and others */
+            height: 200px; /* IE 6 */
+            padding: 10px;
+        }
+        #footer {
+            clear: both;
+            padding: 5px;
+            text-align: center;
+        }
     }
 
     h1, h2, h3, h4, h5, h6 {

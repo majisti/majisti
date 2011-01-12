@@ -113,10 +113,6 @@ final class Loader
         } else {
             $updateSymlink($majDir, $symlink);
         }
-
-        if( !file_exists($appDir . '/images/majisti') ) {
-            symlink('../majisti/images', $appDir . '/images/majisti');
-        }
     }
 
     /**

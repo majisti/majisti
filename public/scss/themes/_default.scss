@@ -1,3 +1,5 @@
+$imgDir: "" !default;
+
 /* headers */
 h1 {font-size: 200%;padding: 0px; margin: 0px;}
 h2 {font-size: 185%;padding: 0px; margin: 0px;}
@@ -23,7 +25,7 @@ a:hover {color: #FF9900; text-decoration: underline;}
 }
 
 #header {
-    background: image-url('majisti/themes/default/banner.jpg') no-repeat black;
+    background: image-url('#{$imgDir}themes/default/banner.jpg') no-repeat black;
     color: white;
     min-height: 150px;
     height: auto;

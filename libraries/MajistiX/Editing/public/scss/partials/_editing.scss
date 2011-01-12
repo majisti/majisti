@@ -1,13 +1,15 @@
 @import "compass/utilities/sprites";
 
+$imgDir: "" !default;
+
 $sprite-default-size: 16px;
 $sprite-image-default-width: 16px;
 
-@mixin icons {
-    @include sprite-background('icons-16x16.png');
+@mixin icons() {
+    @include sprite-background('#{$imgDir}icons-16x16.png');
 }
 
-.maj-editing-container {
+@mixin editing() {
     > .message {
         font-weight: bold;
         &.success {
@@ -19,7 +21,7 @@ $sprite-image-default-width: 16px;
             padding: 0 0 0 $sprite-default-size + 5;
         }
         &.loading {
-            background: inline-image('ajax-loader.gif');
+            background: inline-image('#{$imgDir}ajax-loader.gif');
             width: 200px;
             height: 19px;
         }
@@ -66,4 +68,3 @@ $sprite-image-default-width: 16px;
         }
     }
 }
-

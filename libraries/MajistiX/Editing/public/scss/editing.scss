@@ -1,0 +1,9 @@
+//This is the standalone version. Compiling everything in a css file
+//that is included by default. To extend this file, create your own scss,
+//and import majistix/editing/editing and include the needed mixin.
+
+@import "partials/editing";
+
+.maj-editing-container {
+    @include editing;
+}
