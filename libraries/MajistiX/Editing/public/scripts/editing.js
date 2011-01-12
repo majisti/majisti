@@ -168,7 +168,7 @@ $.extend(majisti.ext, {
             * @param useTimeout Removes message for options.messageDuration.
             */
            showMessage: function(message, cssClass, useTimeout) {
-               useTimeout = useTimeout || true;
+               useTimeout = undefined === useTimeout ? true : useTimeout;
 
                var $message = this.$container.find('.message');
                $message
