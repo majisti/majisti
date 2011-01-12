@@ -592,13 +592,14 @@ abstract class AbstractOptimizer implements IOptimizer
             return;
         }
 
-        $cache     = $this->getCache();
         $cacheFile = $this->getCacheFilePath();
 
         /* create the cache file */
         if( !file_exists($cacheFile) ) {
             touch($cacheFile);
         }
+
+        $cache = $this->getCache();
 
         /* cache did not change, do not cache again */
         if( $cache === $this->getRealCache() ) {
