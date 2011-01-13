@@ -17,7 +17,7 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: SqlsrvTest.php 21197 2010-02-24 16:12:53Z rob $
+ * @version    $Id: SqlsrvTest.php 23510 2010-12-15 18:34:36Z andries $
  */
 
 /**
@@ -29,8 +29,6 @@ require_once 'Zend/Db/Adapter/TestCommon.php';
  * @see Zend_Db_Adapter_Sqlsrv
  */
 require_once 'Zend/Db/Adapter/Sqlsrv.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__);
 
 /**
  * @category   Zend
@@ -162,6 +160,17 @@ class Zend_Db_Adapter_SqlsrvTest extends Zend_Db_Adapter_TestCommon
         $this->assertFalse($desc['product_name']['PRIMARY'], 'Expected product_name not to be a primary key');
         $this->assertNull($desc['product_name']['PRIMARY_POSITION'], 'Expected product_name to return null for PRIMARY_POSITION');
         $this->assertFalse($desc['product_name']['IDENTITY'], 'Expected product_name to return false for IDENTITY');
+    }
+
+    /**
+     * test that describeTable() returns empty array on not existing table
+     * @group ZF-9079
+     */
+    public function testAdapterDescribeTableNotExistingTable()
+    {
+        $desc = $this->_db->describeTable('not_existing_table');
+
+        $this->assertEquals(0, count($desc), 'Expected to have empty result');
     }
 
     public function testAdapterDescribeTablePrimaryKeyColumn()
@@ -430,14 +439,14 @@ class Zend_Db_Adapter_SqlsrvTest extends Zend_Db_Adapter_TestCommon
 
         $this->assertTrue($db->setTransactionIsolationLevel(), "Setting to default should work by passsing null or nothing");
     }
-    
+
     /**
      * @group ZF-9252
      * @see zf-trunk/tests/Zend/Db/Adapter/Zend_Db_Adapter_TestCommon#testAdapterLimit()
      */
     public function testAdapterLimit()
     {
-    	parent::testAdapterLimit();
+        parent::testAdapterLimit();
 
         $products = $this->_db->quoteIdentifier('zfproducts');
         $product_id = $this->_db->quoteIdentifier('product_id');
@@ -452,15 +461,15 @@ class Zend_Db_Adapter_SqlsrvTest extends Zend_Db_Adapter_TestCommon
             'Expecting to get product_id 1');
 
     }
-    
+
     /**
      * @group ZF-9252
      * @see zf-trunk/tests/Zend/Db/Adapter/Zend_Db_Adapter_TestCommon#testAdapterLimitOffset()
      */
     public function testAdapterLimitOffset()
     {
-    	parent::testAdapterLimitOffset();
-    	
+        parent::testAdapterLimitOffset();
+
         $products = $this->_db->quoteIdentifier('zfproducts');
         $product_id = $this->_db->quoteIdentifier('product_id');
 
@@ -472,7 +481,78 @@ class Zend_Db_Adapter_SqlsrvTest extends Zend_Db_Adapter_TestCommon
             'Expecting row count to be 1');
         $this->assertEquals(2, $result[0]['product_id'],
             'Expecting to get product_id 2');
-    }    
+    }
+
+    /**
+     * @group ZF-8148
+     */
+    public function testAdapterLimitOffsetWithOffsetExceedingRowCount()
+    {
+        $products = $this->_db->quoteIdentifier('zfproducts');
+        $product_id = $this->_db->quoteIdentifier('product_id');
+
+        $sql = $this->_db->limit("SELECT * FROM $products ORDER BY $products.$product_id", 2, 2);
+
+        $stmt = $this->_db->query($sql);
+        $result = $stmt->fetchAll();
+        $this->assertEquals(1, count($result),
+            'Expecting row count to be 1');
+    }
+
+    /**
+     * @group ZF-8148
+     */
+    public function testAdapterLimitWithoutOrder()
+    {
+        $products = $this->_db->quoteIdentifier('zfproducts');
+        $product_id = $this->_db->quoteIdentifier('product_id');
+
+        $sql = $this->_db->limit("SELECT * FROM $products", 1);
+
+        $stmt = $this->_db->query($sql);
+        $result = $stmt->fetchAll();
+        $this->assertEquals(1, count($result),
+            'Expecting row count to be 1');
+        $this->assertEquals(1, $result[0]['product_id'],
+            'Expecting to get product_id 1');
+    }
+
+    /**
+     * @group ZF-8148
+     */
+    public function testAdapterLimitOffsetWithoutOrder()
+    {
+        $products = $this->_db->quoteIdentifier('zfproducts');
+        $product_id = $this->_db->quoteIdentifier('product_id');
+
+        $sql = $this->_db->limit("SELECT * FROM $products", 1, 1);
+
+        $stmt = $this->_db->query($sql);
+        $result = $stmt->fetchAll();
+        $this->assertEquals(1, count($result),
+            'Expecting row count to be 1');
+        $this->assertEquals(2, $result[0]['product_id'],
+            'Expecting to get product_id 2');
+    }
+
+    /**
+     * @group ZF-8901
+     */
+    public function testAdapterLimitOffsetWithMultipleOrderColumns()
+    {
+        $products = $this->_db->quoteIdentifier('zfproducts');
+        $product_id = $this->_db->quoteIdentifier('product_id');
+        $product_name = $this->_db->quoteIdentifier('product_name');
+
+        $sql = $this->_db->limit("SELECT * FROM $products ORDER BY $products.$product_id ASC, $products.$product_name DESC", 1, 1);
+
+        $stmt = $this->_db->query($sql);
+        $result = $stmt->fetchAll();
+        $this->assertEquals(1, count($result),
+            'Expecting row count to be 1');
+        $this->assertEquals(2, $result[0]['product_id'],
+            'Expecting to get product_id 2');
+    }
 
     public function getDriver()
     {

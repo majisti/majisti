@@ -17,14 +17,12 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: WildfireTest.php 21353 2010-03-06 02:21:47Z cadorn $
+ * @version    $Id: WildfireTest.php 23532 2010-12-17 18:36:35Z cadorn $
  */
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Zend_Wildfire_WildfireTest::main');
 }
-
-require_once dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
 
 /** Zend_Wildfire_Channel_HttpHeaders */
 require_once 'Zend/Wildfire/Channel/HttpHeaders.php';
@@ -43,6 +41,9 @@ require_once 'Zend/Controller/Request/HttpTestCase.php';
 
 /** Zend_Controller_Response_Http */
 require_once 'Zend/Controller/Response/HttpTestCase.php';
+
+/** Zend_Controller_Request_Simple */
+require_once 'Zend/Controller/Request/Simple.php';
 
 /** Zend_Controller_Front **/
 require_once 'Zend/Controller/Front.php';
@@ -153,13 +154,13 @@ class Zend_Wildfire_WildfireTest extends PHPUnit_Framework_TestCase
         $this->_request->setUserAgentExtensionEnabled(false);
 
         $this->assertFalse($channel->isReady(true));
-        
+
         $this->_request->setUserAgentExtensionEnabled(true, 'User-Agent');
-        
+
         $this->assertTrue($channel->isReady(true));
 
         $this->_request->setUserAgentExtensionEnabled(true, 'X-FirePHP-Version');
-        
+
         $this->assertTrue($channel->isReady(true));
     }
 
@@ -176,11 +177,11 @@ class Zend_Wildfire_WildfireTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($channel->isReady());
 
         $this->_request->setUserAgentExtensionEnabled(true, 'User-Agent');
-        
+
         $this->assertTrue($channel->isReady());
 
         $this->_request->setUserAgentExtensionEnabled(true, 'X-FirePHP-Version');
-        
+
         $this->assertTrue($channel->isReady());
     }
 
@@ -602,6 +603,54 @@ class Zend_Wildfire_WildfireTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->_response->verifyHeaders($headers));
     }
 
+    /**
+     * @group ZF-10761
+     */
+    public function testMessageGroupsWithCollapsedTrueOption()
+    {
+        $this->_setupWithFrontController();
+ 
+        Zend_Wildfire_Plugin_FirePhp::group('Test Group', array('Collapsed' => true));
+        Zend_Wildfire_Plugin_FirePhp::send('Test Message');
+        Zend_Wildfire_Plugin_FirePhp::groupEnd();
+
+        $this->_controller->dispatch();
+
+        $headers = array();
+        $headers['X-Wf-Protocol-1'] = 'http://meta.wildfirehq.org/Protocol/JsonStream/0.2';
+        $headers['X-Wf-1-Structure-1'] = 'http://meta.firephp.org/Wildfire/Structure/FirePHP/FirebugConsole/0.1';
+        $headers['X-Wf-1-Plugin-1'] = 'http://meta.firephp.org/Wildfire/Plugin/ZendFramework/FirePHP/1.6.2';
+        $headers['X-Wf-1-1-1-1'] = '69|[{"Type":"GROUP_START","Label":"Test Group","Collapsed":"true"},null]|';
+        $headers['X-Wf-1-1-1-2'] = '31|[{"Type":"LOG"},"Test Message"]|';
+        $headers['X-Wf-1-1-1-3'] = '27|[{"Type":"GROUP_END"},null]|';
+
+        $this->assertTrue($this->_response->verifyHeaders($headers));
+    }
+
+    /**
+     * @group ZF-10761
+     */
+    public function testMessageGroupsWithCollapsedFalseOption()
+    {
+        $this->_setupWithFrontController();
+ 
+        Zend_Wildfire_Plugin_FirePhp::group('Test Group', array('Collapsed' => false));
+        Zend_Wildfire_Plugin_FirePhp::send('Test Message');
+        Zend_Wildfire_Plugin_FirePhp::groupEnd();
+
+        $this->_controller->dispatch();
+
+        $headers = array();
+        $headers['X-Wf-Protocol-1'] = 'http://meta.wildfirehq.org/Protocol/JsonStream/0.2';
+        $headers['X-Wf-1-Structure-1'] = 'http://meta.firephp.org/Wildfire/Structure/FirePHP/FirebugConsole/0.1';
+        $headers['X-Wf-1-Plugin-1'] = 'http://meta.firephp.org/Wildfire/Plugin/ZendFramework/FirePHP/1.6.2';
+        $headers['X-Wf-1-1-1-1'] = '70|[{"Type":"GROUP_START","Label":"Test Group","Collapsed":"false"},null]|';
+        $headers['X-Wf-1-1-1-2'] = '31|[{"Type":"LOG"},"Test Message"]|';
+        $headers['X-Wf-1-1-1-3'] = '27|[{"Type":"GROUP_END"},null]|';
+
+        $this->assertTrue($this->_response->verifyHeaders($headers));
+    }
+
     public function testMessageComparison()
     {
         $label = 'Message';
@@ -972,6 +1021,71 @@ class Zend_Wildfire_WildfireTest extends PHPUnit_Framework_TestCase
                             '[{"Type":"TABLE","Label":"Label"},[["Col1","Col2"],[{"__className":"Zend_Wildfire_WildfireTest_TestObject3","public:name":"Name","public:value":"Value","undeclared:testArray":["val1","** Max Array Depth (1) **"],"undeclared:child":{"__className":"Zend_Wildfire_WildfireTest_TestObject3","public:name":"Name","public:value":"Value","undeclared:testArray":["val1","** Max Array Depth (1) **"],"undeclared:child":"** Max Object Depth (2) **"}},{"__className":"Zend_Wildfire_WildfireTest_TestObject3","public:name":"Name","public:value":"Value","undeclared:testArray":["val1","** Max Array Depth (1) **"],"undeclared:child":{"__className":"Zend_Wildfire_WildfireTest_TestObject3","public:name":"Name","public:value":"Value","undeclared:testArray":["val1","** Max Array Depth (1) **"],"undeclared:child":"** Max Object Depth (2) **"}}]]]');
     }
 
+    /**
+     * @group ZF-10526
+     */
+    public function testNonHTTPRequest()
+    {
+        $this->_request = new Zend_Controller_Request_Simple();
+        $this->_response = new Zend_Wildfire_WildfireTest_Response();
+
+        $channel = Zend_Wildfire_Channel_HttpHeaders::getInstance();
+        $channel->setRequest($this->_request);
+        $channel->setResponse($this->_response);
+
+        // this should not fail with: PHP Fatal error:  Call to undefined method Zend_Controller_Request_Simple::getHeader()
+        $this->assertFalse($channel->isReady());
+
+        // this should not fail with: PHP Fatal error:  Call to undefined method Zend_Controller_Request_Simple::getHeader()
+        $firephp = Zend_Wildfire_Plugin_FirePhp::getInstance();
+        $firephp->send('This is a log message!');
+    }
+
+    /**
+     * @group ZF-10537
+     */
+    public function testFileLineOffsets()
+    {
+        $this->_setupWithoutFrontController();
+
+        $firephp = Zend_Wildfire_Plugin_FirePhp::getInstance();
+        $channel = Zend_Wildfire_Channel_HttpHeaders::getInstance();
+        $protocol = $channel->getProtocol(Zend_Wildfire_Plugin_FirePhp::PROTOCOL_URI);
+        $firephp->setOption('includeLineNumbers', true);
+        $firephp->setOption('maxTraceDepth', 0);
+
+        $lines = array();
+        // NOTE: Do NOT separate the following pairs otherwise the line numbers will not match for the test
+
+        // Message number: 1
+        $lines[] = __LINE__+1;
+        $firephp->send('Hello World');
+
+        // Message number: 2
+        $lines[] = __LINE__+1;
+        $firephp->send('Hello World', null, 'TRACE');
+
+        // Message number: 3
+        $table = array('Summary line for the table',
+                       array(
+                           array('Column 1', 'Column 2'),
+                           array('Row 1 c 1',' Row 1 c 2'),
+                           array('Row 2 c 1',' Row 2 c 2')
+                       )
+                      );
+        $lines[] = __LINE__+1;
+        $firephp->send($table, null, 'TABLE');
+
+        $messages = $protocol->getMessages();
+        $messages = $messages[Zend_Wildfire_Plugin_FirePhp::STRUCTURE_URI_FIREBUGCONSOLE][Zend_Wildfire_Plugin_FirePhp::PLUGIN_URI];
+
+        for( $i=0 ; $i<sizeof($messages) ; $i++ ) {
+            if(!preg_match_all('/WildfireTest\.php","Line":' . $lines[$i] . '/', $messages[$i], $m)) {
+                $this->fail("File and line does not match for message number: " . ($i+1));
+            }
+
+        }
+    }
 }
 
 class Zend_Wildfire_WildfireTest_TestObject1

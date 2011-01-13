@@ -17,13 +17,8 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: OpensslTest.php 20288 2010-01-14 20:15:43Z thomas $
+ * @version    $Id: OpensslTest.php 23522 2010-12-16 20:33:22Z andries $
  */
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
 /**
  * @see Zend_Filter_Encrypt_Openssl
@@ -208,7 +203,7 @@ d/fxzPfuO/bLpADozTAnYT9Hu3wPrQVLeAfCp0ojqH7DYg==
             $filter->decrypt('unknown');
             $this->fail();
         } catch (Zend_Filter_Exception $e) {
-            $this->assertContains('with one private key', $e->getMessage());
+            $this->assertContains('Please give a private key', $e->getMessage());
         }
 
         $filter->setPrivateKey(array('public' => dirname(__FILE__) . '/../_files/privatekey.pem'));
@@ -216,7 +211,7 @@ d/fxzPfuO/bLpADozTAnYT9Hu3wPrQVLeAfCp0ojqH7DYg==
             $filter->decrypt('unknown');
             $this->fail();
         } catch (Zend_Filter_Exception $e) {
-            $this->assertContains('with one envelope key', $e->getMessage());
+            $this->assertContains('Please give a envelope key', $e->getMessage());
         }
 
         $filter->setEnvelopeKey('unknown');
@@ -260,5 +255,58 @@ bK22CwD/l7SMBOz4M9XH0Jb0OhNxLza4XMDu0ANMIpnkn1KOcmQ4gB8fmAbBt';
         $public = $filter->getPublicKey();
         $this->assertFalse(empty($public));
         $this->assertEquals($passphrase, $filter->getPassphrase());
+    }
+
+    /**
+     * Ensures that the filter allows de/encryption
+     *
+     * @return void
+     */
+    public function testEncryptionWithDecryptionWithPackagedKeys()
+    {
+        $filter = new Zend_Filter_Encrypt_Openssl();
+        $filter->setPublicKey(dirname(__FILE__) . '/../_files/publickey.pem');
+        $filter->setPackage(true);
+        $output = $filter->encrypt('teststring');
+        $this->assertNotEquals('teststring', $output);
+
+        $phrase = 'zPUp9mCzIrM7xQOEnPJZiDkBwPBV9UlITY0Xd3v4bfIwzJ12yPQCAkcR5BsePGVw
+RK6GS5RwXSLrJu9Qj8+fk0wPj6IPY5HvA9Dgwh+dptPlXppeBm3JZJ+92l0DqR2M
+ccL43V3Z4JN9OXRAfGWXyrBJNmwURkq7a2EyFElBBWK03OLYVMevQyRJcMKY0ai+
+tmnFUSkH2zwnkXQfPUxg9aV7TmGQv/3TkK1SziyDyNm7GwtyIlfcigCCRz3uc77U
+Izcez5wgmkpNElg/D7/VCd9E+grTfPYNmuTVccGOes+n8ISJJdW0vYX1xwWv5l
+bK22CwD/l7SMBOz4M9XH0Jb0OhNxLza4XMDu0ANMIpnkn1KOcmQ4gB8fmAbBt';
+        $filter->setPrivateKey(dirname(__FILE__) . '/../_files/privatekey.pem', $phrase);
+        $input = $filter->decrypt($output);
+        $this->assertEquals('teststring', trim($input));
+    }
+
+    /**
+     * Ensures that the filter allows de/encryption
+     *
+     * @return void
+     */
+    public function testEncryptionWithDecryptionAndCompressionWithPackagedKeys()
+    {
+        if (!extension_loaded('bz2')) {
+            $this->markTestSkipped('Bz2 extension for compression test needed');
+        }
+
+        $filter = new Zend_Filter_Encrypt_Openssl();
+        $filter->setPublicKey(dirname(__FILE__) . '/../_files/publickey.pem');
+        $filter->setPackage(true);
+        $filter->setCompression('bz2');
+        $output = $filter->encrypt('teststring');
+        $this->assertNotEquals('teststring', $output);
+
+        $phrase = 'zPUp9mCzIrM7xQOEnPJZiDkBwPBV9UlITY0Xd3v4bfIwzJ12yPQCAkcR5BsePGVw
+RK6GS5RwXSLrJu9Qj8+fk0wPj6IPY5HvA9Dgwh+dptPlXppeBm3JZJ+92l0DqR2M
+ccL43V3Z4JN9OXRAfGWXyrBJNmwURkq7a2EyFElBBWK03OLYVMevQyRJcMKY0ai+
+tmnFUSkH2zwnkXQfPUxg9aV7TmGQv/3TkK1SziyDyNm7GwtyIlfcigCCRz3uc77U
+Izcez5wgmkpNElg/D7/VCd9E+grTfPYNmuTVccGOes+n8ISJJdW0vYX1xwWv5l
+bK22CwD/l7SMBOz4M9XH0Jb0OhNxLza4XMDu0ANMIpnkn1KOcmQ4gB8fmAbBt';
+        $filter->setPrivateKey(dirname(__FILE__) . '/../_files/privatekey.pem', $phrase);
+        $input = $filter->decrypt($output);
+        $this->assertEquals('teststring', trim($input));
     }
 }

@@ -17,18 +17,13 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: PaginatorTest.php 22262 2010-05-23 09:17:47Z wilmoore $
+ * @version    $Id: PaginatorTest.php 23522 2010-12-16 20:33:22Z andries $
  */
 
 // Call Zend_PaginatorTest::main() if this source file is executed directly.
 if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Zend_PaginatorTest::main');
 }
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../TestHelper.php';
 
 /**
  * @see Zend_Paginator
@@ -43,7 +38,6 @@ require_once 'Zend/Paginator/AdapterAggregate.php';
 /**
  * @see PHPUnit_Framework_TestCase
  */
-require_once 'PHPUnit/Framework/TestCase.php';
 
 /**
  * @see Zend_Config_Xml
@@ -514,8 +508,42 @@ class Zend_PaginatorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(10, $this->_paginator->getItemCountPerPage());
         $this->_paginator->setItemCountPerPage(15);
         $this->assertEquals(15, $this->_paginator->getItemCountPerPage());
+        $this->_paginator->setItemCountPerPage(10);
+    }
+
+    /**
+     * @group ZF-5376
+     */
+    public function testGetsAndSetsItemCounterPerPageOfNegativeOne()
+    {
+        Zend_Paginator::setConfig(new Zend_Config(array()));
+        $this->_paginator = new Zend_Paginator(new Zend_Paginator_Adapter_Array(range(1, 101)));
+        $this->_paginator->setItemCountPerPage(-1);
+        $this->assertEquals(101, $this->_paginator->getItemCountPerPage());
+        $this->_paginator->setItemCountPerPage(10);
+    }
+
+    /**
+     * @group ZF-5376
+     */
+    public function testGetsAndSetsItemCounterPerPageOfZero()
+    {
+        Zend_Paginator::setConfig(new Zend_Config(array()));
+        $this->_paginator = new Zend_Paginator(new Zend_Paginator_Adapter_Array(range(1, 101)));
         $this->_paginator->setItemCountPerPage(0);
-        $this->assertEquals(10, $this->_paginator->getItemCountPerPage());
+        $this->assertEquals(101, $this->_paginator->getItemCountPerPage());
+        $this->_paginator->setItemCountPerPage(10);
+    }
+
+    /**
+     * @group ZF-5376
+     */
+    public function testGetsAndSetsItemCounterPerPageOfNull()
+    {
+        Zend_Paginator::setConfig(new Zend_Config(array()));
+        $this->_paginator = new Zend_Paginator(new Zend_Paginator_Adapter_Array(range(1, 101)));
+        $this->_paginator->setItemCountPerPage();
+        $this->assertEquals(101, $this->_paginator->getItemCountPerPage());
         $this->_paginator->setItemCountPerPage(10);
     }
 
@@ -962,6 +990,46 @@ class Zend_PaginatorTest extends PHPUnit_Framework_TestCase
         $this->setExpectedException("Zend_Paginator_Exception");
 
         $p = new Zend_Paginator(array());
+    }
+
+    /**
+     * @group ZF-9396
+     */
+    public function testArrayAccessInClassSerializableLimitIterator()
+    {
+        $iterator  = new ArrayIterator(array('zf9396', 'foo', null));
+        $paginator = Zend_Paginator::factory($iterator);
+
+        $this->assertEquals('zf9396', $paginator->getItem(1));
+
+        $items = $paginator->getAdapter()
+                           ->getItems(0, 10);
+
+        $this->assertEquals('foo', $items[1]);
+        $this->assertEquals(0, $items->key());
+        $this->assertFalse(isset($items[2]));
+        $this->assertTrue(isset($items[1]));
+        $this->assertFalse(isset($items[3]));
+        $this->assertEquals(0, $items->key());
+    }
+
+    /**
+     * @group ZF-9174
+     */
+    public function testSetDefaultPageRange()
+    {
+        Zend_Paginator::setConfig(new Zend_Config(array()));
+
+        $paginator = Zend_Paginator::factory(range(1, 10));
+        $this->assertEquals(10, $paginator->getPageRange());
+
+        Zend_Paginator::setDefaultPageRange(20);
+        $this->assertEquals(20, Zend_Paginator::getDefaultPageRange());
+
+        $paginator = Zend_Paginator::factory(range(1, 10));
+        $this->assertEquals(20, $paginator->getPageRange());
+
+        $this->_restorePaginatorDefaults();
     }
 }
 

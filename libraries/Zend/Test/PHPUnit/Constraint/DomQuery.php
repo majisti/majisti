@@ -17,7 +17,7 @@
  * @subpackage PHPUnit
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: DomQuery.php 20096 2010-01-06 02:05:09Z bkarwin $
+ * @version    $Id: DomQuery.php 22561 2010-07-15 17:49:16Z dragonbe $
  */
 
 /** @see PHPUnit_Framework_Constraint */
@@ -93,6 +93,12 @@ class Zend_Test_PHPUnit_Constraint_DomQuery extends PHPUnit_Framework_Constraint
     protected $_useXpath          = false;
 
     /**
+     * XPath namespaces
+     * @var array
+     */
+    protected $_xpathNamespaces = array();
+
+    /**
      * Constructor; setup constraint state
      *
      * @param  string $path CSS selector path
@@ -154,6 +160,7 @@ class Zend_Test_PHPUnit_Constraint_DomQuery extends PHPUnit_Framework_Constraint
 
         $method   = $this->_useXpath ? 'queryXpath' : 'query';
         $domQuery = new Zend_Dom_Query($other);
+        $domQuery->registerXpathNamespaces($this->_xpathNamespaces);
         $result   = $domQuery->$method($this->_path);
         $argv     = func_get_args();
         $argc     = func_num_args();
@@ -267,6 +274,17 @@ class Zend_Test_PHPUnit_Constraint_DomQuery extends PHPUnit_Framework_Constraint
     }
 
     /**
+     * Register XPath namespaces
+     *
+     * @param   array $xpathNamespaces
+     * @return  void
+     */
+    public function registerXpathNamespaces($xpathNamespaces)
+    {
+        $this->_xpathNamespaces = $xpathNamespaces;
+    }
+
+    /**
      * Check to see if content is matched in selected nodes
      *
      * @param  Zend_Dom_Query_Result $result
@@ -275,6 +293,8 @@ class Zend_Test_PHPUnit_Constraint_DomQuery extends PHPUnit_Framework_Constraint
      */
     protected function _matchContent($result, $match)
     {
+        $match = (string) $match;
+
         if (0 == count($result)) {
             return false;
         }

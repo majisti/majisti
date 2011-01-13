@@ -17,7 +17,7 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: PgsqlTest.php 21174 2010-02-23 20:20:44Z mikaelkael $
+ * @version    $Id: PgsqlTest.php 23510 2010-12-15 18:34:36Z andries $
  */
 
 
@@ -27,7 +27,7 @@
 require_once 'Zend/Db/Table/Select/TestCommon.php';
 
 
-PHPUnit_Util_Filter::addFileToFilter(__FILE__);
+
 
 
 /**

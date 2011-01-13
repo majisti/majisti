@@ -17,23 +17,13 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ResponseTest.php 20096 2010-01-06 02:05:09Z bkarwin $
+ * @version    $Id: ResponseTest.php 23522 2010-12-16 20:33:22Z andries $
  */
-
-/**
- * Test helper
- */
-require_once dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
 
 /**
  * Zend_Http_Response
  */
 require_once 'Zend/Http/Response.php';
-
-/**
- * PHPUnit test case
- */
-require_once 'PHPUnit/Framework/TestCase.php';
 
 /**
  * Zend_Http_Response unit tests
@@ -160,6 +150,20 @@ class Zend_Http_ResponseTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($response->isError(), 'Response is an error, but isError() returned false');
         $this->assertFalse($response->isSuccessful(), 'Response is an error, but isSuccessful() returned true');
         $this->assertFalse($response->isRedirect(), 'Response is an error, but isRedirect() returned true');
+    }
+
+    /**
+     * @group ZF-5520
+     */
+    public function test302LocationHeaderMatches()
+    {
+        $headerName  = 'Location';
+        $headerValue = 'http://www.google.com/ig?hl=en';
+        $response    = Zend_Http_Response::fromString($this->readResponse('response_302'));
+        $responseIis = Zend_Http_Response::fromString($this->readResponse('response_302_iis'));
+
+        $this->assertEquals($headerValue, $response->getHeader($headerName));
+        $this->assertEquals($headerValue, $responseIis->getHeader($headerName));
     }
 
     public function test300isRedirect()
@@ -320,6 +324,57 @@ class Zend_Http_ResponseTest extends PHPUnit_Framework_TestCase
 
         $response = Zend_Http_Response::fromString($this->readResponse('response_multibyte_body'));
         $this->assertEquals($md5, md5($response->getBody()));
+    }
+
+    /**
+     * Test that headers are properly set when passed to the constructor as an associative array
+     *
+     * @group ZF-10277
+     */
+    public function testConstructorWithHeadersAssocArray()
+    {
+        $response = new Zend_Http_Response(200, array(
+            'content-type' => 'text/plain',
+            'x-foo'        => 'bar:baz'
+        ));
+
+        $this->assertEquals('text/plain', $response->getHeader('content-type'));
+        $this->assertEquals('bar:baz', $response->getHeader('x-foo'));
+    }
+
+    /**
+     * Test that headers are properly parsed when passed to the constructor as an indexed array
+     *
+     * @link  http://framework.zend.com/issues/browse/ZF-10277
+     * @group ZF-10277
+     */
+    public function testConstructorWithHeadersIndexedArrayZF10277()
+    {
+        $response = new Zend_Http_Response(200, array(
+            'content-type: text/plain',
+            'x-foo: bar:baz'
+        ));
+
+        $this->assertEquals('text/plain', $response->getHeader('content-type'));
+        $this->assertEquals('bar:baz', $response->getHeader('x-foo'));
+    }
+
+    /**
+     * Test that headers are properly parsed when passed to the constructor as
+     * an indexed array with no whitespace after the ':' sign
+     *
+     * @link  http://framework.zend.com/issues/browse/ZF-10277
+     * @group ZF-10277
+     */
+    public function testConstructorWithHeadersIndexedArrayNoWhitespace()
+    {
+        $response = new Zend_Http_Response(200, array(
+            'content-type:text/plain',
+            'x-foo:bar:baz'
+        ));
+
+        $this->assertEquals('text/plain', $response->getHeader('content-type'));
+        $this->assertEquals('bar:baz', $response->getHeader('x-foo'));
     }
 
     /**

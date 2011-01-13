@@ -30,7 +30,7 @@ require_once 'Zend/Form/Element/Xhtml.php';
  * @subpackage Element
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Submit.php 20096 2010-01-06 02:05:09Z bkarwin $
+ * @version    $Id: Submit.php 23484 2010-12-10 03:57:59Z mjh_ca $
  */
 class Zend_Form_Element_Submit extends Zend_Form_Element_Xhtml
 {
@@ -52,7 +52,7 @@ class Zend_Form_Element_Submit extends Zend_Form_Element_Xhtml
         if (is_string($spec) && ((null !== $options) && is_string($options))) {
             $options = array('label' => $options);
         }
-        
+
         if (!isset($options['ignore'])) {
             $options['ignore'] = true;
         }
@@ -113,7 +113,7 @@ class Zend_Form_Element_Submit extends Zend_Form_Element_Xhtml
     public function loadDefaultDecorators()
     {
         if ($this->loadDefaultDecoratorsIsDisabled()) {
-            return;
+            return $this;
         }
 
         $decorators = $this->getDecorators();
@@ -122,5 +122,6 @@ class Zend_Form_Element_Submit extends Zend_Form_Element_Xhtml
                  ->addDecorator('ViewHelper')
                  ->addDecorator('DtDdWrapper');
         }
+        return $this;
     }
 }

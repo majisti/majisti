@@ -17,10 +17,8 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Ean2Test.php 20096 2010-01-06 02:05:09Z bkarwin $
+ * @version    $Id: Ean2Test.php 23522 2010-12-16 20:33:22Z andries $
  */
-
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/TestHelper.php';
 
 require_once dirname(__FILE__) . '/TestCommon.php';
 
@@ -105,6 +103,8 @@ class Zend_Barcode_Object_Ean2Test extends Zend_Barcode_Object_TestCommon
     {
         $this->_object->setText('43');
         $this->assertEquals(41, $this->_object->getWidth());
+        $this->_object->setWithQuietZones(false);
+        $this->assertEquals(21, $this->_object->getWidth(true));
     }
 
     public function testCompleteGeneration()

@@ -20,8 +20,6 @@
  * @version    $Id$
  */
 
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/TestHelper.php';
-
 require_once 'Zend/Feed/Writer/Feed.php';
 
 /**
@@ -345,6 +343,20 @@ class Zend_Feed_Writer_FeedTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6', $writer->getId());
     }
 
+    public function testSetsIdAcceptsSimpleTagUri()
+    {
+        $writer = new Zend_Feed_Writer_Feed;
+        $writer->setId('tag:example.org,2010:/foo/bar/');
+        $this->assertEquals('tag:example.org,2010:/foo/bar/', $writer->getId());
+    }
+
+    public function testSetsIdAcceptsComplexTagUri()
+    {
+        $writer = new Zend_Feed_Writer_Feed;
+        $writer->setId('tag:diveintomark.org,2004-05-27:/archives/2004/05/27/howto-atom-linkblog');
+        $this->assertEquals('tag:diveintomark.org,2004-05-27:/archives/2004/05/27/howto-atom-linkblog', $writer->getId());
+    }
+
     public function testSetIdThrowsExceptionOnInvalidParameter()
     {
         $writer = new Zend_Feed_Writer_Feed;
@@ -631,7 +643,7 @@ class Zend_Feed_Writer_FeedTest extends PHPUnit_Framework_TestCase
         $writer = new Zend_Feed_Writer_Feed;
         $this->assertTrue(is_null($writer->getFeedLinks()));
     }
-    
+
     public function testSetsBaseUrl()
     {
         $writer = new Zend_Feed_Writer_Feed;
@@ -654,14 +666,14 @@ class Zend_Feed_Writer_FeedTest extends PHPUnit_Framework_TestCase
         $writer = new Zend_Feed_Writer_Feed;
         $this->assertTrue(is_null($writer->getBaseUrl()));
     }
-    
+
     public function testAddsHubUrl()
     {
         $writer = new Zend_Feed_Writer_Feed;
         $writer->addHub('http://www.example.com/hub');
         $this->assertEquals(array('http://www.example.com/hub'), $writer->getHubs());
     }
-    
+
     public function testAddsManyHubUrls()
     {
         $writer = new Zend_Feed_Writer_Feed;
@@ -691,14 +703,14 @@ class Zend_Feed_Writer_FeedTest extends PHPUnit_Framework_TestCase
         $entry = $writer->createEntry();
         $this->assertTrue($entry instanceof Zend_Feed_Writer_Entry);
     }
-    
+
     public function testAddsCategory()
     {
         $writer = new Zend_Feed_Writer_Feed;
         $writer->addCategory(array('term'=>'cat_dog'));
         $this->assertEquals(array(array('term'=>'cat_dog')), $writer->getCategories());
     }
-    
+
     public function testAddsManyCategories()
     {
         $writer = new Zend_Feed_Writer_Feed;
@@ -715,7 +727,7 @@ class Zend_Feed_Writer_FeedTest extends PHPUnit_Framework_TestCase
         } catch (Zend_Feed_Exception $e) {
         }
     }
-    
+
     public function testAddingCategoryWithInvalidUriAsSchemeThrowsException()
     {
         $writer = new Zend_Feed_Writer_Feed;
@@ -821,7 +833,7 @@ class Zend_Feed_Writer_FeedTest extends PHPUnit_Framework_TestCase
             'width' => '88'
         ), $writer->getImage());
     }
-    
+
     public function testSetsImageDescription()
     {
         $writer = new Zend_Feed_Writer_Feed;
@@ -833,6 +845,50 @@ class Zend_Feed_Writer_FeedTest extends PHPUnit_Framework_TestCase
             'uri' => 'http://www.example.com/logo.gif',
             'description' => 'Image description'
         ), $writer->getImage());
+    }
+
+    // Icon Tests
+
+    public function testSetsIconUri()
+    {
+        $writer = new Zend_Feed_Writer_Feed;
+        $writer->setIcon(array(
+            'uri' => 'http://www.example.com/logo.gif'
+        ));
+        $this->assertEquals(array(
+            'uri' => 'http://www.example.com/logo.gif'
+        ), $writer->getIcon());
+    }
+
+    /**
+     * @expectedException Zend_Feed_Exception
+     */
+    public function testSetsIconUriThrowsExceptionOnEmptyUri()
+    {
+        $writer = new Zend_Feed_Writer_Feed;
+        $writer->setIcon(array(
+            'uri' => ''
+        ));
+    }
+
+    /**
+     * @expectedException Zend_Feed_Exception
+     */
+    public function testSetsIconUriThrowsExceptionOnMissingUri()
+    {
+        $writer = new Zend_Feed_Writer_Feed;
+        $writer->setIcon(array());
+    }
+
+    /**
+     * @expectedException Zend_Feed_Exception
+     */
+    public function testSetsIconUriThrowsExceptionOnInvalidUri()
+    {
+        $writer = new Zend_Feed_Writer_Feed;
+        $writer->setIcon(array(
+            'uri' => 'http://'
+        ));
     }
 
     public function testGetCategoriesReturnsNullIfNotSet()

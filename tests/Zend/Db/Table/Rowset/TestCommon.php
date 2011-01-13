@@ -17,7 +17,7 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: TestCommon.php 20096 2010-01-06 02:05:09Z bkarwin $
+ * @version    $Id: TestCommon.php 23510 2010-12-15 18:34:36Z andries $
  */
 
 
@@ -27,7 +27,7 @@
 require_once 'Zend/Db/Table/TestSetup.php';
 
 
-PHPUnit_Util_Filter::addFileToFilter(__FILE__);
+
 
 
 /**
@@ -262,6 +262,81 @@ abstract class Zend_Db_Table_Rowset_TestCommon extends Zend_Db_Table_TestSetup
             $this->assertEquals('The specified Table is of class My_ZendDbTable_TableProducts, expecting class to be instance of My_ZendDbTable_TableBugs', $e->getMessage());
         }
         $this->assertFalse($connected);
+    }
+
+    /**
+     * @group ZF-9213
+     * @group ZF-10173
+     */
+    public function testTableRowsetIndexesValid()
+    {
+        $rowset = $this->_table['bugs']->fetchAll();
+        try {
+            $rowset[-1];
+            $this->fail();
+        } catch (Exception $e) {
+            $this->assertType('Zend_Db_Table_Rowset_Exception', $e);
+            $this->assertContains('Illegal index', $e->getMessage());
+        }
+
+        $this->assertTrue($rowset[0] instanceof Zend_Db_Table_Row);
+
+        try {
+            $row = $rowset[count($rowset) + 1];
+            $this->fail();
+        } catch (Exception $e) {
+            $this->assertType('Zend_Db_Table_Rowset_Exception', $e);
+            $this->assertContains('Illegal index', $e->getMessage());
+        }
+        $this->assertEquals(0, $rowset->key());
+    }
+
+
+
+    /**
+     * @group ZF-8486
+     */
+    public function testTableRowsetIteratesAndWillReturnLastRowAfter()
+    {
+        $table = $this->_table['bugs'];
+        $rowset = $table->fetchAll('bug_id IN (1,2,3,4)', 'bug_id ASC');
+        foreach ($rowset as $row) {
+            $lastRow = $row;
+        }
+
+        $numRows = $rowset->count();
+        $this->assertEquals(4, $numRows);
+
+        $rowset->seek(3);
+        $seekLastRow = $rowset->current();
+
+        $this->assertSame($lastRow, $seekLastRow);
+    }
+
+    /**
+     * @group ZF-8486
+     */
+    public function testTableRowsetThrowsExceptionOnInvalidSeek()
+    {
+        $table = $this->_table['bugs'];
+        $rowset = $table->fetchAll('bug_id IN (1,2,3,4)', 'bug_id ASC');
+        $rowset->seek(3);
+
+        $this->setExpectedException('Zend_Db_Table_Rowset_Exception', 'Illegal index 4');
+        $rowset->seek(4);
+    }
+
+    /**
+     * @group ZF-8486
+     */
+    public function testTableRowsetThrowsExceptionOnInvalidGetRow()
+    {
+        $table = $this->_table['bugs'];
+        $rowset = $table->fetchAll('bug_id IN (1,2,3,4)', 'bug_id ASC');
+        $rowset->getRow(3);
+
+        $this->setExpectedException('Zend_Db_Table_Rowset_Exception', 'No row could be found at position 4');
+        $rowset->getRow(4);
     }
 
 }

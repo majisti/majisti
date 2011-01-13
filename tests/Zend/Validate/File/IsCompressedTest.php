@@ -17,18 +17,13 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: IsCompressedTest.php 20444 2010-01-20 16:04:13Z ralph $
+ * @version    $Id: IsCompressedTest.php 23522 2010-12-16 20:33:22Z andries $
  */
 
 // Call Zend_Validate_File_MimeTypeTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
     define("PHPUnit_MAIN_METHOD", "Zend_Validate_File_IsCompressedTest::main");
 }
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
 /**
  * @see Zend_Validate_File_IsCompressed
@@ -73,7 +68,7 @@ class Zend_Validate_File_IsCompressedTest extends PHPUnit_Framework_TestCase
                 . ' but mime_content_type exhibits buggy behavior on this system.'
                 );
         }
-        
+
         $valuesExpected = array(
             array(null, true),
             array('zip', true),
@@ -188,13 +183,18 @@ class Zend_Validate_File_IsCompressedTest extends PHPUnit_Framework_TestCase
 
     public function testOptionsAtConstructor()
     {
+        if (!extension_loaded('fileinfo')) {
+            $this->markTestSkipped('This PHP Version has no finfo installed');
+        }
+
+        $magicFile = dirname(__FILE__) . '/_files/magic.mime';
         $validator = new Zend_Validate_File_IsCompressed(array(
             'image/gif',
             'image/jpg',
-            'magicfile' => __FILE__,
+            'magicfile'   => $magicFile,
             'headerCheck' => true));
 
-        $this->assertEquals(__FILE__, $validator->getMagicFile());
+        $this->assertEquals($magicFile, $validator->getMagicFile());
         $this->assertTrue($validator->getHeaderCheck());
         $this->assertEquals('image/gif,image/jpg', $validator->getMimeType());
     }

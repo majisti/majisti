@@ -17,17 +17,12 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: AutoloaderTest.php 20096 2010-01-06 02:05:09Z bkarwin $
+ * @version    $Id: AutoloaderTest.php 23522 2010-12-16 20:33:22Z andries $
  */
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Zend_Loader_AutoloaderTest::main');
 }
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../../TestHelper.php';
 
 /**
  * @see Zend_Loader_Autoloader
@@ -380,6 +375,20 @@ class Zend_Loader_AutoloaderTest extends PHPUnit_Framework_TestCase
         $class = $this->autoloader->autoload('Zend_ThisClass_WilNever_Exist');
         $this->assertEquals('Zend_ThisClass_WilNever_Exist', $class);
         $this->assertFalse(class_exists($class, false));
+    }
+
+    /**
+     * @group ZF-10024
+     */
+    public function testClosuresRegisteredWithAutoloaderShouldBeUtilized()
+    {
+        if (version_compare(PHP_VERSION, '5.3.0', '<')) {
+            $this->markTestSkipped(__METHOD__ . ' requires PHP version 5.3.0 or greater');
+        }
+
+        $closure = require_once dirname(__FILE__) . '/_files/AutoloaderClosure.php';
+        $this->autoloader->pushAutoloader($closure);
+        $this->assertTrue(Zend_Loader_Autoloader::autoload('AutoloaderTest_AutoloaderClosure'));
     }
 
     public function addTestIncludePath()

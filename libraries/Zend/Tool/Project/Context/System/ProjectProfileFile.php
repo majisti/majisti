@@ -17,7 +17,7 @@
  * @subpackage Framework
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ProjectProfileFile.php 20967 2010-02-07 18:17:49Z ralph $
+ * @version    $Id: ProjectProfileFile.php 23484 2010-12-10 03:57:59Z mjh_ca $
  */
 
 /**
@@ -66,7 +66,7 @@ class Zend_Tool_Project_Context_System_ProjectProfileFile
      * @var Zend_Tool_Project_Profile
      */
     protected $_profile = null;
-    
+
     /**
      * getName()
      *
@@ -76,7 +76,7 @@ class Zend_Tool_Project_Context_System_ProjectProfileFile
     {
         return 'ProjectProfileFile';
     }
-    
+
     /**
      * setProfile()
      *

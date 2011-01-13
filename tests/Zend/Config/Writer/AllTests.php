@@ -17,12 +17,8 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: AllTests.php 20096 2010-01-06 02:05:09Z bkarwin $
+ * @version    $Id: AllTests.php 23522 2010-12-16 20:33:22Z andries $
  */
-
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
-
-PHPUnit_Util_Filter::addDirectoryToFilter(dirname(__FILE__) . "/temp", "cfg");
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Zend_Config_Writer_AllTests::main');
@@ -30,7 +26,9 @@ if (!defined('PHPUnit_MAIN_METHOD')) {
 
 require_once 'Zend/Config/Writer/ArrayTest.php';
 require_once 'Zend/Config/Writer/IniTest.php';
+require_once 'Zend/Config/Writer/JsonTest.php';
 require_once 'Zend/Config/Writer/XmlTest.php';
+require_once 'Zend/Config/Writer/YamlTest.php';
 
 /**
  * @category   Zend
@@ -53,7 +51,9 @@ class Zend_Config_Writer_AllTests
 
         $suite->addTestSuite('Zend_Config_Writer_ArrayTest');
         $suite->addTestSuite('Zend_Config_Writer_IniTest');
+        $suite->addTestSuite('Zend_Config_Writer_JsonTest');
         $suite->addTestSuite('Zend_Config_Writer_XmlTest');
+        $suite->addTestSuite('Zend_Config_Writer_YamlTest');
 
         return $suite;
     }

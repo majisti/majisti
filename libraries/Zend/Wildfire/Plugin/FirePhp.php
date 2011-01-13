@@ -17,7 +17,7 @@
  * @subpackage Plugin
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: FirePhp.php 20096 2010-01-06 02:05:09Z bkarwin $
+ * @version    $Id: FirePhp.php 23532 2010-12-17 18:36:35Z cadorn $
  */
 
 /** Zend_Controller_Request_Abstract */
@@ -323,11 +323,12 @@ class Zend_Wildfire_Plugin_FirePhp implements Zend_Wildfire_Plugin_Interface
      * Starts a group in the Firebug Console
      *
      * @param string $title The title of the group
+     * @param array $options OPTIONAL Setting 'Collapsed' to true will initialize group collapsed instead of expanded
      * @return TRUE if the group instruction was added to the response headers or buffered.
      */
-    public static function group($title)
+    public static function group($title, $options=array())
     {
-        return self::send(null, $title, self::GROUP_START);
+        return self::send(null, $title, self::GROUP_START, $options);
     }
 
     /**
@@ -475,7 +476,8 @@ class Zend_Wildfire_Plugin_FirePhp implements Zend_Wildfire_Plugin_Interface
             if (!isset($meta['File']) || !isset($meta['Line'])) {
 
                 if (!$trace) {
-                    $trace = $firephp->_getStackTrace($options);
+                    $trace = $firephp->_getStackTrace(array_merge($options,
+                                                                  array('maxTraceDepth'=>$options['maxTraceDepth']+1)));
                 }
 
                 $meta['File'] = isset($trace[0]['file'])?$trace[0]['file']:'';
@@ -485,6 +487,12 @@ class Zend_Wildfire_Plugin_FirePhp implements Zend_Wildfire_Plugin_Interface
         } else {
             unset($meta['File']);
             unset($meta['Line']);
+        }
+
+        if ($meta['Type'] == self::GROUP_START) {
+            if (isset($options['Collapsed'])) {
+                $meta['Collapsed'] = ($options['Collapsed'])?'true':'false';
+            }
         }
 
         if ($meta['Type'] == self::DUMP) {
@@ -513,7 +521,22 @@ class Zend_Wildfire_Plugin_FirePhp implements Zend_Wildfire_Plugin_Interface
     {
         $trace = debug_backtrace();
 
-        return array_splice($trace, $options['traceOffset'], $options['maxTraceDepth']);
+        $trace = array_splice($trace, $options['traceOffset']);
+
+        if (!count($trace)) {
+            return $trace;
+        }
+
+        if (isset($options['fixZendLogOffsetIfApplicable']) && $options['fixZendLogOffsetIfApplicable']) {
+            if (count($trace) >=3 &&
+                isset($trace[0]['file']) && substr($trace[0]['file'], -7, 7)=='Log.php' &&
+                isset($trace[1]['function']) && $trace[1]['function']=='__call') {
+
+                $trace = array_splice($trace, 2);
+            }
+        }
+
+        return array_splice($trace, 0, $options['maxTraceDepth']);
     }
 
     /**

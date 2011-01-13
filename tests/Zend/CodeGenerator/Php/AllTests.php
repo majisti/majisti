@@ -17,10 +17,8 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: AllTests.php 20096 2010-01-06 02:05:09Z bkarwin $
+ * @version    $Id: AllTests.php 23522 2010-12-16 20:33:22Z andries $
  */
-
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Zend_CodeGenerator_Php_AllTests::main');
@@ -35,6 +33,7 @@ require_once 'Zend/CodeGenerator/Php/FileTest.php';
 require_once 'Zend/CodeGenerator/Php/MethodTest.php';
 require_once 'Zend/CodeGenerator/Php/ParameterTest.php';
 require_once 'Zend/CodeGenerator/Php/PropertyTest.php';
+require_once 'Zend/CodeGenerator/Php/Property/DefaultValueTest.php';
 
 /**
  * @category   Zend
@@ -65,6 +64,7 @@ class Zend_CodeGenerator_Php_AllTests
         $suite->addTestSuite('Zend_CodeGenerator_Php_MethodTest');
         $suite->addTestSuite('Zend_CodeGenerator_Php_ParameterTest');
         $suite->addTestSuite('Zend_CodeGenerator_Php_PropertyTest');
+        $suite->addTestSuite('Zend_CodeGenerator_Php_Property_DefaultValueTest');
 
         return $suite;
     }

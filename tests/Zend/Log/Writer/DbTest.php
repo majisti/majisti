@@ -17,13 +17,14 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: DbTest.php 20096 2010-01-06 02:05:09Z bkarwin $
+ * @version    $Id: DbTest.php 23522 2010-12-16 20:33:22Z andries $
  */
 
-/** PHPUnit_Framework_TestCase */
-require_once 'PHPUnit/Framework/TestCase.php';
+if (!defined('PHPUnit_MAIN_METHOD')) {
+    define('PHPUnit_MAIN_METHOD', 'Zend_Log_Writer_DbTest::main');
+}
 
-/** Zend_Log_Writer_Mock */
+/** Zend_Log_Writer_Db */
 require_once 'Zend/Log/Writer/Db.php';
 
 /**
@@ -36,6 +37,12 @@ require_once 'Zend/Log/Writer/Db.php';
  */
 class Zend_Log_Writer_DbTest extends PHPUnit_Framework_TestCase
 {
+    public static function main()
+    {
+        $suite  = new PHPUnit_Framework_TestSuite(__CLASS__);
+        $result = PHPUnit_TextUI_TestRunner::run($suite);
+    }
+
     public function setUp()
     {
         $this->tableName = 'db-table-name';
@@ -47,7 +54,8 @@ class Zend_Log_Writer_DbTest extends PHPUnit_Framework_TestCase
     public function testFormattingIsNotSupported()
     {
         try {
-            $this->writer->setFormatter(new stdclass);
+            require_once 'Zend/Log/Formatter/Simple.php';
+            $this->writer->setFormatter(new Zend_Log_Formatter_Simple());
             $this->fail();
         } catch (Exception $e) {
             $this->assertType('Zend_Log_Exception', $e);
@@ -109,7 +117,7 @@ class Zend_Log_Writer_DbTest extends PHPUnit_Framework_TestCase
             $this->assertEquals('Database adapter is null', $e->getMessage());
         }
     }
-    
+
     public function testFactory()
     {
         $cfg = array('log' => array('memory' => array(
@@ -120,8 +128,22 @@ class Zend_Log_Writer_DbTest extends PHPUnit_Framework_TestCase
             ),
         )));
 
+        require_once 'Zend/Log.php';
         $logger = Zend_Log::factory($cfg['log']);
         $this->assertTrue($logger instanceof Zend_Log);
+    }
+
+    /**
+     * @group ZF-10089
+     */
+    public function testThrowStrictSetFormatter()
+    {
+        try {
+            $this->writer->setFormatter(new StdClass());
+        } catch (Exception $e) {
+            $this->assertType('PHPUnit_Framework_Error', $e);
+            $this->assertContains('must implement interface', $e->getMessage());
+        }
     }
 }
 
@@ -135,4 +157,8 @@ class Zend_Log_Writer_DbTest_MockDbAdapter
         $this->calls[$method][] = $params;
     }
 
+}
+
+if (PHPUnit_MAIN_METHOD == 'Zend_Log_Writer_DbTest::main') {
+    Zend_Log_Writer_DbTest::main();
 }

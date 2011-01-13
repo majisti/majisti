@@ -17,15 +17,13 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ImageTest.php 20096 2010-01-06 02:05:09Z bkarwin $
+ * @version    $Id: ImageTest.php 23522 2010-12-16 20:33:22Z andries $
  */
 
 // Call Zend_Form_Element_ImageTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
     define("PHPUnit_MAIN_METHOD", "Zend_Form_Element_ImageTest::main");
 }
-
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
 require_once 'Zend/Form/Element/Image.php';
 require_once 'Zend/View.php';
@@ -204,6 +202,17 @@ class Zend_Form_Element_ImageTest extends PHPUnit_Framework_TestCase
         if (strtolower(substr(PHP_OS, 0, 3)) == 'win' && version_compare(PHP_VERSION, '5.1.4', '=')) {
             $this->markTestIncomplete('Error occurs for PHP 5.1.4 on Windows');
         }
+    }
+
+    /**
+     * Prove the fluent interface on Zend_Form_Element_Image::loadDefaultDecorators
+     *
+     * @link http://framework.zend.com/issues/browse/ZF-9913
+     * @return void
+     */
+    public function testFluentInterfaceOnLoadDefaultDecorators()
+    {
+        $this->assertSame($this->element, $this->element->loadDefaultDecorators());
     }
 }
 

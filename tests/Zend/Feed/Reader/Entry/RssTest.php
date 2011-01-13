@@ -17,10 +17,9 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: RssTest.php 22087 2010-05-04 11:29:09Z padraic $
+ * @version    $Id: RssTest.php 23514 2010-12-15 19:29:04Z mjh_ca $
  */
 
-require_once 'PHPUnit/Framework/TestCase.php';
 require_once 'Zend/Feed/Reader.php';
 
 /**
@@ -1909,7 +1908,7 @@ class Zend_Feed_Reader_Entry_RssTest extends PHPUnit_Framework_TestCase
         $entry = $feed->current();
         $fdate = $entry->getDateModified();
         $edate = new Zend_Date;
-        $edate->set('2010-01-04T08:14:00-0600', Zend_Date::ISO_8601);
+        $edate->set('2010-01-04T02:14:00-0600', Zend_Date::ISO_8601);
         Zend_Registry::getInstance()->offsetUnset('Zend_Locale');
         $this->assertTrue($edate->equals($fdate));
     }

@@ -17,14 +17,18 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ChainingTest.php 20096 2010-01-06 02:05:09Z bkarwin $
+ * @version    $Id: ChainingTest.php 23522 2010-12-16 20:33:22Z andries $
  */
 
-/** PHPUnit_Framework_TestCase */
-require_once 'PHPUnit/Framework/TestCase.php';
+if (!defined('PHPUnit_MAIN_METHOD')) {
+    define('PHPUnit_MAIN_METHOD', 'Zend_Log_Filter_ChainingTest::main');
+}
 
 /** Zend_Log */
 require_once 'Zend/Log.php';
+
+/** Zend_Log_Writer_Stream */
+require_once 'Zend/Log/Writer/Stream.php';
 
 /**
  * @category   Zend
@@ -36,6 +40,12 @@ require_once 'Zend/Log.php';
  */
 class Zend_Log_Filter_ChainingTest extends PHPUnit_Framework_TestCase
 {
+    public static function main()
+    {
+        $suite  = new PHPUnit_Framework_TestSuite(__CLASS__);
+        $result = PHPUnit_TextUI_TestRunner::run($suite);
+    }
+
     public function setUp()
     {
         $this->log = fopen('php://memory', 'w');
@@ -84,5 +94,8 @@ class Zend_Log_Filter_ChainingTest extends PHPUnit_Framework_TestCase
         $this->assertContains($err, $logdata);
         $this->assertNotContains($warn, $logdata);
     }
+}
 
+if (PHPUnit_MAIN_METHOD == 'Zend_Log_Filter_ChainingTest::main') {
+    Zend_Log_Filter_ChainingTest::main();
 }

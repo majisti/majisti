@@ -17,15 +17,13 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: FileTest.php 20268 2010-01-13 20:18:22Z matthew $
+ * @version    $Id: FileTest.php 23522 2010-12-16 20:33:22Z andries $
  */
 
 // Call Zend_Form_Element_FileTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
     define("PHPUnit_MAIN_METHOD", "Zend_Form_Element_FileTest::main");
 }
-
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
 require_once 'Zend/Form/Element/File.php';
 require_once 'Zend/File/Transfer/Adapter/Abstract.php';
@@ -480,6 +478,18 @@ class Zend_Form_Element_FileTest extends PHPUnit_Framework_TestCase
     public function errorHandlerIgnore($errno, $errstr, $errfile, $errline, array $errcontext)
     {
         $this->_errorOccurred = true;
+    }
+
+
+    /**
+     * Prove the fluent interface on Zend_Form_Element_File::loadDefaultDecorators
+     *
+     * @link http://framework.zend.com/issues/browse/ZF-9913
+     * @return void
+     */
+    public function testFluentInterfaceOnLoadDefaultDecorators()
+    {
+        $this->assertSame($this->element, $this->element->loadDefaultDecorators());
     }
 }
 

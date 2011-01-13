@@ -17,15 +17,13 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: CaptchaTest.php 20096 2010-01-06 02:05:09Z bkarwin $
+ * @version    $Id: CaptchaTest.php 23522 2010-12-16 20:33:22Z andries $
  */
 
 // Call Zend_Form_Element_CaptchaTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
     define("PHPUnit_MAIN_METHOD", "Zend_Form_Element_CaptchaTest::main");
 }
-
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
 /** Zend_Form_Element_Captcha */
 require_once 'Zend/Form/Element/Captcha.php';
@@ -45,7 +43,6 @@ class Zend_Form_Element_CaptchaTest extends PHPUnit_Framework_TestCase
 {
     public static function main()
     {
-        require_once 'PHPUnit/TextUI/TestRunner.php';
 
         $suite  = new PHPUnit_Framework_TestSuite('Zend_Form_Element_CaptchaTest');
         PHPUnit_TextUI_TestRunner::run($suite);
@@ -162,6 +159,17 @@ class Zend_Form_Element_CaptchaTest extends PHPUnit_Framework_TestCase
     {
         require_once 'Zend/View.php';
         $this->assertFalse(array_key_exists('helper', $this->element->getAttribs()));
+    }
+
+    /**
+     * Prove the fluent interface on Zend_Form_Element_Captcha::loadDefaultDecorators
+     *
+     * @link http://framework.zend.com/issues/browse/ZF-9913
+     * @return void
+     */
+    public function testFluentInterfaceOnLoadDefaultDecorators()
+    {
+        $this->assertSame($this->element, $this->element->loadDefaultDecorators());
     }
 }
 

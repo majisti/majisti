@@ -17,11 +17,10 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: RsaTest.php 22042 2010-04-28 19:33:31Z padraic $
+ * @version    $Id: RsaTest.php 23514 2010-12-15 19:29:04Z mjh_ca $
  */
 
 require_once 'Zend/Crypt/Rsa.php';
-require_once 'PHPUnit/Framework/TestCase.php';
 
 
 /**
@@ -39,8 +38,18 @@ class Zend_Crypt_RsaTest extends PHPUnit_Framework_TestCase
 
     protected $_testPemPath = null;
 
-    public function setup()
+    public function setUp()
     {
+        try {
+            $rsaObject = new Zend_Crypt_Rsa();
+        } catch (Zend_Crypt_Rsa_Exception $e) {
+            if (strpos($e->getMessage(), 'requires openssl extention') !== false) {
+                $this->markTestSkipped($e->getMessage());
+            } else {
+                throw $e;
+            }
+        }
+
         $this->_testPemString = <<<RSAKEY
 -----BEGIN RSA PRIVATE KEY-----
 MIIBOgIBAAJBANDiE2+Xi/WnO+s120NiiJhNyIButVu6zxqlVzz0wy2j4kQVUC4Z

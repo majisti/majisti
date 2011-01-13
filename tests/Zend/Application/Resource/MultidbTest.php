@@ -21,13 +21,8 @@
  */
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
-    define('PHPUnit_MAIN_METHOD', 'Zend_Application_Resource_MailTest::main');
+    define('PHPUnit_MAIN_METHOD', 'Zend_Application_Resource_MultidbTest::main');
 }
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
 /**
  * Zend_Loader_Autoloader
@@ -82,6 +77,7 @@ class Zend_Application_Resource_MultidbTest extends PHPUnit_Framework_TestCase
     public function tearDown()
     {
         Zend_Db_Table::setDefaultAdapter(null);
+        Zend_Db_Table::setDefaultMetadataCache();
 
         // Restore original autoloaders
         $loaders = spl_autoload_functions();
@@ -187,7 +183,10 @@ class Zend_Application_Resource_MultidbTest extends PHPUnit_Framework_TestCase
             'username' => 'dba',
             'charset' => null,
             'persistent' => false,
-            'options' => array('caseFolding' => 0, 'autoQuoteIdentifiers' => true),
+            'options' => array(
+                'caseFolding'          => 0,
+                'autoQuoteIdentifiers' => true,
+                'fetchMode'            => 2),
             'driver_options' => array());
         $this->assertEquals($expected, $res->getDb('db2')->getConfig());
 
@@ -198,9 +197,53 @@ class Zend_Application_Resource_MultidbTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $res->getDb('db2')->getConfig());
     }
 
+    /**
+     * @group ZF-10049
+     */
+    public function testSetDefaultMetadataCache()
+    {
+        $cache = Zend_Cache::factory('Core', 'Black Hole', array(
+            'lifetime' => 120,
+            'automatic_serialization' => true
+        ));
 
+        $options = $this->_dbOptions;
+        $options['defaultMetadataCache'] = $cache;
+        $resource = new Zend_Application_Resource_Multidb($options);
+        $resource->init();
+        $this->assertType('Zend_Cache_Core', Zend_Db_Table::getDefaultMetadataCache());
+    }
+
+    /**
+     * @group ZF-10049
+     */
+    public function testSetDefaultMetadataCacheFromCacheManager()
+    {
+        $configCache = array(
+            'database' => array(
+                'frontend' => array(
+                    'name' => 'Core',
+                    'options' => array(
+                        'lifetime' => 120,
+                        'automatic_serialization' => true
+                    )
+                ),
+                'backend' => array(
+                    'name' => 'Black Hole'
+                )
+            )
+        );
+        $this->bootstrap->registerPluginResource('cachemanager', $configCache);
+
+        $options = $this->_dbOptions;
+        $options['defaultMetadataCache'] = 'database';
+        $resource = new Zend_Application_Resource_Multidb($options);
+        $resource->setBootstrap($this->bootstrap);
+        $resource->init();
+        $this->assertType('Zend_Cache_Core', Zend_Db_Table::getDefaultMetadataCache());
+    }
 }
 
-if (PHPUnit_MAIN_METHOD == 'Zend_Application_Resource_LogTest::main') {
-    Zend_Application_Resource_LogTest::main();
+if (PHPUnit_MAIN_METHOD == 'Zend_Application_Resource_MultidbTest::main') {
+    Zend_Application_Resource_MultidbTest::main();
 }

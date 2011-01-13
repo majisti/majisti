@@ -15,40 +15,24 @@
  * @category   Zend
  * @package    Zend_Service_WindowsAzure
  * @subpackage UnitTests
- * @version    $Id: StorageTest.php 28585 2009-09-07 12:12:56Z unknown $
+ * @version    $Id$
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-/**
- * Test helpers
- */
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
-
-/**
- * @see Zend_Service_WindowsAzure_Storage
- */
+/** Zend_Service_WindowsAzure_Storage */
 require_once 'Zend/Service/WindowsAzure/Storage.php';
-
-if (!defined('PHPUnit_MAIN_METHOD')) {
-    define('PHPUnit_MAIN_METHOD', 'Zend_Service_WindowsAzure_StorageTest::main');
-}
 
 /**
  * @category   Zend
  * @package    Zend_Service_WindowsAzure
  * @subpackage UnitTests
- * @version    $Id: StorageTest.php 28585 2009-09-07 12:12:56Z unknown $
+ * @version    $Id$
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_WindowsAzure_StorageTest extends PHPUnit_Framework_TestCase
 {
-    public static function main()
-    {
-        $suite  = new PHPUnit_Framework_TestSuite("Zend_Service_WindowsAzure_BlobStorageTest");
-        $result = PHPUnit_TextUI_TestRunner::run($suite);
-    }
 
     /**
      * Test constructor for devstore
@@ -58,7 +42,7 @@ class Zend_Service_WindowsAzure_StorageTest extends PHPUnit_Framework_TestCase
         $storage = new Zend_Service_WindowsAzure_Storage();
         $this->assertEquals('http://127.0.0.1:10000/devstoreaccount1', $storage->getBaseUrl());
     }
-    
+
     /**
      * Test constructor for production
      */
@@ -69,7 +53,3 @@ class Zend_Service_WindowsAzure_StorageTest extends PHPUnit_Framework_TestCase
     }
 }
 
-// Call Zend_Service_WindowsAzure_StorageTest::main() if this source file is executed directly.
-if (PHPUnit_MAIN_METHOD == "Zend_Service_WindowsAzure_StorageTest::main") {
-    Zend_Service_WindowsAzure_StorageTest::main();
-}

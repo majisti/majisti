@@ -17,17 +17,12 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: VersionTest.php 20096 2010-01-06 02:05:09Z bkarwin $
+ * @version    $Id: VersionTest.php 23522 2010-12-16 20:33:22Z andries $
  */
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Zend_VersionTest::main');
 }
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../TestHelper.php';
 
 /**
  * @see Zend_Version
@@ -89,6 +84,18 @@ class Zend_VersionTest extends PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * @group ZF-10363
+     */
+    public function testFetchLatestVersion()
+    {
+        $actual = Zend_Version::getLatest();
+        if ('not available' === $actual) {
+            $this->markTestIncomplete('http://framework.zend.com/ may be down');
+        }
+
+        $this->assertRegExp('/^[1-2](\.[0-9]+){2}/', $actual);
+    }
 }
 
 if (PHPUnit_MAIN_METHOD == "Zend_VersionTest::main") {

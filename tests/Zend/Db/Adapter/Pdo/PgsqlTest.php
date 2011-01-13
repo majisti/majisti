@@ -22,7 +22,6 @@
 
 require_once 'Zend/Db/Adapter/Pdo/TestCommon.php';
 
-PHPUnit_Util_Filter::addFileToFilter(__FILE__);
 
 /**
  * @category   Zend
@@ -206,5 +205,36 @@ class Zend_Db_Adapter_Pdo_PgsqlTest extends Zend_Db_Adapter_Pdo_TestCommon
         $description = $this->_db->describeTable('zf_pgsql_bpchar');
         $this->_util->dropTable('zf_pgsql_bpchar');
         $this->assertEquals('Default', $description['pg_name']['DEFAULT']);
+    }
+
+    /**
+     * @group ZF-10160
+     * @group ZF-10257
+     */
+    public function testQuoteIdentifiersInSequence()
+    {
+        $this->_util->createSequence('camelCase_id_seq');
+        $this->_util->createSequence("single'quotes");
+
+        $this->_db->nextSequenceId('camelCase_id_seq');
+        $this->_db->nextSequenceId($this->_db->quoteIdentifier('camelCase_id_seq', true));
+        $this->_db->lastSequenceId('camelCase_id_seq');
+        $this->_db->lastSequenceId($this->_db->quoteIdentifier('camelCase_id_seq', true));
+
+        require_once 'Zend/Db/Expr.php';
+        $this->_db->lastSequenceId(new Zend_Db_Expr('camelCase_id_seq'));
+        $lastId = $this->_db->lastSequenceId(new Zend_Db_Expr('camelCase_id_seq'));
+        $this->assertEquals(2, $lastId);
+
+        $this->_db->nextSequenceId('"public"."camelCase_id_seq"');
+        $lastId = $this->_db->lastSequenceId('"public"."camelCase_id_seq"');
+        $this->assertEquals(3, $lastId);
+
+        $this->_db->nextSequenceId("single'quotes");
+        $lastId = $this->_db->lastSequenceId("single'quotes");
+        $this->assertEquals(1, $lastId);
+
+        $this->_util->dropSequence("single'quotes");
+        $this->_util->dropSequence('camelCase_id_seq');
     }
 }
