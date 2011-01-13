@@ -275,4 +275,47 @@ class View extends \Zend_View
 
         return $render;
     }
+
+    /**
+     * @desc Renders a parent script in the stack. This function must be called
+     * from a view script. The view script will specify __FILE__ as the default
+     * argument in order to call its parent in the stack.
+     *
+     * @param strign $file The current script file. Use __FILE__
+     *
+     * @return mixed The parent's content. Note that setRenderReturn could have
+     * been used in that parent and the content set will be returned.
+     *
+     * @throws Exception If there is no parent to call.
+     * @throws Exception If argument was not matching the last script path
+     * in the script paths stack.
+     */
+    public function renderParent($file)
+    {
+        $scriptPaths = $this->getScriptPaths();
+        $child = array_shift($scriptPaths);
+
+        if( count($scriptPaths) <= 0 ) {
+            throw new Exception("There is no parent script in the stack.");
+        }
+
+        $script = substr($file, 0, strlen($child));
+
+        if( $script !== $child ) {
+            throw new Exception("You must call renderParent with __FILE__ as" .
+                " function argument.");
+        }
+
+        $renderFile = substr($file, strlen($child), strlen($file));
+
+        $this->setScriptPath(array_reverse($scriptPaths));
+
+        $content = $this->render($renderFile);
+
+        array_unshift($scriptPaths, $child);
+
+        $this->setScriptPath(array_reverse($scriptPaths));
+
+        return $content;
+    }
 }
