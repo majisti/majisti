@@ -15,48 +15,32 @@
  * @category   Zend
  * @package    Zend_Service_WindowsAzure
  * @subpackage UnitTests
- * @version    $Id: BlobStorageTest.php 14561 2009-05-07 08:05:12Z unknown $
+ * @version    $Id$
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-/**
- * Test helpers
- */
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
-
-/**
- * @see Zend_Service_WindowsAzure_SessionHandler 
- */
+/** Zend_Service_WindowsAzure_SessionHandler */
 require_once 'Zend/Service/WindowsAzure/SessionHandler.php';
 
-/**
- * @see Zend_Service_WindowsAzure_Storage_Table 
- */
+/** Zend_Service_WindowsAzure_Storage_Table */
 require_once 'Zend/Service/WindowsAzure/Storage/Table.php';
-
-if (!defined('PHPUnit_MAIN_METHOD')) {
-    define('PHPUnit_MAIN_METHOD', 'Zend_Service_WindowsAzure_SessionHandlerTest::main');
-}
 
 /**
  * @category   Zend
  * @package    Zend_Service_WindowsAzure
  * @subpackage UnitTests
- * @version    $Id: BlobStorageTest.php 14561 2009-05-07 08:05:12Z unknown $
+ * @version    $Id$
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_WindowsAzure_SessionHandlerTest extends PHPUnit_Framework_TestCase
 {
+
+    protected static $uniqId = 0;
+
     public function __construct()
     {
-    }
-
-    public static function main()
-    {
-        $suite  = new PHPUnit_Framework_TestSuite("Zend_Service_WindowsAzure_SessionHandlerTest");
-        $result = PHPUnit_TextUI_TestRunner::run($suite);
     }
 
     /**
@@ -65,7 +49,7 @@ class Zend_Service_WindowsAzure_SessionHandlerTest extends PHPUnit_Framework_Tes
     protected function setUp()
     {
         if (!TESTS_ZEND_SERVICE_WINDOWSAZURE_SESSIONHANDLER_RUNTESTS) {
-            $this->markTestSkipped('Windows Azure Tests disabled');
+            $this->markTestSkipped('This test case requires TESTS_ZEND_SERVICE_WINDOWSAZURE_SESSIONHANDLER_RUNTESTS to be enabled in TestConfiguration.php');
         }
     }
 
@@ -74,6 +58,9 @@ class Zend_Service_WindowsAzure_SessionHandlerTest extends PHPUnit_Framework_Tes
      */
     protected function tearDown()
     {
+        if ($this->status == PHPUnit_Runner_BaseTestRunner::STATUS_SKIPPED) {
+            return;
+        }
         $storageClient = $this->createStorageInstance();
         for ($i = 1; $i <= self::$uniqId; $i++)
         {
@@ -105,8 +92,6 @@ class Zend_Service_WindowsAzure_SessionHandlerTest extends PHPUnit_Framework_Tes
         );
         return $sessionHandler;
     }
-
-    protected static $uniqId = 0;
 
     protected function generateName()
     {
@@ -181,17 +166,20 @@ class Zend_Service_WindowsAzure_SessionHandlerTest extends PHPUnit_Framework_Tes
      */
     public function testWrite()
     {
-        $storageClient = $this->createStorageInstance();
-        $tableName = $this->generateName();
-        $sessionHandler = $this->createSessionHandler($storageClient, $tableName);
-        $sessionHandler->open();
+        if (TESTS_ZEND_SERVICE_WINDOWSAZURE_SESSIONHANDLER_RUNTESTS) {
+            $storageClient = $this->createStorageInstance();
+            $tableName = $this->generateName();
+            $sessionHandler = $this->createSessionHandler($storageClient, $tableName);
+            $sessionHandler->open();
 
-        $sessionId = $this->session_id();
-        $sessionData = serialize( 'PHPAzure' );
-        $sessionHandler->write($sessionId, $sessionData);
+            $sessionId = $this->session_id();
+            $sessionData = serialize( 'PHPAzure' );
+            $sessionHandler->write($sessionId, $sessionData);
 
-        $verifyResult = $storageClient->retrieveEntities($tableName);
-        $this->assertEquals(1, count($verifyResult));
+
+            $verifyResult = $storageClient->retrieveEntities($tableName);
+            $this->assertEquals(1, count($verifyResult));
+        }
     }
 
     /**
@@ -244,7 +232,3 @@ class Zend_Service_WindowsAzure_SessionHandlerTest extends PHPUnit_Framework_Tes
     }
 }
 
-// Call Zend_Service_WindowsAzure_SessionHandlerTest::main() if this source file is executed directly.
-if (PHPUnit_MAIN_METHOD == "Zend_Service_WindowsAzure_SessionHandlerTest::main") {
-    Zend_Service_WindowsAzure_SessionHandlerTest::main();
-}

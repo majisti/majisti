@@ -25,11 +25,6 @@ if (!defined('PHPUnit_MAIN_METHOD')) {
 }
 
 /**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../../TestHelper.php';
-
-/**
  * @see Zend_Validate_PostCode
  */
 require_once 'Zend/Validate/PostCode.php';
@@ -131,7 +126,7 @@ class Zend_Validate_PostCodeTest extends PHPUnit_Framework_TestCase
             $this->_validator->setLocale('gez_ER');
             $this->fail();
         } catch (Zend_Validate_Exception $e) {
-            $this->assertContains('Unable to detect a format', $e->getMessage());
+            $this->assertContains('Unable to detect a postcode format', $e->getMessage());
         }
     }
 
@@ -164,14 +159,14 @@ class Zend_Validate_PostCodeTest extends PHPUnit_Framework_TestCase
             $this->_validator->setFormat(null);
             $this->fail();
         } catch (Zend_Validate_Exception $e) {
-            $this->assertContains('a not empty string', $e->getMessage());
+            $this->assertContains('A postcode-format string has to be given', $e->getMessage());
         }
 
         try {
             $this->_validator->setFormat('');
             $this->fail();
         } catch (Zend_Validate_Exception $e) {
-            $this->assertContains('a not empty string', $e->getMessage());
+            $this->assertContains('A postcode-format string has to be given', $e->getMessage());
         }
     }
 
@@ -182,7 +177,7 @@ class Zend_Validate_PostCodeTest extends PHPUnit_Framework_TestCase
     {
         $this->assertFalse($this->_validator->isValid('hello'));
         $message = $this->_validator->getMessages();
-        $this->assertContains('not appear to be an postal code', $message['postcodeNoMatch']);
+        $this->assertContains('not appear to be a postal code', $message['postcodeNoMatch']);
     }
 }
 

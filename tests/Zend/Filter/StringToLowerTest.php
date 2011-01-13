@@ -17,14 +17,8 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: StringToLowerTest.php 20912 2010-02-04 19:44:42Z thomas $
+ * @version    $Id: StringToLowerTest.php 23522 2010-12-16 20:33:22Z andries $
  */
-
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../../TestHelper.php';
 
 /**
  * @see Zend_Filter_StringToLower
@@ -168,5 +162,17 @@ class Zend_Filter_StringToLowerTest extends PHPUnit_Framework_TestCase
         } catch (Zend_Filter_Exception $e) {
             $this->assertContains('mbstring is required', $e->getMessage());
         }
+    }
+
+    /**
+     * @group ZF-9854
+     */
+    public function testDetectMbInternalEncoding()
+    {
+        if (!function_exists('mb_internal_encoding')) {
+            $this->markTestSkipped("Function 'mb_internal_encoding' not available");
+        }
+
+        $this->assertEquals(mb_internal_encoding(), $this->_filter->getEncoding());
     }
 }

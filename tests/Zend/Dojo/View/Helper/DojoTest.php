@@ -17,15 +17,13 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: DojoTest.php 21705 2010-03-31 17:38:19Z matthew $
+ * @version    $Id: DojoTest.php 23566 2010-12-20 07:54:20Z mjh_ca $
  */
 
 // Call Zend_Dojo_View_Helper_DojoTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
     define("PHPUnit_MAIN_METHOD", "Zend_Dojo_View_Helper_DojoTest::main");
 }
-
-require_once dirname(__FILE__) . '/../../../../TestHelper.php';
 
 /** Zend_Dojo_View_Helper_Dojo */
 require_once 'Zend/Dojo/View/Helper/Dojo.php';
@@ -223,7 +221,7 @@ class Zend_Dojo_View_Helper_DojoTest extends PHPUnit_Framework_TestCase
     public function testShouldUseLatestVersionWhenUsingCdnByDefault()
     {
         $this->helper->enable();
-        $this->assertEquals('1.4.1', $this->helper->getCdnVersion());
+        $this->assertEquals('1.5.0', $this->helper->getCdnVersion());
     }
 
     public function testShouldAllowSpecifyingDojoVersionWhenUtilizingCdn()
@@ -801,7 +799,6 @@ function() {
     }
 
     /**
-     * @see   ZF-3962
      * @group ZF-3962
      */
     public function testHelperShouldAllowDisablingParseOnLoadWithDeclarativeStyle()
@@ -900,6 +897,16 @@ function() {
         $this->assertEquals($stylesheetMods, $helper->getStyleSheetModules());
         $this->assertEquals($stylesheets, $helper->getStylesheets());
         $this->assertFalse($helper->registerDojoStylesheet());
+    }
+
+    public function testJsonExpressionRenders()
+    {
+        $this->helper->addDijit('foo',
+                array('dojoType' => 'dijit.form.TextBox',
+                      'onChange' => new Zend_Json_Expr('function(){alert(\'foo\');}'),
+                      ));
+        $output = $this->helper->dijitsToJson();
+        $this->assertRegexp('#(function\\(\\){alert\\(\'foo\'\\);})#', $output);
     }
 
     public function setupDojo()

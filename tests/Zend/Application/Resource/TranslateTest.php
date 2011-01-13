@@ -17,17 +17,12 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: TranslateTest.php 20096 2010-01-06 02:05:09Z bkarwin $
+ * @version    $Id: TranslateTest.php 23522 2010-12-16 20:33:22Z andries $
  */
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Zend_Application_Resource_TranslateTest::main');
 }
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
 /**
  * Zend_Loader_Autoloader
@@ -147,6 +142,81 @@ class Zend_Application_Resource_TranslateTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('bar', $translate->translate('foo'));
         $this->assertEquals('bericht4', $translate->translate('message4'));
         $this->assertEquals('shouldNotExist', $translate->translate('shouldNotExist'));
+    }
+
+    /**
+     * @group ZF-10034
+     */
+    public function testSetCacheFromCacheManager()
+    {
+        $configCache = array(
+            'translate' => array(
+                'frontend' => array(
+                    'name' => 'Core',
+                    'options' => array(
+                        'lifetime' => 120,
+                        'automatic_serialization' => true
+                    )
+                ),
+                'backend' => array(
+                    'name' => 'Black Hole'
+                )
+            )
+        );
+        $this->bootstrap->registerPluginResource('cachemanager', $configCache);
+
+        $options = $this->_translationOptions;
+        $options['cache'] = 'translate';
+        $resource = new Zend_Application_Resource_Translate($options);
+        $resource->setBootstrap($this->bootstrap);
+        $resource->init();
+
+        $this->assertType('Zend_Cache_Core', Zend_Translate::getCache());
+        Zend_Translate::clearCache();
+    }
+
+    /**
+     * @group ZF-10352
+     */
+    public function testToUseTheSameKeyAsTheOptionsZendTranslate()
+    {
+        $options = array(
+            'adapter' => 'array',
+            'content' => array(
+                'm1' => 'message1',
+                'm2' => 'message2'
+            ),
+            'locale' => 'auto'
+        );
+
+        $resource = new Zend_Application_Resource_Translate($options);
+        $translator = $resource->init();
+
+        $this->assertEquals(new Zend_Translate($options), $translator);
+        $this->assertEquals('message2', $translator->_('m2'));
+    }
+
+    /**
+     * @group ZF-10352
+     * @expectedException Zend_Application_Resource_Exception
+     */
+    public function testToUseTheTwoKeysContentAndDataShouldThrowsException()
+    {
+        $options = array(
+            'adapter' => 'array',
+            'content' => array(
+                'm1' => 'message1',
+                'm2' => 'message2'
+            ),
+            'data' => array(
+                'm3' => 'message3',
+                'm4' => 'message4'
+            ),
+            'locale' => 'auto'
+        );
+
+        $resource = new Zend_Application_Resource_Translate($options);
+        $translator = $resource->init();
     }
 }
 

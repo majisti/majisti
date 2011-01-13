@@ -1,6 +1,5 @@
 <?php
 
-require_once 'PHPUnit/Framework/TestCase.php';
 require_once 'Zend/Oauth.php';
 
 class Test_Http_Client_19485876 extends Zend_Http_Client {}
@@ -38,4 +37,37 @@ class Zend_OauthTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(null, $resetClient->getHeader('Authorization'));
     }
 
+    /**
+     * @group ZF-10182
+     */
+    public function testOauthClientPassingObjectConfigInConstructor()
+    {
+        $options = array(
+            'requestMethod' => 'GET',
+            'siteUrl'       => 'http://www.example.com'
+        );
+
+        require_once 'Zend/Config.php';
+        require_once 'Zend/Oauth/Client.php';
+        $config = new Zend_Config($options);
+        $client = new Zend_Oauth_Client($config);
+        $this->assertEquals('GET', $client->getRequestMethod());
+        $this->assertEquals('http://www.example.com', $client->getSiteUrl());
+    }
+
+    /**
+     * @group ZF-10182
+     */
+    public function testOauthClientPassingArrayInConstructor()
+    {
+        $options = array(
+            'requestMethod' => 'GET',
+            'siteUrl'       => 'http://www.example.com'
+        );
+
+        require_once 'Zend/Oauth/Client.php';
+        $client = new Zend_Oauth_Client($options);
+        $this->assertEquals('GET', $client->getRequestMethod());
+        $this->assertEquals('http://www.example.com', $client->getSiteUrl());
+    }
 }

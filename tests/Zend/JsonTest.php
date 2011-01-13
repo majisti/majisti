@@ -17,13 +17,8 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: JsonTest.php 20616 2010-01-25 19:56:04Z matthew $
+ * @version    $Id: JsonTest.php 23522 2010-12-16 20:33:22Z andries $
  */
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../TestHelper.php';
 
 /**
  * @see Zend_Json
@@ -711,7 +706,7 @@ class Zend_JsonTest extends PHPUnit_Framework_TestCase
         }
 
         Zend_Json::$useBuiltinEncoderDecoder = true;
-        $this->assertEquals("[1.20, 1.68]", Zend_Json_Encode::encode(array(
+        $this->assertEquals("[1.20, 1.68]", Zend_Json_Encoder::encode(array(
             (float)"1,20", (float)"1,68"
         )));
     }
@@ -720,7 +715,7 @@ class Zend_JsonTest extends PHPUnit_Framework_TestCase
     {
         $this->markTestIncomplete('Test is not yet finished.');
     }
-    
+
     /**
      * @group ZF-8663
      */
@@ -728,12 +723,12 @@ class Zend_JsonTest extends PHPUnit_Framework_TestCase
     {
         $source = "</foo><foo>bar</foo>";
         $target = '"<\\/foo><foo>bar<\\/foo>"';
-        
+
         // first test ext/json
         Zend_Json::$useBuiltinEncoderDecoder = false;
         $this->assertEquals($target, Zend_Json::encode($source));
     }
-    
+
     /**
      * @group ZF-8663
      */
@@ -741,12 +736,12 @@ class Zend_JsonTest extends PHPUnit_Framework_TestCase
     {
         $source = "</foo><foo>bar</foo>";
         $target = '"<\\/foo><foo>bar<\\/foo>"';
-        
+
         // first test ext/json
         Zend_Json::$useBuiltinEncoderDecoder = true;
         $this->assertEquals($target, Zend_Json::encode($source));
     }
-    
+
     /**
      * @group ZF-8918
      * @expectedException Zend_Json_Exception
@@ -754,6 +749,18 @@ class Zend_JsonTest extends PHPUnit_Framework_TestCase
     public function testDecodingInvalidJsonShouldRaiseAnException()
     {
         Zend_Json::decode(' some string ');
+    }
+
+    /**
+     * @group ZF-9416
+     * Encoding an iterator using the internal encoder should handle undefined keys
+     */
+    public function testIteratorWithoutDefinedKey()
+    {
+        $inputValue = new ArrayIterator(array('foo'));
+        $encoded = Zend_Json_Encoder::encode($inputValue);
+        $expectedDecoding = '{"__className":"ArrayIterator","0":"foo"}';
+        $this->assertEquals($encoded, $expectedDecoding);
     }
 }
 

@@ -21,11 +21,6 @@
  */
 
 /**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../TestHelper.php';
-
-/**
  * These const values control some testing behavior.
  * They may be defined here or in TestConfiguration.php.
  */
@@ -5652,6 +5647,27 @@ class Zend_DateTest extends PHPUnit_Framework_TestCase
         $date2  = $date->getMonth();
         $result = $date2->toArray();
         $this->assertEquals(1970, $result['year']);
+    }
+
+    /**
+     * @ZF-9891
+     */
+    public function testComparingDatesWithoutOption()
+    {
+        $date  = new Zend_Date(strtotime('Sat, 07 Mar 2009 08:03:50 +0000'));
+        $date2 = new Zend_Date();
+        $date2->set('Sat, 07 Mar 2009 08:03:50 +0000', Zend_Date::RFC_2822);
+
+        $this->assertTrue($date2->equals($date));
+    }
+
+    /**
+     * @ZF-10150
+     */
+    public function testChineseFullDates()
+    {
+        $date = new Zend_Date(array('year' => 2008, 'month' => 10, 'day' => 12));
+        $this->assertEquals('2008年10月12日', $date->get(Zend_Date::DATE_LONG, 'zh'));
     }
 }
 

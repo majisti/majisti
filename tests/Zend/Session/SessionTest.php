@@ -17,15 +17,8 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: SessionTest.php 20096 2010-01-06 02:05:09Z bkarwin $
+ * @version    $Id: SessionTest.php 23522 2010-12-16 20:33:22Z andries $
  */
-
-
-/**
- * PHPUnit test case
- */
-require_once 'PHPUnit/Framework/TestCase.php';
-
 
 /**
  * @see Zend_Session
@@ -783,6 +776,7 @@ class Zend_SessionTest extends PHPUnit_Framework_TestCase
     /**
      * test expiration of namespaces and namespace variables by seconds; expect expiration of specified keys/namespace
      *
+     * @runInSeparateProcess
      * @return void
      */
     public function testSetExpirationSeconds()
@@ -842,6 +836,7 @@ class Zend_SessionTest extends PHPUnit_Framework_TestCase
     /**
      * test expiration of namespaces by hops; expect expiration of specified namespace in the proper number of hops
      *
+     * @runInSeparateProcess
      * @return void
      */
     public function testSetExpireSessionHops()
@@ -874,6 +869,7 @@ class Zend_SessionTest extends PHPUnit_Framework_TestCase
     /**
      * test expiration of namespace variables by hops; expect expiration of specified keys in the proper number of hops
      *
+     * @runInSeparateProcess
      * @return void
      */
     public function testSetExpireSessionVarsByHops1()
@@ -884,6 +880,7 @@ class Zend_SessionTest extends PHPUnit_Framework_TestCase
     /**
      * sanity check .. we should be able to repeat this test without problems
      *
+     * @runInSeparateProcess
      * @return void
      */
     public function testSetExpireSessionVarsByHops2()
@@ -949,6 +946,7 @@ class Zend_SessionTest extends PHPUnit_Framework_TestCase
     /**
      * test expiration of namespace variables by hops; expect expiration of specified keys in the proper number of hops
      *
+     * @runInSeparateProcess
      * @return void
      */
     public function testSetExpireSessionVarsByHopsOnUse()

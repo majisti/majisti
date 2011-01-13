@@ -17,7 +17,7 @@
  * @subpackage Writer
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Db.php 20096 2010-01-06 02:05:09Z bkarwin $
+ * @version    $Id: Db.php 23576 2010-12-23 23:25:44Z ramon $
  */
 
 /** Zend_Log_Writer_Abstract */
@@ -29,18 +29,20 @@ require_once 'Zend/Log/Writer/Abstract.php';
  * @subpackage Writer
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Db.php 20096 2010-01-06 02:05:09Z bkarwin $
+ * @version    $Id: Db.php 23576 2010-12-23 23:25:44Z ramon $
  */
 class Zend_Log_Writer_Db extends Zend_Log_Writer_Abstract
 {
     /**
      * Database adapter instance
+     *
      * @var Zend_Db_Adapter
      */
     private $_db;
 
     /**
      * Name of the log table in the database
+     *
      * @var string
      */
     private $_table;
@@ -58,6 +60,7 @@ class Zend_Log_Writer_Db extends Zend_Log_Writer_Abstract
      * @param Zend_Db_Adapter $db   Database adapter instance
      * @param string $table         Log table in database
      * @param array $columnMap
+     * @return void
      */
     public function __construct($db, $table, $columnMap = null)
     {
@@ -68,7 +71,7 @@ class Zend_Log_Writer_Db extends Zend_Log_Writer_Abstract
 
     /**
      * Create a new instance of Zend_Log_Writer_Db
-     * 
+     *
      * @param  array|Zend_Config $config
      * @return Zend_Log_Writer_Db
      * @throws Zend_Log_Exception
@@ -77,15 +80,15 @@ class Zend_Log_Writer_Db extends Zend_Log_Writer_Abstract
     {
         $config = self::_parseConfig($config);
         $config = array_merge(array(
-            'db'        => null, 
-            'table'     => null, 
+            'db'        => null,
+            'table'     => null,
             'columnMap' => null,
         ), $config);
-        
+
         if (isset($config['columnmap'])) {
             $config['columnMap'] = $config['columnmap'];
         }
-        
+
         return new self(
             $config['db'],
             $config['table'],
@@ -95,11 +98,14 @@ class Zend_Log_Writer_Db extends Zend_Log_Writer_Abstract
 
     /**
      * Formatting is not possible on this writer
+     *
+     * @return void
+     * @throws Zend_Log_Exception
      */
-    public function setFormatter($formatter)
+    public function setFormatter(Zend_Log_Formatter_Interface $formatter)
     {
         require_once 'Zend/Log/Exception.php';
-        throw new Zend_Log_Exception(get_class() . ' does not support formatting');
+        throw new Zend_Log_Exception(get_class($this) . ' does not support formatting');
     }
 
     /**

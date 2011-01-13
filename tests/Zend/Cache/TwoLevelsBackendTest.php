@@ -17,7 +17,7 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: TwoLevelsBackendTest.php 21954 2010-04-19 19:19:24Z mabe $
+ * @version    $Id: TwoLevelsBackendTest.php 23514 2010-12-15 19:29:04Z mjh_ca $
  */
 
 /**
@@ -30,11 +30,6 @@ require_once 'Zend/Cache/Backend/TwoLevels.php';
  * Common tests for backends
  */
 require_once 'CommonExtendedBackendTest.php';
-
-/**
- * PHPUnit test case
- */
-require_once 'PHPUnit/Framework/TestCase.php';
 
 /**
  * @category   Zend
@@ -107,6 +102,8 @@ class Zend_Cache_TwoLevelsBackendTest extends Zend_Cache_CommonExtendedBackendTe
         $fastBackend->expects($this->at(1))
             ->method('getFillingPercentage')
             ->will($this->returnValue(90));
+
+
         $slowBackendOptions = array(
             'cache_dir' => $this->_cache_dir
         );
@@ -118,12 +115,42 @@ class Zend_Cache_TwoLevelsBackendTest extends Zend_Cache_CommonExtendedBackendTe
         ));
 
         $id = 'test'.uniqid();
-        $cache->save(10, $id); //fast usage at 0%
-
-        $cache->save(100, $id); //fast usage at 90%
+        $this->assertTrue($cache->save(10, $id)); //fast usage at 0%
+        
+        $this->assertTrue($cache->save(100, $id)); //fast usage at 90%
         $this->assertEquals(100, $cache->load($id));
     }
+    
+    /**
+     * @group ZF-9855
+     */
+    public function testSaveReturnsTrueIfFastIsFullOnFirstSave()
+    {
+        $slowBackend = 'File';
+        $fastBackend = $this->getMock('Zend_Cache_Backend_Apc', array('getFillingPercentage'));
+        $fastBackend->expects($this->any())
+            ->method('getFillingPercentage')
+            ->will($this->returnValue(90));
 
+        $slowBackendOptions = array(
+            'cache_dir' => $this->_cache_dir
+        );
+        $cache = new Zend_Cache_Backend_TwoLevels(array(
+            'fast_backend' => $fastBackend,
+            'slow_backend' => $slowBackend,
+            'slow_backend_options' => $slowBackendOptions,
+            'stats_update_factor' => 1
+        ));
+
+        $id = 'test'.uniqid();
+        
+        $this->assertTrue($cache->save(90, $id)); //fast usage at 90%, failing for 
+        $this->assertEquals(90, $cache->load($id));
+                
+        $this->assertTrue($cache->save(100, $id)); //fast usage at 90%
+        $this->assertEquals(100, $cache->load($id));
+    }
+    
 }
 
 

@@ -17,14 +17,13 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: HttpTest.php 20984 2010-02-08 16:25:08Z matthew $
+ * @version    $Id: HttpTest.php 23522 2010-12-16 20:33:22Z andries $
  */
 
 // Call Zend_Controller_Request_HttpTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
     define("PHPUnit_MAIN_METHOD", "Zend_Controller_Request_HttpTest::main");
 }
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
 require_once 'Zend/Controller/Request/Http.php';
 
@@ -436,6 +435,43 @@ class Zend_Controller_Request_HttpTest extends PHPUnit_Framework_TestCase
         $this->assertSame('', $this->_request->getBaseUrl());
     }
 
+	/**
+     * Dataprovider for testing prefix paths in the base url
+     * @group ZF-10040
+     */
+    public function prefixProvider()
+    {
+        return array (
+            array (null),
+            array ('/public'),
+            array ('/publicite'),
+            array ('/foo'),
+        );
+    }
+    /**
+     * @dataProvider prefixProvider
+     * @group ZF-10040
+     */
+	public function testBaseUrlSetsProperLocation($prefix)
+	{
+	    $_SERVER['REQUEST_URI']     = $prefix . '/index.php/news/3?var1=val1&var2=val2';
+	    $_SERVER['QUERY_STRING']    = 'var1=val1&var2=val2';
+        $_SERVER['SCRIPT_NAME']     = $prefix . '/index.php';
+        $_SERVER['PHP_SELF']        = $prefix . '/index.php/news/3';
+        $_SERVER['SCRIPT_FILENAME'] = '/var/web/html' . $prefix . '/index.php';
+        $_GET = array(
+            'var1' => 'val1',
+            'var2' => 'val2'
+        );
+		$request = new Zend_Controller_Request_Http();
+		if (null !== $prefix) {
+		    $request->setBasePath($prefix);
+		}
+		$this->assertEquals($prefix, $request->getBasePath());
+		$this->assertEquals($prefix . '/index.php', $request->getBaseUrl());
+		unset ($request);
+	}
+
     /*
      * Tests if an empty string gets returned when no basepath is set on the request.
      * This is important on windows, where before this fix '\' was returned instead of an empty string.
@@ -839,6 +875,89 @@ class Zend_Controller_Request_HttpTest extends PHPUnit_Framework_TestCase
         $pathInfo = $request->getPathInfo();
         $this->assertEquals('/index/index', $pathInfo);
     }
+
+    /**
+     * @group ZF-10577
+     */
+    public function testGetHeaderWithEmptyValueReturnsEmptyString()
+    {
+        $_SERVER['HTTP_X_FOO'] = '';
+
+        $this->assertSame('', $this->_request->getHeader('X-Foo'));
+    }
+
+
+    /**
+     * @group ZF-3527
+     */
+    public function testGetRequestUriShouldReturnDecodedUri()
+    {
+        $request = new Zend_Controller_Request_Http();
+        $request->setBaseUrl( '%7Euser' );
+        $this->assertEquals( '~user', $request->getBaseUrl() );
+    }
+
+    /**
+     * @group ZF-3527
+     */
+    public function testPathInfoShouldRespectEncodedBaseUrl()
+    {
+        $request = new Zend_Controller_Request_Http();
+        $request->setBaseUrl( '%7Euser' );
+        $_SERVER['REQUEST_URI'] = '~user/module/controller/action';
+        $pathInfo = $request->getPathInfo();
+
+        $this->assertEquals( '/module/controller/action', $pathInfo, $pathInfo);
+    }
+
+    /**
+     * @group ZF-3527
+     */
+    public function testPathInfoShouldRespectNonEncodedBaseUrl()
+    {
+        $request = new Zend_Controller_Request_Http();
+        $request->setBaseUrl( '~user' );
+        $_SERVER['REQUEST_URI'] = '~user/module/controller/action';
+        $pathInfo = $request->getPathInfo();
+
+        $this->assertEquals( '/module/controller/action', $pathInfo, $pathInfo);
+    }
+
+    /**
+     * @group ZF-3527
+     */
+    public function testPathInfoShouldRespectEncodedRequestUri()
+    {
+        $request = new Zend_Controller_Request_Http();
+        $request->setBaseUrl( '~user' );
+        $_SERVER['REQUEST_URI'] = '%7Euser/module/controller/action';
+        $pathInfo = $request->getPathInfo();
+
+        $this->assertEquals( '/module/controller/action', $pathInfo, $pathInfo);
+    }
+
+    /**
+     * @group ZF-3527
+     */
+    public function testPathInfoShouldRespectNonEncodedRequestUri()
+    {
+        $request = new Zend_Controller_Request_Http();
+        $request->setBaseUrl( '~user' );
+        $_SERVER['REQUEST_URI'] = '~user/module/controller/action';
+        $pathInfo = $request->getPathInfo();
+
+        $this->assertEquals( '/module/controller/action', $pathInfo, $pathInfo);
+    }
+
+    /**
+     * @group ZF-9899
+     */
+    public function testHostNameShouldBeEmpty()
+    {
+        $request = new Zend_Controller_Request_Http();
+        $this->assertEquals('', $request->getHttpHost(), 'HttpHost should be :');
+    }
+
 }
 
 // Call Zend_Controller_Request_HttpTest::main() if this source file is executed directly.

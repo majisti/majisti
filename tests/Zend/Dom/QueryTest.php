@@ -17,15 +17,13 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: QueryTest.php 22045 2010-04-28 19:59:49Z matthew $
+ * @version    $Id: QueryTest.php 23522 2010-12-16 20:33:22Z andries $
  */
 
 // Call Zend_Dom_QueryTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
     define("PHPUnit_MAIN_METHOD", "Zend_Dom_QueryTest::main");
 }
-
-require_once dirname(__FILE__) . '/../../TestHelper.php';
 
 /** Zend_Dom_Query */
 require_once 'Zend/Dom/Query.php';
@@ -89,7 +87,7 @@ class Zend_Dom_QueryTest extends PHPUnit_Framework_TestCase
         $this->query->setDocument($this->getHtml());
     }
 
-    public function handleError($msg, $code = 0) 
+    public function handleError($msg, $code = 0)
     {
         $this->error = $msg;
     }
@@ -243,7 +241,7 @@ class Zend_Dom_QueryTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(is_array($errors));
         $this->assertTrue(0 < count($errors));
     }
-    
+
     /**
      * @group ZF-9765
      */
@@ -270,6 +268,46 @@ EOF;
         $this->assertEquals(2, count($results), $results->getXpathQuery());
         $results = $this->query->query('input[type="hidden"][value="0"]');
         $this->assertEquals(1, count($results));
+    }
+
+    /**
+     * @group ZF-3938
+     */
+    public function testAllowsSpecifyingEncodingAtConstruction()
+    {
+        $doc = new Zend_Dom_Query($this->getHtml(), 'iso-8859-1');
+        $this->assertEquals('iso-8859-1', $doc->getEncoding());
+    }
+
+    /**
+     * @group ZF-3938
+     */
+    public function testAllowsSpecifyingEncodingWhenSettingDocument()
+    {
+        $this->query->setDocument($this->getHtml(), 'iso-8859-1');
+        $this->assertEquals('iso-8859-1', $this->query->getEncoding());
+    }
+
+    /**
+     * @group ZF-3938
+     */
+    public function testAllowsSpecifyingEncodingViaSetter()
+    {
+        $this->query->setEncoding('iso-8859-1');
+        $this->assertEquals('iso-8859-1', $this->query->getEncoding());
+    }
+
+    /**
+     * @group ZF-3938
+     */
+    public function testSpecifyingEncodingSetsEncodingOnDomDocument()
+    {
+        $this->query->setDocument($this->getHtml(), 'utf-8');
+        $test = $this->query->query('.foo');
+        $this->assertType('Zend_Dom_Query_Result', $test);
+        $doc  = $test->getDocument();
+        $this->assertType('DOMDocument', $doc);
+        $this->assertEquals('utf-8', $doc->encoding);
     }
 }
 

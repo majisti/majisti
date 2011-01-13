@@ -17,13 +17,17 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: StreamTest.php 20096 2010-01-06 02:05:09Z bkarwin $
+ * @version    $Id: StreamTest.php 23522 2010-12-16 20:33:22Z andries $
  */
 
-/** PHPUnit_Framework_TestCase */
-require_once 'PHPUnit/Framework/TestCase.php';
+if (!defined('PHPUnit_MAIN_METHOD')) {
+    define('PHPUnit_MAIN_METHOD', 'Zend_Log_Writer_StreamTest::main');
+}
 
-/** Zend_Log_Writer_Mock */
+/** Zend_Log */
+require_once 'Zend/Log.php';
+
+/** Zend_Log_Writer_Stream */
 require_once 'Zend/Log/Writer/Stream.php';
 
 /**
@@ -36,6 +40,12 @@ require_once 'Zend/Log/Writer/Stream.php';
  */
 class Zend_Log_Writer_StreamTest extends PHPUnit_Framework_TestCase
 {
+    public static function main()
+    {
+        $suite  = new PHPUnit_Framework_TestSuite(__CLASS__);
+        $result = PHPUnit_TextUI_TestRunner::run($suite);
+    }
+
     public function testConstructorThrowsWhenResourceIsNotStream()
     {
         $resource = xml_parser_create();
@@ -145,7 +155,7 @@ class Zend_Log_Writer_StreamTest extends PHPUnit_Framework_TestCase
 
         $this->assertContains($expected, $contents);
     }
-    
+
     public function testFactoryStream()
     {
         $cfg = array('log' => array('memory' => array(
@@ -159,7 +169,7 @@ class Zend_Log_Writer_StreamTest extends PHPUnit_Framework_TestCase
         $logger = Zend_Log::factory($cfg['log']);
         $this->assertTrue($logger instanceof Zend_Log);
     }
-    
+
     public function testFactoryUrl()
     {
         $cfg = array('log' => array('memory' => array(
@@ -173,4 +183,8 @@ class Zend_Log_Writer_StreamTest extends PHPUnit_Framework_TestCase
         $logger = Zend_Log::factory($cfg['log']);
         $this->assertTrue($logger instanceof Zend_Log);
     }
+}
+
+if (PHPUnit_MAIN_METHOD == 'Zend_Log_Writer_StreamTest::main') {
+    Zend_Log_Writer_StreamTest::main();
 }

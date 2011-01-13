@@ -15,40 +15,26 @@
  * @category   Zend
  * @package    Zend_Service_WindowsAzure
  * @subpackage UnitTests
- * @version    $Id: QueueStorageTest.php 24241 2009-07-22 09:43:13Z unknown $
+ * @version    $Id$
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-/**
- * Test helpers
- */
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
-
-/**
- * @see Zend_Service_WindowsAzure_Storage_Queue 
- */
+/** Zend_Service_WindowsAzure_Storage_Queue */
 require_once 'Zend/Service/WindowsAzure/Storage/Queue.php';
-
-if (!defined('PHPUnit_MAIN_METHOD')) {
-    define('PHPUnit_MAIN_METHOD', 'Zend_Service_WindowsAzure_QueueStorageTest::main');
-}
 
 /**
  * @category   Zend
  * @package    Zend_Service_WindowsAzure
  * @subpackage UnitTests
- * @version    $Id: QueueStorageTest.php 24241 2009-07-22 09:43:13Z unknown $
+ * @version    $Id$
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_WindowsAzure_QueueStorageTest extends PHPUnit_Framework_TestCase
 {
-    public static function main()
-    {
-        $suite  = new PHPUnit_Framework_TestSuite("Zend_Service_WindowsAzure_QueueStorageTest");
-        $result = PHPUnit_TextUI_TestRunner::run($suite);
-    }
+
+    protected static $uniqId = 0;
 
     /**
      * Test setup
@@ -56,7 +42,7 @@ class Zend_Service_WindowsAzure_QueueStorageTest extends PHPUnit_Framework_TestC
     protected function setUp()
     {
         if (!TESTS_ZEND_SERVICE_WINDOWSAZURE_QUEUE_RUNTESTS) {
-            $this->markTestSkipped('Windows Azure Tests disabled');
+            $this->markTestSkipped('This test case requires TESTS_ZEND_SERVICE_WINDOWSAZURE_QUEUE_RUNTESTS to be enabled in TestConfiguration.php');
         }
     }
 
@@ -65,9 +51,11 @@ class Zend_Service_WindowsAzure_QueueStorageTest extends PHPUnit_Framework_TestC
      */
     protected function tearDown()
     {
+        if ($this->status == PHPUnit_Runner_BaseTestRunner::STATUS_SKIPPED) {
+            return;
+        }
         $storageClient = $this->createStorageInstance();
-        for ($i = 1; $i <= self::$uniqId; $i++)
-        {
+        for ($i = 1; $i <= self::$uniqId; $i++) {
             try { $storageClient->deleteQueue(TESTS_ZEND_SERVICE_WINDOWSAZURE_QUEUE_PREFIX . $i); } catch (Exception $e) { }
         }
     }
@@ -87,8 +75,6 @@ class Zend_Service_WindowsAzure_QueueStorageTest extends PHPUnit_Framework_TestC
 
         return $storageClient;
     }
-
-    protected static $uniqId = 0;
 
     protected function generateName()
     {
@@ -183,6 +169,24 @@ class Zend_Service_WindowsAzure_QueueStorageTest extends PHPUnit_Framework_TestC
     }
 
     /**
+     * Test list queues with metadata
+     */
+    public function testListQueuesWithMetadata()
+    {
+        $queueName = $this->generateName();
+        $storageClient = $this->createStorageInstance();
+        $storageClient->createQueue($queueName, array(
+            'createdby' => 'PHPAzure',
+            'ownedby' => 'PHPAzure',
+        ));
+
+        $result = $storageClient->listQueues($queueName, null, null, 'metadata');
+
+        $this->assertEquals('PHPAzure', $result[0]->Metadata['createdby']);
+        $this->assertEquals('PHPAzure', $result[0]->Metadata['ownedby']);
+    }
+
+    /**
      * Test put message
      */
     public function testPutMessage()
@@ -192,7 +196,7 @@ class Zend_Service_WindowsAzure_QueueStorageTest extends PHPUnit_Framework_TestC
         $storageClient->createQueue($queueName);
         $storageClient->putMessage($queueName, 'Test message', 120);
 
-        sleep(45); // wait for the message to appear in the queue...
+        sleep(5); // wait for the message to appear in the queue...
 
         $messages = $storageClient->getMessages($queueName);
         $this->assertEquals(1, count($messages));
@@ -212,7 +216,7 @@ class Zend_Service_WindowsAzure_QueueStorageTest extends PHPUnit_Framework_TestC
         $storageClient->putMessage($queueName, 'Test message 3', 120);
         $storageClient->putMessage($queueName, 'Test message 4', 120);
 
-        sleep(45); // wait for the messages to appear in the queue...
+        sleep(5); // wait for the messages to appear in the queue...
 
         $messages1 = $storageClient->getMessages($queueName, 2);
         $messages2 = $storageClient->getMessages($queueName, 2);
@@ -236,13 +240,36 @@ class Zend_Service_WindowsAzure_QueueStorageTest extends PHPUnit_Framework_TestC
         $storageClient->putMessage($queueName, 'Test message 3', 120);
         $storageClient->putMessage($queueName, 'Test message 4', 120);
 
-        sleep(45); // wait for the messages to appear in the queue...
+        sleep(5); // wait for the messages to appear in the queue...
 
         $messages1 = $storageClient->peekMessages($queueName, 4);
         $messages2 = $storageClient->getMessages($queueName, 4);
 
         $this->assertEquals(4, count($messages1));
         $this->assertEquals(4, count($messages2));
+    }
+
+    /**
+     * Test dequeuecount
+     */
+    public function testDequeueCount()
+    {
+        $queueName = $this->generateName();
+        $storageClient = $this->createStorageInstance();
+        $storageClient->createQueue($queueName);
+        $storageClient->putMessage($queueName, 'Test message 1', 120);
+
+        sleep(5); // wait for the message to appear in the queue...
+
+        $expectedDequeueCount = 3;
+        for ($i = 0; $i < $expectedDequeueCount - 1; $i++) {
+            $storageClient->getMessages($queueName, 1, 1);
+            sleep(3);
+        }
+
+        $messages = $storageClient->getMessages($queueName, 1);
+
+        $this->assertEquals($expectedDequeueCount, $messages[0]->DequeueCount);
     }
 
     /**
@@ -258,12 +285,12 @@ class Zend_Service_WindowsAzure_QueueStorageTest extends PHPUnit_Framework_TestC
         $storageClient->putMessage($queueName, 'Test message 3', 120);
         $storageClient->putMessage($queueName, 'Test message 4', 120);
 
-        sleep(45); // wait for the messages to appear in the queue...
+        sleep(5); // wait for the messages to appear in the queue...
 
         $messages1 = $storageClient->peekMessages($queueName, 4);
         $storageClient->clearMessages($queueName);
 
-        sleep(45); // wait for the GC...
+        sleep(5); // wait for the GC...
 
         $messages2 = $storageClient->peekMessages($queueName, 4);
 
@@ -284,23 +311,19 @@ class Zend_Service_WindowsAzure_QueueStorageTest extends PHPUnit_Framework_TestC
         $storageClient->putMessage($queueName, 'Test message 3', 120);
         $storageClient->putMessage($queueName, 'Test message 4', 120);
 
-        sleep(45); // wait for the messages to appear in the queue...
+        sleep(5); // wait for the messages to appear in the queue...
 
         $messages1 = $storageClient->getMessages($queueName, 2, 10);
-        foreach ($messages1 as $message) {
+        foreach ($messages1 as $message)
+        {
             $storageClient->deleteMessage($queueName, $message);
         }
 
-        sleep(45); // wait for the GC...
+        sleep(5); // wait for the GC...
 
         $messages2 = $storageClient->getMessages($queueName, 4);
 
         $this->assertEquals(2, count($messages1));
         $this->assertEquals(2, count($messages2));
     }
-}
-
-// Call Zend_Service_WindowsAzure_QueueStorageTest::main() if this source file is executed directly.
-if (PHPUnit_MAIN_METHOD == "Zend_Service_WindowsAzure_QueueStorageTest::main") {
-    Zend_Service_WindowsAzure_QueueStorageTest::main();
 }

@@ -17,10 +17,9 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: PriorityTest.php 21365 2010-03-07 09:38:41Z thomas $
+ * @version    $Id: PriorityTest.php 23514 2010-12-15 19:29:04Z mjh_ca $
  */
 
-require_once 'PHPUnit/Framework/TestCase.php';
 require_once 'Zend/Validate/Sitemap/Priority.php';
 
 /**
@@ -105,7 +104,7 @@ class Zend_Validate_Sitemap_PriorityTest extends PHPUnit_Framework_TestCase
         foreach ($values as $value) {
             $this->assertSame(false, $this->_validator->isValid($value));
             $messages = $this->_validator->getMessages();
-            $this->assertContains('should be a integer', current($messages));
+            $this->assertContains('integer or float expected', current($messages));
         }
     }
 }

@@ -17,13 +17,8 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: IniTest.php 20096 2010-01-06 02:05:09Z bkarwin $
+ * @version    $Id: IniTest.php 23522 2010-12-16 20:33:22Z andries $
  */
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
 /**
  * Zend_Config
@@ -245,5 +240,40 @@ ECS;
         } catch (Zend_Config_Exception $expected) {
             $this->assertContains('Value can not contain double quotes "', $expected->getMessage());
         }
+    }
+
+    /**
+     * @group ZF-6289
+     */
+    public function testZF6289_NonSectionElementsAndSectionJumbling()
+    {
+        $config = new Zend_Config(array(
+            'one'   => 'element',
+            'two'   => array('type' => 'section'),
+            'three' => 'element',
+            'four'  => array('type' => 'section'),
+            'five'  => 'element'
+        ));
+
+        $writer = new Zend_Config_Writer_Ini;
+        $iniString = $writer->setConfig($config)->render($config);
+
+        $expected = <<<ECS
+one = "element"
+three = "element"
+five = "element"
+[two]
+type = "section"
+
+[four]
+type = "section"
+
+
+ECS;
+
+        $this->assertEquals(
+            $expected,
+            $iniString
+        );
     }
 }

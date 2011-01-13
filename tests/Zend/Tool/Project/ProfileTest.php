@@ -17,10 +17,8 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ProfileTest.php 21709 2010-03-31 17:38:42Z matthew $
+ * @version    $Id: ProfileTest.php 23522 2010-12-16 20:33:22Z andries $
  */
-
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
 require_once 'Zend/Tool/Project/Profile.php';
 
@@ -284,7 +282,11 @@ class Zend_Tool_Project_ProfileTest extends PHPUnit_Framework_TestCase
 
         foreach (new RecursiveIteratorIterator($rdi, RecursiveIteratorIterator::CHILD_FIRST) as $dirIteratorItem) {
 
-            if (stristr($dirIteratorItem->getPathname(), '.svn')) {
+            $basename = $dirIteratorItem->getBasename();
+            if (stristr($dirIteratorItem->getPathname(), '.svn')
+                || '.' === $basename
+                || '..' === $basename)
+            {
                 continue;
             }
 

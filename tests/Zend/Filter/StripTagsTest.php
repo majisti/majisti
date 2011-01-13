@@ -17,18 +17,13 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: StripTagsTest.php 22174 2010-05-14 22:12:50Z thomas $
+ * @version    $Id: StripTagsTest.php 23522 2010-12-16 20:33:22Z andries $
  */
 
 // Call Zend_Filter_StripTagsTest::main() if this source file is executed directly.
 if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Zend_Filter_StripTagsTest::main');
 }
-
-/**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../../TestHelper.php';
 
 /**
  * @see Zend_Filter_StripTags
@@ -60,7 +55,6 @@ class Zend_Filter_StripTagsTest extends PHPUnit_Framework_TestCase
      */
     public static function main()
     {
-        require_once "PHPUnit/TextUI/TestRunner.php";
 
         $suite  = new PHPUnit_Framework_TestSuite(__CLASS__);
         $result = PHPUnit_TextUI_TestRunner::run($suite);
@@ -601,6 +595,16 @@ class Zend_Filter_StripTagsTest extends PHPUnit_Framework_TestCase
         $input    = '<img width="10" height="10" src=\'wont_be_matched.jpg\'>';
         $expected = '<img width="10" height="10" src=\'wont_be_matched.jpg\'>';
         $this->assertEquals($expected, $filter->filter($input));
+    }
+
+    /**
+     * @group ZF-10256
+     */
+    public function testNotClosedHtmlCommentAtEndOfString()
+    {
+        $input    = 'text<!-- not closed comment at the end';
+        $expected = 'text';
+        $this->assertEquals($expected, $this->_filter->filter($input));
     }
 }
 

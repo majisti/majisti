@@ -20,8 +20,6 @@
  * @version    $Id $
  */
 
-require_once dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . 'TestHelper.php';
-
 if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Zend_Cache_AllTests::main');
 }
@@ -35,6 +33,7 @@ require_once 'Zend/Cache/FileFrontendTest.php';
 require_once 'Zend/Cache/FunctionFrontendTest.php';
 require_once 'Zend/Cache/ManagerTest.php';
 require_once 'Zend/Cache/MemcachedBackendTest.php';
+require_once 'Zend/Cache/LibmemcachedBackendTest.php';
 require_once 'Zend/Cache/OutputFrontendTest.php';
 require_once 'Zend/Cache/PageFrontendTest.php';
 require_once 'Zend/Cache/SkipTests.php';
@@ -147,6 +146,31 @@ class Zend_Cache_AllTests
                 define('TESTS_ZEND_CACHE_MEMCACHED_PERSISTENT', true);
             }
             $suite->addTestSuite('Zend_Cache_MemcachedBackendTest');
+        }
+
+        /*
+         * Check if Memcached2 tests are enabled, and if extension is available.
+         */
+        if (!defined('TESTS_ZEND_CACHE_LIBMEMCACHED_ENABLED') ||
+            constant('TESTS_ZEND_CACHE_LIBMEMCACHED_ENABLED') === false) {
+            $skipTest = new Zend_Cache_LibmemcachedBackendTest_SkipTests();
+            $skipTest->message = 'Tests are not enabled in TestConfiguration.php';
+            $suite->addTest($skipTest);
+        } else if (!extension_loaded('memcached')) {
+            $skipTest = new Zend_Cache_LibmemcachedBackendTest_SkipTests();
+            $skipTest->message = "Extension 'Memcached' is not loaded";
+            $suite->addTest($skipTest);
+        } else {
+            if (!defined('TESTS_ZEND_CACHE_LIBMEMCACHED_HOST')) {
+                define('TESTS_ZEND_CACHE_LIBMEMCACHED_HOST', '127.0.0.1');
+            }
+            if (!defined('TESTS_ZEND_CACHE_LIBMEMCACHED_PORT')) {
+                define('TESTS_ZEND_CACHE_LIBMEMCACHED_PORT', 11211);
+            }
+            if (!defined('TESTS_ZEND_CACHE_LIBMEMCACHED_WEIGHT')) {
+                define('TESTS_ZEND_CACHE_LIBMEMCACHED_WEIGHT', 1);
+            }
+            $suite->addTestSuite('Zend_Cache_LibmemcachedBackendTest');
         }
 
         /*

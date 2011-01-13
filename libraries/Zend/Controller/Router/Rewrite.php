@@ -16,7 +16,7 @@
  * @package    Zend_Controller
  * @subpackage Router
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Rewrite.php 20246 2010-01-12 21:36:08Z dasprid $
+ * @version    $Id: Rewrite.php 23484 2010-12-10 03:57:59Z mjh_ca $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -95,7 +95,7 @@ class Zend_Controller_Router_Rewrite extends Zend_Controller_Router_Abstract
             require_once 'Zend/Controller/Router/Route/Module.php';
             $compat = new Zend_Controller_Router_Route_Module(array(), $dispatcher, $request);
 
-            $this->_routes = array_merge(array('default' => $compat), $this->_routes);
+            $this->_routes = array('default' => $compat) + $this->_routes;
         }
 
         return $this;
@@ -381,8 +381,8 @@ class Zend_Controller_Router_Rewrite extends Zend_Controller_Router_Abstract
 
         // Find the matching route
         $routeMatched = false;
-        
-        foreach (array_reverse($this->_routes) as $name => $route) {
+
+        foreach (array_reverse($this->_routes, true) as $name => $route) {
             // TODO: Should be an interface method. Hack for 1.0 BC
             if (method_exists($route, 'isAbstract') && $route->isAbstract()) {
                 continue;
@@ -458,7 +458,8 @@ class Zend_Controller_Router_Rewrite extends Zend_Controller_Router_Abstract
             }
         }
 
-        $params = array_merge($this->_globalParams, $userParams);
+        // Use UNION (+) in order to preserve numeric keys
+        $params = $userParams + $this->_globalParams;
 
         $route = $this->getRoute($name);
         $url   = $route->assemble($params, $reset, $encode);

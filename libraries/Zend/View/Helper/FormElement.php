@@ -17,7 +17,7 @@
  * @subpackage Helper
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: FormElement.php 22285 2010-05-25 14:22:11Z matthew $
+ * @version    $Id: FormElement.php 23484 2010-12-10 03:57:59Z mjh_ca $
  */
 
 /**
@@ -115,7 +115,7 @@ abstract class Zend_View_Helper_FormElement extends Zend_View_Helper_HtmlElement
                 }
             }
 
-            // If all helper options are passed as an array, attribs may have 
+            // If all helper options are passed as an array, attribs may have
             // been as well
             if (null === $attribs) {
                 $attribs = $info['attribs'];

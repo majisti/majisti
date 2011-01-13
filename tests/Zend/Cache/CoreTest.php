@@ -17,7 +17,7 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: CoreTest.php 21292 2010-03-02 10:25:22Z mabe $
+ * @version    $Id: CoreTest.php 23514 2010-12-15 19:29:04Z mjh_ca $
  */
 
 /**
@@ -27,11 +27,6 @@ require_once 'Zend/Cache.php';
 require_once 'Zend/Cache/Core.php';
 require_once 'Zend/Cache/Backend/File.php'; // TODO : use only Test backend ?
 require_once 'Zend/Cache/Backend/Test.php';
-
-/**
- * PHPUnit test case
- */
-require_once 'PHPUnit/Framework/TestCase.php';
 
 require_once 'Zend/Config.php';
 
@@ -86,7 +81,7 @@ class Zend_Cache_CoreTest extends PHPUnit_Framework_TestCase
         $test->setConfig($config);
         $this->assertEquals(3600, $test->getOption('lifetime'));
     }
-    
+
     /**
      * @group ZF-9092
      */
@@ -522,4 +517,18 @@ class Zend_Cache_CoreTest extends PHPUnit_Framework_TestCase
         $this->assertContains('id6', $ids);
     }
 
+    /**
+     * @group ZF-10189
+     */
+    public function testIfFileZendLogWasIncluded()
+    {
+        if (class_exists('Zend_Log', false)) {
+            $this->markTestSkipped('File Zend/Log.php already included');
+        }
+
+        $cacheCore = new Zend_Cache_Core(
+            array('logging' => true)
+        );
+        $this->assertTrue($cacheCore->getOption('logger') instanceof Zend_Log);
+    }
 }

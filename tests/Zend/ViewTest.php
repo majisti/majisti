@@ -25,11 +25,6 @@ if (!defined('PHPUnit_MAIN_METHOD')) {
 }
 
 /**
- * Test helper
- */
-require_once dirname(__FILE__) . '/../TestHelper.php';
-
-/**
  * Zend_View
  */
 require_once 'Zend/View.php';
@@ -652,6 +647,21 @@ class Zend_ViewTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("Some text", $escaped);
     }
 
+    /**
+     * @group ZF-9595
+     */
+    public function testEscapeShouldAllowAndUseMoreThanOneArgument()
+    {
+        $view = new Zend_View();
+        $view->setEscape(array($this, 'escape'));
+        $this->assertEquals('foobar', $view->escape('foo', 'bar'));
+    }
+
+    public function escape($value, $additional = '')
+    {
+        return $value . $additional;
+    }
+
     public function testZf995UndefinedPropertiesReturnNull()
     {
         error_reporting(E_ALL | E_STRICT);
@@ -1074,18 +1084,18 @@ class Zend_ViewTest extends PHPUnit_Framework_TestCase
         $paths = $view->getFilterPaths();
         $this->assertTrue(array_key_exists('My_View_', $paths), var_export($paths, 1));
     }
-    
+
     /**
      * @group ZF-8177
      */
     public function testRegisterHelperShouldRegisterHelperWithView()
     {
     	require_once dirname(__FILE__) . '/View/_stubs/HelperDir1/Stub1.php';
-    	
+
     	$view = new Zend_View();
     	$helper = new Foo_View_Helper_Stub1();
     	$view->registerHelper($helper, 'stub1');
-    	
+
     	$this->assertEquals($view->getHelper('stub1'), $helper);
     	$this->assertEquals($view->stub1(), 'foo');
     }

@@ -17,17 +17,13 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: JsonTest.php 20096 2010-01-06 02:05:09Z bkarwin $
+ * @version    $Id: JsonTest.php 23522 2010-12-16 20:33:22Z andries $
  */
 
 // Call Zend_View_Helper_JsonTest::main() if this source file is executed directly.
 if (!defined("PHPUnit_MAIN_METHOD")) {
     define("PHPUnit_MAIN_METHOD", "Zend_View_Helper_JsonTest::main");
 }
-
-require_once dirname(__FILE__) . '/../../../TestHelper.php';
-require_once "PHPUnit/Framework/TestCase.php";
-require_once "PHPUnit/Framework/TestSuite.php";
 
 require_once 'Zend/View/Helper/Json.php';
 require_once 'Zend/Controller/Front.php';
@@ -55,7 +51,6 @@ class Zend_View_Helper_JsonTest extends PHPUnit_Framework_TestCase
      */
     public static function main()
     {
-        require_once "PHPUnit/TextUI/TestRunner.php";
 
         $suite  = new PHPUnit_Framework_TestSuite("Zend_View_Helper_JsonTest");
         $result = PHPUnit_TextUI_TestRunner::run($suite);
@@ -98,9 +93,12 @@ class Zend_View_Helper_JsonTest extends PHPUnit_Framework_TestCase
         $found = false;
         foreach ($headers as $header) {
             if ('Content-Type' == $header['name']) {
+                if ($found) {
+                    $this->fail('Content-Type header has been set twice.');
+                    return null;
+                }
                 $found = true;
                 $value = $header['value'];
-                break;
             }
         }
         $this->assertTrue($found);
@@ -109,6 +107,16 @@ class Zend_View_Helper_JsonTest extends PHPUnit_Framework_TestCase
 
     public function testJsonHelperSetsResponseHeader()
     {
+        $this->helper->json('foobar');
+        $this->verifyJsonHeader();
+    }
+
+    /**
+     * @group ZF-10675
+     */
+    public function testJsonHelperReplacesContentTypeReponseHeaderIfAlreadySet()
+    {
+        $this->response->setHeader('Content-Type', 'text/html');
         $this->helper->json('foobar');
         $this->verifyJsonHeader();
     }
