@@ -135,6 +135,42 @@ class ViewTest extends \Zend_ViewTest
             parent::testAddingStreamSchemeAsScriptPathShouldNotReverseSlashesOnWindows();
         }
     }
+
+    public function testRenderParent()
+    {
+        $view = $this->getView();
+        $view->addBasePath(__DIR__ . '/_files/anotherParent');
+        $view->addBasePath(__DIR__ . '/_files/parent');
+        $view->addBasePath(__DIR__ . '/_files/child');
+
+        $scriptPaths = $view->getScriptPaths();
+
+        $this->assertEquals("parent_child", $view->render('index/index.phtml'));
+        $this->assertEquals($scriptPaths, $view->getScriptPaths());
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    public function testRenderParentWithNoParentWillThrowException()
+    {
+        $view = $this->getView();
+        $view->addBasePath(__DIR__ . '/_files/child');
+
+        $view->render('index/index.phtml');
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    public function testRenderParentWithInvalidArgumentWillThrowException()
+    {
+        $view = $this->getView();
+        $view->addBasePath(__DIR__ . '/_files/parent');
+        $view->addBasePath(__DIR__ . '/_files/child');
+
+        $view->renderParent('foo');
+    }
 }
 
 ViewTest::runAlone();
