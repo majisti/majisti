@@ -335,10 +335,14 @@ class Zend_Loader_Autoloader
                 continue;
             }
             if (0 === strpos($class, $ns)) {
-                $namespace   = $ns;
-                $autoloaders = $autoloaders + $this->getNamespaceAutoloaders($ns);
-                break;
+                // ZF-8529: now looping the entire array in case of subpackages
+                $namespace = $ns;
             }
+        }
+
+        // ZF_8529
+        if( $namespace ) {
+            $autoloaders = $autoloaders + $this->getNamespaceAutoloaders($namespace);
         }
 
         // Add internal namespaced autoloader
@@ -350,8 +354,8 @@ class Zend_Loader_Autoloader
             }
         }
 
-        // Add non-namespaced autoloaders
-        $autoloaders = $autoloaders + $this->getNamespaceAutoloaders('');
+        // Add non-namespaced autoloaders, ZF-8529: fixed merge
+        $autoloaders = array_merge($autoloaders, $this->getNamespaceAutoloaders(''));
 
         // Add fallback autoloader
         if (!$namespace && $this->isFallbackAutoloader()) {

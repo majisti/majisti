@@ -146,8 +146,10 @@ class Zend_Loader_Autoloader_Resource implements Zend_Loader_Autoloader_Interfac
 
         if (!empty($namespaceTopLevel)) {
             $namespace = array_shift($segments);
-            if ($namespace != $namespaceTopLevel) {
-                // wrong prefix? we're done
+
+            /* support for subpackages namespaces ZF-8529 */
+            if ( strpos($class, $namespaceTopLevel) !== 0 ) {
+                // wrong namespace? we're done
                 return false;
             }
         }
