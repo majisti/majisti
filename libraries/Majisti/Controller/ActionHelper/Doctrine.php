@@ -1,12 +1,13 @@
 <?php
 
+namespace Majisti\Controller\ActionHelper;
+
 /**
  * @desc Controller Helper that returns the Doctrine EntityManager
  *
  * @author Majisti
  */
-class Majisti_Controller_ActionHelper_Doctrine
-    extends Zend_Controller_Action_Helper_Abstract
+class Doctrine extends \Zend_Controller_Action_Helper_Abstract
 {
     /**
      * @desc Returns the registered Majisti ModelContainer
