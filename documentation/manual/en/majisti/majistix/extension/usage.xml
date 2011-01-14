@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en"
+    xml:id="majistix.extensions" version="5.0">
+    <title>MajistiX Extensions</title>
+    <section xml:id="majistix.extensions.usage">
+    <title>Usage</title>
+        <section xml:id="majitix.extensions.usage.directories"><title>Setting extensions directories</title>
+        <para>By default, Majisti's extension resource adds two extensions
+            directories: the library's itself extensions dir
+            (libraries/MajistiX) and the application's one (library/extensions).
+            You can use extensions located under MajistiX and in your
+            application right out of the box. However, if you need to add more
+            directories to the stack you can always do the
+            following:<programlisting>resources.extensions.paths[] = "/path/to/extensions"</programlisting></para>
+        <para>Note that since extensions must be explicitely enabled, the paths
+            cannot be reset through the configuration. You can only add to the
+            stack. If you need to reset or change the paths, you need to use the
+                <classname>Majisti\Application\Extension\Manager</classname> .
+            The manager is available as a bootstrap resource like
+            so:<programlisting>$manager = $bootstrap->getPluginResource('Extensions')->getManager();
+$manager->setExtensionPaths(array(
+    array(
+        'namespace' => 'MyNamespace',
+        'path'      => '/path/to/extensions'
+    )
+    ));</programlisting></para>
+            </section>
+        <section xml:id="majistix.extensions.usage.enabling"><title>Enabling a
+            selected extension</title>
+        <para>Enabling extensions within Majisti is meant to be easy. Whenever
+            you need to add an extension to your application stack you usually
+            do the
+            following:<programlisting>resources.extensions[] = ExtensionName</programlisting></para>
+        <para>Provided the extension is initializable with no more options that
+                the init boolean itself, it should be fully functionnal within
+                your application. In case the extension needs a set of options
+                you would do the following:<programlisting>resources.extension.ExtensionName.enable = 1
+resources.extension.ExtensionName.options.anOption = optionValue</programlisting><note>
+                    <para>All extensions begin with an uppercase and follow the
+                        camel case convention. Also, the first line above is
+                        optionnal. If you provide options, Majisti assumes that
+                        this extension should be enabled. If you want to provide
+                        options but disable the application (say in another
+                        enironment) you would use 0 for the
+                            <emphasis>ExtensionName.enable</emphasis>
+                        key.</para>
+                </note></para>
+        </section>
+    
+    </section>
+    <section xml:id="majistix.extensions.extending">
+        <title>Extending an extension</title>
+        <para>Extending an extension consists the extension of the following concepts:</para>
+        <itemizedlist>
+            <listitem>
+                <para>Bootstrapping and configuration</para>
+            </listitem>
+            <listitem>
+                <para>Styling (css)</para>
+            </listitem>
+            <listitem>
+                <para>Client side (javascript)</para>
+            </listitem>
+            <listitem>
+                <para>Controller plugins</para>
+            </listitem>
+            <listitem>
+                <para>MVC components</para>
+            </listitem>
+            <listitem>
+                <para>Html output</para>
+            </listitem>
+        </itemizedlist>
+    </section>
+</section>

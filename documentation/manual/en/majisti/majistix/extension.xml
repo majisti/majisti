@@ -8,17 +8,12 @@
 
     <para> Extension is undeniably the top amongst Majisti's core components.
         Following one one the main point Majisti is trying to accomplish,
-        extensions is what makes the framework itself. Besides the core,
-        extensions actually make the framework become alive and usable. It
+        extensions is what makes the library itself. Besides the core,
+        extensions actually make the library become alive and usable. It
         completes the framework by adding its missing concreteness by using its
         well established abstractness. </para>
 
-    <note>
-        <para>Extensions located in MajistiX are the ones officially supported.
-            Any custom extensions you may write up or find elsewhere on the net
-            would go under MajistiC or in your own library. This section list
-            the extensions available under MajistiX. </para>
-    </note>
-
+    <xi:include href="extension/usage.xml"/>
+<!--    <xi:include href="extension/writing.xml"/>-->
     <xi:include href="extension/in-place-editing.xml"/>
 </section>
