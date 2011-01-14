@@ -1,45 +1,42 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<book
-    version="5.0"
-    xmlns="http://docbook.org/ns/docbook"
+<book version="5.0" xmlns="http://docbook.org/ns/docbook"
     xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:xi="http://www.w3.org/2001/XInclude">
+    xmlns:xi="http://www.w3.org/2001/XInclude" xml:id="majisti">
     <info>
         <title>Developer's Reference Guide</title>
-        <subtitle>Majisti Framework</subtitle>
-        <edition>Developer's Reference Guide for Majisti Framework</edition>
+        <subtitle>Majisti Livbrary</subtitle>
+        <edition>Developer's Reference Guide for Majisti Library</edition>
         <pubdate><?dbtimestamp format="Y-m-d" ?></pubdate>
-
         <copyright>
             <year><?dbtimestamp format="Y" ?></year>
-            <holder>
-                Majisti (<link xlink:href="http://www.majisti.com/" />)
-            </holder>
+            <holder> Majisti (<link xlink:href="http://www.majisti.com/"
+                />)</holder>
         </copyright>
-                
         <!-- START: Front Cover -->
         <cover>
-            <para role="tagline">The official documentation for Majisti Framework</para>
+            <para role="tagline">The official documentation for Majisti
+                Library</para>
         </cover>
         <!-- END: Front Cover -->
-        
         <!-- START: Back Cover -->
         <cover>
-            <para>Majisti Framework</para>
+            <para>Majisti Library</para>
         </cover>
         <!-- END: Back Cover -->
     </info>
-    
+
     <!-- START: Chapters -->
-    <xi:include href="majisti/introduction.xml" />
-    <xi:include href="majisti/quickstart.xml" />
-    <xi:include href="majisti/application.xml" />
-    <xi:include href="majisti/config.xml" />
-    <xi:include href="majisti/controller.xml" />
-    <xi:include href="majisti/model.xml" />
-    <xi:include href="majisti/test.xml" />
-    <xi:include href="majisti/util.xml" />
-    <xi:include href="majisti/view.xml" />
-    <xi:include href="majisti/majistix.xml" />
+
+    <xi:include href="majisti/introduction.xml"/>
+    <xi:include href="majisti/quickstart.xml"/>
+    <xi:include href="majisti/application.xml"/>
+    <xi:include href="majisti/config.xml"/>
+    <xi:include href="majisti/controller.xml"/>
+    <xi:include href="majisti/model.xml"/>
+    <xi:include href="majisti/test.xml"/>
+    <xi:include href="majisti/util.xml"/>
+    <xi:include href="majisti/view.xml"/>
+    <xi:include href="majisti/extensions.xml"/>
+
     <!-- END: Chapters -->
 </book>
