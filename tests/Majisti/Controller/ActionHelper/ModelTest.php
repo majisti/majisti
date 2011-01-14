@@ -11,7 +11,7 @@ require_once __DIR__ . '/TestHelper.php';
 class ModelTest extends \Majisti\Test\TestCase
 {
     /**
-     * @var Majisti_Controller_ActionHelper_Model
+     * @var Model
      */
     protected $_modelContainerActual;
 
