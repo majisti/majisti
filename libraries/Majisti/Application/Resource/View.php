@@ -27,7 +27,7 @@ class View extends \Zend_Application_Resource_View
     {
         $view = $this->getView();
 
-        $viewRenderer = new \Majisti_Controller_ActionHelper_ViewRenderer(
+        $viewRenderer = new \Majisti\Controller\ActionHelper\ViewRenderer(
             $view, $this->getSettings()->toArray());
         \Zend_Controller_Action_HelperBroker::addHelper($viewRenderer);
 

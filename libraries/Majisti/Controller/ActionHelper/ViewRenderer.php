@@ -1,9 +1,8 @@
 <?php
 
-//FIXME: ZF-9604
-//namespace Majisti\Controller\ActionHelper;
+namespace Majisti\Controller\ActionHelper;
 
-class Majisti_Controller_ActionHelper_ViewRenderer extends \Zend_Controller_Action_Helper_ViewRenderer
+class ViewRenderer extends \Zend_Controller_Action_Helper_ViewRenderer
 {
     protected $_appNamespace = '';
 

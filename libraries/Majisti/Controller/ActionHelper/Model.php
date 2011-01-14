@@ -1,12 +1,13 @@
 <?php
 
+namespace Majisti\Controller\ActionHelper;
+
 /**
  * @desc Controller Helper that returns Majisti's ModelContainer
  *
  * @author Majisti
  */
-class Majisti_Controller_ActionHelper_Model
-    extends Zend_Controller_Action_Helper_Abstract
+class Model extends \Zend_Controller_Action_Helper_Abstract
 {
     public function __call($methodName, $args)
     {
@@ -21,6 +22,6 @@ class Majisti_Controller_ActionHelper_Model
     public function direct()
     {
         //FIXME: wrong coupling
-        return Zend_Registry::get('Majisti_ModelContainer');
+        return \Zend_Registry::get('Majisti_ModelContainer');
     }
 }
