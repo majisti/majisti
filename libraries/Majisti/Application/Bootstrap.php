@@ -64,6 +64,6 @@ class Bootstrap extends \Zend_Application_Bootstrap_Bootstrap
     {
         \Zend_Controller_Action_HelperBroker::addPath(
             'Majisti/Controller/ActionHelper',
-            'Majisti_Controller_ActionHelper');
+            'Majisti\Controller\ActionHelper\\');
     }
 }
