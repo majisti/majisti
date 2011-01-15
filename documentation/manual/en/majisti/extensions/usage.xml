@@ -5,12 +5,12 @@
     <title>Usage</title>
     <section xml:id="majitix.extensions.usage.directories"><title>Setting extensions directories</title>
         <para>By default, Majisti's extension resource adds two extensions
-            directories: the library's itself extensions dir
-            (libraries/MajistiX) and the application's one (library/extensions).
-            You can use extensions located under MajistiX and in your
-            application right out of the box. However, if you need to add more
-            directories to the stack you can always do the
-            following:<programlisting>resources.extensions.paths[] = "/path/to/extensions"</programlisting></para>
+            directories: the library's extensions directory (libraries/MajistiX)
+            and the application's directory (library/extensions). You can use
+            extensions located under MajistiX and in your application right out
+            of the box. However, if you need to add more directories to the
+            stack you can always do the
+            following:<programlisting>resources.extensions.paths[]['My\App\\'] = "/path/to/extensions"</programlisting></para>
         <para>Note that since extensions must be explicitely enabled, the paths
             cannot be reset through the configuration. You can only add to the
             stack. If you need to reset or change the paths, you need to use the
@@ -29,20 +29,31 @@ $manager->setExtensionPaths(array(
         <para>Enabling extensions within Majisti is meant to be easy. Whenever
             you need to add an extension to your application stack you usually
             do the
-            following:<programlisting>resources.extensions[] = ExtensionName</programlisting></para>
-        <para>Provided the extension is initializable with no more options that
-            the init boolean itself, it should be fully functionnal within
-            your application. In case the extension needs a set of options
-            you would do the following:<programlisting>resources.extension.ExtensionName.enable = 1
-resources.extension.ExtensionName.options.anOption = optionValue</programlisting><note>
-    <para>All extensions begin with an uppercase and follow the
-        camel case convention. Also, the first line above is
-        optionnal. If you provide options, Majisti assumes that
-        this extension should be enabled. If you want to provide
-        options but disable the application (say in another
-        enironment) you would use 0 for the
-        <emphasis>ExtensionName.enable</emphasis>
-        key.</para>
-</note></para>
+            following:<programlisting>resources.extensions[] = ExtensionName
+
+OR
+
+resources.extensions.ExtensionName.enabled = 1 //prefered method</programlisting></para>
+        <para>In case the extension needs or provide configurable set of options
+            you would do the
+            following:<programlisting>resources.extension.ExtensionName.enabled = 1
+resources.extension.ExtensionName.anOption = optionValue</programlisting></para>
+        <para>Every other key aside from <emphasis>enabled</emphasis> will be
+            passed to the extension.</para>
+        <para>
+            <note>
+                <para>All extensions begin with an uppercase and follow the
+                    camelCase convention. Also, the first line above is
+                    optionnal. If you provide options, Majisti assumes that this
+                    extension should be enabled. If you want to provide options
+                    but disable the application (say in another environment) you
+                    would use 0 as <emphasis>ExtensionName.enabled</emphasis>
+                    value.</para>
+            </note>
+        </para>
+        <para>Remember that the extensions stack is meant to override other
+            extensions of the same name. For example, if AnExtension is avaible
+            in the library and that you add AnExtension within your
+            application's library, the latter will be used.</para>
     </section>
 </section>

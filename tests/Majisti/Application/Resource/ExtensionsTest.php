@@ -4,11 +4,11 @@ namespace Majisti\Application\Resource;
 
 require_once __DIR__ . '/TestHelper.php';
 
-class AddonsTest extends \Majisti\Test\TestCase
+class ExtensionsTest extends \Majisti\Test\TestCase
 {
     public function setUp()
     {
-        $this->resource = new Addons();
+        $this->resource = new Extensions();
         $this->resource->setBootstrap($this->getHelper()
              ->createBootstrapInstance());
     }
@@ -43,4 +43,4 @@ class AddonsTest extends \Majisti\Test\TestCase
     }
 }
 
-AddonsTest::runAlone();
+ExtensionsTest::runAlone();

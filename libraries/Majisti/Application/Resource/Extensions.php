@@ -75,14 +75,6 @@ class Extensions extends \Zend_Application_Resource_ResourceAbstract
             $manager->loadExtension($name, $extOptions);
         }
 
-        /* load modules */
-//        foreach( $options->module as $namespace => $name ) {
-//            if( is_int($namespace) ) {
-//                $namespace = static::DEFAULT_NAMESPACE;
-//            }
-//            $manager->loadModule($name, $namespace);
-//        }
-
         return $manager;
     }
 }
