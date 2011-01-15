@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xmlns="http://docbook.org/ns/docbook"
+         xml:id="majisti.extensions.authoring"
+         version="5.0">
+    <title>Extensions authoring</title>
+    <para>TODO</para>
+    <section xml:id="majisti.extensions.authoring.writing">
+        <title>Writing an extension</title>
+        <para>TODO</para>
+    </section>
+    <section xml:id="majisti.extensions.authoring.extending">
+        <title>Extending an extension</title>
+        <para>Extending an extension consists the extension of the following concepts:</para>
+        <itemizedlist>
+            <listitem>
+                <para>Bootstrapping and configuration</para>
+            </listitem>
+            <listitem>
+                <para>Styling (css)</para>
+            </listitem>
+            <listitem>
+                <para>Client side (javascript)</para>
+            </listitem>
+            <listitem>
+                <para>Controller plugins</para>
+            </listitem>
+            <listitem>
+                <para>MVC components</para>
+            </listitem>
+            <listitem>
+                <para>Html output</para>
+            </listitem>
+        </itemizedlist>
+    </section>
+</section>

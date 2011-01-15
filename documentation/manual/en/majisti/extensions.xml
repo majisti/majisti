@@ -9,13 +9,12 @@
     <title>Extensions</title>
     
     <para>Extension is undeniably the top amongst Majisti's core components.
-        Following one one the main point Majisti is trying to accomplish,
-        extensions is what makes the library itself. Besides the core,
-        extensions actually make the library become alive and usable. It
-        completes the framework by adding its missing concreteness by using its
-        well established abstractness. </para>
+        Following the modularity Majisti is trying to accomplish, extensions
+        form the library itself. Besides the core, extensions actually make the
+        library become alive and usable. It completes the framework by adding
+        its missing concreteness by using its well established abstractness. </para>
     
     <xi:include href="extensions/usage.xml"/>
-    <xi:include href="extensions/extending.xml"/>
+    <xi:include href="extensions/authoring.xml"/>
     
 </chapter>
