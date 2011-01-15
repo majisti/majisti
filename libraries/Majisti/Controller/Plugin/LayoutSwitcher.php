@@ -25,7 +25,7 @@ class LayoutSwitcher extends \Zend_Layout_Controller_Plugin_Layout
      *
      * @param Zend_Controller_Request_Abstract $request The request object
      */
-    public function preDispatch(\Zend_Controller_Request_Abstract $request)
+    public function postDispatch(\Zend_Controller_Request_Abstract $request)
     {
         $layout     = $this->getLayout();
         $moduleName = $request->getModuleName();
@@ -35,7 +35,7 @@ class LayoutSwitcher extends \Zend_Layout_Controller_Plugin_Layout
             \Zend_Registry::get('Majisti_Config'));
 
         /* layout name */
-        $confProp = "{$moduleName}.resources.layout";
+        $confProp = "resources.layout.{$moduleName}";
 
         /*
          * find layout name, and find layoutPath if it exists. If path does not
@@ -50,5 +50,7 @@ class LayoutSwitcher extends \Zend_Layout_Controller_Plugin_Layout
                 $layout->setLayoutPath($layoutPath);
             }
         }
+
+        parent::postDispatch($request);
     }
 }
