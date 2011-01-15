@@ -5,31 +5,140 @@
     <title>Extensions authoring</title>
     <para>TODO</para>
     <section xml:id="majisti.extensions.authoring.writing">
-        <title>Writing an extension</title>
-        <para>TODO</para>
-    </section>
-    <section xml:id="majisti.extensions.authoring.extending">
-        <title>Extending an extension</title>
-        <para>Extending an extension consists the extension of the following concepts:</para>
-        <itemizedlist>
-            <listitem>
-                <para>Bootstrapping and configuration</para>
-            </listitem>
-            <listitem>
-                <para>Styling (css)</para>
-            </listitem>
-            <listitem>
-                <para>Client side (javascript)</para>
-            </listitem>
-            <listitem>
-                <para>Controller plugins</para>
-            </listitem>
-            <listitem>
-                <para>MVC components</para>
-            </listitem>
-            <listitem>
-                <para>Html output</para>
-            </listitem>
-        </itemizedlist>
+        <title>Creating</title>
+        <para>This section is dedicated on writing an extension for Majisti.
+            Extensions are meant to be foremost additions to applications.
+            Extensions are not <emphasis role="strong">Components</emphasis> and
+            therefore are designed to add reusable and <emphasis role="strong"
+                >extensible</emphasis> code to applications. Authoring an
+            extension for Majisti must follow all its convention to assure its
+            functionnality.</para>
+        <section>
+            <title>Structure</title>
+            <para>First of all, every extensions follow Zend's
+                    <emphasis>Module</emphasis> structure. Remember that a
+                module is just any folder that contains its own set of
+                    <acronym>MVC</acronym> components. A request to
+                http://mysite.com/blog/index/index would dispatch to the blog
+                module, which contains the controller models, views and its own
+                bootstrap.  Any module can contain the following:</para>
+            <itemizedlist>
+                <listitem>
+                    <para>Controllers</para>
+                </listitem>
+                <listitem>
+                    <para>Models</para>
+                </listitem>
+                <listitem>
+                    <para>Controller plugins</para>
+                </listitem>
+                <listitem>
+                    <para>Views</para>
+                </listitem>
+            </itemizedlist>
+            <para>In addition to those default folders, Majisti added a little
+                more to make it feel more like an extension:<itemizedlist>
+                    <listitem>
+                        <para>Handlers (GRASP controller pattern)</para>
+                    </listitem>
+                    <listitem>
+                        <para>Unit tests</para>
+                    </listitem>
+                    <listitem>
+                        <para>Public directory containing accessible files by
+                            the <acronym>www</acronym>.</para>
+                    </listitem>
+                    <listitem>
+                        <para>Extension's documentation</para>
+                    </listitem>
+                </itemizedlist></para>
+            <para>In short, the folder structure follows this
+                pattern:<programlisting>AnExtension/
+    documentation/
+    models/
+    plugins/
+    public/
+        scripts/
+        styles/
+        images/
+        scss/
+    tests/
+    views/
+        helpers/
+        filters/
+        scripts/
+            majistix/
+                AnExtension/
+                    layouts/
+                    index/
+                        ...
+    Bootstrap.php
+    Version.php</programlisting></para>
+            <para>
+                <note>
+                    <para>Majisti makes sure that upon bootstrapping the
+                        extension, a <classname>ModuleAutoloader</classname> is
+                        instancied to automatically load classes without the use
+                        of <methodname>require_once</methodname>.</para>
+                </note>
+            </para>
+        </section>
+        <section>
+            <title>Conventions</title>
+            <para>Every extensions must follow the listed design decisions to
+                help standardize extensions and faciliate extensibility.<itemizedlist>
+                    <listitem>
+                        <para>Styling is done with SCSS (formally SASS, but
+                            SASS2 is now known as SCSS) and the Compass
+                            framework.</para>
+                    </listitem>
+                    <listitem>
+                        <para>Client side scripting is done with the conjunction
+                            of the Mootools Class and JQuery plugin.</para>
+                    </listitem>
+                    <listitem>
+                        <para>Docbook documentation is used to describe how to
+                            use the extension and its various options.</para>
+                    </listitem>
+                    <listitem>
+                        <para>PHPQuery for HTML generation.</para>
+                    </listitem>
+                    <listitem>
+                        <para>Doctrine2 is used for persistent models.</para>
+                    </listitem>
+                </itemizedlist>Along with thoses mendatory conventions are some
+                optionnal ones that are still important, but mostly considered
+                as best practices:</para>
+            <itemizedlist>
+                <listitem>
+                    <para>Spriting and compressing images to base64 (handy
+                        utility functions are available with Compass)</para>
+                </listitem>
+                <listitem>
+                    <para>Both integration tests and unit tests must be
+                        present.</para>
+                </listitem>
+                <listitem>
+                    <para>In case a <acronym>CLI</acronym> (<emphasis
+                            role="bold">C</emphasis>ommand <emphasis role="bold"
+                            >L</emphasis>ine <emphasis role="bold"
+                        >I</emphasis>nterface) is used,  it must add either
+                        functionality to Majisti's CLI, or the application's
+                        one.</para>
+                </listitem>
+            </itemizedlist>
+            <section>
+                <title>Styling with SCSS and Compass</title>
+                <para>TODO</para>
+            </section>
+            <section>
+                <title>Client side scripting with Mootools and JQuery</title>
+                <para>TODO</para>
+            </section>
+            <section>
+                <title>Docbook documentation</title>
+                <para>TODO</para>
+            </section>
+        </section>
     </section>
 </section>

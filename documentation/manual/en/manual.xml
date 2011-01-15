@@ -4,7 +4,7 @@
     xmlns:xi="http://www.w3.org/2001/XInclude" xml:id="majisti">
     <info>
         <title>Developer's Reference Guide</title>
-        <subtitle>Majisti Livbrary</subtitle>
+        <subtitle>Majisti Library</subtitle>
         <edition>Developer's Reference Guide for Majisti Library</edition>
         <pubdate><?dbtimestamp format="Y-m-d" ?></pubdate>
         <copyright>

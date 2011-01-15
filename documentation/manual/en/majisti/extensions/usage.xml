@@ -3,7 +3,7 @@
           xml:id="majisti.extensions.usage"
           version="5.0">
     <title>Usage</title>
-    <section xml:id="majitix.extensions.usage.directories"><title>Setting extensions directories</title>
+    <section xml:id="majitix.extensions.usage.directories"><title>Setting directories</title>
         <para>By default, Majisti's extension resource adds two extensions
             directories: the library's extensions directory (libraries/MajistiX)
             and the application's directory (library/extensions). You can use
@@ -11,7 +11,7 @@
             of the box. However, if you need to add more directories to the
             stack you can always do the
             following:<programlisting>resources.extensions.paths[]['My\App\\'] = "/path/to/extensions"</programlisting></para>
-        <para>Note that since extensions must be explicitely enabled, the paths
+        <para>Note that since extensions can be explicitely enabled, the paths
             cannot be reset through the configuration. You can only add to the
             stack. If you need to reset or change the paths, you need to use the
                 <classname>Majisti\Application\Extension\Manager</classname> .
@@ -24,8 +24,11 @@ $manager->setExtensionPaths(array(
     )
 ));</programlisting></para>
     </section>
-    <section xml:id="majisti.extensions.usage.enabling"><title>Enabling a
-        selected extension</title>
+    <section xml:id="majisti.extensions.usage.adding">
+        <title>Adding</title>
+        <para>TODO</para>
+    </section>
+    <section xml:id="majisti.extensions.usage.enabling"><title>Enabling</title>
         <para>Enabling extensions within Majisti is meant to be easy. Whenever
             you need to add an extension to your application stack you usually
             do the
@@ -55,5 +58,30 @@ resources.extension.ExtensionName.anOption = optionValue</programlisting></para>
             extensions of the same name. For example, if AnExtension is avaible
             in the library and that you add AnExtension within your
             application's library, the latter will be used.</para>
+    </section>
+    
+    <section xml:id="majisti.extensions.usage.extending">
+        <title>Extending</title>
+        <para>Extending an extension consists the extension of the following concepts:</para>
+        <itemizedlist>
+            <listitem>
+                <para>Bootstrapping and configuration</para>
+            </listitem>
+            <listitem>
+                <para>Styling (css)</para>
+            </listitem>
+            <listitem>
+                <para>Client side (javascript)</para>
+            </listitem>
+            <listitem>
+                <para>Controller plugins</para>
+            </listitem>
+            <listitem>
+                <para>MVC components</para>
+            </listitem>
+            <listitem>
+                <para>Html output</para>
+            </listitem>
+        </itemizedlist>
     </section>
 </section>
