@@ -32,4 +32,9 @@ abstract class AbstractHelper
     {
         //TODO: complete method stub
     }
+
+    public function getView()
+    {
+        return $this->view;
+    }
 }
