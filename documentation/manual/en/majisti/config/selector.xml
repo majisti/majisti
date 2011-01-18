@@ -25,9 +25,9 @@ $config = new \Zend_Config($array);</programlisting></para>
     ...
 }</programlisting></para>
     <para>That is fine, but you obvisouly see that it can get pretty tedious.
-        The <classname>Selector</classname> uses a CSS-like attribute selection
-        to find your values. That means that you can specify an attribute
-        selector such as <code>foo.bar.baz</code> to retrieve
+        The <classname>Selector</classname> uses a minimal CSS-like attribute
+        selection to find your values. That means that you can specify an
+        attribute selector such as <code>foo.bar.baz</code> to retrieve
             <code>value</code>.</para>
     <para>You can even specify a default return value in case your value cannot
         be found within the configuration. This makes way for shorter code as such:<programlisting>if( $value = $selector->find('foo.bar', false) ) {

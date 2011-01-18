@@ -13,10 +13,10 @@
     <para> LayoutSwitcher checks the configuration for the following keys:
             <itemizedlist mark="bullet">
             <listitem>
-                <para>moduleName.resources.layout.layout = layoutName</para>
+                <para>resources.layout.moduleName.layout = layoutName</para>
             </listitem>
             <listitem>
-                <para>moduleName.resources.layout.layoutPath = layoutPath
+                <para>resources.layout.moduleName.layoutPath = layoutPath
                     [optionnal]</para>
             </listitem>
             <listitem override="opencircle">
@@ -30,7 +30,7 @@
             <listitem override="opencircle">
                 <para>where layoutPath is the path to the layout directory, if
                     none is provided it assumes
-                    APPLICATION_PATH/moduleName/views/layouts </para>
+                    majisti.app.path/moduleName/views/layouts </para>
             </listitem>
         </itemizedlist></para>
     <para> By default, Majisti synergizes this feature with the Layout
