@@ -30,8 +30,11 @@ resources.locale.available[] = ch</programlisting></para>
         to the first locale made available, in this case 'es'.</para>
     <para>To explicitly define the default locale of you application, the
         configuration setting is quite similar to the one used to define the
-        supported locales. All there is to do is add the following line in the
-        configuration:<programlisting>resources.locale.default = fr</programlisting></para>
+        supported locales. All there is to do is add the following line in the configuration:<programlisting>resources.locale.default = fr</programlisting><note>
+            <para>Setting the default language explicitely is optionnal. If you
+                specify available locales, the first one will be implicitely
+                taken as the default one.</para>
+        </note></para>
     <para>You can always use the object-oriented way, using
             <methodname>addLocale()</methodname>,
             <code>addLocales()</code>,<methodname>setLocales()</methodname> and

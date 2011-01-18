@@ -78,7 +78,7 @@ $xmlEnLocaleOnly = new Xml('file2.xml');</programlisting></para>
                 since 'fr' cannot be found in the XML file.</para>
         </example>
     </para>
-    <para> Of course, just like <classname>Zend_Form</classname>, you can (and probably should)
-        extend this model class in order to make a concrete model of your own. This is always
-        something that should be done in projects.</para>
+    <para> Of course, just like <classname>Zend_Form</classname>, you can (and
+        probably should) extend this model class in order to make a concrete
+        model of your own.</para>
 </section>

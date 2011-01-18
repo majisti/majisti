@@ -79,7 +79,9 @@
                     <para>Majisti makes sure that upon bootstrapping the
                         extension, a <classname>ModuleAutoloader</classname> is
                         instancied to automatically load classes without the use
-                        of <methodname>require_once</methodname>.</para>
+                        of <methodname>require_once</methodname>. This include
+                        models, views, handlers, forms, etc. (See the
+                            <classname>ResourceAutoloader</classname>).</para>
                 </note>
             </para>
         </section>
@@ -133,10 +135,80 @@
             </section>
             <section>
                 <title>Client side scripting with Mootools and JQuery</title>
-                <para>TODO</para>
+                <para>JQuery and Mootools were chosen for two specific purposes.
+                    JQuery is Majisti's main javascript library for its DOM
+                    manipulation, ui effects and plugin system.  Mootools was
+                    custom built using only Class and Class.extras. Mootools
+                    make it easy to create, implement and extend classes. In
+                    addition, Moo4q (Mootools for jQuery) might be used to use
+                    both techniques to make a plugin as extensible as
+                    possible.</para>
+                <para>Majisti uses the <methodname>majisti.ext</methodname>
+                    global object to store client side scripting for extensions.
+                    Every extensions must use a single namespace in that global
+                    object, which resolve as the extension name itself. Here's
+                    an
+                    exemple:<programlisting>$.extend(majisti.ext.myExtension, {
+    foo: function(bar) {
+        console.log(bar);
+    },
+    myClass: new Class({
+        //...
+    }
+});</programlisting></para>
+                <para>We can see here the usage of both Mootools for classes and
+                    jQuery to extend the global extension object.</para>
             </section>
             <section>
                 <title>Docbook documentation</title>
+                <para>TODO</para>
+            </section>
+            <section>
+                <title>PHPQuery for HTML generation</title>
+                <para>PHPQuery was chosen because it does not add anything new
+                    to someone who already knows JQuery. Majisti's use of
+                    PHPQuery is mainly to distribute html in an 'object' way. In
+                    short, you can manipulate an entire DOM before actually
+                    outputing it. For extensions, the same applies, and become
+                    even more important. The author can go on and implement a
+                    default view script for displaying the various models and
+                    users can add markup to the PHPQuery objects without having
+                    to rewrite the entire
+                    view.<programlisting>&lt;?php
+
+// anExtension/views/scripts/aView.phtml
+
+$container = pq('&lt;div />')
+    ->attr('id', 'majistix-anExtension-container')
+    ->append(pq('&lt;p />')
+        ->html('This is a paragraph.')
+    )
+;
+
+$this->setRenderReturn($container);
+
+// PHPQuery objects can be reused anywhere
+// aProject/application/modules/main/views/scripts/index/index.phtml
+
+$content = pq('&lt;div />')
+    ->addClass('.block')
+    ->append($this->render('majistix/anExtension/aView.phtml))
+;
+
+// inheritence and polymorphism can even be used
+// aProject/application/modules/main/views/scripts/majistix/anExtension/aView.phtml
+
+$content = pq('&lt;div />')
+    ->addClass('.block')
+    ->append($this->renderParent(__FILE__))
+;</programlisting></para>
+                <para>With PHPQuery, HTML becomes much much flexible in how it
+                    is generated before being outputted, leading to clever loose
+                    coupling and object reuse. For a more in-depth look on how
+                    to use HTML with Majisti, see this section.</para>
+            </section>
+            <section>
+                <title>Doctrine2 and persistent models</title>
                 <para>TODO</para>
             </section>
         </section>
