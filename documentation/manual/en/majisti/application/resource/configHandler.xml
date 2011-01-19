@@ -36,10 +36,7 @@ resources.configHandler.property   = 0</programlisting>
         <para> To specify a custom class already loadable from the autoloader,
             you can simply provide: </para>
 
-        <programlisting>resources.configHandler.custom              = "My_Config_Handler_Custom"
-
-/* PHP5.3 namespace supported too */
-resources.configHandler.customNamespaced    = "\My\Config\Handler\CustomNamespace"</programlisting>
+        <programlisting>resources.configHandler.custom = "\My\Config\Handler\CustomNamespace"</programlisting>
 
         <para>Should you ever need to pass options to your custom class -
             provided the class accepts an array of options within its

@@ -7,6 +7,9 @@
     version="5.0">
     
     <title>Resources</title>
+    <para>Resources are class additions that uses the strategy pattern to handle
+        the configuration. Class resources are highly coherent and thus Majisti
+        used this concept to add more ways to enhance applications.</para>
 
     <xi:include href="resource/configHandler.xml"></xi:include>
     <xi:include href="resource/dispatcher.xml"></xi:include>

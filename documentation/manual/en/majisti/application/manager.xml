@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!---->
+<section 
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" 
+    xml:lang="en" xml:id="majisti.application.manager" 
+    version="5.0">
+    
+    <title>The Manager</title>
+    
+    <para>Applications are bootstrapped using the Manager. The manager sole
+        purpose is to instanciate a <classname>Zend_Application</classname>
+        using a merged configuration. A merged configuration is composed of
+        Majisti's default configuration with the application's specific one. It
+        is where all the core configuration are also dertmined such as:<itemizedlist>
+            <listitem>
+                <para>Majisti's url and path</para>
+            </listitem>
+            <listitem>
+                <para>Application's namespace, environment, url, base url and
+                    path</para>
+                <para>Using the manager is pretty straightforward. The only
+                    required configuration for it to work is the application's
+                    path, namespace and environment. Here's an example on how to
+                    easily bootstrap an application:</para>
+                <programlisting>$options = array('majisti' => array(
+    'app' => array(
+        'namespace'   => 'MyApplication',
+        'path'        => dirname(__DIR__),
+        'env'         => 'development',
+    ),
+);
+
+$manager = new \Majisti\Application\Manager($options);
+$app = $manager->getApplication(); //creates a \Zend_Application instance
+$app->bootstrap()->run(); //dispatches everything</programlisting>
+            </listitem>
+        </itemizedlist></para>
+    <para>A lot more configuration might be added or tweaked. Majisti uses a lot
+        of default configuration to maximize its ease of use and reduce code
+        duplication. The configuration section will give a more in-depth look
+        into the configuration.</para>
+</section>
