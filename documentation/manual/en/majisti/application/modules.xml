@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en"
+    xml:id="majisti.application.resource" version="5.0">
+    <title>Modules</title>
+    <para>Applications Modules comes with two redefined components for Majisti:<itemizedlist>
+            <listitem>
+                <para>Module autoloader</para>
+            </listitem>
+            <listitem>
+                <para>Module bootstrap</para>
+            </listitem>
+        </itemizedlist></para>
+    <section>
+        <title>Module autoloader</title>
+        <para>The module autoloaders adds more resources types to autoload. With
+            those of Zend, Majisti added:<itemizedlist>
+                <listitem>
+                    <para>Handlers</para>
+                    <para>Following the GRASP Controller pattern, Majisti
+                        thought it should be the handler's responsability to
+                        handle controller specify logic. Zend Controllers do
+                        just that, but should only do it as a thin interface,
+                        such as providing CRUD access with actions, such as
+                            <methodname>createAction</methodname>,
+                            <methodname>deleteAction</methodname> and so on, but
+                            <emphasis>delegate</emphasis> the controller
+                        implementation to an <classname>handler</classname> (or
+                        multiple ones) to keep controllers thin, and models
+                        fat.<programlisting>namespace MyApp\Handler;
+
+class UserHandler extends \Majisti\Controller\Handler\AbstractHandler
+{
+    public function handle()
+    {
+        $controller = $this->getController();
+        //...
+    }
+}</programlisting></para>
+                    <para>More on handlers in this section.</para>
+                </listitem>
+            </itemizedlist></para>
+    </section>
+    <section>
+        <title>Module Bootstrap</title>
+        <para>The module bootstrap only ensures that everything works with PHP
+            namespaces, such as resources autoloaders and action helpers.</para>
+    </section>
+</section>
