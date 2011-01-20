@@ -38,7 +38,7 @@ class Majisti extends AbstractPlugin
              $locales = \Majisti\Application\Locales::getInstance();
 
              /* retrieve locale and switch if it is supported and not current */
-             if( $locale = $request->getParam($config->requestParam, false) ) {
+             if( $locale = $request->getParam($config->i18nRequestParam, false) ) {
 
                 $locale = new \Zend_Locale($locale);
 
