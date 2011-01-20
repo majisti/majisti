@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en"
+    xml:id="majisti.config.configuration" version="5.0">
+    <title>Configuration</title>
+    <para>The configuration object is the main configuration element for every
+        class that needs to add a layer of flexibility through options. Usually,
+        such as in most Zend classes, configuration of object instances is
+        issued throught options array. This is fine, but every class needs to
+        implement how they read, and define default configuration. A lot of
+        cumbersome <methodname>array_merge</methodname> and
+            <methodname>isset()</methodname> calls is needed and drops the
+        class' coherency level.</para>
+    <section>
+        <title>Usage</title>
+        <para>The configuration object is simply an extensible atomic wrapper
+            for options. One can view the object as an aggregator of options
+            designed for a very specific goal: configuring the current
+            class.</para>
+        <para>Instanciating a configuration object is simple. You either pass it
+            a <classname>Zend_Config</classname>, an array or even another
+                <classname>Configuration</classname> object. The configuration
+            will then be readable through CSS-like selectors with its
+                <methodname>has()</methodname> and
+                <methodname>find()</methodname> functions.</para>
+        <section>
+            <title>Creating</title>
+            <para>Creating a configuration instance is done like
+                so:<programlisting>$myConfig = new \Majisti\Config\Configuration(array(
+    'baz' => 'baz',
+    'foo' => 'foo
+));</programlisting></para>
+            <para>You can provide default options as a second parameter:</para>
+            <programlisting>$myConfig = new \Majisti\Config\Configuration(array(
+    'baz' => 'baz',
+    'foo' => 'foo
+), array(
+    'foo' => 'bar'
+));</programlisting>
+            <para>Default options mean that they get overriden with the concrete
+                options. In this exemple, foo's value would be 'baz'. In case no
+                'foo' key was provided as concrete options, foo would have been
+                'bar' by default.</para>
+        </section>
+        <section>
+            <title>Extending</title>
+            <para>Extending a configuration object will <emphasis role="bold"
+                    >override and merge </emphasis>the current instance with the
+                one received as parameter. Again, you can extend with an array,
+                a Zend_Config object or another Configuration
+                instance.<programlisting>$config = array('foo' => 'bar');
+
+$myConfig = new \Majisti\Config\Configuration(array(
+    'baz' => 'baz',
+    'foo' => 'foo
+));
+
+$myConfig->extend($config); //overrides the foo key, and merges the baz key.
+
+//alternative: use default options as second argument
+
+$myConfig = new \Majisti\Config\Configuration(array(
+    'baz' => 'baz',
+    'foo' => 'foo
+), $config);</programlisting></para>
+        </section>
+        <section>
+            <title>Querying</title>
+            <para>Querying a configuration object is simple. You either use the
+                    <methodname>has()</methodname> or
+                    <methodname>find()</methodname> function. Both method accept
+                a CSS-like selection or an array of selections.</para>
+            <para>Using
+                <methodname>has()</methodname>:<programlisting>$config = new \Majisti\Config\Configuration(array(
+    'foo'   => 'bar',
+    'items' => array(
+        'item1' => 'item1',
+        'item2' => 'item2,
+    ),
+));
+
+$config->has('foo');
+$config->has('items.item1');
+
+//or
+
+$config->has(array('foo', 'items.item1'));</programlisting></para>
+            <para>Using
+                <methodname>find()</methodname>:<programlisting>$foo    = $config->find('foo');
+$anItem = $config->find('items.item1');
+
+$config->find('items.item4'); //throws Exception, key not found
+$anotherItem = $config->find('items.item4', 'item4');
+
+//more complex query
+
+$options = $config->find(array('foo', 'anItem' => 'items.item1'), 'anotherItem' => array('items.item4', 'item4'));
+print $options->foo;
+print $options->anItem;</programlisting></para>
+            <para>You can see here that <methodname>find()</methodname> can help
+                prepare complex options set needed for simple code units.  Note that:<variablelist>
+                    <varlistentry>
+                        <term>When passing a string selection</term>
+                        <listitem>
+                            <para>The value returned will be a string, or a
+                                    <classname>Zend_Config</classname>,
+                                depending on the requested key.</para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term>When passing an array of selection</term>
+                        <listitem>
+                            <para>You can specify an alias for  a selection,
+                                such as array('anItem' => 'items.item1')</para>
+                            <para>You can specify default return values just
+                                like single string selection, but you must wrap
+                                the selection in another array, such as
+                                array('anotherItem' => array('items.item4',
+                                'item4')) //item4 is the default return value is
+                                no key items.item4 is found.</para>
+                            <para>The returnDefault parameter becomes obsolete
+                                on array selections.</para>
+                            <para>In depth selections such as items.item4 will
+                                be camelCased if no alias is provided, so that
+                                the option can be retrived via
+                                $options->itemsItem4</para>
+                        </listitem>
+                    </varlistentry>
+                </variablelist></para>
+            <para>
+                <note>
+                    <para><methodname>has()</methodname> works much like
+                            <methodname>find()</methodname> when used as boolean
+                        operators except that <methodname>has()</methodname>
+                        will never throw exceptions if a selection is not found,
+                        since it will return false when at least 1 value is not
+                        present.</para>
+                </note>
+                <warning>
+                    <para>Multiple selections is not supported as of 0.4.0. See
+                            <uri
+                            xlink:href="http://stivon.com:8084/browse/MA-77"
+                            >MA-77</uri> to track its progress.</para>
+                </warning>
+            </para>
+        </section>
+    </section>
+    <section>
+        <title>Class exemple</title>
+        <para>Here's a simple exemple on how the configuration object could be
+            used with flexible classes.</para>
+        <example>
+            <title>Using configuration in flexible classes</title>
+            <para>Here's a simple
+                usage:<programlisting>namespace MyApp\Model;
+
+use \Majisti\Config\Configuration;
+
+class MyConfigurableModel
+{
+    /** @var \Majisti\Config\Configuration */
+    private $_config;
+
+    public function setConfiguration(Configuration config)
+    {
+        $this->_config = $config;
+    }
+
+    public function getConfiguration()
+    {
+        return new Configuration($this->_config, $this->getDefaultConfiguration());
+    }
+
+    public function getDefaultConfiguration()
+    {
+        return new Configuration(array(
+            'name'  => 'Bob'
+            'color' => 'orange',
+            'items' => array(
+                'item1' => 'foo',
+                'item2' => 'bar',
+            ),
+        ));
+    }
+    
+    public function doWork()
+    {
+        $config = $this->getConfiguration();
+
+        if( $config->has(array('items.item1, 'items.item2', 'color') ) {
+            //...
+        }
+
+        $item1 = $config->find('items.item1');
+    }
+}</programlisting></para>
+            <para>You can see here that the default configuration is
+                overriden with the custom options that could be passed
+                with <methodname>setConfiguration()</methodname>. The
+                configuration object uses an internal config Selector to
+                implement CSS-like selections. Be aware that the same
+                exceptions can be thrown.</para>
+        </example>
+        <note>
+            <para>This is a simple class, be aware that some lazy
+                instanciation should be added.</para>
+        </note>
+    </section>
+</section>

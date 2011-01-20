@@ -13,7 +13,7 @@
         purpose is to instanciate a <classname>Zend_Application</classname>
         using a merged configuration. A merged configuration is composed of
         Majisti's default configuration with the application's specific one. It
-        is where all the core configuration are also dertmined such as:<itemizedlist>
+        is where all the core configurations are also dertmined such as:<itemizedlist>
             <listitem>
                 <para>Majisti's url and path</para>
             </listitem>
@@ -22,12 +22,11 @@
                     path</para>
                 <para>Using the manager is pretty straightforward. The only
                     required configuration for it to work is the application's
-                    path, namespace and environment. Here's an example on how to
+                    namespace and environment. Here's an example on how to
                     easily bootstrap an application:</para>
                 <programlisting>$options = array('majisti' => array(
     'app' => array(
         'namespace'   => 'MyApplication',
-        'path'        => dirname(__DIR__),
         'env'         => 'development',
     ),
 );
@@ -35,6 +34,14 @@
 $manager = new \Majisti\Application\Manager($options);
 $app = $manager->getApplication(); //creates a \Zend_Application instance
 $app->bootstrap()->run(); //dispatches everything</programlisting>
+                <note>
+                    <para>Majisti's template project already ships a Loader
+                        class that will use that application manager to
+                        bootstrap applications. See documentation for the Loader
+                        class <link
+                            xlink:href="majisti.application.loader.html">on the
+                            next section</link>.</para>
+                </note>
             </listitem>
         </itemizedlist></para>
     <para>A lot more configuration might be added or tweaked. Majisti uses a lot
