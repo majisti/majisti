@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!---->
+<section 
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" 
+    xml:lang="en" xml:id="majisti.application.configuration" 
+    version="5.0">
+    
+    <title>Configuration</title>
+    <para>This section describes the default configuration used by Majisti to
+        reduce configuration duplication within applications.</para>
+    <section>
+        <title>Core </title>
+        <para>The following is setup by default:<itemizedlist>
+                <listitem>
+                    <para>Bootstrap<itemizedlist>
+                            <listitem>
+                                <para>Application's bootstrap path. Resolves to
+                                    application/Bootstrap.php</para>
+                            </listitem>
+                            <listitem>
+                                <para>Application's bootstrap class. Resolves to
+                                    {majisti.app.namespace}\Application\Bootstrap</para>
+                            </listitem>
+                            <listitem>
+                                <para>appnamespace, used for Zend same as
+                                    majisti.app.namespace.</para>
+                            </listitem>
+                        </itemizedlist></para>
+                </listitem>
+                <listitem>
+                    <para>Plugin paths<itemizedlist>
+                            <listitem>
+                                <para>Majisti's application resource
+                                    (Majisti/Application/Resource)</para>
+                            </listitem>
+                            <listitem>
+                                <para>Application's library resources
+                                    ({majisti.app.path}/library/resources)</para>
+                            </listitem>
+                        </itemizedlist></para>
+                </listitem>
+            </itemizedlist></para>
+    </section>
+    <section>
+        <title>Loaded Resources</title>
+        <para>Majisti makes sure to load the following resources:<itemizedlist>
+                <listitem>
+                    <para><link
+                        xlink:href="majisti.application.resource.configHandler.html">
+                        ConfigHandler</link> with the import and property handler
+                        loaded by default.</para>
+                </listitem>
+                <listitem>
+                    <para><link
+                            xlink:href="majisti.application.resource.dispatcher"
+                            >Dispatcher</link>, to dispatch multiple controller
+                        directories.</para>
+                </listitem>
+                <listitem>
+                    <para>I18n,  for application internationnalization</para>
+                </listitem>
+                <listitem>
+                    <para>Layout, enabling layouts for both the application's
+                        and its modules.</para>
+                </listitem>
+                <listitem>
+                    <para>View</para>
+                </listitem>
+                <listitem>
+                    <para>Database</para>
+                </listitem>
+                <listitem>
+                    <para>Frontcontroller<itemizedlist>
+                            <listitem>
+                                <para>Default module set as "main" and modules
+                                    directory to "application/modules"</para>
+                            </listitem>
+                            <listitem>
+                                <para>Environment set to
+                                    {majisti.app.env}</para>
+                            </listitem>
+                            <listitem>
+                                <para>Controller plugins enabled:<itemizedlist>
+                                        <listitem>
+                                        <para>Majisti plugin and
+                                        LayoutSwitcher</para>
+                                        </listitem>
+                                    </itemizedlist></para>
+                            </listitem>
+                        </itemizedlist></para>
+                </listitem>
+                <listitem>
+                    <para>Modules, enables modules.</para>
+                </listitem>
+                <listitem>
+                    <para>Javascript: loads and set JQuery and Mootools
+                        libraries. <emphasis role="bold">They are disabled by
+                            default</emphasis>, but their paths are already set
+                        to point to Google's servers in production mode and to
+                        Majisti's public directory in development mode.</para>
+                </listitem>
+            </itemizedlist></para>
+    </section>
+</section>

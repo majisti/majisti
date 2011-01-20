@@ -60,7 +60,6 @@ class Doctrine extends \Zend_Application_Resource_ResourceAbstract
         $config->setProxyNamespace($maj['app']['namespace'] . '\Doctrine\Proxies');
         $config->setAutoGenerateProxyClasses(true);
 
-
         $adapterClass = get_class($db);
         $dbConfig = $db->getConfig();
         $dbConfig['user'] = $dbConfig['username'];

@@ -53,7 +53,7 @@ class Table implements ILayout
             if( 'Zend_Form_Element_Captcha' === $element->getType() ) {
                 $element->setDecorators($captchaDecorators);
             } elseif( 'Zend_Form_Element_Submit' === $element->getType()
-                || 'Zend_Form_Element_Reset' === $element->getType() 
+                || 'Zend_Form_Element_Reset' === $element->getType()
                 || 'Zend_Form_Element_Hidden' === $element->getType() )
             {
                 $element->setDecorators($buttonDecorators);

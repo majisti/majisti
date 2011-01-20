@@ -8,17 +8,22 @@
     
     <title>Majisti\Application</title>
     
-    <para>
-        <classname>Majisti\Application</classname> is the main entry point or
-        facade into using the entire library. Concrete implementations are
-        bootstrapped using an instance created by the
-            <classname>Manager</classname>.</para>
+    <para> </para>
+    <section>
+        <title>Introduction</title>
+        <para><classname>Majisti\Application</classname> is the main entry point
+            or facade into using the entire library. Concrete implementations
+            are bootstrapped using an instance created by the
+                <classname>Manager</classname>. This is where configuration are
+            merged, resources loaded and a Zend_Application bootstrapped.</para>
+    </section>
     
     <xi:include href="application/manager.xml" />
+    <xi:include href="application/loader.xml" />
+    <xi:include href="application/configuration.xml" />
     <xi:include href="application/resource.xml" />
     <xi:include href="application/locales.xml" />
 </chapter>
-
 
 
 

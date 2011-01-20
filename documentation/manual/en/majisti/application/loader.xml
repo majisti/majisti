@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!---->
+<section 
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" 
+    xml:lang="en" xml:id="majisti.application.loader" 
+    version="5.0">
+    
+    <title>The Loader</title>
+    <para>Majisti's application Loader is the only concrete class found within
+        concrete projects. This class is meant to find the Majisti library, init
+        the needed autoloaders and create a symlink that will point to Majisti's
+        public directory.</para>
+    <section>
+        <title>Using the the Loader class</title>
+        <para>When using the default project template shipped with Majisti, the
+            Loader class is already provided. You can notice that the Loader
+            uses a few
+            settings:<programlisting>$settings = array('majisti' => array(
+    'app' => array(
+        'namespace' => 'MyApp',
+        'env'       => 'development',
+    ),
+    'lib'       => array(
+        'majisti' => 'majisti-0.4/libraries',
+    ),
+));</programlisting></para>
+        <para>Notice here the use of a relative url for finding the Majisti
+            library. The loader class will search <emphasis>upright</emphasis>
+            for a folder entitled 'majisti-0.4' and add the needed include path.
+            This follows the "deploy anywhere" that Majisti is providing.
+            Wherever you put your application within your webserver, as long as
+            you have majisti located somewhere up in the directory structure,
+            your application will launch seemlessly, without having to change
+            base urls or whatsoever.</para>
+        <para>The only options you have to change amonsgt environments is
+            obviously the 'env' one. But that should be <emphasis role="bold"
+                >the only one</emphasis>. Every other configuration options are
+            specified in the config files, which change according to the
+            environment.</para>
+        <para>Here's a simple
+            example:<programlisting>www/
+   libs/
+     majisti-0.4/
+     majisti-0.5/
+     otherLib/
+   customers/
+        customer-site1/
+        customer-site2/</programlisting></para>
+        <para>There is two different projects here: customer-site1 and
+            customer-site2. Provided they both use the Loader class, Majisti
+            will be found and the application will dispatch seemlessly (using
+            libs/majisti-0.4/libraries). In case you move your project, the
+            Loader class will update the symlink under
+            projectName/public/majisti to reflect the new change. Since the
+            project always makes use of dynamic urls (such as base url), your
+            application will always be fully functionnal anywhere, on any
+            environment.</para>
+        <note>
+            <para>Note that the maximum upright search for libraries is 100
+                folders to prevent infinite loops in case Majisti cannot be
+                found.</para>
+        </note>
+        <para>Searching for the library on every request can be quite tedious on
+            heavy websites, but the Loader class makes use of the symlink
+            existance to check whether the library can still be seen under its
+            absolute path. When it is no longer accessible, the library will be
+            searched again. Also, you can always pass in an absolute path, but
+            that will break up the "deploy anywhere" functionnality.</para>
+        <para>If you don't want the Loader class to fallback on upright folder
+            searching, you can disable
+            it:<programlisting>$options = array('majisti' => array(
+    'app' => array(
+        ...
+    ),
+    'autoFindLibraries' => false
+);</programlisting></para>
+        <para>You can also add other libraries, and those will be searched the
+            same way as
+            Majisti.<programlisting>$options = array('majisti' => array(
+    'app' => array(
+        ...
+    ),
+    'lib' => array(
+        'majisti' => 'majisti-0.4/libraries',
+        'myLib'   => 'myLib',
+    ),
+    'autoFindLibraries' => true,
+);</programlisting></para>
+        <para>You can also use absolute paths for custom libraries.</para>
+        <note>
+            <para>Adding custom libraries with relative paths will trigger a
+                upright folder search on every request since no symlink is used.
+                Make sure you are not storing your libraries too far in the
+                filesystem.</para>
+        </note>
+    </section>
+</section>
