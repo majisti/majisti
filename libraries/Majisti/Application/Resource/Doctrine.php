@@ -5,13 +5,20 @@ namespace Majisti\Application\Resource;
 use Doctrine\ORM\EntityManager,
     Doctrine\ORM\Configuration;
 
+/**
+ * @desc Doctrine Resource. This resource will bootstrap a Doctrine EntityManager
+ * according to the database configuration provided by the Db Resource. The resource
+ * will make sure to load any entities located under every module and under
+ * the application's library, use proxies, cache and data fixtures.
+ *
+ * @author Majisti
+ */
 class Doctrine extends \Zend_Application_Resource_ResourceAbstract
 {
     protected $_em;
 
     public function init()
     {
-        $this->getBootstrap()->bootstrap('frontController');
         return $this->getEntityManager();
     }
 
@@ -24,6 +31,7 @@ class Doctrine extends \Zend_Application_Resource_ResourceAbstract
         $bootstrap = $this->getBootstrap();
         $maj = $bootstrap->getApplication()->getOption('majisti');
 
+        $bootstrap->bootstrap('frontController');
         $db = $bootstrap->bootstrap('Db')->getResource('Db');
 
         if( null === $db ) {
@@ -75,28 +83,5 @@ class Doctrine extends \Zend_Application_Resource_ResourceAbstract
         $this->_em = $em;
 
         return $em;
-    }
-
-    protected function adapterToDoctrineDriver(\Zend_Db_Adapter_Abstract $db)
-    {
-        /* get Zend adapter name */
-        $adapter = strtolower(str_replace(
-            'Zend_Db_Adapter_',
-            '' ,
-            get_class($db)
-        ));
-
-    \Zend_Debug::dump($adapter);
-
-        return $adapter;
-
-        /* transform to corresponding Doctrine driver */
-        $driver = str_replace(array(
-            'mysqli',
-        ), array(
-            'pdo_mysql',
-        ), $adapter);
-
-        return $driver;
     }
 }

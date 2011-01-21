@@ -7,15 +7,19 @@
     version="5.0">
     
     <title>Resources</title>
-    <para>Resources are class additions that uses the strategy pattern to handle
+    <para>Resources are class additions that uses the Strategy pattern to handle
         the configuration. Class resources are highly coherent and thus Majisti
         used this concept to add more ways to enhance applications.</para>
 
     <xi:include href="resource/configHandler.xml"></xi:include>
     <xi:include href="resource/dispatcher.xml"></xi:include>
+    <xi:include href="resource/doctrine.xml"></xi:include>
+    <xi:include href="resource/extensions.xml"></xi:include>
     <xi:include href="resource/i18n.xml"></xi:include>
+    <xi:include href="resource/javascript.xml"></xi:include>
+    <xi:include href="resource/locale.xml"></xi:include>
     <xi:include href="resource/layout.xml"></xi:include>
     <xi:include href="resource/modelContainer.xml"></xi:include>
+    <xi:include href="resource/translate.xml"></xi:include>
     <xi:include href="resource/view.xml"></xi:include>
-    <xi:include href="resource/addons.xml"></xi:include>
 </section>
