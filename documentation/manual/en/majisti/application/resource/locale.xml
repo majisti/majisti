@@ -5,5 +5,21 @@
     xml:id="majisti.application.resource.locale" version="5.0">
     <title>Locale</title>
     
-    <para>TODO</para>
+    <para>The locale resource let's you internationnalize your application into
+        multiple languages. By default, Majisti assumes that the application is
+        using the en locale, but that can be changed through configuration. More
+        locales can also be added as a list of available locales to the
+        application. Here's how to configure
+        I18n:<programlisting>resources.locales.available = en
+resources.locales.available = fr
+resources.locales.available = es</programlisting></para>
+    <para>This will enable three languages for your application: English, French
+        and Spanish, English being the default one since it is the first one.
+        You can change its
+        default:<programlisting>resources.locales.default = fr</programlisting></para>
+    <para>Since the <link linkend="majisti.controller.plugins.i18n">I18n</link>
+        controller plugin is enabled by default, this will automatically enable
+        language switching for your application through url parameters. You can
+        then combine this with view script blocks such as the
+        language-switcher.</para>
 </section>

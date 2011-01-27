@@ -68,13 +68,11 @@ class Dispatcher extends \Zend_Application_Resource_ResourceAbstract
 
         /* add the fallbacks */
         if( $fallbacks = $selector->find('fallback', false) ) {
-            foreach ($fallbacks as $module => $fallback) {
-                $fallback = $fallback->toArray();
-                $namespace = current($fallback);
-                $path      = key($fallback);
-
-                $dispatcher->addFallbackControllerDirectory(
-                    $namespace, $path, $module);
+            foreach ($fallbacks as $moduleName => $module) {
+                foreach( $module as $namespace => $path ) {
+                    $dispatcher->addFallbackControllerDirectory(
+                        $namespace, $path, $moduleName);
+                }
             }
         }
     }

@@ -43,8 +43,8 @@ class DispatcherTest extends \Majisti\Test\TestCase
         /* auth */
         $dir = $dispatcher->getFallbackControllerDirectory('auth');
         $this->assertEquals(1, count($dir));
-        $this->assertEquals('bar', $dir[0][0]); //namespace
-        $this->assertEquals('foo', $dir[0][1]); //path
+        $this->assertEquals('foo', $dir[0][0]); //namespace
+        $this->assertEquals('bar', $dir[0][1]); //path
     }
 }
 

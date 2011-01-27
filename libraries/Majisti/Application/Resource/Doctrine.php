@@ -15,13 +15,24 @@ use Doctrine\ORM\EntityManager,
  */
 class Doctrine extends \Zend_Application_Resource_ResourceAbstract
 {
+    /**
+     * @var EntityManager
+     */
     protected $_em;
 
+    /*
+     * (non-phpDoc)
+     * @see Inherited documentation.
+     */
     public function init()
     {
         return $this->getEntityManager();
     }
 
+    /**
+     * @desc Inits the Entity Manager
+     * @return EntityManager The manager
+     */
     public function getEntityManager()
     {
         if( null !== $this->_em ) {
@@ -34,6 +45,7 @@ class Doctrine extends \Zend_Application_Resource_ResourceAbstract
         $bootstrap->bootstrap('frontController');
         $db = $bootstrap->bootstrap('Db')->getResource('Db');
 
+        /* ensure db settings */
         if( null === $db ) {
             throw new Exception("Db settings must be set in order to
                 bootstrap the doctrine resource");
@@ -48,19 +60,22 @@ class Doctrine extends \Zend_Application_Resource_ResourceAbstract
         $chain = new \Doctrine\ORM\Mapping\Driver\DriverChain();
         $driverImpl = $config->newDefaultAnnotationDriver();
         $chain->addDriver($driverImpl, $maj['app']['namespace'] . '\Model');
-
-        $paths = array(
+        $driverImpl->addPaths(array(
             $maj['app']['path'] . '/library/models',
-        );
+        ));
 
+        /* add more annotation drivers based on modules */
         $cont = $bootstrap->getResource('frontController');
-        foreach( $cont->getControllerDirectory() as $dir ) {
+        foreach( $cont->getControllerDirectory() as $module => $dir ) {
+            $driver = $config->newDefaultAnnotationDriver();
             if( $path = realpath($dir . '/../models/doctrine/fixtures') ) {
-                $paths[] = $path;
+                $driver->addPaths(array($path));
             }
+            $chain->addDriver(
+                $driver,
+                $maj['app']['namespace'] . '\\' . ucfirst($module) . '\Model'
+            );
         }
-
-        $driverImpl->addPaths($paths);
 
         $config->setMetadataDriverImpl($chain);
         $config->setQueryCacheImpl($cache);

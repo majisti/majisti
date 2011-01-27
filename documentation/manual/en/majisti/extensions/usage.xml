@@ -11,7 +11,8 @@
             extensions located under MajistiX and in your application right out
             of the box. However, if you need to add more directories to the
             stack you can always do the
-            following:<programlisting>resources.extensions.paths[]['My\App\\'] = "/path/to/extensions"</programlisting></para>
+            following:<programlisting>resources.extensions.paths.myextensions.namespace = "My\App\\"
+resources.extensions.paths.myextensions.path      = "/path/to/extensions"</programlisting></para>
         <para>Note that since extensions can be explicitely enabled, the paths
             cannot be reset through the configuration. You can only add to the
             stack. If you need to reset or change the paths, you need to use the

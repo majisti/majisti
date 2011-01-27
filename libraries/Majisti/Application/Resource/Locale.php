@@ -3,8 +3,7 @@ namespace Majisti\Application\Resource;
 
 /**
  * @desc Supports adding 'available' locales to an application. Available locales
- * constraints the application to the locales specified. The current locale
- * is remembered through a storage model.
+ * constraints the application to the locales specified. 
  *
  * @see \Majisti\Application\Locales
  * @author Majisti

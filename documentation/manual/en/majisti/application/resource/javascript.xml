@@ -5,5 +5,50 @@
     xml:id="majisti.application.resource.javascript" version="5.0">
     <title>Javascript</title>
     
-    <para>TODO</para>
+    <para>The Javascript resource is used to enaled various Javascript libraries
+        for Majisti. Currently, Majisti supports jQuery and Mootools. JQuery is
+        used as the core one, providing DOM selection and plugins, while
+        Mootools is used for it's <classname>Class</classname> and
+            <classname>Class.extras</classname>. Therefore, Mootools is compiled
+        using those components only.</para>
+    <section>
+        <title>Enabling jQuery</title>
+        <para>By default, JQuery is disabled. You must explicitely enable it in
+            the
+            configuration.<programlisting>resources.javascript.jquery.enable = 1</programlisting></para>
+        <para>However, paths are already defined. In development, Majisti will
+            use the jquery located in its public directory while in production
+            it will use Google's. If you need to change the path, which can also
+            be an url you do the following:</para>
+        <programlisting>resources.javascript.jquery.path = /path/to/jquery.js
+resources.javascript.jquery.path = "http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js"</programlisting>
+        <para>The current used version of JQuery within Majisti is: <emphasis
+                role="bold">1.4.1</emphasis></para>
+        <para>Moreover, the JQuery UI library can also be enabled, and is
+            disabled by
+            default.<programlisting>resources.javascript.jquery.ui.enable = 1
+resources.javascript.jquery.ui.theme  = "redmond"</programlisting></para>
+        <para>Majisti ships the following jQuery UI themes:<itemizedlist>
+                <listitem>
+                    <para>Redmond</para>
+                </listitem>
+            </itemizedlist></para>
+        <para>You can also provide a
+            theme:<programlisting>resources.javascript.jquery.ui.theme  = "redmond"</programlisting></para>
+        <para>If you need to change paths, it basically works the same way as
+            the core
+            library:<programlisting>resources.javascript.jquery.ui.path = "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js"</programlisting></para>
+    </section>
+    <section>
+        <title>Enabling Mootools</title>
+        <para>Enabling Mootools works the same way as enabling jQuery. You can
+            expect the same configurable elements found with
+            jQuery:<programlisting>resources.javascript.mootools.enable = 1
+resources.javascript.mootools.path = /path/to/moootools.js</programlisting></para>
+        <note>
+            <para>Do not forget that the default Mootools shipped with Majisti
+                contains only <classname>Class</classname> and
+                    <classname>Class.extras</classname></para>
+        </note>
+    </section>
 </section>

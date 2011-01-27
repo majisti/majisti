@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section xmlns="http://docbook.org/ns/docbook"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en"
     xml:id="majisti.application.resource.configHandler" version="5.0">
 
     <title>ConfigHandler</title>
 
     <para> The <classname>Confighandler</classname> resource enables easy <link
-            xlink:href="majisti.config.handlers">config handling</link>
+            linkend="majisti.config.handlers">config handling</link>
         through the application's configuration. It makes use of the
             <classname>Composite</classname> handler to aggregate multiple
         handlers that will modify the entire configuration. </para>
@@ -22,9 +21,9 @@
 resources.configHandler.property   = 1</programlisting>
 
         <para> That would enable the already shipped <link
-                xlink:href="majisti.config.handlers.html#majisti.config.handlers.property"
+                linkend="majisti.config.handlers.property"
                 >Property</link> and <link
-                xlink:href="majisti.config.handlers.html#majisti.config.handlers.import"
+                linkend="majisti.config.handlers.import"
                 >Import</link> handlers. You may note though that Import and
             Property handers are already enabled within Majisti's core
             configuration and if you need those disabled you would only need to
@@ -52,9 +51,7 @@ resources.configHandler.aUniqueKey[]       = "value2"</programlisting>
             found within the pluginsPath, you would replace 'aUniqueKey' with
             the class name (property, for instance). The next code snippet
             shows this along with another usefull use of parameters with the
-                <link
-                xlink:href="majisti.config.handlers.html#majisti.config.handlers.markup"
-                >Markup</link> handler:</para>
+                <link linkend="majisti.config.handlers.markup">Markup</link> handler:</para>
 
         <programlisting>resources.configHandler.markup[] = "bbcode_html"</programlisting>
 
