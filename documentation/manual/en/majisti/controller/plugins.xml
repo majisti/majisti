@@ -12,5 +12,6 @@
         is continually developping plugins and modules that eases the task of
         producing rich and well designed applications. </para>
     
+    <xi:include href="plugins/i18n.xml" />
     <xi:include href="plugins/layoutSwitcher.xml" />
 </section>

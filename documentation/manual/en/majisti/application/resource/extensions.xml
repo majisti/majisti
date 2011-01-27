@@ -2,62 +2,9 @@
 <section xmlns="http://docbook.org/ns/docbook"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en"
-    xml:id="majisti.application.resource.addons" version="5.0">
-
-    <title>Addons</title>
-
-    <para>The addons resource will automatically attempt to load any modules or
-        extensions under the specified path(s) using the <link
-            xlink:href="majisti.application.addons.html#majisti.application.addons.manager"
-            > addons manager</link> .</para>
-    <para> Here's how to specify addons paths in a configuration file: </para>
-    <programlisting>resources.addons.extension.paths[] = MA_APP "/library/extensions"
-resources.addons.module.paths[]    = MA_APP "/library/modules"</programlisting>
-    <para>Anything specified in the brackets will be used as the classes
-        namespace.</para>
-    <para>
-        <example>
-            <title>Loading an extension</title>
-            <para> In order to load an extension into your application, simply
-                use the following syntax in your configuration
-                file:<programlisting>resources.addons.extension[] = "InPlaceEditing" //Directly loaded from MajistiX, provided you have the extension there.
-resources.addons.extension[] = "MyOwnExtension" //Loaded from your application's library</programlisting></para>
-        </example>
-        <note>
-            <para>Adding extensions path will <emphasis role="bold"
-                    >extend</emphasis> extensions of the same name that are
-                lower in the paths stack (even any of officially supported
-                MajistiX' Extensions). By default, the MajistiX and your
-                application library's extensions directories will be registered
-                as extensions paths. Your application will always extend
-                MajistiX's extensions with the same <emphasis role="bold"
-                    >name</emphasis> and any other subsequent paths added will
-                do the same to the previous entries. Extending is possible
-                because extensions must comply to the same namespace, which is
-                MajistiX and each path added will add the respective paths for
-                the helpers, plugins, actionhelpers, etc.</para>
-        </note>
-        <example>
-            <title>Loading a module</title>
-            <para> In order to <emphasis role="bold">fallback</emphasis> (load)
-                a module into your application, simply use the following syntax
-                in your configuration
-                file:<programlisting>resources.addons.module[] = "auth"
-resources.addons.module[] = "users"</programlisting></para>
-            <para>What does <emphasis role="italic">fallback</emphasis> mean? An
-                application already automatically discovers its own modules and
-                dispatches them. If the requested module is not existant in your
-                application, A dispatched request will fallback to the first
-                module found within the paths provided. If you already have the
-                same module name in your application, enabling the module will
-                act as a fallback, meaning that any controllers not present in
-                your application, but present in the loaded module <emphasis
-                    role="bold">will</emphasis> be dispatched. You can get a
-                better explanation on fallback controller directories by reading
-                the <link xlink:href="majisti.controller.dispatcher.html">
-                    Multiple Dispatcher.</link> If you do not want to expose an
-                entire module using fallbacks, make sure to read on the fallback
-                restrictions section.</para>
-        </example>
-    </para>
+    xml:id="majisti.application.resource.extensions" version="5.0">
+    <title>Extensions</title>
+    <para>The extensions resource is used for enabling extensions. You can
+        read more on how to configure extension in the dedicated chapter <link
+            linkend="majisti.extensions">here</link>.</para>
 </section>

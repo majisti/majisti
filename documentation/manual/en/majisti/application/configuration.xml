@@ -21,11 +21,11 @@
                             </listitem>
                             <listitem>
                                 <para>Application's bootstrap class. Resolves to
-                                    {majisti.app.namespace}\Application\Bootstrap</para>
+                                    ${majisti.app.namespace}\Application\Bootstrap</para>
                             </listitem>
                             <listitem>
                                 <para>appnamespace, used for Zend same as
-                                    majisti.app.namespace.</para>
+                                    ${majisti.app.namespace}.</para>
                             </listitem>
                         </itemizedlist></para>
                 </listitem>
@@ -37,7 +37,7 @@
                             </listitem>
                             <listitem>
                                 <para>Application's library resources
-                                    ({majisti.app.path}/library/resources)</para>
+                                    (${majisti.app.path}/library/resources)</para>
                             </listitem>
                         </itemizedlist></para>
                 </listitem>
@@ -48,28 +48,49 @@
         <para>Majisti makes sure to load the following resources:<itemizedlist>
                 <listitem>
                     <para><link
-                        xlink:href="majisti.application.resource.configHandler.html">
+                        linkend="majisti.application.resource.configHandler">
                         ConfigHandler</link> with the import and property handler
                         loaded by default.</para>
                 </listitem>
                 <listitem>
                     <para><link
-                            xlink:href="majisti.application.resource.dispatcher"
+                            linkend="majisti.application.resource.dispatcher"
                             >Dispatcher</link>, to dispatch multiple controller
                         directories.</para>
                 </listitem>
                 <listitem>
-                    <para>I18n,  for application internationnalization</para>
+                    <para><link
+                            linkend="majisti.application.resource.extensions"
+                            >Extensions</link>, to make it possible to enable
+                        extensions.</para>
                 </listitem>
                 <listitem>
-                    <para>Layout, enabling layouts for both the application's
-                        and its modules.</para>
+                    <para><link linkend="majisti.application.resource.i18n"
+                            >I18n</link>, for application
+                        internationnalization</para>
                 </listitem>
                 <listitem>
-                    <para>View</para>
+                    <para><link linkend="majisti.application.resource.locale"
+                            >Locale</link>, to add langauges to a multilingual
+                        application</para>
                 </listitem>
                 <listitem>
-                    <para>Database</para>
+                    <para><link linkend="majisti.application.resource.translate"
+                            >Translate</link>, for controlling which adapter to
+                        automatically use on i18n aware applications.</para>
+                </listitem>
+                <listitem>
+                    <para><link linkend="majisti.application.resource.layout"
+                            >Layout</link>, enabling layouts for both the
+                        application's and its modules.</para>
+                </listitem>
+                <listitem>
+                    <para><link linkend="majisti.application.resource.view"
+                            >View</link>, Enabling a Majisti View with
+                        configured helper paths</para>
+                </listitem>
+                <listitem>
+                    <para>Database, for configuring the database settings</para>
                 </listitem>
                 <listitem>
                     <para>Frontcontroller<itemizedlist>
@@ -79,7 +100,7 @@
                             </listitem>
                             <listitem>
                                 <para>Environment set to
-                                    {majisti.app.env}</para>
+                                    ${majisti.app.env}</para>
                             </listitem>
                             <listitem>
                                 <para>Controller plugins enabled:<itemizedlist>
@@ -95,11 +116,14 @@
                     <para>Modules, enables modules.</para>
                 </listitem>
                 <listitem>
-                    <para>Javascript: loads and set JQuery and Mootools
-                        libraries. <emphasis role="bold">They are disabled by
-                            default</emphasis>, but their paths are already set
-                        to point to Google's servers in production mode and to
-                        Majisti's public directory in development mode.</para>
+                    <para><link
+                            linkend="majisti.application.resource.javascript"
+                            >Javascript</link>: loads and set jQuery and
+                        Mootools libraries. <emphasis role="bold">They are
+                            disabled by default</emphasis>, but their paths are
+                        already set to point to Google's servers in production
+                        mode and to Majisti's public directory in development
+                        mode.</para>
                 </listitem>
             </itemizedlist></para>
     </section>

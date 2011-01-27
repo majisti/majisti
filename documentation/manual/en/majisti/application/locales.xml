@@ -2,7 +2,7 @@
 <section xmlns="http://docbook.org/ns/docbook"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en"
-    xml:id="majisti.i18n.localeSession" version="5.0">
+    xml:id="majisti.application.locales" version="5.0">
     <title>Locales</title>
     <para>The <classname>Locales</classname> class provides a variety of
         functions meant to ease the management a multilingual application. It

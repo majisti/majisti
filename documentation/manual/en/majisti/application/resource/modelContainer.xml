@@ -5,9 +5,14 @@
     xml:id="majisti.application.resource.modelContainer" version="5.0">
     <title>Model Container</title>
     
-    <para>The <classname>ModelContainer</classname> resource simply ensures
-        that an instance of <classname>Majisti\Model\Container</classname> is
-        available in the registry. This is enable controllers, views and models
-        an entry point access to that container, for business modeling
+    <para>The <classname>ModelContainer</classname> resource simply ensures that
+        an instance of <classname>Majisti\Model\Container</classname> is
+        available in the registry. This will enable controllers, views and
+        models an entry point access to that container, for business modeling
         aggregation.</para>
+    <warning>
+        <para>The model container is marked as <emphasis role="underline"
+                >deprecated</emphasis> for now, since a clever solution will be
+            used involving Symfony's Dependendy Injection Container.</para>
+    </warning>
 </section>
