@@ -71,10 +71,13 @@ class Doctrine extends \Zend_Application_Resource_ResourceAbstract
             if( $path = realpath($dir . '/../models/doctrine/fixtures') ) {
                 $driver->addPaths(array($path));
             }
-            $chain->addDriver(
-                $driver,
-                $maj['app']['namespace'] . '\\' . ucfirst($module) . '\Model'
-            );
+
+            if( count($driver->getPaths()) ) {
+                $chain->addDriver(
+                    $driver,
+                    $maj['app']['namespace'] . '\\' . ucfirst($module) . '\Model'
+                );
+            }
         }
 
         $config->setMetadataDriverImpl($chain);

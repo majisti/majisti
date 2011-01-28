@@ -10,7 +10,19 @@ class AllTests extends \Majisti\Test\TestSuite
     {
         $suite = new self('MajistiX - All tests');
 
-        $suite->addTestSuite(Editing\AllTests::suite());
+        $it = new \DirectoryIterator(__DIR__);
+
+        foreach ( new \DirectoryIterator(__DIR__) as $fileInfo ) {
+            if( $fileInfo->isDot() || !$fileInfo->isDir() ) {
+                continue;
+            }
+
+            $class = __NAMESPACE__ . "\\{$fileInfo}\AllTests";
+
+            if( class_exists($class) ) {
+                $suite->addTestSuite($class::suite());
+            }
+        }
         
         return $suite;
     }
