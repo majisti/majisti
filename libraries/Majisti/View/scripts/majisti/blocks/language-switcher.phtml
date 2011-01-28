@@ -5,15 +5,15 @@
  * @author Majisti
  */
 
-$localeSession = \Majisti\Application\Locales::getInstance();
+$locales = $this->locales();
 
 $content = pq('<div />')
     ->addClass('language-bar')
 ;
 
 /* @var $locale \Zend_Locale */
-foreach ($localeSession->getLocales() as $locale) {
-    if( $locale->equals($localeSession->getCurrentLocale()) ) {
+foreach ($locales->getLocales() as $locale) {
+    if( $locale->equals($locales->getCurrentLocale()) ) {
         continue;
     }
 

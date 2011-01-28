@@ -2,7 +2,8 @@
 
 namespace Majisti\Controller\Plugin;
 
-use Zend_Controller_Request_Abstract as Request;
+use \Zend_Controller_Request_Abstract as Request,
+    \Zend_Controller_Action_HelperBroker as HelperBroker;
 
 /**
  * @desc I18n plugin that listens to a specific URL parameter to switch locales
@@ -41,7 +42,8 @@ class I18n extends AbstractPlugin
                 throw $exception;
              }
 
-             $locales = \Majisti\Application\Locales::getInstance();
+             $bootstrap = \Zend_Controller_Front::getInstance()->getParam('bootstrap');
+             $locales   = $bootstrap->getResource('Locales');
 
              /* retrieve locale and switch if it is supported and not current */
              if( $locale = $request->getParam($config->requestParam, false) ) {
@@ -59,11 +61,11 @@ class I18n extends AbstractPlugin
 
                     /* send result as json encoded response */
                     if( $request->isXmlHttpRequest() ) {
-                        $helper = \Zend_Controller_Action_HelperBroker::getStaticHelper('json');
+                        $helper = HelperBroker::getStaticHelper('json');
                         /* @var $helper \Zend_Controller_Action_Helper_Json */
                         $helper->sendJson(array('switched' => true));
                     } else { /* redirect */
-                        \Zend_Controller_Action_HelperBroker ::getStaticHelper('redirector')
+                        HelperBroker::getStaticHelper('redirector')
                             ->gotoSimpleAndExit(
                                 $request->getActionName(),
                                 $request->getControllerName(),

@@ -63,17 +63,19 @@ class XmlTest extends \Majisti\Test\TestCase
        $this->fooPath = __DIR__ . '/_files/foo.xml';
        $this->barPath = __DIR__ . '/_files/bar.xml';
 
-       $this->xmlWithFr     = new Xml($this->fooPath);
-       $this->xmlWithoutFr  = new Xml($this->barPath);
-
-       $this->markupStack   = $this->xmlWithFr->getMarkupStack();
-
        $this->en = new \Zend_Locale('en');
        $this->fr = new \Zend_Locale('fr');
 
-       $this->locales = Locales::getInstance();
+       $this->xmlWithFr     = new Xml($this->fooPath);
+       $this->xmlWithoutFr  = new Xml($this->barPath);
+
+       $this->locales = new Locales(str_replace('\\', '_', __CLASS__));
        $this->locales->addLocales(array($this->en, $this->fr));
        $this->locales->switchLocale($this->en);
+
+       Xml::setLocales($this->locales);
+
+       $this->markupStack = $this->xmlWithFr->getMarkupStack();
     }
 
     /**
@@ -131,13 +133,11 @@ class XmlTest extends \Majisti\Test\TestCase
      */
     public function testThatGetDataWorksWithCurrentLocale()
     {
-        $locales = $this->locales;
-
         $data = $this->xmlWithFr->getData();
         $this->assertEquals('en', $data->getSectionName());
         $this->assertTrue($data->readOnly());
 
-        $locales->switchLocale($this->fr);
+        $this->locales->switchLocale($this->fr);
 
         $data = $this->xmlWithFr->getData();
         $this->assertEquals('fr', $data->getSectionName());
@@ -149,11 +149,8 @@ class XmlTest extends \Majisti\Test\TestCase
      */
     public function testThatDataFallsBackToDefaultLocaleIfCurrentLocaleCannotBeFound()
     {
-        $locales = $this->locales;
-        $fr      = $this->fr;
-
-        $locales->switchLocale($fr);
-        $data    = $this->xmlWithoutFr->getData();
+        $this->locales->switchLocale($this->fr);
+        $data = $this->xmlWithoutFr->getData();
         $this->assertEquals('en', $data->getSectionName());
     }
 }

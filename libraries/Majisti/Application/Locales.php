@@ -23,41 +23,13 @@ class Locales
     private $_session;
 
     /**
-     * @var \Zend_Locale
-     */
-    protected $_defaultLocale;
-
-    /**
-     * @var array of \Zend_Locale
-     */
-    protected $_locales = array();
-
-    /**
-     * @var Locales
-     */
-    static protected $_instance;
-
-    /**
      * @desc Constructs a new Internationalisation object which will handle
      * the locale through \Zend_Locale automatically using the session.
      */
-    protected function __construct()
+    public function __construct($namespace)
     {
-    	$this->_session = new \Zend_Session_Namespace('Majisti_Locale', true);
-    }
-
-    /**
-     * @desc Returns the single instance of this class
-     *
-     * @return \Majisti\Application\Locales
-     */
-    static public function getInstance()
-    {
-        if( null === static::$_instance ) {
-            static::$_instance = new static();
-        }
-
-        return static::$_instance;
+        $ns = 'Majisti_Locale_' . ucfirst(strtolower((string) $namespace));
+    	$this->_session = new \Zend_Session_Namespace($ns);
     }
 
     /**
@@ -67,16 +39,6 @@ class Locales
     public function reset()
     {
         $this->switchLocale($this->getDefaultLocale());
-    }
-
-    /**
-     * @desc Returns true if the session is active
-     *
-     * @return bool True is the session is active
-     */
-    private function isSessionActive()
-    {
-        return isset($this->_session->current);
     }
 
     /**
@@ -105,13 +67,14 @@ class Locales
             return null;
         }
 
-        $current = unserialize($this->_session->current);
+        $session = $this->_session;
+        $current = $session->current;
 
-        if( !($current && $this->hasLocale($current)) ) {
-            $this->_session->current = serialize($this->getDefaultLocale());
+        if( !(isset($current) && $this->hasLocale($session->locales[$session->current])) ) {
+            $session->current = $this->findLocale($this->getDefaultLocale());
         }
 
-        return unserialize($this->_session->current);
+        return $session->locales[$session->current];
     }
 
     /**
@@ -131,12 +94,14 @@ class Locales
             return null;
         }
 
-        if( null == $this->_defaultLocale ||
-                !$this->hasLocale($this->_defaultLocale) ) {
-            $this->_defaultLocale = $this->_locales[0];
+        $session = $this->_session;
+
+        if( null === $session->default ||
+                !$this->hasLocale($session->locales[$session->default]) ) {
+            $session->default = 0;
         }
 
-        return $this->_defaultLocale;
+        return $session->locales[$session->default];
     }
 
     /**
@@ -162,7 +127,13 @@ class Locales
      */
     public function getLocales($excludeDefault = false)
     {
-        $locales = $this->_locales;
+        $session = $this->_session;
+
+        if( !isset($this->_session->locales) ) {
+            $this->clearLocales();
+        }
+
+        $locales = $session->locales;
 
         if( $excludeDefault ) {
             $pos = $this->findLocale($this->getDefaultLocale());
@@ -202,9 +173,9 @@ class Locales
             throw new Exception("Locale $locale is not available.");
         }
 
-//        $this->getStorageModel()->current = serialize($locale);
-        $this->_session->current = serialize($locale);
-        \Zend_Registry::set('Zend_Locale', $locale);
+        $session = $this->_session;
+        $session->current = $this->findLocale($locale);
+        \Zend_Registry::set('Zend_Locale', $session->locales[$session->current]);
 
         return $this;
     }
@@ -269,7 +240,7 @@ class Locales
             throw new Exception("Locale $locale is not available.");
         }
 
-        $this->_defaultLocale = $locale;
+        $this->_session->default = $this->findLocale($locale);
 
         return $this;
     }
@@ -284,7 +255,7 @@ class Locales
     public function addLocale(\Zend_Locale $locale)
     {
         if( !$this->hasLocale($locale) ) {
-            $this->_locales[] = $locale;
+            $this->_session->locales[] = $locale;
         }
 
         return $this;
@@ -313,7 +284,10 @@ class Locales
      */
     public function clearLocales()
     {
-        $this->_locales = array();
+        $session = $this->_session;
+        unset($session->current, $session->default, $session->locales);
+
+        $session->locales = array();
 
         return $this;
     }
@@ -345,7 +319,7 @@ class Locales
     public function removeLocale(\Zend_Locale $locale)
     {
         if( false !== $key = $this->findLocale($locale) ) {
-            unset($this->_locales[$key]);
+            unset($this->_session->locales[$key]);
             return $this;
         }
 

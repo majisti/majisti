@@ -8,12 +8,12 @@ namespace Majisti\View\Helper;
  *
  * @author Majisti
  */
-class Locale extends AbstractHelper
+class Locales extends AbstractHelper
 {
     /**
      * @var \Majisti\Application\Locales
      */
-    protected $_locale;
+    protected $_locales;
 
     /**
      * @desc Returns the locale session instance for locale handling.
@@ -31,10 +31,12 @@ class Locale extends AbstractHelper
      */
     public function getLocale()
     {
-        if( null === $this->_locale ) {
-            $this->_locale =  \Majisti\Application\Locales::getInstance();
+        if( null === $this->_locales ) {
+            $this->_locales = \Zend_Controller_Front::getInstance()
+                ->getParam('bootstrap')
+                ->getResource('Locales');
         }
 
-        return $this->_locale;
+        return $this->_locales;
     }
 }

@@ -52,7 +52,7 @@ class Manager
         $bootstrap->setOptions($configArray);
 
         /* add locales to the application */
-        $bootstrap->bootstrap('Locale');
+        $bootstrap->bootstrap('Locales');
 
         $this->_application = $application;
     }
