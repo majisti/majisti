@@ -36,7 +36,7 @@ class ContentMonitor extends \Majisti\Controller\Plugin\AbstractPlugin
                 $repo = $em->getRepository(
                     'MajistiX\Editing\Model\Content');
                 $model = $repo->findOrCreate($key,
-                    Locales::getInstance()->getCurrentLocale());
+                    \Zend_Registry::get('Zend_Locale'));
 
                 $em->persist($model);
 

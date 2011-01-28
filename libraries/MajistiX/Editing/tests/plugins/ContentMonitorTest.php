@@ -32,10 +32,18 @@ class ContentMonitorTest extends \Majisti\Test\TestCase
         $dbHelper = $helper->getDatabaseHelper();
         $this->em = $dbHelper->getEntityManager();
 
+        \Zend_Controller_Front::getInstance()->setParam('bootstrap',
+            $this->getHelper()->createBootstrapInstance());
+
         $this->repo = $this->em->getRepository('MajistiX\Editing\Model\Content');
 
         $dbHelper->updateSchema()
                  ->truncateTables(array($this->repo));
+    }
+
+    public function tearDown()
+    {
+        \Zend_Controller_Front::getInstance()->setParam('bootstrap', null);
     }
 
     /**

@@ -46,7 +46,7 @@ class Editing extends \Majisti\View\Helper\AbstractHelper
         $repo = $em->getRepository(
             'MajistiX\Editing\Model\Content');
         $model = $repo->findOrCreate($key,
-            Locales::getInstance()->getCurrentLocale());
+            \Zend_Registry::get('Zend_Locale'));
 
         return $model;
     }
