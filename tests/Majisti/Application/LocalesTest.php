@@ -77,13 +77,13 @@ class LocalesTest extends \Majisti\Test\TestCase
         $this->mainLocales  = array($this->en, $this->fr, $this->es);
         $this->altLocales   = array($this->de, $this->it, $this->ca);
 
-        $this->locales = Locales::getInstance();
+        $this->locales = new Locales('Foo');
         $this->locales->setLocales($this->mainLocales);
         $this->locales->reset();
     }
 
     /**
-     * @desc Restarts the session
+     * @desc Restarts the session, but does not clear it.
      */
     protected function restartSession()
     {
@@ -99,15 +99,15 @@ class LocalesTest extends \Majisti\Test\TestCase
      */
     public function test__construct()
     {
-    	$locale = $this->locales;
+    	$locales = $this->locales;
     	
     	/* test that the locale object behaves according to the settings */
-    	$this->assertEquals($this->en, $locale->getDefaultLocale());
-    	$this->assertEquals($this->mainLocales, $locale->getLocales());
-    	$this->assertTrue($locale->isCurrentLocaleDefault());
-    	$this->assertTrue($locale->hasLocale($this->en));
-    	$this->assertTrue($locale->hasLocale($this->fr));
-    	$this->assertTrue($locale->hasLocale($this->es));
+    	$this->assertEquals($this->en, $locales->getDefaultLocale());
+    	$this->assertEquals($this->mainLocales, $locales->getLocales());
+    	$this->assertTrue($locales->isCurrentLocaleDefault());
+    	$this->assertTrue($locales->hasLocale($this->en));
+    	$this->assertTrue($locales->hasLocale($this->fr));
+    	$this->assertTrue($locales->hasLocale($this->es));
     	
     	/* test that the Zend_Locale was setup correctly in the registry */
     	$localeSession = \Zend_Registry::get('Zend_Locale');
@@ -120,31 +120,34 @@ class LocalesTest extends \Majisti\Test\TestCase
      */
     public function testGetDefault()
     {
-    	$locale = $this->locales;
+    	$locales = $this->locales;
     	
-    	$this->assertEquals($this->en, $locale->getDefaultLocale());
+    	$this->assertEquals($this->en, $locales->getDefaultLocale());
     	
-    	$locale->switchLocale($this->fr);
-    	$this->assertEquals($this->en, $locale->getDefaultLocale());
+    	$locales->switchLocale($this->fr);
+    	$this->assertEquals($this->en, $locales->getDefaultLocale());
     	
-    	$locale->switchLocale($this->es);
-    	$this->assertEquals($this->en, $locale->getDefaultLocale());
+    	$locales->switchLocale($this->es);
+    	$this->assertEquals($this->en, $locales->getDefaultLocale());
     }
     
     /**
      * Tests that switchLocale modifies current locale.
-     * @expectedException Exception
      */
 	public function testSwitchLocale()
     {
         foreach( $this->mainLocales as $key => $locale ) {
-            $switch = $this->locales->switchLocale($locale);
-            $this->assertEquals($locale, $switch);
+            $this->locales->switchLocale($locale);
             $this->assertEquals($this->mainLocales[$key],
                     $this->locales->getCurrentLocale());
         }
-    	
-    	/* throws exception */
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    public function testSwitchingToNonExistantLocaleThrowsException()
+    {
     	$this->locales->switchLocale($this->de);
     }
     
@@ -153,24 +156,24 @@ class LocalesTest extends \Majisti\Test\TestCase
      */
     public function testCurrentLocalePersistance()
     {
-    	$locale = $this->locales;
-    	$locale->switchLocale($this->fr);
+    	$locales = $this->locales;
+    	$locales->switchLocale($this->fr);
     	
     	$this->restartSession();
     	
-    	$locale = Locales::getInstance();
-    	$this->assertEquals($this->fr, $locale->getCurrentLocale());
+    	$locales = new Locales('Foo');
+    	$this->assertEquals($this->fr, $locales->getCurrentLocale());
     	
     	$this->restartSession();
     	
-    	$locale->switchLocale($this->es);
-    	$locale = Locales::getInstance();
-    	$this->assertEquals($this->es, $locale->getCurrentLocale());
+    	$locales->switchLocale($this->es);
+    	$locales = new Locales('Foo');
+    	$this->assertEquals($this->es, $locales->getCurrentLocale());
     	
     	$this->restartSession();
     	
-    	$locale->switchLocale($this->en);
-    	$this->assertEquals($this->en, $locale->getCurrentLocale());
+    	$locales->switchLocale($this->en);
+    	$this->assertEquals($this->en, $locales->getCurrentLocale());
     }
 
     /**
@@ -205,19 +208,18 @@ class LocalesTest extends \Majisti\Test\TestCase
      */
     public function testAddLocale()
     {
-        $locales = $this->mainLocales;
-        $locale  = $this->locales;
+        $locales  = $this->locales;
 
-        $locale->addLocales(array($this->de, $this->it));
-        $this->assertTrue($locale->hasLocale($this->de));
-        $this->assertTrue($locale->hasLocale($this->it));
+        $locales->addLocales(array($this->de, $this->it));
+        $this->assertTrue($locales->hasLocale($this->de));
+        $this->assertTrue($locales->hasLocale($this->it));
 
-        $locale->switchLocale($this->de);
-        $this->assertEquals($this->de, $locale->getCurrentLocale());
-        $this->assertEquals($this->en, $locale->getDefaultLocale());
+        $locales->switchLocale($this->de);
+        $this->assertEquals($this->de, $locales->getCurrentLocale());
+        $this->assertEquals($this->en, $locales->getDefaultLocale());
 
-        $locale->addLocale($this->ca);
-        $this->assertTrue($locale->hasLocale($this->ca));
+        $locales->addLocale($this->ca);
+        $this->assertTrue($locales->hasLocale($this->ca));
     }
 
     /**
@@ -225,25 +227,25 @@ class LocalesTest extends \Majisti\Test\TestCase
      */
     public function testRemoveLocale()
     {
-       $locales = $this->mainLocales;
-       $locale  = $this->locales;
+       $mainLocales = $this->mainLocales;
+       $locales     = $this->locales;
 
-       $this->assertFalse($locale->removeLocale($this->ca));
-       $this->assertFalse($locale->hasLocale($this->ca));
+       $this->assertFalse($locales->removeLocale($this->ca));
+       $this->assertFalse($locales->hasLocale($this->ca));
 
-       $locale->addLocales(array($this->de, $this->it, $this->ca));
-       $count   = $locale->count();
+       $locales->addLocales(array($this->de, $this->it, $this->ca));
+       $count   = $locales->count();
 
-       $locale->removeLocale($this->it);
-       $this->assertFalse($locale->hasLocale($this->it));
-       $this->assertEquals(--$count, $locale->count());
+       $locales->removeLocale($this->it);
+       $this->assertFalse($locales->hasLocale($this->it));
+       $this->assertEquals(--$count, $locales->count());
 
-       $locale->removeLocales(array($this->de, $this->ca));
-       $this->assertFalse($locale->hasLocale($this->de));
-       $this->assertFalse($locale->hasLocale($this->ca));
-       $this->assertEquals($count - 2, $locale->count());
+       $locales->removeLocales(array($this->de, $this->ca));
+       $this->assertFalse($locales->hasLocale($this->de));
+       $this->assertFalse($locales->hasLocale($this->ca));
+       $this->assertEquals($count - 2, $locales->count());
 
-       $this->assertEquals($this->mainLocales, $locales);
+       $this->assertEquals($this->mainLocales, $mainLocales);
     }
 
     /**
@@ -251,29 +253,29 @@ class LocalesTest extends \Majisti\Test\TestCase
      */
     public function testThatSetLocalesOverwritesAllLocales()
     {
-        $locales    = $this->mainLocales;
-        $locale     = $this->locales;
-        $altLocales = $this->altLocales;
+        $mainLocales = $this->mainLocales;
+        $locales     = $this->locales;
+        $altLocales  = $this->altLocales;
 
-        $locale->setLocales($altLocales);
-        $this->assertEquals($altLocales, $locale->getLocales());
-        $this->assertTrue($locale->hasLocales($altLocales));
-        $this->assertEquals(count($altLocales), $locale->count());
-        $this->assertEquals($this->de, $locale->getDefaultLocale());
-        $this->assertEquals($this->de, $locale->getCurrentLocale());
+        $locales->setLocales($altLocales);
+        $this->assertEquals($altLocales, $locales->getLocales());
+        $this->assertTrue($locales->hasLocales($altLocales));
+        $this->assertEquals(count($altLocales), $locales->count());
+        $this->assertEquals($this->de, $locales->getDefaultLocale());
+        $this->assertEquals($this->de, $locales->getCurrentLocale());
 
-        $locale->setLocales($locales);
-        $this->assertEquals($locales, $locale->getLocales());
-        $this->assertTrue($locale->hasLocales($locales));
-        $this->assertEquals(count($locales), $locale->count());
-        $this->assertEquals($this->en, $locale->getDefaultLocale());
-        $this->assertEquals($this->en, $locale->getCurrentLocale());
+        $locales->setLocales($mainLocales);
+        $this->assertEquals($mainLocales, $locales->getLocales());
+        $this->assertTrue($locales->hasLocales($mainLocales));
+        $this->assertEquals(count($mainLocales), $locales->count());
+        $this->assertEquals($this->en, $locales->getDefaultLocale());
+        $this->assertEquals($this->en, $locales->getCurrentLocale());
 
-        $locale->setLocales(array());
-        $this->assertTrue($locale->isEmpty());
-        $this->assertFalse($locale->hasLocales($locales));
-        $this->assertNull($locale->getDefaultLocale());
-        $this->assertNull($locale->getCurrentLocale());
+        $locales->setLocales(array());
+        $this->assertTrue($locales->isEmpty());
+        $this->assertFalse($locales->hasLocales($mainLocales));
+        $this->assertNull($locales->getDefaultLocale());
+        $this->assertNull($locales->getCurrentLocale());
     }
 
     /**
@@ -282,15 +284,15 @@ class LocalesTest extends \Majisti\Test\TestCase
      */
     public function testThatSetDefaultLocaleChangesDefaultLocale()
     {
-        $locale = $this->locales;
+        $locales = $this->locales;
         $fr     = $this->fr;
         $it     = $this->it;
 
-        $locale->setDefaultLocale($fr);
-        $this->assertEquals($fr, $locale->getDefaultLocale());
+        $locales->setDefaultLocale($fr);
+        $this->assertEquals($fr, $locales->getDefaultLocale());
 
         /* will throw exception */
-        $locale->setDefaultLocale($it);
+        $locales->setDefaultLocale($it);
     }
 
     /**
@@ -299,33 +301,33 @@ class LocalesTest extends \Majisti\Test\TestCase
      */
     public function testThatSetCurrentLocaleChangesCurrentLocale()
     {
-        $locale = $this->locales;
+        $locales = $this->locales;
         $fr     = $this->fr;
         $it     = $this->it;
 
-        $locale->switchLocale($fr);
-        $this->assertEquals($fr, $locale->getCurrentLocale());
+        $locales->switchLocale($fr);
+        $this->assertEquals($fr, $locales->getCurrentLocale());
 
         /* will throw exception */
-        $locale->switchLocale($it);
+        $locales->switchLocale($it);
     }
 
     /**
      * Tests that the isCurrentLocaleDefault() function returns true
      * only if the current locale is also the default one.
      */
-    public function testIsCurrentDefaultFunction()
+    public function testIsCurrentLocaleDefault()
     {
-        $locale = $this->locales;
-        $fr     = $this->fr;
-        $en     = $this->en;
+        $locales = $this->locales;
+        $fr      = $this->fr;
+        $en      = $this->en;
 
-        $locale->switchLocale($fr);
-        $locale->setDefaultLocale($fr);
-        $this->assertTrue($locale->isCurrentLocaleDefault());
+        $locales->switchLocale($fr);
+        $locales->setDefaultLocale($fr);
+        $this->assertTrue($locales->isCurrentLocaleDefault());
 
-        $locale->switchLocale($en);
-        $this->assertFalse($locale->isCurrentLocaleDefault());
+        $locales->switchLocale($en);
+        $this->assertFalse($locales->isCurrentLocaleDefault());
     }
 }
 

@@ -44,6 +44,9 @@ class I18nTest extends \Majisti\Test\TestCase
     {
         $this->i18n = new I18n();
 
+        $bootstrap = $this->getHelper()->createBootstrapInstance();
+        \Zend_Controller_Front::getInstance()->setParam('bootstrap', $bootstrap);
+
         /* setting up request object */
         $this->request = new \Zend_Controller_Request_Http();
         $this->request->setActionName('fooAction');
@@ -51,7 +54,7 @@ class I18nTest extends \Majisti\Test\TestCase
         $this->request->setModuleName('bazModule');
 
         /* setting up locales */
-        $this->locales = \Majisti\Application\Locales::getInstance();
+        $this->locales = $bootstrap->getResource('Locales');
         $this->locales->addLocale(new \Zend_Locale('en'));
         $this->locales->addLocale(new \Zend_Locale('fr'));
         $this->locales->switchLocale(new \Zend_Locale('en'));

@@ -15,6 +15,7 @@ class I18n extends \Zend_Application_Resource_ResourceAbstract
     public function init()
     {
         $this->initForm();
+        $this->initModel();
     }
 
     /**
@@ -22,7 +23,7 @@ class I18n extends \Zend_Application_Resource_ResourceAbstract
      */
     protected function initForm()
     {
-        $locales     = \Majisti\Application\Locales::getInstance();
+        $locales = $this->getLocales();
         $appSettings = $this->getBootstrap()->getOptions();
 
         $translator = new \Zend_Translate(
@@ -33,5 +34,25 @@ class I18n extends \Zend_Application_Resource_ResourceAbstract
         );
 
         \Zend_Form::setDefaultTranslator($translator);
+    }
+
+    /**
+     * @desc Returns the locales
+     * 
+     * @return \Majisti\Application\Locales
+     */
+    protected function getLocales()
+    {
+        return $this->getBootstrap()
+            ->bootstrap('Locales')
+            ->getResource('Locales');
+    }
+
+    /**
+     * @desc Init the models.
+     */
+    protected function initModel()
+    {
+        \Majisti\Model\Data\Xml::setLocales($this->getLocales());
     }
 }

@@ -8,14 +8,25 @@ namespace Majisti\Application\Resource;
  * @see \Majisti\Application\Locales
  * @author Majisti
  */
-class Locale extends \Zend_Application_Resource_Locale
+class Locales extends \Zend_Application_Resource_Locale
 {
+    /**
+     * @var \Majisti\Application\Locales 
+     */
+    protected $_locales;
     /**
      * @desc Prepares the locales according to the options
      */
     public function getLocale()
     {
-        $locales    = \Majisti\Application\Locales::getInstance();
+        if( null !== $this->_locales ) {
+            return $this->_locales;
+        }
+
+        $maj        = $this->getBootstrap()
+                            ->getApplication()
+                            ->getOption('majisti');
+        $locales    = new \Majisti\Application\Locales($maj['app']['namespace']);
         $selector   = new \Majisti\Config\Selector(
             new \Zend_Config($this->getOptions()));
 
@@ -44,6 +55,8 @@ class Locale extends \Zend_Application_Resource_Locale
             $locales->addLocale($locale); //will become default
         }
 
-        return $locales->getDefaultLocale();
+        $this->_locales = $locales;
+
+        return $locales;
     }
 }

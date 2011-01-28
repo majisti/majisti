@@ -12,7 +12,7 @@ if( !defined('PHPUnit_MAIN_METHOD') ) {
  * @desc
  * @author
  */
-class LocaleTest extends \Zend_Application_Resource_LocaleTest
+class LocalesTest extends \Zend_Application_Resource_LocaleTest
 {
     static protected $_class = __CLASS__;
 
@@ -33,8 +33,14 @@ class LocaleTest extends \Zend_Application_Resource_LocaleTest
 
     public function setUp()
     {
-        $this->resource = new Locale();
-        $this->locales  = \Majisti\Application\Locales::getInstance();
+        $this->resource = new Locales();
+        $this->resource->setBootstrap(
+            \Majisti\Test\Helper::getInstance()->createBootstrapInstance()
+        );
+
+        $this->locales = $this->resource->getBootstrap()
+            ->bootstrap('Locales')
+            ->getResource('Locales');
         $this->locales->setLocales(array(new \Zend_Locale('en')));
         $this->locales->reset();
         $this->locales->clearLocales();
@@ -60,10 +66,9 @@ class LocaleTest extends \Zend_Application_Resource_LocaleTest
         $options    = array('available' => array('fr'));
 
         $resource->setOptions($options);
-        $locale = $resource->init();
+        $resource->init();
 
         $expectedLocale = new \Zend_Locale('fr');
-        $this->assertTrue($expectedLocale->equals($locale));
         $this->assertTrue($expectedLocale->equals($locales->getDefaultLocale()));
         $this->assertTrue($expectedLocale->equals($locales->getCurrentLocale()));
 
@@ -79,10 +84,9 @@ class LocaleTest extends \Zend_Application_Resource_LocaleTest
         $options    = array('available' => array('en', 'fr', 'it'));
 
         $resource->setOptions($options);
-        $locale = $resource->init();
+        $resource->init();
 
         $expectedLocale = new \Zend_Locale('en');
-        $this->assertTrue($expectedLocale->equals($locale));
         $this->assertTrue($expectedLocale->equals($locales->getDefaultLocale()));
         $this->assertTrue($expectedLocale->equals($locales->getCurrentLocale()));
 
@@ -104,4 +108,4 @@ class LocaleTest extends \Zend_Application_Resource_LocaleTest
     }
 }
 
-LocaleTest::runAlone();
+LocalesTest::runAlone();

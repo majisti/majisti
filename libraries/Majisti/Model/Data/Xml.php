@@ -30,18 +30,66 @@ class Xml
     protected $_markupStack;
 
     /**
-     * @var string
+     * @var \Zend_Locale
      */
     protected $_locale;
+
+    /**
+     * @var Locales
+     */
+    static protected $_locales;
 
     /**
      * @desc contructor
      */
     public function  __construct($xmlPath = null, $useBBCodeMarkup = true)
     {
-        $this->_locale          = Locales::getInstance()->toString();
         $this->_xmlPath         = $xmlPath;
         $this->_useBBCodeMarkup = $useBBCodeMarkup;
+    }
+
+    /**
+     * @desc Sets the locale.
+     *
+     * @param \Zend_Locale $locale The locale
+     */
+    public function setLocale(\Zend_Locale $locale)
+    {
+        $this->_locale = $locale;
+    }
+
+    /**
+     * @desc Returns the locale.
+     *
+     * @return \Zend_Locale
+     */
+    public function getLocale()
+    {
+        if( null === $this->_locale ) {
+            $this->_locale = static::getLocales()->getCurrentLocale();
+        }
+
+        return $this->_locale;
+    }
+
+    /**
+     * @desc Sets the application locales object.
+     *
+     * @param Locales $locales
+     */
+    static public function setLocales(Locales $locales)
+    {
+        static::$_locales = $locales;
+    }
+
+    /**
+     * @desc Returns the default locale.
+     *
+     * @return Locales The application locales object.
+     */
+    static public function getLocales()
+    {
+        return static::$_locales;
     }
 
     /**
@@ -134,24 +182,24 @@ class Xml
      */
     public function getData()
     {
-        $locale = Locales::getInstance();
+        $locales = static::getLocales();
 
         if( null === $this->_data ||
-                $this->_locale !== $locale->toString() ) {
+                $this->_locale !== $locales->toString() ) {
 
             /* load current locale section */
-            $this->_locale = $locale->toString();
+            $this->_locale = $locales->toString();
             try {
                 $data = new \Zend_Config_Xml(
                     $this->_xmlPath,
-                    $locale->toString(),
+                    $locales->toString(),
                     array('allowModifications' => true)
                 );
             /* section could not be found, fallback to default locale */
             } catch( \Zend_Config_Exception $e ) {
                 $data = new \Zend_Config_Xml(
                     $this->_xmlPath,
-                    $locale->getDefaultLocale()->toString(),
+                    $locales->getDefaultLocale()->getLanguage(),
                     array('allowModifications' => true)
                 );
             }

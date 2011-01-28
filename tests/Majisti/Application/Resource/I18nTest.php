@@ -13,7 +13,9 @@ class I18nTest extends \Majisti\Test\TestCase
             $this->getHelper()->createBootstrapInstance()
         );
 
-        $this->locales = \Majisti\Application\Locales::getInstance();
+        $this->locales = $this->resource->getBootstrap()
+            ->bootstrap('Locales')
+            ->getResource('Locales');
         $locale = new \Zend_Locale('en');
         $this->locales->addLocale($locale)->setDefaultLocale($locale);
     }
@@ -26,7 +28,7 @@ class I18nTest extends \Majisti\Test\TestCase
         $this->assertNotNull($t);
 
         $options = (object)$t->getOptions();
-        $locales = \Majisti\Application\Locales::getInstance();
+        $locales = $this->locales;
 
         $this->assertEquals($this->getHelper()->getMajistiPath() . '/resources/languages',
                 $options->content);

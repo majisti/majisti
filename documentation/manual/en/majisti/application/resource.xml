@@ -17,7 +17,7 @@
     <xi:include href="resource/extensions.xml"></xi:include>
     <xi:include href="resource/i18n.xml"></xi:include>
     <xi:include href="resource/javascript.xml"></xi:include>
-    <xi:include href="resource/locale.xml"></xi:include>
+    <xi:include href="resource/locales.xml"></xi:include>
     <xi:include href="resource/layout.xml"></xi:include>
     <xi:include href="resource/modelContainer.xml"></xi:include>
     <xi:include href="resource/translate.xml"></xi:include>

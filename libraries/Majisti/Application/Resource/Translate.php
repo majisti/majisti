@@ -26,12 +26,14 @@ class Translate extends \Zend_Application_Resource_Translate
             return $this->_adapter;
         }
 
-        $locale = \Majisti\Application\Locales::getInstance();
+        $locales = $this->getBootstrap()
+            ->bootstrap('Locales')
+            ->getResource('Locales');
         $options = new \Zend_Config(
             $this->getBootstrap()->getApplication()->getOptions());
         $options = $options->majisti;
 
-        $currentLocale = $locale->getCurrentLocale();
+        $currentLocale = $locales->getCurrentLocale();
         $moPath = $options->app->path . "/library/models/i18n/{$currentLocale}.mo";
 
         if( !file_exists($moPath) ) {
@@ -41,12 +43,12 @@ class Translate extends \Zend_Application_Resource_Translate
         /* add application's translation file */
         $adapter = new \Zend_Translate_Adapter_Gettext(
             $moPath,
-            $locale->getCurrentLocale()
+            $locales->getCurrentLocale()
         );
 
         /* add majp mo file, provided the application is not already en */
         $majpMo = $options->path . "/resources/i18n/{$currentLocale}.mo";
-        if( !$locale->getCurrentLocale()->equals(new \Zend_Locale('en'))
+        if( !$locales->getCurrentLocale()->equals(new \Zend_Locale('en'))
             && file_exists($majpMo) )
         {
             $adapter->addTranslation(array(
