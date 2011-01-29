@@ -8,32 +8,33 @@
     
     <title>Modularity</title>
     
-    <para>
-        A very known word in software development and of course, a lot of software
-        are greatly successfull by deciding to let their application be modular.
-        But what does Majisti is exactly adding up to make everything more modular?
-    </para>
+    <para>A very known word in software development and of course, a lot of
+        software are greatly successfull by deciding to let their application be
+        modular. But what does Majisti is exactly adding up to make everything
+        more modular? </para>
     
-    <para>
-        Some very successfull open-source Web CMS such as Joomla or Drupal do follow
-        modular scalability where users can contribute their separate modules and
-        Majisti is aiming for that <emphasis>philosophical way of thinking.</emphasis>
-        Its design is not based on those CMS but the modular thinking pretty much is.
-        Majisti classes user contribution as an high priority where community driven development
-        is what makes it grow, but it will be used in a much more restricted environment,
-        where the core library is already based on another library which is Zend of course.
-        More is discussed in the User Contribution section.
-    </para>
+    <para>Some very successful open-source Web CMS such as Joomla or Drupal do
+        follow modular scalability where users can contribute their separate
+        modules and Majisti is aiming for that <emphasis>philosophical way of
+            thinking.</emphasis> Do not misunderstand, its design is not based
+        on those CMS but the modular thinking pretty much is (as much as to
+        question why those were even mentionned instead of just using the
+        definition of modular applications). Majisti classes user contribution
+        as an high priority where community driven development is what makes it
+        grow, but it will be used in a much more restricted environment, where
+        the core library is already based on other libraries. More is discussed
+        in the <link linkend="majisti.introduction.userContribution">User
+            Contribution</link> section. </para>
     
-    <para>
-        This is the list of what is actually making up the modular components as a whole.
-    </para>
+    <para>This is the list of what is actually making up the modular components
+        as a whole:</para>
     
     <simplelist>
-        <member>Zend Modules (a folder consisting of controllers, models and views)</member>
-        <member>Zend Controller Plugins</member>
-        <member>Sub libraries</member>
-        <member>Utility classes</member>
+        <member> Zend Modules (a folder consisting of controllers, models and
+            views)</member>
+        <member> Zend Controller Plugins</member>
+        <member> Sub libraries</member>
+        <member> Utility classes</member>
     </simplelist>
     
     <para>What does Majisti do with those components:</para>
@@ -42,17 +43,17 @@
         <varlistentry>
             <term>Modules</term>
             <listitem>
-                <para>
-                    It is possible to have multiple controller directories under the same module,
-                    the latest controller directory always overiding the others, provided that
-                    every controller extends the prior ones to ensure extensibility though controllers
-                    still can be rewritten from scratch. See the MajistiX\Module section for more information.
-                </para>
-                <para>
-                    That way, specific actions can be overriden with the use of polymorphism
-                    and view scripts will still be rendered in the default way or vice-versa
-                    where view scripts can be rewritten and controllers unchanged.
-                </para>
+                <para>It is possible to have multiple controller directories
+                    under the same module, the latest controller directory
+                    always overiding the others, provided that every controller
+                    extends the prior ones to ensure extensibility though
+                    controllers still can be rewritten from scratch. See the
+                        <link linkend="majisti.controller.dispatcher">Multiple
+                        Dispatcher</link> for more information. </para>
+                <para>That way, specific actions can be overriden with the use
+                    of polymorphism and view scripts will still be rendered in
+                    the default way or vice-versa where view scripts can be
+                    rewritten and controllers unchanged. </para>
             </listitem>
         </varlistentry>
         <varlistentry>
@@ -65,10 +66,8 @@
         <varlistentry>
             <term>Sub libraries and utility classes</term>
             <listitem>
-                <para>
-                    Multiple modules can use the same set of reusable sub libraries
-                    or utility classes.
-                </para>
+                <para>Multiple modules can use the same set of reusable sub
+                    libraries or utility classes. </para>
             </listitem>
         </varlistentry>
     </variablelist>

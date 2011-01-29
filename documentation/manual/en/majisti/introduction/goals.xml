@@ -8,70 +8,69 @@
     
     <title>Goals</title>
 
-    <para>
-        Here is a short list of what Majisti is trying to achieve
-        as a modular application framework:
-    </para>
+    <para>Here is a short list of what Majisti is trying to achieve as a domain
+		specific application library: </para>
     
     <itemizedlist>
     	<listitem>
-    	    <para>
-    	        User contributed components that were proposed,
-    	        reviewed, commented and accepted for development and rated by the community
-    	        through the proposal and rating systems for use in the standard distribution.
-    	    </para>
+			<para>The core library should be minimalist, providing the tools to
+				create the necessary components for platforming an application.
+			</para>
+		</listitem>
+		<listitem>
+			<para>User contributed extensions that were proposed, reviewed,
+				commented and accepted for development and rated by the
+				community through the proposal and rating systems for use in the
+				standard distribution. They can be compared as Symfony 2
+				bundles, but following Zend's module struture and have the
+				hability to be dispatchale (see <link
+					linkend="majisti.controller.dispatcher">Multiple
+					Dispatching</link>).</para>
+		</listitem>
+    	<listitem>
+    		<para>Use proven conventions and then make components configurable through
+				its set of configuration files.</para>
     	</listitem>
     	<listitem>
-    		<para>
-    		    The core library should be minimalist, providing the tools
-    		    to create the modules, plugins and utility classes.
-    		</para>
-    	    
-    	    <para>
-    	        Actually, the library is splitted as such:
-    	        <segmentedlist>
-    	            <segtitle>Majisti</segtitle>
-    	            <segtitle>MajistiX</segtitle>
-    	            <segtitle>MajistiC</segtitle>
-    	            <seglistitem>
-    	                <seg>The core library</seg>
-    	                <seg>Modules, controller plugins, view helpers,
-    	                  etc... that were accepted as part of the standard distribution.
-    	                </seg>
-    	                <seg>User dropins or customization, modules and components 
-    	                    not officially supported by Majisti.
-    	                </seg>
-    	            </seglistitem>
-    	        </segmentedlist>
-    	    </para>
-    	</listitem>
-    	<listitem>
-    		<para>Beforehand configurable through its set of configuration files or other
-    			configuration storage for any official or non official modules and
-    			extendable.
-    		</para>
-    	</listitem>
-        <listitem>
-            <para>Client-side modules (using JQuery) that interacts with the server side modules.</para>
-        </listitem>
-    	<listitem>
-    		<para>Templates and themes for different layouts.</para>
+    		<para>Template and themes for different layouts.</para>
     	</listitem>
     </itemizedlist>
 	
 	<para>What Majisti is NOT:</para>
 	
 	<itemizedlist>
-		<listitem><para>A first level component library. Example: reading a 
-			word document will never show up as a component in the standard distribution under Majisti\Word but User Handling
-			could make it under Majisti\User since its related to applications. (That is why it uses the Zend Framework).
-			First level components should be submitted to the Zend Framework community.
-		</para></listitem>
-		<listitem><para>Mainly a <acronym>CMS</acronym> (A Content Management System could be part of a contributed module or set of modules)</para></listitem>
-		<listitem><para>A JQuery plugin creator. It uses already proven and tested JQuery plugins.</para></listitem>
+		<listitem><para>A first level component library. Example: reading say a Word document will
+				never show up as a core component in the standard distribution
+				but could make it as an extension, but the main focus is on
+				extensions that adds business functionnality to an application.
+				(That is why it uses the Zend Framework or Symfony). First level
+				components should be submitted to those communities. </para></listitem>
+		<listitem><para>A <acronym>CMS</acronym> (A Content Management System could be part of a
+				contributed extension or set of extensions).</para></listitem>
 	</itemizedlist>
 	
-	<para>To sum up, Majisti is simply a module engine where everything needed for a rich application should already be defined and ready to get
-	configured if any of the default behaviour is not wanted and extendable for even more specific needs without having to rewrite
-	an entire module.</para>
+	<para>To sum up, Majisti is simply a platform that aims to provide reusability
+		to developed business logic from project to project. The goal is to give
+		a toolset for the developer in order to make him feel like he is
+		focussing on the task at hand, and not struggling on the underlying
+		complexity.</para>
+	<para>If you still wonder what those patterns could be, here is a little
+		example:</para>
+	<para>You need to make a transactionnal website that will sell products or
+		services.Transactionnal websites already expect a lot of things:
+		shopping carts, full invoice details, customer account or even customer
+		paid subscriptions and much much more. Those requirements are easily
+		identifiable, but hide very complex designs. Your main focus should be
+		on how you will display the products and their promotional rates, the
+		prices, how you will make use of call to actions and other marketing
+		techniques closely related to business activities and processes. Those
+		all resolve around business applicability, the actual stuff that will
+		make your sales successfull and your customers satisfied. You should not
+		have to design from scratch - or even roughly copy paste past designs! -
+		the entire shopping cart mechanism, billing system, email system,
+		payment gateways (paypal, moneybookers, ePay to name a few), login and
+		profile systems, and etc. You should only have to define or tweak them
+		according to what you are trying to accomplish. In the case a new
+		potentiel recurrent system must be developed, Majisti is there to make
+		sure you will structure your extensions for reusability.</para>
 </section>
