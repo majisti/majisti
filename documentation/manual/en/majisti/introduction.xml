@@ -7,16 +7,13 @@
     
     <title>Introduction</title>
     
-    <note><para>
-        Note that you should be already familiar with Zend Framework
-        since this library is actually using it for its deployment. Moreover,
-        Zend Frameworks terms are used in this documentation without explicitely
-        defining what they do since it should be already known. For example,
-        Zend_Application is used, but not described on how to configure it, only
-        how to configure Majisti_Application. Another example would be an official
-        module that uses Zend_Acl, it is considered that such components is already
-        well known.
-    </para></note>
+    <note><para>Note that you should be already familiar with Zend Framework1 and
+            ZendFramework2, Symfony1 and 2, Doctrine2 and PHPUnit since this
+            library is built using those frameworks. Moreover, Zend Framework
+            terms are mostly used in this documentation without explicitely
+            defining what they do since it is expectedto be already known by the
+            reader. For example, Zend_Application is used, but not described on
+            how to configure it, only how to use Majisti\Application. </para></note>
     
     <xi:include href="introduction/preface.xml" />
     <xi:include href="introduction/goals.xml" />
