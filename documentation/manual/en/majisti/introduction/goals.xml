@@ -63,14 +63,14 @@
 		identifiable, but hide very complex designs. Your main focus should be
 		on how you will display the products and their promotional rates, the
 		prices, how you will make use of call to actions and other marketing
-		techniques closely related to business activities and processes. Those
-		all resolve around business applicability, the actual stuff that will
-		make your sales successfull and your customers satisfied. You should not
-		have to design from scratch - or even roughly copy paste past designs! -
-		the entire shopping cart mechanism, billing system, email system,
-		payment gateways (paypal, moneybookers, ePay to name a few), login and
-		profile systems, and etc. You should only have to define or tweak them
-		according to what you are trying to accomplish. In the case a new
-		potentiel recurrent system must be developed, Majisti is there to make
-		sure you will structure your extensions for reusability.</para>
+		techniques closely related to business activities and processes. All of
+		those resolve around business applicability, the actual stuff that will
+		make your sales successful and your customers satisfied. You should not
+		have to design from scratch - or worse, copy paste past designs! - the
+		entire shopping cart mechanism, billing system, email system, payment
+		gateways (paypal, moneybookers, ePay to name a few), login and profile
+		systems, and etc. You should only have to define or tweak them according
+		to what you are trying to accomplish. In the case a new potentiel
+		recurrent system must be developed, Majisti is there to make sure you
+		will structure your extensions for reusability.</para>
 </section>
