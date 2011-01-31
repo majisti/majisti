@@ -70,7 +70,7 @@
                         internationnalization</para>
                 </listitem>
                 <listitem>
-                    <para><link linkend="majisti.application.resource.locale"
+                    <para><link linkend="majisti.application.resource.locales"
                             >Locale</link>, to add langauges to a multilingual
                         application</para>
                 </listitem>
