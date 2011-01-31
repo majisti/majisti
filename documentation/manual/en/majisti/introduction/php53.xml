@@ -12,47 +12,32 @@
         
         <title>Autoloader</title>
         
-        <para>Along with the Zend's autoloader, Majisti adds up to the autoloading
-            stack with its implementation of an autoloader PHP5.3 namespaced class.
-            A class located under /Path/To/Class would be instanciable without
-            using <methodname>require_once</methodname> with the namespace syntax,
-            which in this case would be \Path\To\Class provided it is retrievable
-            from the include_path.</para>
+        <para>Along with the Zend's autoloader, Majisti adds up to the
+            autoloading stack with its implementation of an autoloader PHP5.3
+            namespaced class. A class located under /Path/To/Class would be
+            instanciable without using <methodname>require_once</methodname>
+            with the namespace syntax, which in this case would be
+            \Path\To\Class provided it is retrievable from the include_path.
+            This is a fast implementation before ZF2 gets released.</para>
     </section>
     
     <section xml:id="majisti.introduction.php53.namespaces">
         
         <title>Namespaces</title>
         
-        <para>Majisti is entirely written with PHP5.3. Meaning that it makes use of
-            the new features such as lamba functions, late static binding and
-            namespaces. Those new features provide maximum flexibility and Majisti
-            strives to make the best use of them. However, since Majisti uses Zend
-            as its backbone framework, which is using a namespacing mechanism of
-            its own, it cannot use PHP5.3 namespace everywhere. Trying to extend
-            all the components to assure that every single one is PHP5.3 namespace
-            compatible is not within Majisti's scope. Therefore, Majisti will rely
-            and wait on Zend 2.0 to consider whether full PHP5.3 namespace would be
-            needed. Currently, Majisti support PHP namespaces for those components:<itemizedlist>
-                <listitem>
-                    <para>All core classes (e.g \Majisti\Config\Handler)</para>
-                </listitem>
-                <listitem>
-                    <para>Application Resources, provided you add the "pluginsPath"
-                        in the configuration. See <link
-                            xlink:href="majisti.application.resources">Majisti
-                            Application Resources</link> for more
-                        information.</para>
-                </listitem>
-            </itemizedlist></para>
-        <para>And the ones not supported by Majisti:<itemizedlist>
-            <listitem>
-                <para>View helpers, action helpers, controller plugins and
-                    autoloaded resources using the Module autoloader. They must
-                    use the Zend Standard. (e.g. To instanciate a model you
-                    would do the ApplicationName_Model_AModel convention to
-                    access it). </para>
-            </listitem>
-        </itemizedlist></para>
+        <para>Majisti is entirely written with PHP5.3. Meaning that it makes use
+            of the new features such as lamba functions, late static binding and
+            namespaces. Those new features provide maximum flexibility and
+            Majisti strives to make the best use of them. However, since Majisti
+            uses Zend as its backbone framework, which is using a namespacing
+            mechanism of its own, it cannot use PHP5.3 namespace everywhere.
+            Trying to extend all the components to assure that every single one
+            is PHP5.3 namespace compatible is not within Majisti's scope.
+            Therefore, Majisti will rely and wait on Zend 2.0 to consider
+            whether full PHP5.3 namespace would be needed. Currently, Module
+            bootstrap and controllers are the only class that are not namespaced
+            within your application. Models, Handlers, View helpers, Action
+            Helpers, Resources and Controller plugins are all namespaced since
+            0.4.0.</para>
     </section>
 </section>
