@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter 
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" 
+    xml:lang="en" xml:id="majisti.test" version="5.0">
+    
+    <title>Majisti\Test</title>
+    
+    <section xml:id="majisti.test.simplified">
+        <title>Running Tests In a Simplified Way</title>
+        <para xlink:href="http://www.phpunit.de/">Majisti makes use of the well
+            known testing library PHPUnit from Sebastian Bergmann and uses it for
+            its entire library. Since testing is not only reserved for framework
+            developers, but should be used in web application as well, Majisti
+            provides a test helper to build runnable tests out of the fly.<example>
+                <title>Creating tests</title>
+                <para>Majisti makes use of PHP5.3 <link
+                    xlink:href="http://php.net/manual/en/language.oop5.late-static-bindings.php"
+                    >late static binding</link> to make sure test cases creation
+                    are as minimalist as possible.</para>
+            </example><programlisting>&lt;?php
+
+namespace MyApp\AComponent;
+
+require_once 'TestHelper.php';
+
+class ComponentXTest extends \Majisti\Test\TestCase
+{
+    //procede with setUp functions and tests
+}
+
+ComponentXTest::runAlone();</programlisting></para>
+        <para>The <methodname>runAlone</methodname> function lets you run the unit
+            test straight on, without having to bootstrap anything. In the case
+            where the test case would be included in a test suite, you would do the
+            following:<programlisting>&lt;?php
+namespace MyApp\AComponent;
+
+require_once 'TestHelper.php';
+
+class AllTests extends \Majisti\Test\TestSuite
+{
+    public static function suite()
+    {
+        $suite = new self('My App - AComponent - All tests');
+
+        $suite->addTestCase(__NAMESPACE__ . '\ComponentXTest');
+
+        //ComponentY and ComponentZ being two subspaces
+        $suite->addTestSuite(ComponentY\AllTests::suite());
+        $suite->addTestSuite(ComponentZ\AllTests::suite());        
+
+        return $suite;
+    }
+}
+
+AllTests::runAlone();
+</programlisting></para>
+        <para>The last thing you need is a test helper. One easy thing is to place
+            that test helper within the root of your tests. Every tests can just
+            <methodname>require_once 'TestHelper.php'</methodname> without
+            specifying a complete path. You just put a
+            <filename>TestHelper.php</filename> on every folder where there is a
+            <filename>AllTests.php</filename>.</para>
+        <programlisting>tests/
+  AllTests.php
+  TestHelper.php
+  MyApplication/
+    AllTests.php
+    ComponentXTest.php
+    TestHelper.php
+    ComponentX/
+  ...</programlisting>
+        <programlisting>Every subsequent test helpers can just fallback to the previous one contained in its
+parent directory like this:</programlisting>
+        <programlisting>&lt;?php
+
+/* fallsback to parent test helper */
+require_once dirname(__DIR__) . '/TestHelper.php';</programlisting>
+        <programlisting>Here is a recommended root test helper to help you init your tests using Majisti and Zend:</programlisting>
+        <programlisting>&lt;?php
+
+require_once dirname(__DIR__) . '/bootstrap.php';
+
+$helper = \Majisti\Test\Helper::getInstance($appLoader->getOptions() + array(
+    'mvc' => true
+));
+$helper->init();
+
+unset($helper, $appLoader);</programlisting>
+    </section>
+</chapter>

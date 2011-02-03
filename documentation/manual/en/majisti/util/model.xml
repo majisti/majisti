@@ -14,8 +14,7 @@
         library and therefore it does not strive to provide all possible
         classes for a package, but wheter provide what was necessary for the
         core components and application development. Feel free to append other
-        utility libraries. </para>
+        utility libraries.</para>
     
-    <xi:include href="model/aggregates.xml" />
     <xi:include href="model/collection/stack.xml" />
 </section>

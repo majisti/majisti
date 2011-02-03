@@ -10,5 +10,5 @@
         the ModelContainer. It provides the same sets of method as the
             <methodname>getModel()</methodname> function. You can read more on
         the ModelContainer <link xlink:href="majisti.model.container"
-            >here.</link></para>
+            >here</link>.</para>
 </section>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section 
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" 
+    xml:lang="en" xml:id="majisti.config.handlers.chain" version="5.0">
+    
+    <title>Chain</title>
+    
+    <para>The <classname>Chain</classname> handler class follows the GoF
+        Composite pattern, allowing the user to stack multiple handlers and make
+        them act as one. The handler extends the Majisti's Stack class, allowing
+        users to push as many handlers as they want. The composite function,
+            <code>handle()</code>, will loop over the stack and traverse each
+        handler it contains, running their respective handle() and merging the
+        results in the returned <classname>Zend_Config</classname>
+        object.</para>
+    <para>This way, one can use Import, Markup and Property handlers at the same
+        time within a Zend_Config object, by simply doing the
+        following:<programlisting>$config = new \Zend_Config_Ini('path/to/file', 'sectionName', true);
+
+$propertyHandler = new Property();
+$markupHandler   = new Markup();
+$importHandler   = new Import();
+
+$chain = new \Majisti\Handler\Chain();
+$chain->push(array($propertyHandler, $markupHandler, $importHandler)); //array could have been given within constructor
+
+$composite->handle($config);</programlisting></para>
+    <para>See the <link linkend="majisti.util.model.collection.stack"
+            >Stack</link> class for more info.</para>
+</section>

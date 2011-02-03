@@ -9,9 +9,87 @@
     <para>Plugins are encapsulated code units that run when certain events
         occur. Zend Framework's controller architecture grants it's users the
         possibility to write code and make it happen when they want it. Majisti
-        is continually developping plugins and modules that eases the task of
-        producing rich and well designed applications. </para>
+        provides essential controller plugins to ease certain tasks.</para>
     
-    <xi:include href="plugins/i18n.xml" />
-    <xi:include href="plugins/layoutSwitcher.xml" />
+    <section xml:id="majisti.controller.plugins.i18n">
+        <title>I18n</title>
+        
+        <para>The <classname>I18n</classname> plugin listens for a specific url
+            parameter to switch amongst available locales. If more than one
+            language was added using the <link
+                linkend="majisti.application.resource.locales">locales</link>
+            resource, it will switch to that locale when specified in the url.
+            By default, Majisti assumes <varname>lang</varname> as the default
+            request parameter so an url poiting
+                to:<uri>/myapp/public/index/index/lang/en</uri> will swtich to
+                <varname>en</varname>, if it is avaiable as a locale. You can
+            always change that request parameter by adding the following in your
+            configuration:<programlisting>resources.frontController.plugins.i18n.requestParam = lang //change lang to something else</programlisting></para>
+        <para>This plugin works well with the usage of a language switcher
+            block. Using Majisti's <link
+                linkend="majisti.view.scripts.blocks.languageSwitcher">language switcher block</link> will list available locales as
+            links to easily switch between locales.</para>
+    </section>
+    
+    <section xml:id="majisti.controller.plugins.layoutSwitcher">
+        <title>LayoutSwitcher</title>
+        <para>The layout switcher provides the functionnality to modules to have
+            their own set of layouts, contained in a specific directory, apart
+            from the application library's layouts. </para>
+        <para> LayoutSwitcher checks the configuration for the following keys:
+                <itemizedlist mark="bullet">
+                <listitem>
+                    <para>resources.layout.moduleName.layout = layoutName</para>
+                </listitem>
+                <listitem>
+                    <para>resources.layout.moduleName.layoutPath = layoutPath
+                        [optionnal]</para>
+                </listitem>
+                <listitem override="opencircle">
+                    <para>where moduleName is the same module name dispatched
+                        with the request</para>
+                </listitem>
+                <listitem override="opencircle">
+                    <para>where layoutName is the name of the layout script (e.g
+                        default)</para>
+                </listitem>
+                <listitem override="opencircle">
+                    <para>where layoutPath is the path to the layout directory,
+                        if none is provided it assumes
+                        majisti.app.path/moduleName/views/layouts </para>
+                </listitem>
+            </itemizedlist></para>
+        <para>By default, Majisti synergizes this feature with the Layout
+            resource. See more details <link
+                linkend="majisti.application.resource.layout"
+            >here</link>.</para>
+    </section>
+    <section>
+        <title>Javascript</title>
+        <para>The Javascript plugin will transform most of Majisti's dynamic
+            configuration into a <acronym>JSON</acronym> object. This object
+            will be added as the <varname>majisti</varname> javascript global
+            variable with every page request. Here is a short exemple list of
+            available configuration
+            elements:<programlisting>majisti.app.namespace
+majisti.app.path
+majisti.app.baseUrl
+majisti.app.url
+majisti.app.currentUrl //could resolve as /myapp/public/index/index/aParam/value (depending on the environment)
+
+majisti.url
+majisti.path
+
+majisti.ext.anExtensions.xxxx</programlisting></para>
+        <para>The outputed <acronym>JSON</acronym> is
+                <emphasis>pretty-printed</emphasis> in development whereas
+            compacted in production|staging. This inline javascript will also be
+            minified when using the HeadScript Optimizer.</para>
+    </section>
+    <section>
+        <title>View</title>
+        <para>The view plugin makes sure to add view helper paths for the module
+            that is currently dispatched.</para>
+    </section>
+    
 </section>

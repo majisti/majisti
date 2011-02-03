@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter 
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" 
+    xml:lang="en" xml:id="majisti.model" 
+    version="5.0">
+    
+    <title>Majisti\Model</title>
+    
+    <para>
+        <acronym>Model-View-Controller</acronym>(MVC) applications is what Zend has fully
+        aimed for with big focus on views and controllers. There is still some minor but still
+        very important need here on the models. With Business Modeling in mind, Majisti is trying
+        to rely most on the design of models so that we can keep controllers thin and views
+        interchangable. A very common way to communicate between views and models within Zend
+        is with the controller such as
+    </para>
+    
+    <programlisting><![CDATA[
+//file IndexController.php
+
+class IndexController extends Zend_Controller_Action
+{
+    public function indexAction()
+    {
+        $users = new MyApp\Model\Users(); //a Users model
+
+        $users->activate(100); //Activating user with id 100
+        
+        $this->view->users = $users->getActiveMembers();
+    }
+}
+]]>
+    </programlisting>
+    
+    <para>Though that way is very simple and straightforward it still break some
+        of the MVC dogmatic, <emphasis role="underline">where views must
+            aggregate or communicate with their known models</emphasis>, usually
+        seen with the <link
+            xlink:href="http://en.wikipedia.org/wiki/Observer_pattern">Observer
+            Pattern</link> where an observer attach itself to the model it is
+        aggregating. A better way -maybe- would be to use a placeholder model
+        limiting the useless coupling between the controller and the view (such
+        as Zend's <classname>Placeholder</classname> helper), but still, it
+        would be better if the controller's sole task was actually to tell the
+        model to prepare its data. It should not give the returned content to
+        the view. It is the view's responsability to extract the needed
+        information from its known model. </para>
+    <para>This is where <link
+            xlink:href="http://en.wikipedia.org/wiki/Dependency_injection"
+            >Dependency Injection</link> service containers must be used.
+        Currently, Majisti is using a <classname>ModelContainer</classname> but
+        it does not yet provide models as a service. Majisti plans to release a
+        convention for models using Symfony2's <link
+            xlink:href="http://components.symfony-project.org/dependency-injection/"
+            >Dependency Injection component</link>.</para>
+    
+    <example>
+        <title>Interacting with models</title>
+        
+        <para> Let's take the <emphasis role="underline">very</emphasis> simple
+            example of a user's model:         </para>
+        <programlisting>&lt;?php
+
+namespace MyApp\Model;
+
+/* model */
+class Users
+{
+    private $activeMembers = array();
+
+    public function activate($id)
+    {
+        $this->_activeMembers[$id] = true;
+    }
+
+    public function getActiveMembers()
+    {
+        return $this->_activeMembers;
+    }
+}
+
+/* controller */
+class IndexController extends Zend_Controller_Action
+{
+    public function loginAction()
+    {
+        if( $this->_request->isPost() ) {
+            $user   = $this->_getParam('user', false);
+            
+            if( $user ) {
+                /** @var Users $mUsers */
+                $mUsers = $this->_helper->model('users');
+                $mUsers->activate($id);
+            }
+        }
+    }
+}
+
+/* view */
+login.phtml
+
+foreach( $this->model('users')->getActiveMembers() as $user ) {
+    //render user
+}</programlisting>
+        
+        <para>Notice that there is no instanciation of the
+                <classname>User</classname> class and this is because no
+            arguments except of the model's name was given to the controller's
+            action helper or the view's helper. By default, every model are
+            lazily instanciated and future calls to the helper functions will
+            return that same instance unless specified otherwise in the options
+            function argument. Moreover, there is no need to call
+                <function>require_once</function> if the file was placed under
+            the models folder since by default the model folder is added to the
+            global PluginLoader. </para>
+        
+        <para>By default, every models that are not namespaced will be grouped
+            under the 'default' scope. Through those namespaces, it is possible
+            for every modules to automatically have their model namespaced in
+            the <classname>Majisti\Model\Container</classname> so that
+            interacting or using common models is simplified.</para>
+    </example>
+    
+    <xi:include href="xml.xml" />
+    <xi:include href="form.xml" />
+    <xi:include href="mail.xml" />
+</chapter>

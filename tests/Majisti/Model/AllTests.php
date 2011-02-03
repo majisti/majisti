@@ -9,10 +9,10 @@ class AllTests extends \Majisti\Test\TestSuite
     {
         $suite = new self('Majisti Library - Model - All tests');
 
-        $suite->addTestSuite(Data\AllTests::suite());
         $suite->addTestSuite(Mail\AllTests::suite());
 
         $suite->addTestCase(__NAMESPACE__ . '\ContainerTest');
+        $suite->addTestCase(__NAMESPACE__ . '\XmlTest');
 
         return $suite;
     }

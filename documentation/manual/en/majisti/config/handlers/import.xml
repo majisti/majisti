@@ -6,10 +6,10 @@
 
     <title>Import</title>
 
-    <para> The import handler listens on the import attribute in order for a
-        configuration file to request, in other words import and merge, another
-        configuration file with any given path. The handler will override the
-        parent configuration values, if duplicates are found, with the children
+    <para>The import handler listens on the import attribute in order for a
+        configuration file to request (import and merge), another configuration
+        file with any given path. The handler will override the parent
+        configuration values, if duplicates are found, with the children
         configuration files imported. </para>
     <programlisting><![CDATA[
 [production]

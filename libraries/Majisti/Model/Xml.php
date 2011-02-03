@@ -1,11 +1,11 @@
 <?php
 
-namespace Majisti\Model\Data;
+namespace Majisti\Model;
 
 use Majisti\Util\Model\Collection;
 
-use \Majisti\Util\Model\Collection\Stack    as Stack;
-use \Majisti\Application\Locales            as Locales;
+use \Majisti\Util\Model\Collection\Stack as Stack;
+use \Majisti\Application\Locales         as Locales;
 
 class Xml
 {

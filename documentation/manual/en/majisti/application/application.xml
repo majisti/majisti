@@ -18,11 +18,11 @@
             merged, resources loaded and a Zend_Application bootstrapped.</para>
     </section>
     
-    <xi:include href="application/manager.xml" />
-    <xi:include href="application/loader.xml" />
-    <xi:include href="application/configuration.xml" />
-    <xi:include href="application/resource.xml" />
-    <xi:include href="application/locales.xml" />
+    <xi:include href="manager.xml" />
+    <xi:include href="loader.xml" />
+    <xi:include href="configuration.xml" />
+    <xi:include href="resource.xml" />
+    <xi:include href="locales.xml" />
 </chapter>
 
 

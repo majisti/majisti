@@ -19,20 +19,24 @@
         coding until it is done. Using abstraction is harder, requires more time
         and most of the time the end customer does not really care about the
         abstraction used within since usually that abstraction can even be used
-        again for his competitors! Business modeling most interresting since its
-        the process of designing something new, based on the current knowledge
-        and experience. But business modeling usually covers so much of areas
-        where everything must be focussed on the end user. So, how can we
-        achieve everything without going insane?</para>
+        again for his competitors! Business modeling is more interresting since
+        it is the process of designing something new, based on the current
+        knowledge and experience. Nevertheless, business modeling usually covers
+        so much of areas that must be focussed on the end user and this leads us
+        to our main concern: how can we achieve everything without going
+        insane?</para>
     
-    <para>User contribution. Very well known by the open source community.
-        By using modularity most of the business model is solved up with already contributed
-        modules which are already proven successfull and working and the use case modeling
-        sums up of configuring those modules and coding the models related to that business.
-        In fact, after designing those models, the only thing left is building the actual website
-        and its layout, provided you don't use the default templates shipped with the standard
-        distribution! <emphasis>The key is to concentrate on business modeling</emphasis>.
-    </para>
+    <para>User contribution. By using modularity, most of the business model is
+        built around the knowledge of such plugin avaibility. Business modelin
+        gis oriented in popular trends and the concrete complexity of real world
+        applicability is solved by tweaking those contributed modules. In fact,
+        after designing those models, the only thing left is building the actual
+        application and its layout, provided you don't use the default templates
+        shipped with the standard distribution! The key is to concentrate on
+        business modeling. </para>
+    <blockquote>
+        <para>The key is to concentrate on business modeling.</para>
+    </blockquote>
     
     <para>Majisti plans to use a proposal system which promotes user contributed
         modules to allow the most popular ideas to climb up the ladder as fast

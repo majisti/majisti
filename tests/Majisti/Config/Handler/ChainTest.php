@@ -5,11 +5,11 @@ namespace Majisti\Config\Handler;
 require_once __DIR__ . '/TestHelper.php';
 
 /**
- * @desc Composite test case
+ * @desc Chain test case
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-class CompositeTest extends \Majisti\Test\TestCase
+class ChainTest extends \Majisti\Test\TestCase
 {
     static protected $_class = __CLASS__;
     
@@ -24,7 +24,7 @@ class CompositeTest extends \Majisti\Test\TestCase
     public $importHandler;
 
     /**
-     * @var Composite
+     * @var Chain
      */
     public $handler;
 
@@ -35,7 +35,7 @@ class CompositeTest extends \Majisti\Test\TestCase
     {
         $this->propertyHandler = new Property();
         $this->importHandler   = new Import();
-        $this->handler         = new Composite();
+        $this->handler         = new Chain();
     }
 
     /**
@@ -48,12 +48,12 @@ class CompositeTest extends \Majisti\Test\TestCase
         
         $this->assertNotNull($handler);
         $this->assertContains($this->propertyHandler, $handler,
-                'Composite does not contain first element pushed.');
+                'Chain does not contain first element pushed.');
        
         $handler->push($this->importHandler);
         $this->assertEquals(2, $handler->count());
         $this->assertEquals($this->importHandler, $handler->peek(),
-                'Composite does not contain second element pushed as top of
+                'Chain does not contain second element pushed as top of
                  the stack.');
 
         $import = $handler->pop();
@@ -104,4 +104,4 @@ class CompositeTest extends \Majisti\Test\TestCase
     }
 }
 
-CompositeTest::runAlone();
+ChainTest::runAlone();

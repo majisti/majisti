@@ -6,7 +6,7 @@
 
     <title>Action Helpers</title>
 
-    <para> Action Helpers allow developers to inject runtime and/or on-demand
+    <para>Action Helpers allow developers to inject runtime and/or on-demand
         functionality into any Action Controllers that extend
         Zend_Controller_Action. Action Helpers aim to minimize the necessity to
         extend the abstract Action Controller in order to inject common Action
@@ -15,5 +15,28 @@
             >Zend documentation</link>
     </para>
 
-    <xi:include href="actionHelpers/model.xml"/>
+    <section xml:id="majisti.controller.actionHelper.model">
+        <title>Model</title>
+        <para>The model action helper is meant to supply controllers with
+            Majisti's models container, which is stored in the
+                <classname>Zend_Registry</classname>. The return value is an
+            object of type <classname>Majisti\Model\ModelContainer</classname>.
+            Note that the using the container is not recommanded as of 0.4.0
+            since a better alternative will be available using Symfony's
+            Dependency Injection Container.</para>
+    </section>
+    <section>
+        <title>Doctrine</title>
+        <para>The Doctrine action helper is meant to supply the Doctrine2
+                <classname>EntityManager</classname> that was instanciated using
+            the <link linkend="majisti.application.resource.doctrine">Doctrine
+                Resource</link>. Make sure to use the resource to access the
+                <classname>EntityManager</classname>.</para>
+    </section>
+    <section>
+        <title>View Renderer</title>
+        <para>The <classname>ViewRenderer</classname> replaces Zend's original
+            view renderer in order to enable PHP namespaces for action
+            helpers.</para>
+    </section>
 </section>

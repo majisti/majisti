@@ -16,7 +16,7 @@
         library become alive and usable. It completes the framework by adding
         its missing concreteness by using its well established abstractness. </para>
     
-    <xi:include href="extensions/usage.xml"/>
-    <xi:include href="extensions/authoring.xml"/>
+    <xi:include href="usage.xml"/>
+    <xi:include href="authoring.xml"/>
     
 </chapter>

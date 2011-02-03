@@ -8,10 +8,10 @@
     
     <title>View helpers</title>
     
-    <para>Here is the list of all the view helpers currently in Majisti.</para>
+    <para>Here is the list of all the view helpers currently shipped with
+        Majisti.</para>
     
     <xi:include href="helpers/locale.xml" />
     <xi:include href="helpers/model.xml" />
-    <xi:include href="helpers/headlink.xml" />
     <xi:include href="helpers/head.xml" />
 </section>

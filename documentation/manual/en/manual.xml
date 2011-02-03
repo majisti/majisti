@@ -27,16 +27,16 @@
 
     <!-- START: Chapters -->
 
-    <xi:include href="majisti/introduction.xml"/>
-    <xi:include href="majisti/quickstart.xml"/>
-    <xi:include href="majisti/application.xml"/>
-    <xi:include href="majisti/config.xml"/>
-    <xi:include href="majisti/controller.xml"/>
-    <xi:include href="majisti/model.xml"/>
-    <xi:include href="majisti/test.xml"/>
-    <xi:include href="majisti/util.xml"/>
-    <xi:include href="majisti/view.xml"/>
-    <xi:include href="majisti/extensions.xml"/>
+    <xi:include href="majisti/introduction/introduction.xml"/>
+    <xi:include href="majisti/quickstart/quickstart.xml"/>
+    <xi:include href="majisti/application/application.xml"/>
+    <xi:include href="majisti/config/config.xml"/>
+    <xi:include href="majisti/controller/controller.xml"/>
+    <xi:include href="majisti/model/model.xml"/>
+    <xi:include href="majisti/test/test.xml"/>
+    <xi:include href="majisti/util/util.xml"/>
+    <xi:include href="majisti/view/view.xml"/>
+    <xi:include href="majisti/extensions/extensions.xml"/>
 
     <!-- END: Chapters -->
 </book>
