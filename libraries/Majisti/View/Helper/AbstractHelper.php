@@ -2,20 +2,37 @@
 
 namespace Majisti\View\Helper;
 
-abstract class AbstractHelper
-    extends \Zend_View_Helper_Abstract
-    implements \Majisti\Util\Model\Aggregator\IConfig
+/**
+ * @desc Abstract Helper for view helpers providing configuration and
+ * a selector.
+ *
+ * @author Majisti
+ */
+abstract class AbstractHelper extends \Zend_View_Helper_Abstract
 {
+    /**
+     * @var \Zend_Config 
+     */
     protected $_config;
 
+    /**
+     * @var \Majisti\Config\Selector
+     */
     protected $_selector;
 
+    /**
+     * @desc Returns the Majisti config.
+     *
+     * @return \Zend_ Config The Majisti config.
+     */
     public function getConfig()
     {
         return \Zend_Registry::get('Majisti_Config');
     }
 
     /**
+     * @desc Returns a config selector based on this helper
+     * configuration
      *
      * @return \Majisti\Config\Selector The selector
      */
@@ -28,11 +45,11 @@ abstract class AbstractHelper
         return $this->_selector;
     }
 
-    public function setConfig(\Zend_Config $config)
-    {
-        //TODO: complete method stub
-    }
-
+    /**
+     * @desc Returns the view.
+     *
+     * @return \Zend_View The view
+     */
     public function getView()
     {
         return $this->view;

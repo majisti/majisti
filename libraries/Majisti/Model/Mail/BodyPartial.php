@@ -9,8 +9,7 @@ namespace Majisti\Model\Mail;
  *
  * @author Steven Rosato
  */
-class BodyPartial extends \Majisti\Util\Model\Aggregator\View
-    implements IBodyObject
+class BodyPartial implements IBodyObject
 {
     /**
      * @var string
@@ -24,6 +23,11 @@ class BodyPartial extends \Majisti\Util\Model\Aggregator\View
     protected $_model;
 
     /**
+     * @var \Zend_View
+     */
+    protected $_view;
+
+    /**
      * @desc Constructs the BodyPartial with a view and a model. If no view
      * is provided, the registered Zend_View will be taken from
      * the Zend_Registry, if any.
@@ -34,7 +38,7 @@ class BodyPartial extends \Majisti\Util\Model\Aggregator\View
      * @param $model The model that will be given to the partial view
      * when {@link BodyPartial::getBody()} is called
      */
-    public function __construct($partialName, \Zend_View_Interface $view = null,
+    public function __construct($partialName, \Zend_View_Interface $view= null,
             $model = null)
     {
         $this->setPartialName($partialName);
@@ -97,5 +101,30 @@ class BodyPartial extends \Majisti\Util\Model\Aggregator\View
     {
         return $this->getView()->partial(
             $this->getPartialName(), $this->getModel());
+    }
+
+    /**
+     * @desc Returns the view, in case no view was provided, it attemps,
+     * to retrieve a \Zend_View via the \Zend_Registry.
+     *
+     * @return \Zend_View The view
+     */
+    public function getView()
+    {
+        if( null === $this->_view && \Zend_Registry::isRegistered('Zend_View') ) {
+            $this->setView(\Zend_Registry::get('Zend_View'));
+        }
+
+        return $this->_view;
+    }
+
+    /**
+     * @desc Sets the view.
+     *
+     * @param \Zend_View $view The view
+     */
+    public function setView(\Zend_View $view)
+    {
+        $this->_view = $view;
     }
 }

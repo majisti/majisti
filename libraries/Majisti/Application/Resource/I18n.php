@@ -53,6 +53,6 @@ class I18n extends \Zend_Application_Resource_ResourceAbstract
      */
     protected function initModel()
     {
-        \Majisti\Model\Data\Xml::setLocales($this->getLocales());
+        \Majisti\Model\Xml::setLocales($this->getLocales());
     }
 }
