@@ -2,6 +2,12 @@
 
 namespace Majisti\Controller\ActionHelper;
 
+/**
+ * @desc The ViewRenderer makes sure that it integrates with namespaec
+ * action helpers.
+ *
+ * @author Majisti
+ */
 class ViewRenderer extends \Zend_Controller_Action_Helper_ViewRenderer
 {
     protected $_appNamespace = '';

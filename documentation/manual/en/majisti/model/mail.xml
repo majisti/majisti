@@ -6,17 +6,122 @@
     
     <title>Mail</title>
     
-    <para><classname> Zend_Mail</classname> provides generalized functionality to compose and send
-        both text and MIME-compliant multipart e-mail messages. Mail can be sent with
-            <classname>Zend_Mail</classname> via the default
+    <para><classname>Zend_Mail</classname> provides generalized functionality to
+        compose and send both text and MIME-compliant multipart e-mail messages.
+        Mail can be sent with <classname>Zend_Mail</classname> via the default
             <classname>Zend_Mail_Transport_Sendmail</classname> transport or via
-            <classname>Zend_Mail_Transport_Smtp</classname>. <link
-            xlink:href="http://framework.zend.com/manual/en/zend.mail.html">Learn more about
-                <classname>Zend_Mail</classname></link>.</para>
+            <classname>Zend_Mail_Transport_Smtp</classname>. </para>
     <para>Majisti's mail model is, while heavily relying on <classname>Zend_Mail</classname>, a more
         object-oriented mail sending class, allowing to populate message bodies with multiple
         objects, thus encouraging the making of predefined message templates.</para>
     
-    <xi:include href="mail/bodyPartial.xml"/>
-    <xi:include href="mail/message.xml"/>
+    <section xml:id="majisti.model.mail.bodyPartial">
+        <title>Body Partial</title>
+        
+        <para>The <classname>BodyPartial</classname> class is an implementation of the
+            <classname>IBodyObject</classname> interface that returns the content of a partial
+            script called from a view. Body partial supports the use of models, so one may pass a model
+            when building the object and the model will be passed to the partial view.</para>
+        <para><emphasis role="bold"><emphasis role="underline">Building the body partial
+            object</emphasis></emphasis></para>
+        <para>The <classname>BodyPartial</classname> constructor takes up to three parameters wich are
+            the partial name, an optional <classname>Zend_View_Interface</classname> and an optional
+            model that will be passed to the view upon calling the <code>getBody()</code> function. If
+            no views are supplied to the constructor, the registered <classname>Zend_View</classname>
+            will be taken from the registry, if any. </para>
+        <para>Here are a few example showing how to instanciate a body
+            partial:<programlisting>/* instantiating view object */
+$this->view = new \Majisti\View();
+$this->view->addScriptPath(dirname(__FILE__) . '/_partials');
+
+/* instantiating dummy model */                                                              
+$this->model         = new \StdClass();
+$this->model->name   = 'Majisti';
+
+/* simple HTML body partial built with a specified view */
+$this->bodyPartial             = new BodyPartial('simple.phtml', $this->view);
+
+/* simple HTML body partial built without specifying a view */
+$this->bodyPartialWithoutView  = new BodyPartial('simple.phtml');
+
+/* HTML body partial making use of a model, hence including a model in the constructor */
+$this->bodyPartialWithModel    = new BodyPartial(
+'model.phtml', $this->view, $this->model)
+
+/* flat text body partial. No HTML tags at all. */
+$this->bodyPartialFlatText     = new BodyPartial('flat.phtml')</programlisting></para>
+        <para> Once the object is built, <classname>BodyPartial</classname> offers getters and setters
+            for both the model and the partial name for you to play with. (Using
+            <code>$this->bodyPartial</code> from the above
+            example):<programlisting>$this->bodyPartial->getModel();                //would return null in this context
+$this->bodyPartial->setModel(new \StdClass()); 
+
+$this->bodyPartial->getPartialName();
+$this->bodyPartial->setPartialName();          </programlisting>
+        </para>
+        <para><emphasis role="underline"><emphasis role="bold">Fetching the partial's
+            content</emphasis></emphasis></para>
+        <para>Once the object is built and ready for operation, you can grab the partial's data using
+            the <code>getBody()</code> function. Using this function will call the partial from the view
+            provided and return the rendered content. Here is an example of
+            <code>getBody()</code>:</para>
+        <para>Contents of partial file 'model.phtml'
+            :<programlisting>&lt;div>&lt;p>Hello, &lt;?php echo $this->name ?>.&lt;/p>&lt;/div></programlisting></para>
+        <para>Fetching the partial's rendered
+            data:<programlisting>/* Using the body partial built with a view and a model */
+$data = $this->bodyPartialWithModel->getBody();</programlisting></para>
+        <para> As a reminder, the model's name attribute had been set to 'Majisti' in the first code
+            example. Hence, the output of the file shall be "Hello, Majisti.". A look at
+            <code>$data</code> will confirm
+            this:<programlisting>echo $data;
+
+/* result */
+&lt;div>&lt;p>Hello, Majisti.&lt;/p>&lt;/div></programlisting></para>
+        
+    </section>
+    <section xml:id="majisti.model.mail.message">
+        <title>Message</title>
+        
+        <para>Message model extending <classname>Zend_Mail</classname> offers
+            the developper a more object-oriented way of populating a message's
+            body. The body is now built with a body object of type IBodyObject.
+            This way, the message body becomes more flexible, only relying on
+            the getBody() function, which can be called by numerous different
+            objects to return multiple message templates. All you have to do to
+            set a message's body is to call the <code>setBodyObject()</code>
+            function while providing any instance of
+                <classname>IBodyObject</classname>.</para>
+        <para>
+            <example>
+                <title>Basic usage of the Message class</title>
+                <para> Here is a rather complete example of how you may use the
+                        <classname>Message</classname>
+                    class:<programlisting>/* partial view */
+$this->view = new \Majisti\View();
+$this->view->addScriptPath(dirname(__FILE__) . '/_partials');
+
+/* model used in partial */                                                                   
+$this->model = new \StdClass();
+$this->model->name = 'Majisti';
+
+/* body partial used to populate message body */                                                                   
+$this->bodyPartial = new BodyPartial('simple.phtml', $this->view, $this->model);
+
+/* creating message object */
+$this->message = new Message();
+$this->message->setBodyObject($this->bodyPartial());
+
+/* sending mail */
+$this->message->send(new \Zend_Mail_Transport_Sendmail());</programlisting></para>
+                <para>When the <code>send()</code> function is called, the body is retrieved using
+                    <code>$this->getBodyObject()</code>. If the function detects that the body
+                    object contains HTML tags, it will use it's parent function
+                    <code>setBodyHtml($object->getBody())</code>, else it will call
+                    <code>setBodyText($object->getBody())</code>. Finally, the static function
+                    <code>parrent::send()</code> is invoked and the message will be
+                    delivered.</para>
+            </example>
+        </para>
+        
+    </section>
 </section>

@@ -6,13 +6,38 @@
     
     <title>Form</title>
     
-    <para>Majisti forms are extended versions of <classname>Zend_Form</classname>. While
-            <classname>Zend_Form</classname> simplifies form creation and handling in a web
-        application, customizing the way it renders itself is quite a pain.
-            <classname>Form</classname> overrides <classname>Zend_Form</classname>'s
-            <code>setLayout</code> function to make it accept an <classname>ILayout</classname>
-        object as a parameter. The layout object then calls it's visit function (Visitor pattern
-        [GoF]) on the form and it's possible subforms.</para>
+    <para>Majisti forms are extended versions of
+            <classname>Zend_Form</classname>. While
+            <classname>Zend_Form</classname> simplifies form creation and
+        handling in a web application, customizing the way it renders itself is
+        quite a pain. <classname>Majisti\Model\Form</classname> accepts an
+            <classname>ILayout</classname> object as a parameter. The layout
+        object then calls it's visit function (Visitor pattern [GoF]) on the
+        form and it's possible subforms.
+            <classname>Majisti\Model\Form</classname> also redefines some
+        decorators such as the Label for a required
+            <classname>Zend_Form_Element</classname> by adding a mendatory title
+        with I18n support.</para>
     
-    <xi:include href="form/layout.xml"/>
+    <section xml:id="majisti.model.form.layout">
+        <title>Layout</title>
+        
+        <para><classname>Layout</classname> provides a very flexible way of
+            customizing the appearance of forms. Clipped on a Majisti Form, a
+                <classname>Layout</classname> object will redesign how a form's
+            elements are positionned. A concrete layout class needs to implement
+            the ILayout interface, defining the functions <code>visitForm</code>
+            and <code>visitElement</code>. The <code>visitForm</code> function
+            customizes the appearance of every form elements and receives a
+                <classname>Zend_Form</classname> to visit, as opposed to
+                <code>visitElement</code> whom customizes a single form element,
+            thus receiving a <classname>Zend_Form_Element</classname>.</para>
+        
+        <section xml:id="majisti.model.form.layout.table">
+            <title>Table</title>
+            <para>The table layout will set all of the form elements in a HTML
+                table setup, printing every element on a separate row and every
+                element's components in separate columns.</para>
+        </section>
+    </section>
 </section>

@@ -15,14 +15,15 @@
         
         <title>Introduction</title>
     
-        <para> Majisti\Config is the central point to configuration management.
+        <para>Majisti\Config is the central point to configuration management.
             This is where configuration handlers are found along with selectors
-            and wrapper objects. This section describres the multiples handlers,
-            the CSS-like config query selector and the Configuration
-            object.</para>
+            and wrapper objects. This section describes the multiples handlers,
+            the CSS-like config query selector and the Configuration object that
+            serves as the all purpose configuration and dependency injection
+            standard for configuration aware classes.</para>
     </section>
     
-    <xi:include href="config/handlers.xml" />
-    <xi:include href="config/selector.xml" />
-    <xi:include href="config/configuration.xml" />
+    <xi:include href="handlers.xml" />
+    <xi:include href="selector.xml" />
+    <xi:include href="configuration.xml" />
 </chapter>

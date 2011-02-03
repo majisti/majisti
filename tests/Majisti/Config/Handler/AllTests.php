@@ -18,7 +18,7 @@ class AllTests extends \Majisti\Test\TestSuite
     static public function suite()
     {
         $suite = new self('Majisti - Config - Handler - All tests');
-        $suite->addTestCase(__NAMESPACE__ . '\CompositeTest');
+        $suite->addTestCase(__NAMESPACE__ . '\ChainTest');
         $suite->addTestCase(__NAMESPACE__ . '\MarkupTest');
         $suite->addTestCase(__NAMESPACE__ . '\ImportTest');
         $suite->addTestCase(__NAMESPACE__ . '\PropertyTest');

@@ -15,9 +15,9 @@
             reader. For example, Zend_Application is used, but not described on
             how to configure it, only how to use Majisti\Application. </para></note>
     
-    <xi:include href="introduction/preface.xml" />
-    <xi:include href="introduction/goals.xml" />
-    <xi:include href="introduction/modularity.xml" />
-    <xi:include href="introduction/userContribution.xml" />
-    <xi:include href="introduction/php53.xml" />
+    <xi:include href="preface.xml" />
+    <xi:include href="goals.xml" />
+    <xi:include href="modularity.xml" />
+    <xi:include href="userContribution.xml" />
+    <xi:include href="php53.xml" />
 </chapter>

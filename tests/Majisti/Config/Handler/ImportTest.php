@@ -84,7 +84,7 @@ class ImportTest extends \Majisti\Test\TestCase
          * the external ini files.
          */
         $config = $handler->handle($this->_validImport,
-                new Composite($this->_propertyHandler), $params);
+                new CHain($this->_propertyHandler), $params);
         
         /*
          * config content should have been replaced if common keys are found,
@@ -134,10 +134,10 @@ class ImportTest extends \Majisti\Test\TestCase
             '/validImports.ini'));
         $this->assertSame("Zend_Config_Ini", $handler->getConfigType());
         
-        /* getCompositeHandler() test */
+        /* getChain() test */
         $handler->handle($this->_validImport, 
-                               new Composite($this->_propertyHandler));
-        $this->assertTrue($handler->getCompositeHandler() instanceof Composite);
+                               new Chain($this->_propertyHandler));
+        $this->assertTrue($handler->getChainHandler() instanceof Chain);
         
          
         /* getImportPaths() test */

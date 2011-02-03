@@ -13,27 +13,27 @@ namespace Majisti\Application\Resource;
 class Confighandler extends \Zend_Application_Resource_ResourceAbstract
 {
     /**
-     * @var \Majisti\Config\Handler\CompositeHandler
+     * @var \Majisti\Config\Handler\Chain
      */
-    protected $_compositeHandler;
+    protected $_chainHandler;
 
     /**
      * @desc Handles a configuration by applying instances of
      * \Majisti\Config\Handler\IHandler on it using the
-     * \Majisti\Config\Handler\Composite
+     * \Majisti\Config\Handler\Chain
      *
      * The handled configuration in put back in the Majisti_Config registry key
      *
      * @throws Exception if an exception occurs while handling the confuration
      * it will be thrown wrapped in this namespace's Exception.
      *
-     * @return \Majisti\Config\Handler\Composite the composite handler.
+     * @return \Majisti\Config\Handler\Chain the composite handler.
      */
     public function init()
     {
         try {
-            $compositeHandler = $this->prepareComposite();
-            $config           = $compositeHandler->handle(
+            $chainHandler = $this->prepareChain();
+            $config       = $chainHandler->handle(
                 \Zend_Registry::get('Majisti_Config'));
 
             /* default reg key */
@@ -53,35 +53,35 @@ class Confighandler extends \Zend_Application_Resource_ResourceAbstract
             {$e->getTraceAsString()}");
         }
 
-        return $compositeHandler;
+        return $chainHandler;
     }
 
     /**
      * @desc Prepares the composite handler by pushing instances of
      * \Majisti\Config\Handler\IHandler to it.
      *
-     * @return \Majisti\Config\Handler\CompositeHandler
+     * @return \Majisti\Config\Handler\Chain
      */
-    protected function prepareComposite()
+    protected function prepareChain()
     {
-        if( null !== $this->_compositeHandler ) {
-            return $this->_compositeHandler;
+        if( null !== $this->_chainHandler ) {
+            return $this->_chainHandler;
         }
 
-        $compositeHandler = $this->getCompositeHandler();
+        $chainHandler = $this->getChainHandler();
 
         foreach ($this->getOptions() as $className => $value) {
             if( !empty($value) ) {
                 /* denotes that the handler should be enabled */
                 if( 1 == $value ) {
                     $class = 'Majisti\Config\Handler\\' . ucfirst($className);
-                    $compositeHandler->push(new $class());
+                    $chainHandler->push(new $class());
                 /* the value is a class name */
                 } else if( is_string($value) ) {
                     if( !class_exists($value) ) {
                         throw new Exception("Class {$value} does not exists");
                     }
-                    $compositeHandler->push(new $value());
+                    $chainHandler->push(new $value());
                 /* handler parameters provided */
                 } else if( is_array($value) ) {
                     /* class key for finding the propert class */
@@ -90,27 +90,27 @@ class Confighandler extends \Zend_Application_Resource_ResourceAbstract
                         : 'Majisti\Config\Handler\\' . ucfirst($className);
 
                     unset($value['class']);
-                    $compositeHandler->push(new $className($value));
+                    $chainHandler->push(new $className($value));
                 }
             }
         }
 
-        $this->_compositeHandler = $compositeHandler;
+        $this->_chainHandler = $chainHandler;
 
-        return $this->getCompositeHandler();
+        return $this->getChainHandler();
     }
 
     /**
-     * @desc Lazily instanciates the Composite Handler
+     * @desc Lazily instanciates the Chain Handler
      *
-     * @return \Majisti\Config\Handler\Composite
+     * @return \Majisti\Config\Handler\Chain
      */
-    public function getCompositeHandler()
+    public function getChainHandler()
     {
-        if( null === $this->_compositeHandler ) {
-            $this->_compositeHandler = new \Majisti\Config\Handler\Composite();
+        if( null === $this->_chainHandler ) {
+            $this->_chainHandler = new \Majisti\Config\Handler\Chain();
         }
 
-        return $this->_compositeHandler;
+        return $this->_chainHandler;
     }
 }

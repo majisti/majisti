@@ -7,14 +7,15 @@
     version="5.0">
     
     <title>Xml</title>
-    <para>
-        The XML model class eases the manipulation XML files serving as data models. Xml provides a variety of functions manage the xml file path, the markups used
-        with it, to set whether BBCode markups are enabled and also to get data in the current locale without hassles.
-    </para>
-    <para> When building a Xml object, the constructor accepts two parameters: <code>xmlPath</code>
-        and <code>useBBCodeMarkup</code>. The xml path parameter reffers to the XML file this model
-        is representing, while the second parameter is a flag indicating if BBCode markups should be
-        parsed or not.</para>
+    <para>The XML model class eases the manipulation XML files serving as data
+        models. Xml provides a variety of functions manage the xml file path,
+        the markups used with it, to set whether BBCode markups are enabled and
+        also to get data in the current locale without hassles. </para>
+    <para>When building a Xml object, the constructor accepts two parameters:
+            <code>xmlPath</code> and <code>useBBCodeMarkup</code>. The xml path
+        parameter reffers to the XML file this model is representing, while the
+        second parameter is a flag indicating if BBCode markups should be parsed
+        or not.</para>
     <para>Speaking of markups, <classname>Xml</classname> makes use of a stack to store it's
         markups. To add a markup to the stack, simply call the <code>pushMarkup</code> function. The
         function's signature is the
@@ -27,11 +28,11 @@
         the <classname>Zend_Markup</classname> factory method.</para>
     <para>Once a markup is pushed, the stack may be retrieved
         using:<programlisting>getMarkupStack()</programlisting></para>
-    <para>The object returned is a <classname>Stack</classname>, part of Majisti's collections util
-        classes. <link xlink:href="majisti.util.model.html#majisti.util.model.collection.stack">See more details about the
-            Stack</link>. To clear all of the markups pushed in the stack, Xml has the
-            <code>clearMarkups()</code> function.
-    </para>
+    <para>The object returned is a <classname>Stack</classname>, part of
+        Majisti's collections util classes. <link
+            linkend="majisti.util.model.collection.stack">See more details about
+            the Stack</link>. To clear all of the markups pushed in the stack,
+        Xml has the <code>clearMarkups()</code> function. </para>
     <note>
         <para> When BBCodeMarkupIsUsed value is set to true, Xml automatically pushes the 'BBcode'
             parser in the stack. The renderer is the default one, 'Html'.</para>

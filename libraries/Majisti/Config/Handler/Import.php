@@ -45,10 +45,10 @@ class Import implements IHandler
     protected $_configType;
     
     /**
-     * @desc Optional Composite object
-     * @var Composite
+     * @desc Optional Chain object
+     * @var Chain
      */
-    protected $_compositeHandler;
+    protected $_chainHandler;
     
     protected $_configSectionName;
     
@@ -63,17 +63,17 @@ class Import implements IHandler
      * @desc Handles the configuration by finding the import paths and then
      * merging everything.
      * @param \Zend_Config $config
-     * @param Composite $compositeHandler (optional)
+     * @param Chain $chainHandler (optional)
      * @param array $params (optional)
      * @see _loadOptions() for $params
      *
      * @return \Zend_Config
      */
     public function handle(\Zend_Config $config,
-                    Composite $compositeHandler = null, $params = array())
+                    Chain $chainHandler = null, $params = array())
     {
         $this->clear();
-        $this->_compositeHandler  = $compositeHandler;
+        $this->_chainHandler      = $chainHandler;
         $this->_configSectionName = $config->getSectionName();
         $this->_finalConfig       = new \Zend_Config($config->toArray(), true);
         
@@ -83,8 +83,8 @@ class Import implements IHandler
 
         $this->setConfigType($config);
 
-        if( null !== ($compositeHandler = $this->getCompositeHandler()) ) {
-            $this->_finalConfig = $compositeHandler->handle($this->_finalConfig);
+        if( null !== ($chainHandler = $this->getChainHandler()) ) {
+            $this->_finalConfig = $chainHandler->handle($this->_finalConfig);
         }
 
         $selector = new \Majisti\Config\Selector($this->_finalConfig);
@@ -122,9 +122,9 @@ class Import implements IHandler
                 $this->_importPaths[] = $path;
                 $resolvedConfig = $this->getConfigFileByPath($path);
                 
-                if( null !== ($compositeHandler =
-                              $this->getCompositeHandler()) ) {
-                    $resolvedConfig=$compositeHandler->handle($resolvedConfig);
+                if( null !== ($chainHandler =
+                              $this->getChainHandler()) ) {
+                    $resolvedConfig=$chainHandler->handle($resolvedConfig);
                 }
                 
                 $this->mergeImports($resolvedConfig);
@@ -227,11 +227,11 @@ class Import implements IHandler
     
     /**
      * @desc Config handler composite object getter
-     * @return Composite
+     * @return Chain
      */
-    public function getCompositeHandler()
+    public function getChainHandler()
     {
-        return $this->_compositeHandler;
+        return $this->_chainHandler;
     }
     
     /**

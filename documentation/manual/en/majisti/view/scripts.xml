@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section 
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" 
+    xml:lang="en" xml:id="majisti.view.scripts" 
+    version="5.0">
+    
+    <title>View scripts</title>
+
+    <para>Majisti provides a view script "toolbox" for including common partials
+        for your applications.<note>
+            <para>Every partials are rendered using
+                    <classname>phpQuery</classname>. This means that the
+                    <methodname>setRenderReturn</methodname> is used for
+                returning the phpQuery object. Therefore, no output will be
+                printed but instead returned as a phpQuery container that can
+                then be outputed or used in other phpQuery objects.</para>
+        </note></para>
+    
+    <xi:include href="scripts/blocks.xml" />
+</section>

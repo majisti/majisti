@@ -3,9 +3,11 @@
     xmlns="http://docbook.org/ns/docbook" 
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:xi="http://www.w3.org/2001/XInclude" 
-    xml:lang="en" xml:id="majisti.test" version="5.0">
+    xml:lang="en" xml:id="majisti.util" 
+    version="5.0">
     
-    <title>Majisti\Test</title>
+    <title>Majisti\Util</title>
     
-    <xi:include href="test/simplified.xml" />
+    <xi:include href="exceptions.xml" />
+    <xi:include href="model.xml" />
 </chapter>

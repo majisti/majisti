@@ -5,5 +5,6 @@
     xml:id="majisti.codeStandards" version="5.0">
     <title>Code standards</title>
     <para>Standards developing organization SDO</para>
-    <xi:include href="codeStandards/css.xml">Cascading Stylesheets</xi:include>
+    
+    <xi:include href="css.xml">Cascading Stylesheets</xi:include>
 </chapter>

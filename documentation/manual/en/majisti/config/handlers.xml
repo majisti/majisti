@@ -27,7 +27,7 @@
        <para>The following are the default configuration handlers shipped with
               Majisti. </para>
  
- <xi:include href="handlers/composite.xml" />
+ <xi:include href="handlers/chain.xml" />
  <xi:include href="handlers/import.xml" />
  <xi:include href="handlers/markup.xml" />
  <xi:include href="handlers/property.xml" />

@@ -1,6 +1,6 @@
 <?php
 
-namespace Majisti\Model\Data;
+namespace Majisti\Model;
 use Majisti\Application\Locales as Locales;
 
 require_once __DIR__ . '/TestHelper.php';
@@ -154,4 +154,5 @@ class XmlTest extends \Majisti\Test\TestCase
         $this->assertEquals('en', $data->getSectionName());
     }
 }
+
 XmlTest::runAlone();

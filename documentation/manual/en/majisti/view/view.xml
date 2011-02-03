@@ -26,6 +26,26 @@
                         >Multiple Dispatcher</link>.</para>
             </listitem>
         </itemizedlist></para>
+    <section>
+        <title>Oriented object HTML</title>
+        <para>With the view, it is possible to use object oriented HTML such as
+            phpQuery. Instetad of outputing the content using the
+                <methodname>print</methodname> or <methodname>echo</methodname>
+            functions, you pass the object as a return object, using the
+                <methodname>setRenderReturn($obj)</methodname> method within
+            your view
+            scripts.<programlisting>//view.phtml
+$container = pq('&lt;div />')
+    ->addClass('foo')
+    ->append($this->render('anotherView.phtml') //provided it uses setRenderReturn as well
+;
+
+$this->setRenderReturn($container);</programlisting></para>
+        <para>Using an OO approach opens the way for very flexible layouts and
+            content while limiting (if not removing at all) the usage of php
+            tags.</para>
+    </section>
     
-    <xi:include href="view/helpers.xml" />
+    <xi:include href="helpers.xml" />
+    <xi:include href="scripts.xml" />
 </chapter>

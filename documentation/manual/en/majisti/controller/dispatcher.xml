@@ -5,6 +5,13 @@
     xml:id="majisti.controller.dispatcher" version="5.0">
 
     <title>The Dispatcher</title>
+    <warning>
+        <para>Fallback dispatching is not yet fully integrated as of 0.4.0.
+            Fallbacking controllers has been postponed until ZF2 is released.
+            You can still use the component as it is, but you should not use it
+            under production as the usage in the documention may greatly differ
+            from the implementation.</para>
+    </warning>
 
     <para>The dispatcher has been rewritten to comply to the modularity Majisti
         is trying to accomplish. The only difference is that it is possible to
@@ -22,21 +29,22 @@
     <example>
         <title>Multiple controller directories</title>
 
-        <para>Suppose you have dropped in a Blog module into MajistiC:</para>
+        <para>Suppose you have dropped in a Blog extension into MajistiX:</para>
 
         <programlisting><![CDATA[MajistiX
-    Modules
-        Blog
-            controllers
-                CommentsController.php
-                PagesController.php
-                ... //bunch of other controllers
-            models
-            views
-                comments
-                    index.phtml
-        AnotherModule
-            ...
+    BlogExtension
+        modules
+            blog
+                controllers
+                    CommentsController.php
+                    PagesController.php
+                    ... //bunch of other controllers
+                models
+                views
+                    comments
+                        index.phtml
+    AnotherExtensions
+    ...
 ]]></programlisting>
 
         <para>And your application tree:</para>
@@ -45,7 +53,7 @@
     modules
         default
             ...
-        Blog
+        blog
             controllers
                 CommentsController.php
                 NewControllerNotContainedInShippedModule.php
@@ -55,28 +63,29 @@
         <para>For the fallback process you need to add in your config file the
             following:</para>
 
-        <programlisting><![CDATA[resources.frontController.controllerDirectory[blog]      = APPLICATION_PATH "/blog/controllers"
-resources.dispatcher.fallbackControllerDirectory[blog][] = MAJISTIX_MODULES "/blog/controllers"]]></programlisting>
+        <programlisting>resources.frontController.controllerDirectory.blogExtension      = ${majisti.app.path} "/library/extensions/MyBlog/modules/blog/controllers"
+resources.dispatcher.fallbackControllerDirectory.blogExtension[] = ${majisti.path} "/libraries/MajistiX/BlogExtension/modules/blog/controllers"</programlisting>
 
         <para>Extending controllers would simply require that you extend the
             one you wish to redefine behaviour:</para>
 
-        <programlisting><![CDATA[require_once MAJISTIX_MODULES . '/blog/controllers/CommentsController.php';
-
-class CommentsController extends \Majisti\Modules\Blog\CommentsController  
+        <programlisting>class CommentsController extends \MajistiX\BlogExtension\Controller\CommentsController  
 {
     public function commentAction()
     {
         //redefining behaviour...
     }
-}
-]]></programlisting>
+}</programlisting>
         <programlisting>You can always use the object oriented approach:</programlisting>
         <programlisting>$dispatcher = \Zend_Controller_Front::getInstance()->getDispatcher();
-$dispatcher->addFallbackControllerDirectory('\MajistiX\Modules', 
-    MAJISTIX_MODULES . '/users/controllers', 'users');</programlisting>
+$dispatcher->addFallbackControllerDirectory('MajistiX\BlogExtension',
+    $maj->path . '/libraries/MajistiX/BlogExtension/modules/blog/controllers', 'blog');</programlisting>
         <programlisting>If the third parameter is not specified, which is the module, 
-Majisti assumes the default controller</programlisting>
-        <para>TODO: fallback restrictions section</para>
+Majisti assumes that you are fallbacking the default controller directory.</programlisting>
     </example>
+    <note>
+        <para>Majisti plans to support fallback
+                <emphasis>restrictions</emphasis> since fallbacking entire
+            controllers might expose potential security issues.</para>
+    </note>
 </section>

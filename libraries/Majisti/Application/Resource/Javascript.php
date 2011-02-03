@@ -87,7 +87,7 @@ class Javascript extends \Zend_Application_Resource_ResourceAbstract
         /* add theme */
         if( $theme = $selector->find('jquery.ui.theme', false) ) {
             $file = false === strpos($theme, '.css')
-                ? $settings->url . "/jquery/themes/{$theme}/{$theme}.css"
+                ? $settings->app->baseUrl . "/majisti/jquery/themes/{$theme}/{$theme}.css"
                 : $theme;
 
             $view->headLink()->appendStylesheet($file);

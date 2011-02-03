@@ -62,7 +62,7 @@ class ConfighandlerTest extends \Majisti\Test\TestCase
 
     /**
      * @desc Assert that all handlers get instanciated properly
-     * in the Composite handler.
+     * in the Chain handler.
      */
     public function testInitWithProperConfig()
     {
@@ -91,9 +91,9 @@ class ConfighandlerTest extends \Majisti\Test\TestCase
     /**
      * @desc Initial composite handler should be empty
      */
-    public function testInitialCompositeIsEmpty()
+    public function testInitialChainIsEmpty()
     {
-        $this->assertTrue($this->configHandler->getCompositeHandler()->isEmpty());
+        $this->assertTrue($this->configHandler->getChainHandler()->isEmpty());
     }
 
     /**

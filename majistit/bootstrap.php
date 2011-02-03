@@ -8,9 +8,6 @@ $settings = array('majisti' => array(
     'lib'       => array(
         'majisti' => 'majisti-0.4/libraries',
     ),
-    'url' => array(
-        'production' => 'http://static.majisti.com'
-    )
 ));
 
 require_once 'application/Loader.php';

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section 
+    xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude" 
+    xml:lang="en" xml:id="majisti.view.scripts.blocks" 
+    version="5.0">
+    
+    <title>Blocks</title>
+    
+    <para>Partials blocks are reusable view components that use its own scope to
+        provide "blocks".  Let's take an example of a blog comment, the blog
+        comment has a title, a content, date, author and etc. Of course, Majisti
+        does not provide blog comments as view partials, but you get the
+        point.</para>
+    <section xml:id="majisti.view.scripts.blocks.languageSwitcher">
+        <title>The language switcher</title>
+        <para>The language switcher block will list the available locales
+            (omitting the current locale) as links. Links uses the default
+            request param as suggested in the <link
+                linkend="majisti.controller.plugins.i18n">I18n controller
+                plugin</link> to make your application switch to that selected
+            locale.</para>
+    </section>
+    
+</section>
