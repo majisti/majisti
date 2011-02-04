@@ -37,6 +37,10 @@ class Model extends AbstractHelper
             ->getParam('bootstrap')
             ->getResource('ModelContainer');
 
+        if( 0 === func_num_args() ) { //MA-28
+            return $modelContainer;
+        }
+
         return $modelContainer->getModel($key, $namespace, $returnModel, $args);
     }
 }
