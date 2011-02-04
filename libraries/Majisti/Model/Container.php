@@ -6,6 +6,10 @@ namespace Majisti\Model;
  * @desc Container for holding models by providing case insensitive
  * namespace access, and lazy instanciation.
  *
+ * @deprecated Usage of this class is not recommanded if you need to maintain
+ * applications overtime because this class will be refactored in future revisions
+ * to include Symfony's Depedency Injection.
+ *
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
