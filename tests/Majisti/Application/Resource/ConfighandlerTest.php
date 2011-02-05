@@ -52,10 +52,14 @@ class ConfighandlerTest extends \Majisti\Test\TestCase
             'production',
             array('allowModifications' => true)
         );
-        \Zend_Registry::set('Majisti_Config', $this->config);
 
         $this->configHandler = new Confighandler(
             $this->config->resources->configHandler);
+
+        $bootstrap = $this->getHelper()->createBootstrapInstance();
+        $bootstrap->setOptions($this->config->toArray());
+
+        $this->configHandler->setBootstrap($bootstrap);
             
         $this->wrongConfig = new \Zend_Config($this->wrongConfig);
     }
@@ -69,6 +73,11 @@ class ConfighandlerTest extends \Majisti\Test\TestCase
         $confHandler = $this->configHandler;
         $composite   = $confHandler->init();
 
+        /* assert all other handlers are of the correct types */
+        $this->assertType('Majisti\Config\Handler\Import', $composite->pop());
+        $this->assertType('My_Config_Handler_Custom', $composite->pop());
+        $this->assertType('My\Config\Handler\CustomNamespace', $composite->pop());
+
         /* assert custom namespace with arguments */
         $customWithArgs = $composite->pop();
         $this->assertType('My\Config\Handler\CustomNamespace', $customWithArgs);
@@ -76,11 +85,6 @@ class ConfighandlerTest extends \Majisti\Test\TestCase
             array('key' => 'value1', 'value2'),
             $customWithArgs->params
         );
-
-        /* assert all other handlers are of the correct types */
-        $this->assertType('My\Config\Handler\CustomNamespace', $composite->pop());
-        $this->assertType('My_Config_Handler_Custom', $composite->pop());
-        $this->assertType('Majisti\Config\Handler\Import', $composite->pop());
 
         $this->assertTrue($composite->isEmpty());
 

@@ -2,6 +2,8 @@
 
 namespace Majisti\Application;
 
+use \Majisti\Config\Selector;
+
 /**
  * @desc Majisti's Application Manager is the facade to rich applications where
  * a default configuration along with a concrete configuration are merged
@@ -33,7 +35,6 @@ class Manager
 
         /* setup config and call parent */
         $config = $this->getConfiguration($options);
-        \Zend_Registry::set('Majisti_Config', $config);
 
         $application = new \Zend_Application(
             $options->majisti->app->env,
@@ -42,14 +43,12 @@ class Manager
 
         /* further config handling using the ConfigHandler resource */
         $bootstrap = $application->getBootstrap();
-        $bootstrap->bootstrap('ConfigHandler');
+        $bootstrap->bootstrap('Confighandler');
 
         /* set options */
-        $config      = \Zend_Registry::get('Majisti_Config');
-        $configArray = $config->toArray();
-
-//        $application->setOptions($configArray);
-        $bootstrap->setOptions($configArray);
+        $config = new \Zend_Config($bootstrap->getOptions());
+        \Zend_Registry::set('Majisti_Config', $config);
+        \Zend_Registry::set('Majisti_Config_Selector', new Selector($config));
 
         /* add locales to the application */
         $bootstrap->bootstrap('Locales');
@@ -67,6 +66,11 @@ class Manager
         return $this->_application;
     }
 
+    /**
+     * @desc Inits the options.
+     *
+     * @param \Zend_Config $options The options
+     */
     protected function initOptions(\Zend_Config $options)
     {
         $request  = new \Zend_Controller_Request_Http();

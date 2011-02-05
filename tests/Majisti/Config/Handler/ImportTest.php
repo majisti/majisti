@@ -84,7 +84,7 @@ class ImportTest extends \Majisti\Test\TestCase
          * the external ini files.
          */
         $config = $handler->handle($this->_validImport,
-                new CHain($this->_propertyHandler), $params);
+                new Chain($this->_propertyHandler), $params);
         
         /*
          * config content should have been replaced if common keys are found,

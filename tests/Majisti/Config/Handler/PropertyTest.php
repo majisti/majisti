@@ -2,7 +2,7 @@
 
 namespace Majisti\Config\Handler;
 
-require_once __DIR__ . '/TestHelper.php';
+require_once 'TestHelper.php';
 
 /**
  * @desc Property test case. Currently working only for INI config files.
@@ -11,8 +11,6 @@ require_once __DIR__ . '/TestHelper.php';
  */
 class PropertyTest extends \Majisti\Test\TestCase 
 {
-    static protected $_class = __CLASS__;
-    
     /* files paths */
     protected $_validProperties;
     protected $_secondValidProperties;

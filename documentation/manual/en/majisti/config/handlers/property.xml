@@ -14,7 +14,7 @@
         consider the following application.ini example: </para>
     <programlisting>[production]
 
-majisti.property.applicationUrl  = APPLICATION_URL
+majisti.property.applicationUrl  = ${majisti.app.url}
 majisti.property.baseUrl         = "my-project/public"
 majisti.property.imagesUrl       = #{baseUrl}/images
 majisti.property.scriptsUrl      = #{baseUrl}/scripts
