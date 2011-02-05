@@ -10,7 +10,8 @@
         configuration file to request (import and merge), another configuration
         file with any given path. The handler will override the parent
         configuration values, if duplicates are found, with the children
-        configuration files imported. </para>
+        configuration files imported. Import handler only support
+            <classname>Zend_Config_Ini</classname> for now.</para>
     <programlisting><![CDATA[
 [production]
 majisti.property.applicationPath = /var/www

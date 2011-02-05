@@ -22,8 +22,6 @@ class Confighandler extends \Zend_Application_Resource_ResourceAbstract
      * \Majisti\Config\Handler\IHandler on it using the
      * \Majisti\Config\Handler\Chain
      *
-     * The handled configuration in put back in the Majisti_Config registry key
-     *
      * @throws Exception if an exception occurs while handling the confuration
      * it will be thrown wrapped in this namespace's Exception.
      *
@@ -33,16 +31,13 @@ class Confighandler extends \Zend_Application_Resource_ResourceAbstract
     {
         try {
             $chainHandler = $this->prepareChain();
-            $config       = $chainHandler->handle(
-                \Zend_Registry::get('Majisti_Config'));
+            $bootstrap    = $this->getBootstrap();
 
-            /* default reg key */
-            \Zend_Registry::set('Majisti_Config', $config);
-
-            /* selector */
-            \Zend_Registry::set(
-                'Majisti_Config_Selector',
-                new \Majisti\Config\Selector($config)
+            $bootstrap->setOptions($chainHandler->handle(
+                new \Zend_Config(
+                    $bootstrap->getOptions(),
+                    true
+                ))->toArray()
             );
         } catch( \Exception $e ) {
             throw new Exception("An exception occured in ConfigHandler resource
@@ -70,7 +65,7 @@ class Confighandler extends \Zend_Application_Resource_ResourceAbstract
 
         $chainHandler = $this->getChainHandler();
 
-        foreach ($this->getOptions() as $className => $value) {
+        foreach (array_reverse($this->getOptions()) as $className => $value) {
             if( !empty($value) ) {
                 /* denotes that the handler should be enabled */
                 if( 1 == $value ) {
@@ -84,7 +79,7 @@ class Confighandler extends \Zend_Application_Resource_ResourceAbstract
                     $chainHandler->push(new $value());
                 /* handler parameters provided */
                 } else if( is_array($value) ) {
-                    /* class key for finding the propert class */
+                    /* class key for finding the property class */
                     $className = isset($value['class'])
                         ? $value['class']
                         : 'Majisti\Config\Handler\\' . ucfirst($className);

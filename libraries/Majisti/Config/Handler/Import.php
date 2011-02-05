@@ -9,7 +9,7 @@ namespace Majisti\Config\Handler;
  * necessary, with the children configuration files imported.
  *
  * Exemple:  A core module calling upon the Users module, thus importing it's
-*            configuration file, will cause the core configuration values to be
+ *           configuration file, will cause the core configuration values to be
  *           overriden by the Users' configuration values if duplicate keys are
  *           found.
  *
@@ -58,6 +58,21 @@ class Import implements IHandler
      * @var \Zend_Config
      */
     protected $_finalConfig;
+
+    /**
+     * @var array
+     */
+    protected $_options;
+
+    /**
+     * @desc Constructs the Import Handler.
+     *
+     * @param array $options The options
+     */
+    public function __construct($options = array())
+    {
+        $this->setOptions($options);
+    }
     
     /**
      * @desc Handles the configuration by finding the import paths and then
@@ -73,9 +88,14 @@ class Import implements IHandler
                     Chain $chainHandler = null, $params = array())
     {
         $this->clear();
-        $this->_chainHandler      = $chainHandler;
-        $this->_configSectionName = $config->getSectionName();
-        $this->_finalConfig       = new \Zend_Config($config->toArray(), true);
+        $this->_chainHandler = $chainHandler;
+        $options             = $this->getOptions();
+
+        $this->_configSectionName = null === $config->getSectionName()
+            ? $options['section']
+            : $config->getSectionName();
+
+        $this->_finalConfig = new \Zend_Config($config->toArray(), true);
         
         if( !empty($params) ) {
             $this->loadParams($params);
@@ -124,7 +144,7 @@ class Import implements IHandler
                 
                 if( null !== ($chainHandler =
                               $this->getChainHandler()) ) {
-                    $resolvedConfig=$chainHandler->handle($resolvedConfig);
+                    $resolvedConfig = $chainHandler->handle($resolvedConfig);
                 }
                 
                 $this->mergeImports($resolvedConfig);
@@ -154,7 +174,7 @@ class Import implements IHandler
      */
     protected function mergeImports(\Zend_Config $config)
     {
-            $this->_finalConfig->merge($config);
+        $this->_finalConfig->merge($config);
     }
     
     /**
@@ -186,17 +206,15 @@ class Import implements IHandler
     protected function getConfigFileByPath($configPath)
     {
         try {
-            $type           = $this->getConfigType();
-            $isZendConfig   = 'Zend_Config' === $type;
+            $type         = $this->getConfigType();
+            $isZendConfig = 'Zend_Config' === $type;
             
             if( $isZendConfig && is_string($configPath) ) {
                 throw new Exception("Cannot instanciate a Zend_Config with a
                                     string");
             }
             
-            $config = $isZendConfig
-                    ? new $type($configPath, $this->_configSectionName, true)
-                    : new $type($configPath, $this->_configSectionName, true);
+            $config = new $type($configPath, $this->_configSectionName, true);
         } catch (\Zend_Config_Exception $e) {
             throw new Exception("Cannot instanciate {$type} with
                                 path {$configPath}.
@@ -213,7 +231,7 @@ class Import implements IHandler
      */
     public function setConfigType(\Zend_Config $config)
     {
-        $this->_configType = get_class($config);
+        $this->_configType = 'Zend_Config_Ini';
     }
     
     /**
@@ -241,5 +259,25 @@ class Import implements IHandler
     public function getImportPaths()
     {
         return $this->_importPaths;
+    }
+
+    /**
+     * @desc Returns the options.
+     *
+     * @return array The options
+     */
+    public function getOptions()
+    {
+        return $this->_options;
+    }
+
+    /**
+     * @desc Sets the options.
+     *
+     * @param array $options
+     */
+    public function setOptions(array $options)
+    {
+        $this->_options = $options;
     }
 }
