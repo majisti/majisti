@@ -16,6 +16,7 @@ class Headers extends AbstractHelper
 
     public function prepare()
     {
+        /* @var $view \Majisti\View\View */
         $view = $this->view;
 
         $maj = $this->getConfig()->majisti;
@@ -25,6 +26,8 @@ class Headers extends AbstractHelper
 
         $view->headMeta()->appendHttpEquiv(
             'Content-Type', 'text/html; charset=UTF-8');
+
+        $view->headTitle($maj->app->namespace, 'SET');
     }
 
     public function toString()
@@ -39,7 +42,7 @@ class Headers extends AbstractHelper
         $headers[] = $view->headStyle()->toString();
         $headers[] = trim($view->jQuery(), PHP_EOL);
         $headers[] = $view->headScript()->toString();
-        $headers[] = $view->headTitle($maj->app->namespace);
+        $headers[] = $view->headTitle();
 
         /* append PHP_EOL on non empty strings */
         $output = '';
