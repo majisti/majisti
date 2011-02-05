@@ -7,8 +7,9 @@
     version="5.0">
     
     <title>MajistiX (Extensions)</title>
-    <subtitle>A better way to design rich applications with a small team, while
-        having programming partnership with the entire world. -Steven Rosato</subtitle>
+    <subtitle>A better way to design web applications with a small team, while
+        having programming partnership with the entire world. -Steven
+        Rosato</subtitle>
     
     <para>Extension is undeniably the top amongst Majisti's core components.
         Following the modularity Majisti is trying to accomplish, extensions
