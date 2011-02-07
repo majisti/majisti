@@ -34,6 +34,9 @@ class StaticUrlTest extends \Majisti\Test\TestCase
         $value = "##{majisti.url}##/foo.jpg";
         $this->assertEquals("{$this->conf->find('majisti.url')}/foo.jpg", 
             $filter->filter($value));
+
+        $value = 'http://google.ca/foo.jpg';
+        $this->assertEquals($value, $filter->filter($value));
     }
 }
 

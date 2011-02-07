@@ -11,8 +11,15 @@ class ContentFixture implements DataFixtures\FixtureInterface
     {
         $lorem = new \Majisti\Util\Model\LoremIpsumGenerator();
 
+        $conf = \Zend_Registry::get('Majisti_Config');
+
         $content = new Content('content1', new \Zend_Locale('en'));
-        $content->setContent($lorem->getContent(20));
+        $content->setContent($lorem->getContent(20)
+            . '<br /><br />' . \pq('<img />')
+                ->attr('src', $conf->majisti->app->baseUrl . '/images/be-unique.jpg')
+                ->attr('alt', "fish")
+                ->attr('width', 200)
+        );
 
         $manager->persist($content);
 

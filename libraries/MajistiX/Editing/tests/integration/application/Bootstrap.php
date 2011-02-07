@@ -9,8 +9,21 @@ namespace MajistiT\Application;
  */
 class Bootstrap extends \Majisti\Application\Bootstrap
 {
-    /**
-     * @desc Runs the bootstrap
+    /*
+     * (non-phpDoc) 
+     * @see Inherited documentation.
+     */
+    protected function _bootstrap($resource = null)
+    {
+        parent::_bootstrap($resource);
+
+        require_once 'phpQuery.php';
+        \phpQuery::newDocumentXHTML();
+    }
+
+    /*
+     * (non-phpDoc) 
+     * @see Inherited documentation.
      */
     public function run()
     {
@@ -19,9 +32,6 @@ class Bootstrap extends \Majisti\Application\Bootstrap
 
         $front = $this->getResource('FrontController');
         $front->registerPlugin(new \MajistiT\Plugin\Main());
-
-        require_once 'phpQuery.php';
-        \phpQuery::newDocumentXHTML();
 
         parent::run();
     }
