@@ -99,6 +99,10 @@ class ModuleAutoloader extends ResourceAutoloader
                 'namespace' => 'View',
                 'path'      => 'views',
             ),
+            'util'      => array(
+                'namespace' => 'Util',
+                'path'      => 'utils',
+            ),
             'viewhelper' => array(
                 'namespace' => 'View\\Helper',
                 'path'      => 'views/helpers',

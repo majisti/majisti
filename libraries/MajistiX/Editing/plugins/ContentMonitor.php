@@ -33,6 +33,16 @@ class ContentMonitor extends \Majisti\Controller\Plugin\AbstractPlugin
 
                 $key = str_replace('maj_editing_editor_hidden_', '', $key);
 
+                /* @var $json \Zend_Controller_Action_Helper_Json */
+                $json = HelperBroker::getStaticHelper('json');
+
+                if( !\Zend_Auth::getInstance()->hasIdentity() ) {
+                    $json->direct(array(
+                        'result'  => 'failure',
+                        'message' => 'Permission denied.'
+                    ));
+                }
+
                 $repo = $em->getRepository(
                     'MajistiX\Editing\Model\Content');
                 $model = $repo->findOrCreate($key,
@@ -45,8 +55,6 @@ class ContentMonitor extends \Majisti\Controller\Plugin\AbstractPlugin
                 $em->flush();
 
                 if( $request->isXmlHttpRequest() ) {
-                    /* @var $json \Zend_Controller_Action_Helper_Json */
-                    $json = HelperBroker::getStaticHelper('json');
                     $json->direct(array(
                         'result'  => 'success',
                         'message' => 'Content successfully updated.'

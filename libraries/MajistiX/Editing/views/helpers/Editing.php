@@ -26,6 +26,7 @@ class Editing extends \Majisti\View\Helper\AbstractHelper
     {
         $provider = Editor\Provider::getInstance();
 
+        /* @var $model Content */
         $model = $key instanceof Content
                ? $key
                : $this->getModel($key);

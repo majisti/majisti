@@ -37,6 +37,15 @@ class ContentMonitorTest extends \Majisti\Test\TestCase
 
         $this->repo = $this->em->getRepository('MajistiX\Editing\Model\Content');
 
+        $adapter = new \Zend_Auth_Adapter_Digest(
+            __DIR__ . '/../_files/digest',
+            'editing',
+            'admin',
+            'admin'
+        );
+
+        \Zend_Auth::getInstance()->authenticate($adapter);
+
         $dbHelper->updateSchema()
                  ->truncateTables(array($this->repo));
     }
@@ -44,6 +53,7 @@ class ContentMonitorTest extends \Majisti\Test\TestCase
     public function tearDown()
     {
         \Zend_Controller_Front::getInstance()->setParam('bootstrap', null);
+        \Zend_Auth::getInstance()->clearIdentity();
     }
 
     /**
@@ -128,6 +138,22 @@ class ContentMonitorTest extends \Majisti\Test\TestCase
         $this->assertEquals(\Zend_Json::encode(array(
             'result'  => 'success',
             'message' => 'Content successfully updated.'
+        )), $this->getResponse()->getBody());
+    }
+
+    public function testNoIdentityWillNeverUpdateContent()
+    {
+        \Zend_Auth::getInstance()->clearIdentity();
+
+        $request = $this->getBestScenarioRequest();
+
+        $this->dispatch('/');
+
+        $this->assertHeaderContains(
+            'content-type', 'Content-Type: application/json');
+        $this->assertEquals(\Zend_Json::encode(array(
+            'result'  => 'failure',
+            'message' => 'Permission denied.'
         )), $this->getResponse()->getBody());
     }
 }

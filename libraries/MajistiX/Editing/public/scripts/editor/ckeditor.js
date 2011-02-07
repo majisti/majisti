@@ -21,11 +21,13 @@ majisti.ext.editing.Editor.implement({
      * (non js-doc)
      * @see Inherited implementation
      */
-    bindLivePreview: function($text) {
+    bindTextChange: function(callbacks) {
         var editor = this.getEditor();
+        var self   = this;
+        var $text  = self.$container.find('.text');
 
         /*
-         * preview setup as a greedy interval watcher since
+         * bind live preview as a greedy interval watcher since
          * CkEditor does not provide any event for data change.
          * This greedy listener stops when not focussing on the ckeditor
          * instance, at least to save up some resource.
@@ -35,6 +37,10 @@ majisti.ext.editing.Editor.implement({
         editor.on('focus', function() {
             intervalId = setInterval(function() {
                 $text.html(editor.getData());
+
+                for( var i = 0; i < callbacks.length; i++ ) {
+                    callbacks[i]();
+                }
             }, 100);
         });
         editor.on('blur', function() {

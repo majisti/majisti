@@ -4,7 +4,9 @@ namespace MajistiX\Editing\Model;
 
 use \Doctrine\ORM\Mapping\ClassMetadata,
     \Doctrine\ORM\EntityRepository,
-    \MajistiX\Editing\View\Editor;
+    \MajistiX\Editing\View\Editor,
+    \MajistiX\Editing\Util\Filter as Filters,
+    \Majisti\Config\Configuration;
 
 /**
  * @desc InPlaceEditing entity model.
@@ -24,7 +26,17 @@ class Content
 
     protected $_options;
 
-    static protected $_tableName = 'majistix_content';
+    /**
+     * @var \Zend_Filter 
+     */
+    static protected $_encryptFilters;
+
+    /**
+     * @var \Zend_Filter 
+     */
+    static protected $_decryptFilters;
+
+    static protected $_tableName = 'majistix_editing_content';
 
     /**
      * @desc Constructs the InPlaceEditing.
@@ -71,7 +83,7 @@ class Content
         $metadata->setTableName(static::$_tableName);
         $metadata->setIdGeneratorType(ClassMetadata::GENERATOR_TYPE_AUTO);
         $metadata->setCustomRepositoryClass(
-                __NAMESPACE__ . '\ContentRepository');
+            __NAMESPACE__ . '\ContentRepository');
     }
 
     /**
@@ -100,7 +112,45 @@ class Content
      */
     public function getContent()
     {
-        return stripslashes($this->content);
+        if( empty($this->content) ) {
+            return $this->content;
+        }
+
+        return $this->getDecryptFilters()->filter($this->content);
+    }
+
+    /**
+     * @return \Zend_Filter 
+     */
+    static public function getEncryptFilters()
+    {
+        if( null === static::$_encryptFilters ) {
+            static::$_encryptFilters = new \Zend_Filter();
+        }
+
+        return static::$_encryptFilters;
+    }
+
+    /**
+     * @return \Zend_Filter 
+     */
+    static public function getDecryptFilters()
+    {
+        if( null === static::$_encryptFilters ) {
+            static::$_decryptFilters = new \Zend_Filter();
+        }
+
+        return static::$_decryptFilters;
+    }
+
+    static public function setEncryptFilters(\Zend_Filter $chain)
+    {
+        static::$_encryptFilters = $chain;
+    }
+
+    static public function setDecryptFilters(\Zend_Filter $chain)
+    {
+        static::$_decryptFilters = $chain;
     }
 
     /**
@@ -118,7 +168,7 @@ class Content
      */
     public function setContent($content)
     {
-        $this->content = $content;
+        $this->content = $this->getEncryptFilters()->filter($content);
 
         return $this;
     }

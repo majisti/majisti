@@ -4,6 +4,7 @@ $imgDir: "" !default;
 
 $sprite-default-size: 16px;
 $sprite-image-default-width: 16px;
+$sprite-image-default-height: 16px;
 
 @mixin icons() {
     @include sprite-background('#{$imgDir}icons-16x16.png');
@@ -21,18 +22,19 @@ $sprite-image-default-width: 16px;
             padding: 0 0 0 $sprite-default-size + 5;
         }
         &.loading {
-            background: inline-image('#{$imgDir}ajax-loader.gif');
+            background: image-url('#{$imgDir}ajax-loader.gif');
             width: 200px;
             height: 19px;
         }
     }
     > .text-wrapper {
-        min-height: 20px;
+        min-height: 70px;
         > .text {
             &.being-edited, &.editable {
                 border: 2px dashed black;
                 padding: 0 5px;
                 margin: 5px 0;
+                min-height: 50px;
             }
         }
         > .panel {
@@ -53,17 +55,26 @@ $sprite-image-default-width: 16px;
         table.group tr { //align buttons
             float: left;
         }
-        input[type=submit], input[type=reset] {
+        .save, .cancel {
             @include icons;
             border: none;
             text-indent: -999px; //hide text
             cursor: pointer;
             outline: none;
-            &.save {
-                @include sprite-column(2);
+            &[disabled] {
+                cursor: default;
             }
-            &.cancel {
-                @include sprite-column(3);
+        }
+        .save {
+            @include sprite-position(2);
+            &[disabled] {
+                @include sprite-position(2,2);
+            }
+        }
+        .cancel {
+            @include sprite-position(3);
+            &[disabled] {
+                @include sprite-position(3,2);
             }
         }
     }

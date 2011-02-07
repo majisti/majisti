@@ -18,7 +18,6 @@ $.extend(majisti.ext, {
            Implements: [Options],
 
            options: {
-               livePreview: true,
                messageDuration: 3000
            },
 
@@ -48,7 +47,7 @@ $.extend(majisti.ext, {
                this.initDialogs();
 
                this.bindEdit();
-               this.bindSave();
+               this.bindControls();
            },
 
             /**
@@ -98,10 +97,26 @@ $.extend(majisti.ext, {
 
                    var $text = $cont.find('.text');
 
-                   /* live preview */
-                   if( self.options.livePreview ) {
-                       self.bindLivePreview($text);
-                   }
+                   /* 
+                    * disables/enables the edit button according 
+                    * if text is empty or not 
+                    */
+                   var dataValidator = function() {
+                        var $save = self.$container.find('.save');
+
+                        if( false === $save.attr('disabled') 
+                            && 0 === self.getData().length ) 
+                        {
+                            $save.attr('disabled', true);
+                        }
+                        else if( true === $save.attr('disabled') 
+                            && 0 < self.getData().length ) 
+                        {
+                            $save.attr('disabled', false);
+                        }
+                   };
+
+                   self.bindTextChange([dataValidator]);
 
                    $text.addClass('being-edited');
 
@@ -112,13 +127,14 @@ $.extend(majisti.ext, {
            }.protect(),
 
            /**
-            * @desc Binds the save trigger
+            * @desc Binds the triggers
             */
-           bindSave: function() {
+           bindControls: function() {
                var self = this;
 
                /* save trigger */
                this.$container.find('.editor').submit(function() {
+
                    $(this).hide();
                    self.showLoading();
 
@@ -216,13 +232,16 @@ $.extend(majisti.ext, {
 
            /**
             * @abstract
-            * @desc Bind a live preview to the text while content is
-            * added to the editor. If live preview option is disabled,
-            * this will never be called.
-            *
-            * @param jquery $text The text object
+            * @desc Binds a text change listener to the editor. The contract suggest
+            * at least the following to be implemented: 
+            * 
+            * - a live preview that changes text when the user is typing.
+            * 
+            * The text chage implementation must call back the given callbacks.
+            * 
+            * @param array callbacks
             */
-           bindLivePreview: null
+           bindTextChange: null
        }),
 
        /**
