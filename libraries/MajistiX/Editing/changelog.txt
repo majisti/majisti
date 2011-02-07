@@ -1,11 +1,12 @@
 majisti-0.4.x - compatible
-    v0.1.0
+    v1.0.0
         - Basic editing, using ajax and intuitive ui.
         - CkEditor as default Editor.
-        - ACL integration and/or authentication.
+        - Basic ACL restriction based on Identity existance in Zend_Auth
+        - Environment agnostic urls.
 
 To come:
 - CkFinder setup to work in every environment without any change to configuration
 integrated with CkEditor.
-- Environment agnostic image urls.
 - WMD Editor implementation
+- ACL integration

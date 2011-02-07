@@ -1,28 +1,8 @@
 <?
+
 /**
  * @desc Default layout for the entire application
  * @author Steven Rosato
  */
-?>
-<?=$this->doctype() . PHP_EOL;?>
-<html>
-<head>
-<?
-print $this->headers();
-?>
-</head>
-<body>
-<div id="container">
-    <!-- Header -->
-    <div id="header"><?=$this->render('default/header.phtml')?></div>
 
-    <!-- Content -->
-    <div id="content">
-        <?=$this->layout()->content . PHP_EOL?>
-    </div>
-
-    <div id="footer"></div>
-</div>
-<?=$this->inlineScript();?>
-</body>
-</html>
+print $this->doctype() . PHP_EOL . $this->render('majisti/layouts/simple.phtml');

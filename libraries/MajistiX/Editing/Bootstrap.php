@@ -111,6 +111,24 @@ class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
     }
 
     /**
+     * @desc Inits the content filters for both encryption and decryption
+     */
+    protected function _initContentFilters()
+    {
+        $chain = new \Zend_Filter();
+        $chain->addFilter(new Util\Filter\DynamicUrl($this->getConfiguration()));
+        $chain->addFilter(new \Zend_Filter_Callback('gzcompress'));
+
+        Model\Content::setEncryptFilters($chain);
+
+        $chain = new \Zend_Filter();
+        $chain->addFilter(new \Zend_Filter_Callback('gzuncompress'));
+        $chain->addFilter(new Util\Filter\StaticUrl($this->getConfiguration()));
+
+        Model\Content::setDecryptFilters($chain);
+    }
+
+    /**
      * @desc Returns a configured view with needed helper paths.
      *
      * @return \Majisti\View\View The configured view

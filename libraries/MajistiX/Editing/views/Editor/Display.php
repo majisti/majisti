@@ -81,6 +81,10 @@ EOT;
         $view    = $this->getView();
         $content = $this->getContent();
 
+        if( !\Zend_Auth::getInstance()->hasIdentity() ) {
+            return $content->getContent();
+        }
+
         $view->inlineScript()->appendScript(
             $this->getJavascript($content, $editor));
 

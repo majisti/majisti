@@ -1,0 +1,27 @@
+<?php
+
+$auth = \Zend_Auth::getInstance();
+
+$content = pq('<div />');
+
+$content 
+    ->append(pq('<a />')
+        ->attr('href', $this->url(array('controller' => 'index'), null, true))
+        ->html("Index")
+    )
+    ->append(pq('<br />'))
+;
+
+if( !$auth->hasIdentity() ) {
+    $content->append(pq('<a />')
+        ->attr('href', $this->url(array('login' => 1)))
+        ->html("Login")
+    );
+} else {
+    $content->append(pq('<a />')
+        ->attr('href', $this->url(array('login' => 0)))
+        ->html("Logout")
+    );
+}
+
+$this->setRenderReturn($content);
