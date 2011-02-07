@@ -99,18 +99,20 @@ $.extend(majisti.ext, {
 
                    /* 
                     * disables/enables the edit button according 
-                    * if text is empty or not 
+                    * if text is empty or not or modified
                     */
                    var dataValidator = function() {
                         var $save = self.$container.find('.save');
+                        var data  = self.getData();
 
                         if( false === $save.attr('disabled') 
-                            && 0 === self.getData().length ) 
+                            && ( 0 === data.length
+                                 || data === self.initialContent) ) 
                         {
                             $save.attr('disabled', true);
                         }
                         else if( true === $save.attr('disabled') 
-                            && 0 < self.getData().length ) 
+                            && 0 < data.length && data !== self.initialContent ) 
                         {
                             $save.attr('disabled', false);
                         }
