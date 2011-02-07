@@ -7,7 +7,7 @@ global $appLoader;
 $app = $appLoader->createApplicationManager()->getApplication();
 $app->bootstrap();
 
-$cliLoader = new \Majisti\Util\Cli\Doctrine\CliLoader($app);
+$cliLoader = new \Majisti\Util\Cli\CliLoader($app);
 $cliLoader->runCli();
 
 unset($appLoader, $app, $cliLoader);
