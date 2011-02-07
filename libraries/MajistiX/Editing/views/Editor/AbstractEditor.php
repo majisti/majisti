@@ -73,13 +73,11 @@ abstract class AbstractEditor implements IEditor
         $hiddenField->setValue('##MAJISTIX_EDITING##');
         $form->addElement($hiddenField);
 
-        //TODO: render all buttons in a display group
-        //http://zend-framework-community.634137.n4.nabble.com/Zend-Form-submit-and-reset-decorators-td647799.html
-
         /* submit button */
         $btn_submit = new \Zend_Form_Element_Submit(
             'maj_editing_editor_save_' . $key, 'Save'); //TODO: PO translator?
         $btn_submit->setAttrib('class', 'save');
+        $btn_submit->setAttrib('disabled', 'disabled');
         $form->addElement($btn_submit);
 
         /* cancel button */
