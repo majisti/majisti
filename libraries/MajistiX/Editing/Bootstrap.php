@@ -161,10 +161,7 @@ class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
         $config = $this->getConfiguration();
 
         Model\Content::setTableName(
-            $config->find(
-                'table',
-                strtolower($config->find('majisti.app.namespace')) . '_content'
-            )
+            $config->find('table', 'majistix_editing_content')
         );
     }
 
