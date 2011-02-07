@@ -32,10 +32,10 @@ final class Loader
      */
     static public function getDefaultOptions()
     {
-        return array('majisti' => array(
+        $conf = array('majisti' => array(
             'app' => array(
-                'namespace'   => 'MyApplication',
-                'path'        => dirname(__DIR__),
+                'namespace' => 'MyApplication',
+                'path'      => dirname(__DIR__),
                 'env' => 'development',
             ),
             'ext' => array(),
@@ -45,6 +45,14 @@ final class Loader
             ),
             'autoFindLibraries' => true,
         ));
+
+        if( 'cli' === php_sapi_name() ) {
+            $baseUrl = dirname(__DIR__) . '/public';
+            $conf['majisti']['app']['baseUrl'] = $baseUrl;
+            $conf['majisti']['app']['url'] = $baseUrl;
+        }
+
+        return $conf;
     }
 
     /**

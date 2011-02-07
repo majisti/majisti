@@ -32,6 +32,9 @@ class DynamicUrlTest extends \Majisti\Test\TestCase
 
         $value = "{$this->conf->find('majisti.url')}/foo.jpg";
         $this->assertEquals("##{majisti.url}##/foo.jpg", $filter->filter($value));
+
+        $value = 'http://google.ca/foo.jpg';
+        $this->assertEquals($value, $filter->filter($value));
     }
 }
 

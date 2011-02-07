@@ -8,7 +8,7 @@ use \Doctrine\DBAL\Migrations\Tools\Console\Command as MigrationCommand,
     \Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper,
     \Symfony\Component\Console\Helper as SymfonyHelper;
 
-class CliLoader
+class Loader
 {
     protected $_application;
 
@@ -19,6 +19,10 @@ class CliLoader
         $this->_application = $application;
     }
 
+    /**
+     *
+     * @return \Symfony\Component\Console\Application
+     */
     public function getCli()
     {
         if( null === $this->_cli ) {

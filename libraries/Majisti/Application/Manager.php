@@ -78,9 +78,14 @@ class Manager
 
         $options->path = dirname(dirname(dirname(__DIR__)));
 
-        $options->app->baseUrl = $request->getBaseUrl();
-        $options->app->url     = "{$request->getScheme()}://" .
-            "{$request->getHttpHost()}{$options->app->baseUrl}";
+        if( !isset($options->app->baseUrl) ) {
+            $options->app->baseUrl = $request->getBaseUrl();
+        }
+
+        if( !isset($options->app->url) ) {
+            $options->app->url     = "{$request->getScheme()}://" .
+                "{$request->getHttpHost()}{$options->app->baseUrl}";
+        }
 
         if( $url = $selector->find("url.{$options->app->env}", false) ) {
             $options->url = $url;
