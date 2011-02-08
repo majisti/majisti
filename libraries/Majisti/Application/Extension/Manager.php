@@ -3,13 +3,9 @@
 namespace Majisti\Application\Extension;
 
 /**
- * @desc Addons manager that provides control for loading addons.
- * Addons consists of two different concepts: the Extensions and
- * the Modules. Extensions are simply code addition to the library
- * that may contain controller plugins, view helpers, models, controllers,
- * etc. whereas Modules are pretty much the same as Extensions, but with
- * the addition of being dispatchable. Any added modules are considered
- * a fallback module dispatchable by Majisti's Multiple Dispatcher.
+ * @desc Extensions manager that provides control for loading extensions.
+ * Extensions are simply code addition to the librarythat may contain
+ * controller plugins, view helpers, models, controllers, etc.
  *
  * @author Majisti
  */
@@ -94,10 +90,11 @@ class Manager
      * @desc Loads an extension, calling its respective bootstrap.
      *
      * @param string $name The extension name
-     * @return undetermined yet
+     *
+     * @return \Zend_Application_Module_Bootstrap The extension's bootstrap
      *
      * @throws Exception If the bootstrap file is not readable, non existant,
-     * has wrong namespaced class name or is not implementing IAddonsBoostrapper
+     * has a wrong namespace class name or is not extending AbstractBootstrap
      */
     public function loadExtension($name, array $options = array())
     {
@@ -150,11 +147,68 @@ class Manager
 
             $this->_loadedExtensions[$name] = $pathInfo;
 
-            return $bootstrap->bootstrap();
+            $this->addBasePath($name, $pathInfo);
+
+            $bootstrap->bootstrap();
+
+            return $bootstrap;
         }
 
         throw new Exception("Extension {$name} not found using the provided
          paths " . implode(':', $triedPaths));
+    }
+
+    /**
+     * @desc Adds the extension's base path to the view stack.
+     * This is a bit tricky since we want to actually prepend
+     * it before the application's library helpers, scripts and filters.
+     * This function will remove the application's library base path,
+     * append this extension's base path and reapply the application's
+     * library basepath thereafter.
+     *
+     * @param string $name The extension's name
+     * @param array $pathInfo The extension's pathinfo
+     */
+    protected function addBasePath($name, $pathInfo)
+    {
+        $bootstrap = $this->getApplication()->getBootstrap();
+        $maj       = $bootstrap->getOption('majisti');
+        $view      = $bootstrap->getResource('view');
+
+        /* extension's base path */
+        $view->addBasePath(
+            $pathInfo['path'] . '/' . $name . '/views',
+            "{$pathInfo['namespace']}\\{$name}\View\\"
+        );
+
+        $paths = $view->getAllPaths();
+
+        /* remove the application's library base path */
+        $i = array_search(
+            $maj['app']['path'] . '/library/views/scripts/',
+            $paths['script']
+        );
+
+        unset($paths['script'][$i]);
+        unset($paths['helper'][$maj['app']['namespace'] . '\View\Helper\\']);
+        unset($paths['filter'][$maj['app']['namespace'] . '\View\Filter\\']);
+
+        /* reset paths and reappend application's library base path */
+        $view->setScriptPath(null);
+        $view->setHelperPath(null);
+        $view->setFilterPath(null);
+
+        foreach( $paths['script'] as $path ) {
+            $view->addScriptPath($path);
+        }
+
+        foreach( $paths['helper'] as $prefix => $path ) {
+            $view->addHelperPath($path, $prefix);
+        }
+
+        foreach( $paths['filter'] as $prefix => $path) {
+            $view->addFilterPath($path, $prefix);
+        }
     }
 
     /**
