@@ -16,6 +16,16 @@ class Extensions extends \Zend_Application_Resource_ResourceAbstract
      */
     public function init()
     {
+        $bootstrap = $this->getBootstrap();
+        $resources = $bootstrap->getPluginResources();
+
+        /* MA-67 ensure all resources are loaded first */
+        foreach( $resources as $name => $resource ) {
+            if( 'extensions' !== $name ) {
+                $bootstrap->bootstrap($name);
+            }
+        }
+
         return $this->getExtensions();
     }
 

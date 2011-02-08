@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
          xml:id="majisti.extensions.authoring"
          version="5.0">
     <title>Extensions authoring</title>
@@ -256,8 +258,17 @@ $imgDir: "../majisti/majistix/editing/images"
                     sure to namespace their css and js files and adding it to
                     the
                         <classname>headLink</classname>|<classname>headScript</classname>
-                    object. As an
-                    exemple:<programlisting>$view->headLink()->offsetSetStylesheet('majistix-editing-main', $cssFileUrl);</programlisting></para>
+                    object. As an exemple:<programlisting>$view->headLink()->offsetSetStylesheet('majistix-editing-1', $cssFileUrl);</programlisting><note>
+                        <para>Remember that the <classname>headLink</classname>
+                            and <classname>headScript</classname> placeholders
+                            use <methodname>ksort()</methodname> (<link
+                                xlink:href="http://framework.zend.com/issues/browse/ZF-5435"
+                                >ZF-5435</link>) to sort all the keys. To keep
+                            up with namespacing, the offset number should be
+                            postfixed to the namespace as in
+                                <code>majisti-editing-1</code>, that would be
+                            the first offset file for this extension.</para>
+                    </note></para>
                 <para>It provides an easy way of overriding the needed css,
                     since you will be generating a new one when
                     extending.</para>

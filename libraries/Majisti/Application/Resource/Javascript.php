@@ -107,7 +107,13 @@ class Javascript extends \Zend_Application_Resource_ResourceAbstract
         $path = $selector->find('mootools.path', $defaultPath);
 
         if( $selector->find('mootools.enable', false) )  {
-            $view->headScript()->prependFile($path);
+            /*
+             * 00 to ensure mootools is loaded first,
+             * amongst keys and strings altogether, jQuery
+             * will still be loaded first, because of its own
+             * view helper (ZendX).
+             */
+            $view->headScript()->offsetSetFile('00', $path);
         }
     }
 }
