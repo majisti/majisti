@@ -24,11 +24,14 @@ class Renderer extends AbstractEditor
         $jsUrl       = $majisti->find('url') . '/majistix/editing';
         $ckeditorUrl = $jsUrl . '/editors/ckeditor';
 
+        /* concrete editor always loaded last */
+        $key = 'majistix-editing-100-';
+
         return new Configuration(array(
             'scripts' => array(
-                'ckeditor'          => $ckeditorUrl . '/ckeditor.js',
-                'ckeditor-jquery'   => $ckeditorUrl . '/adapters/jquery.js',
-                'ckeditor-concrete' => $jsUrl       . '/scripts/editor/ckeditor.js'
+                "{$key}editor-1" => $ckeditorUrl . '/ckeditor.js',
+                "{$key}editor-2" => $ckeditorUrl . '/adapters/jquery.js',
+                "{$key}editor-3" => $jsUrl       . '/scripts/editor/ckeditor.js'
             )
         ));
     }

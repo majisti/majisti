@@ -100,8 +100,7 @@ class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
     protected function _initProvider()
     {
         $config = $this->getConfiguration();
-
-        $view = $this->getView();
+        $view   = $this->getView();
 
         /* setup provider singleton */
         $provider = View\Editor\Provider::getInstance()
@@ -127,27 +126,15 @@ class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
     }
 
     /**
-     * @desc Returns a configured view with needed helper paths.
+     * @desc Returns The view
      *
-     * @return \Majisti\View\View The configured view
+     * @return \Majisti\View\View The view
      */
     protected function getView()
     {
-        //FIXME: MA-67: View should be retrievable via the master bootstrap
-        if( null === $this->_view ) {
-            /* view helper paths */
-            $view = new \Majisti\View\View();
-            $view->addHelperPath('ZendX/JQuery/View/Helper', 'ZendX_JQuery_View_Helper');
-            $view->addHelperPath('Majisti/View/Helper', 'Majisti\View\Helper\\');
-            $view->addHelperPath('MajistiX/Editing/views/helpers',
-                'MajistiX\Editing\View\Helper\\');
-
-            $view->addBasePath(__DIR__ . '/views');
-
-            $this->_view = $view;
-        }
-
-        return $this->_view;
+        return $this->getApplication()
+                    ->getBootstrap()
+                    ->getResource('view');
     }
 
     /**
@@ -196,10 +183,10 @@ class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
             'editor' => 'CkEditor',
             'publicFiles' => array(
                 'styles' => array(
-                    'default' => $pubUrl . '/styles/editing.css',
+                    'majistix-editing-1' => $pubUrl . '/styles/editing.css',
                 ),
                 'scripts' => array(
-                    'default'  => $pubUrl . '/scripts/editing.js',
+                    'majistix-editing-1' => $pubUrl . '/scripts/editing.js',
                 )
             )
         ));
