@@ -3,16 +3,20 @@
          xml:id="majisti.extensions.authoring"
          version="5.0">
     <title>Extensions authoring</title>
-    <para>TODO</para>
+    <para>Majisti let's you create extensions within a defined structure that
+        follows conventions. This section is dedicated on how to create an
+        extension, structure it and use the various methodologies and
+        conventions provided by Majisti.</para>
     <section xml:id="majisti.extensions.authoring.writing">
         <title>Creating</title>
         <para>This section is dedicated on writing an extension for Majisti.
             Extensions are meant to be foremost additions to applications.
-            Extensions are not <emphasis role="strong">Components</emphasis> and
-            therefore are designed to add reusable and <emphasis role="strong"
-                >extensible</emphasis> code to applications. Authoring an
-            extension for Majisti must follow all its convention to assure its
-            functionnality.</para>
+            Extensions are not primarily <emphasis role="strong"
+                >Components</emphasis> but mostly bundles that are directly seen
+            by the user and therefore are designed to add reusable and <emphasis
+                role="strong">extensible</emphasis> code to applications.
+            Authoring an extension for Majisti must follow all its convention to
+            assure its functionnality.</para>
         <section>
             <title>Structure</title>
             <para>First of all, every extensions follow Zend's
@@ -21,16 +25,13 @@
                     <acronym>MVC</acronym> components. A request to
                 http://mysite.com/blog/index/index would dispatch to the blog
                 module, which contains the controller models, views and its own
-                bootstrap.  Any module can contain the following:</para>
+                bootstrap. Any module can contain the following:</para>
             <itemizedlist>
                 <listitem>
                     <para>Controllers</para>
                 </listitem>
                 <listitem>
                     <para>Models</para>
-                </listitem>
-                <listitem>
-                    <para>Controller plugins</para>
                 </listitem>
                 <listitem>
                     <para>Views</para>
@@ -51,8 +52,11 @@
                     <listitem>
                         <para>Extension's documentation</para>
                     </listitem>
-                </itemizedlist></para>
-            <para>In short, the folder structure follows this
+                </itemizedlist>It also includes view helpers, filters and
+                scripts, controller plugins and a Bootstrap (in short everything
+                loadable through the
+                    <classname>Majisti\Application\ModuleAutoloader</classname>).</para>
+            <para>The folder structure follows this
                 pattern:<programlisting>AnExtension/
     documentation/
     models/
@@ -80,8 +84,8 @@
                         extension, a <classname>ModuleAutoloader</classname> is
                         instancied to automatically load classes without the use
                         of <methodname>require_once</methodname>. This include
-                        models, views, handlers, forms, etc. (See the
-                            <classname>ResourceAutoloader</classname>).</para>
+                        models, views, handlers, forms, etc. (See
+                            <classname>Majisti\Application\ModuleAutoloader</classname>).</para>
                 </note>
             </para>
         </section>
@@ -131,7 +135,138 @@
             </itemizedlist>
             <section>
                 <title>Styling with SCSS and Compass</title>
-                <para>TODO</para>
+                <para>Styling with SCSS is very simple. Scss files are found
+                    within the <filename>public/</filename> directory. The Scss
+                    structure must consist of partials with facade SCSS files. </para>
+                <bridgehead>Scss directory with an extension called
+                    "Editing"</bridgehead>
+                <programlisting>public/
+    scss/
+        partials/
+            _editing.scss
+        .htaccess
+        config.rb
+        editing.scss</programlisting>
+                <para>The <filename>.htaccess</filename> contains the <code>Deny
+                        from all</code> to deny any request to the
+                        <filename>scss</filename> directory. The
+                        <filename>config.rb</filename> is the file needed for
+                    the compass compiler when polling for changes. The
+                        <filename>editing.scss</filename> is the facade that
+                    uses partials scripts such as the
+                        <filename>_editing.scss</filename>.</para>
+                <para>
+                    <bridgehead>config.rb</bridgehead>
+                    <programlisting>sass_dir        = "."
+css_dir         = "../styles"
+images_dir      = "../images"
+line_comments   = false
+relative_assets = true</programlisting>
+                </para>
+                <para>This is mostly what is needed in the configuration file.
+                    You can of course tweak it by checking the compass
+                        documenation.<bridgehead>editing.scss</bridgehead><programlisting>//This is the standalone version. Compiling everything in a css file
+//that is included by default. To extend this file, create your own scss,
+//and import majistix/editing/partials/editing and include the needed mixin.
+
+@import "partials/editing";
+
+.maj-editing-container {
+    @include editing;
+}</programlisting></para>
+                <para>Since Majisti's application uses a symlink that points to
+                    the Majisti's library public folder, it is possible to
+                    extend existing scss files. But before that, let's see the
+                    scss
+                    partial.<bridgehead>partials/_editing.scss</bridgehead><programlisting>$imgDir: "" !default;
+
+$sprite-default-size: 16px;
+$sprite-image-default-width: 16px;
+
+@mixin icons() {
+    @include sprite-background('#{$imgDir}icons-16x16.png');
+}
+
+@mixin editing() {
+    > .message {
+        font-weight: bold;
+        &amp;.success {
+            @include icons;
+            @include sprite-column(4);
+            width: auto;
+            height: auto;
+            color: green;
+            padding: 0 0 0 $sprite-default-size + 5;
+        }
+    }
+}</programlisting></para>
+                <para>There is two things to understand here. The use of the
+                        <varname>$imgDir</varname> variable and the use of  a
+                    mixin to scope the extension's CSS. While developing or
+                    maintaining the extension, compass is ran from the
+                    extension's scss directory. Compiling scss will output css
+                    files into the <filename>styles</filename> directory of that
+                    extension. Images will render just fine in the outputed CSS
+                    since the <filename>config.rb</filename> defines the
+                        <varname>images_dir</varname> as
+                    <code>../images</code>. However, since another scss
+                    directory is apparent in the application's public directory,
+                    compass is also ran there when developing the application.
+                    When you extend the extension's scss to add more styling,
+                    you already have your own images dir! Since it is not
+                    possible to have multiple images directories, Majisti came
+                    up with the <varname>$imgDir</varname> convention to keep
+                    the flexibilily of extending scss files and keeping images
+                    path valid. Lets proceed to extending that
+                    partial:<programlisting>myapp/
+    public/
+        scss/
+            editing.scss
+
+//editing.scss
+
+$imgDir: "../majisti/majistix/editing/images"
+
+@import "majisti/majistix/editing/scss/partials/editing.scss" //you do not need to use _editing, it is implicitely added.
+
+.another-container {
+    @include editing();
+}</programlisting></para>
+                <para>The <varname>$imgDir</varname> variable will map to the
+                    correct path. For the <code>@import</code> directive, this
+                    is when the mixin comes into play. This way, you can include
+                    the code and add more to it. Of course it has its
+                    limitations, code aimed to override the parent's under the
+                    mixin will not override it, but actually stack under it,
+                    which will render a bigger css with duplicates selectors
+                    meant to override the previous one, but CSS is CSS and this
+                    is what one usually do to override CSS. If you follow up the
+                    compass documentation, the <code>@import
+                        "majisti/..."</code> is made available because of the
+                    symlink found within your application's public directory and
+                    because of one additionnal directive in its
+                        <filename>config.rb</filename> file and that is:</para>
+                <programlisting>additional_import_paths = [".."]</programlisting>
+                <para>This maps to your public directory, meaning that majisti
+                    is callable from there, and any additionnal symlinks or
+                    files there.</para>
+                <para>Now that the scss file is extended, you must of course
+                    replace it in the <classname>headlink</classname> view
+                    object. To provide easy overiding, extensions should make
+                    sure to namespace their css and js files and adding it to
+                    the
+                        <classname>headLink</classname>|<classname>headScript</classname>
+                    object. As an
+                    exemple:<programlisting>$view->headLink()->offsetSetStylesheet('majistix-editing-main', $cssFileUrl);</programlisting></para>
+                <para>It provides an easy way of overriding the needed css,
+                    since you will be generating a new one when
+                    extending.</para>
+                <para>Compass was not really mentioned apart from using it as
+                    the command line. That does not mean it should be ignored.
+                    With Compass you will be creating cohesive and reusable scss
+                    partials. Remember that the goal here is to let changes be
+                    trivial to the user using the extension. Do not forget to
+                    poll changes with <command>compass watch</command>.</para>
             </section>
             <section>
                 <title>Client side scripting with Mootools and JQuery</title>

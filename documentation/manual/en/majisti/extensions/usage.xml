@@ -6,19 +6,22 @@
     <title>Usage</title>
     <section xml:id="majitix.extensions.usage.directories"><title>Setting directories</title>
         <para>By default, Majisti's extension resource adds two extensions
-            directories: the library's extensions directory (libraries/MajistiX)
-            and the application's directory (library/extensions). You can use
-            extensions located under MajistiX and in your application right out
-            of the box. However, if you need to add more directories to the
-            stack you can always do the
+            directories: the Majisti's library extensions directory (located
+            under libraries/MajistiX) and the application's directory (located
+            under yourProject/library/extensions). You can use extensions
+            located under MajistiX and in your application right out of the box.
+            However, if you need to add more directories to the stack you can
+            always do the
             following:<programlisting>resources.extensions.paths.myextensions.namespace = "My\App\\"
 resources.extensions.paths.myextensions.path      = "/path/to/extensions"</programlisting></para>
         <para>Note that since extensions can be explicitely enabled, the paths
             cannot be reset through the configuration. You can only add to the
-            stack. If you need to reset or change the paths, you need to use the
+            stack. If you need to reset everything or change the paths, you need
+            to use the
                 <classname>Majisti\Application\Extension\Manager</classname> .
-            The manager is available as a bootstrap resource like
-            so:<programlisting>$manager = $bootstrap->getPluginResource('Extensions')->getManager();
+            The manager is available as a bootstrap resource and you can change
+            paths this
+            way:<programlisting>$manager = $bootstrap->getPluginResource('Extensions')->getManager();
 $manager->setExtensionPaths(array(
     array(
         'namespace' => 'MyNamespace',
@@ -53,7 +56,7 @@ $manager->setExtensionPaths(array(
                     supplied with paths where he may find them. Where do you put
                     your addons? Here is an example of where in a project your
                     could put
-                    these:<programlisting>APPLICATION_PATH/addons/
+                    these:<programlisting>${majisti.app.path}/addons/
     modules/
         module1/
             controllers/
@@ -103,7 +106,7 @@ OR
 resources.extensions.ExtensionName.enabled = 1 //prefered method</programlisting></para>
         <para>In case the extension needs or provide configurable set of options
             you would do the
-            following:<programlisting>resources.extension.ExtensionName.enabled = 1
+            following:<programlisting>resources.extension.ExtensionName.enabled  = 1
 resources.extension.ExtensionName.anOption = optionValue</programlisting></para>
         <para>Every other key aside from <emphasis>enabled</emphasis> will be
             passed to the extension.</para>
@@ -121,7 +124,8 @@ resources.extension.ExtensionName.anOption = optionValue</programlisting></para>
         <para>Remember that the extensions stack is meant to override other
             extensions of the same name. For example, if AnExtension is avaible
             in the library and that you add AnExtension within your
-            application's library, the latter will be used.</para>
+            application's library, the latter will be used, unless you use
+            fallback dispatching (to come in future versions).</para>
     </section>
     
     <section xml:id="majisti.extensions.usage.extending">
