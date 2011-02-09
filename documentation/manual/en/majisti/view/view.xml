@@ -29,7 +29,7 @@
     <section>
         <title>Oriented object HTML</title>
         <para>With the view, it is possible to use object oriented HTML such as
-            phpQuery. Instetad of outputing the content using the
+            phpQuery. Instead of outputing the content using the
                 <methodname>print</methodname> or <methodname>echo</methodname>
             functions, you pass the object as a return object, using the
                 <methodname>setRenderReturn($obj)</methodname> method within
@@ -43,7 +43,47 @@ $container = pq('&lt;div />')
 $this->setRenderReturn($container);</programlisting></para>
         <para>Using an OO approach opens the way for very flexible layouts and
             content while limiting (if not removing at all) the usage of php
-            tags.</para>
+                tags.<bridgehead>phtml inheritence</bridgehead></para>
+        <para>You can also use inheritence within view scripts when using the
+                <methodname>setRenderReturn()</methodname> function. Since
+            objects are returned whether than being outputed, you can call the
+                <methodname>renderParent(__FILE__)</methodname> function to call
+            a parent script located at the same script
+            path.<programlisting>majisti/
+    libraries/
+        MajistiX/
+            AnExtension/
+                views/
+                    scripts/
+                        majistix/
+                            anExtension/
+                                index.phtml
+//index.phtml
+$container = pq('&lt;div />')
+    ->addClass('.container')
+    ->html($this->_("Hello World!"));
+
+$this->setRenderReturn($container);
+
+myApp/
+    application/
+        modules/
+            main/
+                views/
+                    scripts/
+                        majistix/
+                            anExtension/
+                                index.phtml
+
+//index.phtml
+
+$container = $this->renderParent(__FILE__);
+$container->addClass('anotherClass');
+
+$this->setRenderReturn($container);</programlisting></para>
+        <para><varname>__FILE__</varname> is mendatory for the function to work
+            so it can easily tell which script is actually calling that
+            function.</para>
     </section>
     
     <xi:include href="helpers.xml" />
