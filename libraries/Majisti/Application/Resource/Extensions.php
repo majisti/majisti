@@ -2,6 +2,8 @@
 
 namespace Majisti\Application\Resource;
 
+use Majisti\Application\Extension\Manager;
+
 /**
  * @desc Addons resource that will load any dropped extensions
  * and modules under the supported addons path provided.
@@ -13,6 +15,8 @@ class Extensions extends \Zend_Application_Resource_ResourceAbstract
 {
     /**
      * @desc Inits the addons resource
+     *
+     * @return Manager
      */
     public function init()
     {
@@ -54,12 +58,12 @@ class Extensions extends \Zend_Application_Resource_ResourceAbstract
      * @desc Loads the extensions and modules (addons) and
      * returns the addons manager.
      *
-     * @return \Majisti\Application\Addons\Manager The addons manager.
+     * @return Manager The addons manager.
      */
     protected function getExtensions()
     {
         $app        = $this->getBootstrap()->getApplication();
-        $manager    = new \Majisti\Application\Extension\Manager($app);
+        $manager    = new Manager($app);
 
         $this->getDefaultOptions();
 
