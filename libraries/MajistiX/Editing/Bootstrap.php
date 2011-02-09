@@ -39,12 +39,9 @@ class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
             $bootstrap->registerPluginResource('Doctrine');
         }
 
-        /* @var $em ORM\EntityManager */
-        $this->_em = $this->getApplication()
-                          ->getBootstrap()
-                          ->bootstrap('Doctrine')
-                          ->getPluginResource('Doctrine')
-                          ->getEntityManager();
+        $this->_em = $bootstrap->bootstrap('Doctrine')
+                               ->getPluginResource('Doctrine')
+                               ->getEntityManager();
     }
 
     /**

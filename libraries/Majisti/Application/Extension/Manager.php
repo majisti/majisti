@@ -4,7 +4,7 @@ namespace Majisti\Application\Extension;
 
 /**
  * @desc Extensions manager that provides control for loading extensions.
- * Extensions are simply code addition to the librarythat may contain
+ * Extensions are simply code addition to the library that may contain
  * controller plugins, view helpers, models, controllers, etc.
  *
  * @author Majisti
@@ -219,5 +219,17 @@ class Manager
     public function getLoadedExtensions()
     {
         return $this->_loadedExtensions;
+    }
+
+    /**
+     * @desc Returns whether an extension is loaded by that manager.
+     *
+     * @param string $name The extension's name
+     *
+     * @return bool True if the extension is loaded by that manager
+     */
+    public function isExtensionLoaded($name)
+    {
+        return \array_key_exists($name, $this->_loadedExtensions);
     }
 }

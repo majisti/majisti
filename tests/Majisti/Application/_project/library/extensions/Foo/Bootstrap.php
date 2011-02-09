@@ -1,6 +1,6 @@
 <?php
 
-namespace MajistiT\Extension\Foo;
+namespace MajistiT\Foo;
 
 class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
 {
