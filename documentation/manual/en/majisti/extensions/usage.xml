@@ -7,11 +7,11 @@
     <section xml:id="majitix.extensions.usage.directories"><title>Setting directories</title>
         <para>By default, Majisti's extension resource adds two extensions
             directories: the Majisti's library extensions directory (located
-            under libraries/MajistiX) and the application's directory (located
-            under yourProject/library/extensions). You can use extensions
-            located under MajistiX and in your application right out of the box.
-            However, if you need to add more directories to the stack you can
-            always do the
+            under majisti/libraries/MajistiX) and the application's directory
+            (located under yourProject/library/extensions). You can use
+            extensions located under MajistiX and in your application right out
+            of the box. However, if you need to add more directories to the
+            stack you can always do the
             following:<programlisting>resources.extensions.paths.myextensions.namespace = "My\App\\"
 resources.extensions.paths.myextensions.path      = "/path/to/extensions"</programlisting></para>
         <para>Note that since extensions can be explicitely enabled, the paths
@@ -19,8 +19,9 @@ resources.extensions.paths.myextensions.path      = "/path/to/extensions"</progr
             stack. If you need to reset everything or change the paths, you need
             to use the
                 <classname>Majisti\Application\Extension\Manager</classname> .
-            The manager is available as a bootstrap resource and you can change
-            paths this
+            The extensions manager's purpose is to load the wanted extensions
+            into your application by calling its respective bootstrap file. It
+            is available as a bootstrap resource and you can change paths this
             way:<programlisting>$manager = $bootstrap->getPluginResource('Extensions')->getManager();
 $manager->setExtensionPaths(array(
     array(
@@ -28,78 +29,41 @@ $manager->setExtensionPaths(array(
         'path'      => '/path/to/extensions'
     )
 ));</programlisting></para>
-    </section>
-    <section xml:id="majistix.extensions.usage.manager">
-        <title>Manager</title>
-        <para>
-            <note>
-                <para>In order to understand the use and purpose of the extensions
-                    manager, one first needs to understand the concepts of modules
-                    and extensions Majisti refers to. Your can read more about
-                    modules <link xlink:href="majistix#majistix.module">here</link>,
-                    or you may wish to read more about extensions <link
-                        xlink:href="majistix.extension">there</link>.</para>
-            </note>
-        </para>
-        <para>The addons manager's purpose is to load the wanted modules and
-            extensions into your application. Using a configuration file, the
-            addons manager will add the controller fallback directory of your given
-            module to the dispatcher. If loading an extension, it will call the
-            <code>load()</code> function of that extension's bootstrap. That is
-            how simple the addons manager is. Since this information is pretty
-            straight to the point, here is a more detailed explanation of the
-            manager's behaviours:</para>
-        <para>
-            <example>
-                <title>Setting your addons path</title>
-                <para> In order to load any addons, the manager needs to be
-                    supplied with paths where he may find them. Where do you put
-                    your addons? Here is an example of where in a project your
-                    could put
-                    these:<programlisting>${majisti.app.path}/addons/
-    modules/
-        module1/
-            controllers/
-                controller1.php
-                controller2.php
-                controller3.php
-                controllerN.php
-    extensions/
-        extension1/
-            bootstrap.php</programlisting></para>
-            </example>
-        </para>
-        <para>Using the resource component, the manager will set the addons path(s)
-            automatically. Every path needs to comply with the above structure,
-            meaning that it has to provide a modules and extensions folder, in wich
-            every module supplies it's set of controllers and every extension
-            provides it's bootstrap file. The addons resource will also attempt to
-            load your modules and extensions automatically. <link
-                xlink:href="majisti.application.resource#majisti.application.resource.addons"> Read more about
-                the addons resource.</link></para>
-        <para>
-            <example>
-                <title>Using the manager manually</title>
-                <para> The manager provides functions to register the addons path,
-                    load modules and extensions and get these paths. The best way
-                    to illustrate any usage is by showing an
-                    example:<programlisting>$manager = new \Majisti\Application\Addons\Manager();
-$manager->registerAddonsPath('pathToYourAddons', 'YourNamespace');
-
-$manager->loadModule('YourModuleName', 'YourNamespace');
-$manager->loadExtension('YourExtensionName', 'YourNamespace');</programlisting></para>
-            </example>
-        </para>
+        <para>Again, in most cases, you won't really need to add an extension
+            directory, unless you are using your own set of extensions as an
+            external vendor library, which Majisti favors of course, since code
+            reuse is one of its primary goals.</para>
     </section>
     <section xml:id="majisti.extensions.usage.adding">
         <title>Adding</title>
-        <para>TODO</para>
+        <para>Adding an extension is quite simple. You just drop it under  the
+                <filename>majisti/dropins</filename> folder and majisti's cli
+            tool located under <filename>majisti/bin/majisti.php</filename> with
+            the command <command>php majisti.php ext:install
+                extensionName</command>. This will create all the required
+            symlinks within majisti. Unit tests will also be added to MajistiX'
+            test suite and the documentation will be added to the chapter
+            dedicated on extensions. A dependency resolver makes sure to check
+            that the extension being installed meets all its required
+            dependencies (library version, other extensions needed for it to
+            work and etc.).</para>
+    </section>
+    <section>
+        <title>Removing</title>
+        <para>Removing an extension is quite simple, you run the <command>php
+                majisti.php ext:uninstall extensionName</command>
+            command.</para>
+        <warning>
+            <para>Adding and removing extensions (and also dependency resolving)
+                are not supported by Majisti 0.4.0 and such functionality is
+                scheduled in the next revisions.</para>
+        </warning>
     </section>
     <section xml:id="majisti.extensions.usage.enabling"><title>Enabling</title>
         <para>Enabling extensions within Majisti is meant to be easy. Whenever
             you need to add an extension to your application stack you usually
-            do the
-            following:<programlisting>resources.extensions[] = ExtensionName
+            do the following within your
+            configuration:<programlisting>resources.extensions[] = ExtensionName
 
 OR
 
@@ -136,10 +100,10 @@ resources.extension.ExtensionName.anOption = optionValue</programlisting></para>
                 <para>Bootstrapping and configuration</para>
             </listitem>
             <listitem>
-                <para>Styling (css)</para>
+                <para>Styling (css) using SCSS</para>
             </listitem>
             <listitem>
-                <para>Client side (javascript)</para>
+                <para>Client side (javascript) using Mootools and JQuery</para>
             </listitem>
             <listitem>
                 <para>Controller plugins</para>
@@ -148,8 +112,15 @@ resources.extension.ExtensionName.anOption = optionValue</programlisting></para>
                 <para>MVC components</para>
             </listitem>
             <listitem>
-                <para>Html output</para>
+                <para>Html output using PHPQuery</para>
             </listitem>
         </itemizedlist>
+        <para>Extensions are authored using Majisti's conventions, which means
+            that you can expect to have a very flexible approach on how you can
+            add or override custom parts to an already existant extension. You
+            do not need to rewrite the extension from scratch, and that should
+            be the case for every concepts that were enumarated bellow because
+            extending an extension should not only be limited to extending PHP
+            classes.</para>
     </section>
 </section>

@@ -294,20 +294,27 @@ $imgDir: "../majisti/majistix/editing/images"
                     Every extensions must use a single namespace in that global
                     object, which resolve as the extension name itself. Here's
                     an
-                    exemple:<programlisting>$.extend(majisti.ext.myExtension, {
-    foo: function(bar) {
-        console.log(bar);
-    },
-    myClass: new Class({
-        //...
+                    exemple:<programlisting>$.extend(majisti.ext {
+    myExtension: {
+        foo: function(bar) {
+            console.log(bar);
+        },
+        myClass: new Class({
+            //...
+        }
     }
 });</programlisting></para>
-                <para>We can see here the usage of both Mootools for classes and
-                    jQuery to extend the global extension object.</para>
+                <para>You can see here the usage of both Mootools for classes
+                    and jQuery to extend the global extension object. You can of
+                    course write a jQuery plugin as well, but keep in mind that
+                    everything must stay extensible. Nothing is easier than just
+                    redefining very specific scopes.</para>
             </section>
             <section>
                 <title>Docbook documentation</title>
-                <para>TODO</para>
+                <para>Docbook will be part of extension authoring as the tool
+                    for technical documentation. At the moment, it is not
+                    currently integrated into Majisti.</para>
             </section>
             <section>
                 <title>PHPQuery for HTML generation</title>
@@ -350,12 +357,65 @@ $content = pq('&lt;div />')
 ;</programlisting></para>
                 <para>With PHPQuery, HTML becomes much much flexible in how it
                     is generated before being outputted, leading to clever loose
-                    coupling and object reuse. For a more in-depth look on how
-                    to use HTML with Majisti, see this section.</para>
+                    coupling and object reuse.</para>
             </section>
             <section>
                 <title>Doctrine2 and persistent models</title>
-                <para>TODO</para>
+                <para>Doctrine2 is used for persisting models. Prefer the
+                    annotation driver over other drivers except when things need
+                    to get flexible. In such cases, the
+                        <classname>PHPStaticDriver</classname> could be
+                    employed. You can add your own driver to the already
+                    existant driver chain so that any applications that create
+                    the schema will include the schema of your extension.
+                    Remember that you should still namespace your schema
+                    according to your application name
+                    (majistix_myExtension_tableName) for tables or
+                    (appNamespace_tableName) but adding tables within the
+                    application's namespace should be documented.</para>
+                <para>For exemple, let's say you want to add your persistent
+                    models located under the Model namespace of your
+                    application, you would do the following inside the
+                    extension's bootstrap:</para>
+                <programlisting>use \Doctrine\ORM;
+
+/**
+ * @desc Adds the metadata driver to the driver chain.
+ */
+protected function _initMetadataDriver()
+{
+    $bootstrap = $this->getApplication()->getBootstrap();
+
+    /* doctrine is mendatory for this extension to work */
+    if( !$bootstrap->hasPluginResource('Doctrine') ) {
+        $bootstrap->registerPluginResource('Doctrine');
+    }
+
+    /* @var $em ORM\EntityManager */
+    $em = $bootstrap->bootstrap('Doctrine')
+                    ->getPluginResource('Doctrine')
+                    ->getEntityManager();
+
+    /* @var $driverChain ORM\Mapping\Driver\DriverChain */
+    $driverChain = $em->getConfiguration()->getMetadataDriverImpl();
+
+    $driverChain->addDriver(
+        $this->createMetadataDriver(),
+        __NAMESPACE__ . '\Model'
+    );
+}
+
+/**
+ * @desc Creates the metadata driver.
+ *
+ * @return ORM\Mapping\Driver\StaticPHPDriver
+ */
+protected function createMetadataDriver()
+{
+    return new ORM\Mapping\Driver\StaticPHPDriver(array(
+        __DIR__ . '/models'
+    ));
+}</programlisting>
             </section>
         </section>
     </section>
