@@ -76,8 +76,13 @@ class Bootstrap extends \Majisti\Application\Extension\AbstractBootstrap
     protected function _initPlugin()
     {
         $this->bootstrap('FrontController');
+
+        /* @var $front \Zend_Controller_Front */
         $front = $this->getResource('FrontController');
-        $front->registerPlugin(new Plugin\ContentMonitor());
+
+        if( !$front->hasPlugin('MajistiX\Editing\Plugin\ContentMonitor') ) {
+            $front->registerPlugin(new Plugin\ContentMonitor());
+        }
     }
 
     /**

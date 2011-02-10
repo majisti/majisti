@@ -145,7 +145,9 @@ class Manager
 
             $bootstrap->setOptions($options);
 
-            $this->_loadedExtensions[$name] = $pathInfo;
+            $this->_loadedExtensions[$name] = $pathInfo + array(
+                'bootstrap' => $bootstrap
+            );
 
             $this->addBasePath($name, $pathInfo);
 
@@ -212,13 +214,38 @@ class Manager
     }
 
     /**
-     * @desc Returns the loaded extensions.
+     * @desc Returns a loaded extension bootstrap.
+     *
+     * @param string $name The extension name
+     *
+     * @return AbstractBootstrap The bootstrap
+     */
+    public function getLoadedExtensionBootstrap($name)
+    {
+        $ext = $this->getLoadedExtension($name);
+
+        return $ext['bootstrap'];
+    }
+
+    /**
+     * @desc Returns all the loaded extensions infos.
      *
      * @return Array Loaded extensions
      */
     public function getLoadedExtensions()
     {
         return $this->_loadedExtensions;
+    }
+
+    /**
+     * @desc Returns a loaded extension information.
+     *
+     * @param string $name The extension name.
+     * @return array The extension infos
+     */
+    public function getLoadedExtension($name)
+    {
+        return $this->_loadedExtensions[$name];
     }
 
     /**
