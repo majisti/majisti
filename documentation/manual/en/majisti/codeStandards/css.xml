@@ -46,9 +46,6 @@
 
 .myapp_what-we-do {} // might not be generic enough</programlisting>
             </listitem>
-            <listitem>
-                <para>Wrappers</para>
-            </listitem>
         </orderedlist>
     </para>
 </section>
