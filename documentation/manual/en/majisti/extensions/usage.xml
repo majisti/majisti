@@ -63,11 +63,16 @@ $manager->setExtensionPaths(array(
         <para>Enabling extensions within Majisti is meant to be easy. Whenever
             you need to add an extension to your application stack you usually
             do the following within your
-            configuration:<programlisting>resources.extensions[] = ExtensionName
+            configuration:<programlisting>1) resources.extension[] = Foo //implicitely enabled
 
-OR
+2) resources.extension.Foo = 1
 
-resources.extensions.ExtensionName.enabled = 1 //prefered method</programlisting></para>
+3) resources.extension.Foo.enabled = 1
+
+4) resources.extension.Foo.anOption = aValue //implicitely enabled
+
+5) resources.extension.Foo.enabled  = 0
+6) resources.extension.Foo.anOption = aValue</programlisting></para>
         <para>In case the extension needs or provide configurable set of options
             you would do the
             following:<programlisting>resources.extension.ExtensionName.enabled  = 1

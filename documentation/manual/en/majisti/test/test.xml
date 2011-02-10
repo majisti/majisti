@@ -57,12 +57,12 @@ class AllTests extends \Majisti\Test\TestSuite
 
 AllTests::runAlone();
 </programlisting></para>
-        <para>The last thing you need is a test helper. One easy thing is to place
-            that test helper within the root of your tests. Every tests can just
-            <methodname>require_once 'TestHelper.php'</methodname> without
-            specifying a complete path. You just put a
-            <filename>TestHelper.php</filename> on every folder where there is a
-            <filename>AllTests.php</filename>.</para>
+        <para>The last thing you need is a test helper. One easy thing is to
+            place that test helper within the root of your tests. Every tests
+            can just <methodname>require_once __DIR__ .
+                '/TestHelper.php'</methodname> without specifying a complete
+            path. You just put a <filename>TestHelper.php</filename> on every
+            folder where there is a <filename>AllTests.php</filename>.</para>
         <programlisting>tests/
   AllTests.php
   TestHelper.php
