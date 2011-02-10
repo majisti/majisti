@@ -37,8 +37,6 @@ class ExtensionsTest extends \Majisti\Test\TestCase
 
     public function testImplicitLoadingWithOptionsOnly()
     {
-        $this->markTestIncomplete();
-
         $resource = $this->resource;
 
         $resource->setOptions(array(
@@ -53,13 +51,26 @@ class ExtensionsTest extends \Majisti\Test\TestCase
 
     public function testOptionsAreAllPassedToExtensionBootstrap()
     {
-        $this->markTestIncomplete();
+        $resource = $this->resource;
+
+        $resource->setOptions(array(
+            'Foo' => array(
+                'enabled'  => 1,
+                'anOption' => 'aValue',
+            )
+        ));
+        $manager = $resource->init();
+
+        $extOptions = $manager->getLoadedExtensionBootstrap('Foo')->getOptions();
+
+        $this->assertTrue($manager->isExtensionLoaded('Foo'));
+        $this->assertArrayNotHasKey('enabled', $extOptions);
+        $this->assertArrayHasKey('anOption', $extOptions);
+        $this->assertEquals('aValue', $extOptions['anOption']);
     }
 
     public function testExplicitLoading()
     {
-        $this->markTestIncomplete();
-
         $resource = $this->resource;
 
         $resource->setOptions(array(
@@ -74,8 +85,6 @@ class ExtensionsTest extends \Majisti\Test\TestCase
 
     public function testExplicitelyDisabledExtensionWillNotLoad()
     {
-        $this->markTestIncomplete();
-
         $resource = $this->resource;
 
         $resource->setOptions(array(

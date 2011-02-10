@@ -3,7 +3,8 @@
 namespace MajistiX\Editing\Model;
 
 use \Doctrine\Common\DataFixtures,
-    \MajistiX\Editing\Model\Content;
+    \MajistiX\Editing\Model\Content,
+    \pq;
 
 class ContentFixture implements DataFixtures\FixtureInterface
 {
@@ -15,7 +16,7 @@ class ContentFixture implements DataFixtures\FixtureInterface
 
         $content = new Content('content1', new \Zend_Locale('en'));
         $content->setContent($lorem->getContent(20)
-            . '<br /><br />' . \pq('<img />')
+            . '<br /><br />' . pq('<img />')
                 ->attr('src', $conf->majisti->app->baseUrl . '/images/be-unique.jpg')
                 ->attr('alt', "fish")
                 ->attr('width', 200)

@@ -27,7 +27,7 @@ class BootstrapTest extends \Majisti\Test\TestCase
     public function setUp()
     {
         $bootstrap = $this->getHelper()->createBootstrapInstance()
-            ->bootstrap('Doctrine');
+            ->bootstrap();
 
         /* retrieve entity manager */
         $this->em = $bootstrap->getPluginResource('Doctrine')->getEntityManager();
@@ -74,7 +74,7 @@ class BootstrapTest extends \Majisti\Test\TestCase
 
         /* ensure plugin contained only once */
         foreach( $expectedPlugins as $key ) {
-            $valuesCount = \array_count_values($plugins);
+            $valuesCount = array_count_values($plugins);
 
             $this->assertTrue(false !== array_search($key, $plugins));
             $this->assertEquals(1, $valuesCount[$key]);
