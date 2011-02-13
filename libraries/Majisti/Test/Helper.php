@@ -2,6 +2,8 @@
 
 namespace Majisti\Test;
 
+use \Majisti\Test\Util\ServerInfo;
+
 /**
  * @desc This test helper is the singleton helper for every test case.
  *
@@ -334,10 +336,10 @@ class Helper
         $options = $this->getOptions();
 
         $includePaths = array_unique(array(
+            get_include_path(),
             $options['majisti']['app']['path'] . '/tests',
             $this->getMajistiPath() . '/tests',
             $this->getMajistiPath() . '/libraries',
-            get_include_path()
         ));
 
         set_include_path(implode(PATH_SEPARATOR, $includePaths));
@@ -460,9 +462,10 @@ class Helper
     {
         $majistiPath = $this->getMajistiPath();
 
-        if( 'cli' === PHP_SAPI ) {
+        if( ServerInfo::isCliRunning() ) {
             /* exclude those directories */
             $dirs = array(
+                'libraries/Doctrine',
                 'libraries/Zend',
                 'libraries/ZendX',
                 'resources',
