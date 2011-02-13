@@ -2,6 +2,8 @@
 
 namespace Majisti\Test\Listener\Simple;
 
+use \Majisti\Test\Util\ServerInfo;
+
 /**
  * @desc Html listener that outputs colors. This listener is used by default
  * by Majisti when running test via the browser.
@@ -20,20 +22,20 @@ class Html extends \Majisti\Test\Listener\DefaultListener
      */
     public function write($buffer)
     {
-        if ($this->out !== NULL) {
+        if( $this->out !== NULL ) {
             fwrite($this->out, $buffer);
 
             if ($this->autoFlush) {
                 $this->incrementalFlush();
             }
         } else {
-            if (PHP_SAPI != 'cli') {
+            if( !ServerInfo::isCliRunning() ) {
                 $buffer = nl2br($buffer);
             }
 
             print $buffer;
 
-            if ($this->autoFlush) {
+            if( $this->autoFlush ) {
                 $this->incrementalFlush();
             }
         }

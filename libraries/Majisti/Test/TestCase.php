@@ -2,7 +2,8 @@
 
 namespace Majisti\Test;
 
-use \Majisti\Application as Application;
+use \Majisti\Application as Application,
+    \Majisti\Test\Util\ServerInfo;
 
 /**
  * @desc The test case serves as a simplified manner to extend PHPUnit TestCases.
@@ -79,8 +80,8 @@ class TestCase extends \Zend_Test_PHPUnit_ControllerTestCase
      */
     static public function runAlone($force = false, $arguments = array())
     {
-        if( ((bool)$force || !defined('PHPUNIT_TESTCASE_RUNNING'))
-                && 'cli' !== PHP_SAPI )
+        if( (bool)$force || !(ServerInfo::isTestCaseRunning()
+                || ServerInfo::isPhpunitRunning()) )
         {
             if( !count($arguments) ) {
                 $arguments = \Majisti\Test\Runner::getDefaultArguments();
