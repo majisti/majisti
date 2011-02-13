@@ -141,14 +141,15 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
         $minifier::setState("allInline");
         $this->appendFilesAndExecute('optimize', 'all', $this->files);
 
-        /* head link should contain only the bundled file and the style
+        /*
+         * head link should contain only the bundled file and the style
          * from the head style should have been removed.
          */
         $this->assertEquals(0, $headStyle->count());
 
         $this->assertEquals(
-                file_get_contents($path . "/all.optimized.inc.style.expected{$ext}"),
-                file_get_contents($path . "/all.min{$ext}"));
+            file_get_contents($path . "/all.optimized.inc.style.expected{$ext}"),
+            file_get_contents($path . "/all.min{$ext}"));
     }
 
     /**
@@ -167,8 +168,8 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
 
          /* running optimize() a second time and asserting it returns false */
          $this->assertEquals($urlOptimize, $optimizer->optimize(
-                 $path . "/all{$ext}",
-                 $url  . "/all{$ext}"
+             $path . "/all{$ext}",
+             $url  . "/all{$ext}"
          ));
 
          /*
