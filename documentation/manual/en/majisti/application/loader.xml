@@ -13,7 +13,7 @@
         the needed autoloaders and create a symlink that will point to Majisti's
         public directory.</para>
     <section>
-        <title>Using the the Loader class</title>
+        <title>Using the Loader class</title>
         <para>When using the default project template shipped with Majisti, the
             Loader class is already provided. You can notice that the Loader
             uses a few
