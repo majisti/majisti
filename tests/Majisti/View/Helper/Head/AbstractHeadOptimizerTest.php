@@ -436,18 +436,20 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
 
          $infos1 = $this->getInfos('all');
 
+         $data = $infos1->content . PHP_EOL . 'TEST';
+         file_put_contents($infos1->path, PHP_EOL . 'TEST', FILE_APPEND);
+
          /*
           * clearing head and re-adding same files, then re-bundling and asserting
           * that nothing should have been rewritten
           */
-         sleep(1);
          $this->clearHead();
 
          $urlBundle2 = $this->appendFilesAndExecute('bundle', 'all', $this->files);
 
          $infos2 = $this->getInfos('all');
 
-         $this->assertSame($infos1->content, $infos2->content);
+         $this->assertEquals($data, $infos2->content);
          $this->assertEquals($infos1->fileTime, $infos2->fileTime);
          $this->assertEquals($infos1->cacheTime, $infos2->cacheTime);
          $this->assertEquals($urlBundle1, $urlBundle2);
@@ -458,14 +460,15 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
          $urlMinify1 = $this->appendFilesAndExecute('minify', 'all', $this->files);
          $infos1 = $this->getInfos('core.min', true);
 
-         /* assure one second has passed */
-         sleep(1);
+         $data = $infos1->content . PHP_EOL . 'TEST';
+         file_put_contents($infos1->path, PHP_EOL . 'TEST', FILE_APPEND);
+
          $this->clearHead();
 
          $urlMinify2 = $this->appendFilesAndExecute('minify', 'all', $this->files);
          $infos2 = $this->getInfos('core.min', true);
 
-         $this->assertSame($infos1->content, $infos2->content);
+         $this->assertEquals($data, $infos2->content);
          $this->assertEquals($infos1->fileTime, $infos2->fileTime);
          $this->assertEquals($infos1->cacheTime, $infos2->cacheTime);
          $this->assertEquals($urlMinify1, $urlMinify2);
@@ -596,56 +599,6 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
                     $optimizer->getCachedFilePaths()
                 )
         );
-    }
-
-    /**
-     * @desc Tests that when adding a non-remapped URL to the head after a
-     * bundling operation eveything works as expected if a minify call is
-     * launched.
-     */
-    public function testThatMinifyingAMasterFileAndANonRemappedUrlBehavesAsExpected()
-    {
-        $optimizer = $this->optimizer;
-        $url       = $this->filesUrl;
-        $path      = $this->filesPath;
-        $ext       = $this->extension;
-        $folder    = $this->folder;
-
-        $files = $this->getFilesObjects(array("core{$ext}", "file1{$ext}"));
-
-        $moreFiles = array_merge(
-            $this->getFilesObjects(array("file2{$ext}")),
-            $this->getFilesObjects(array("file3{$ext}"),
-                    "http://www.example.com/foo.css")
-        );
-
-        $this->appendFilesAndExecute('bundle', 'all', $files);
-
-        /* appending more files, including an invalid url that was not remapped */
-        $this->appendFilesAndExecute('minify', 'foo', array_merge($files, $moreFiles));
-
-        /* getting mtime of the created bundled and minified files */
-        $masterMtime  = filemtime($path . "/all{$ext}");
-        $file2Mtime   = filemtime($path .  "/{$this->folder}/file2.min{$ext}");
-
-        /* assuring 1 sec has passed and clearing head */
-        sleep(1);
-        $this->clearHead();
-
-        $this->appendFilesAndExecute('bundle', 'all', $files);
-
-        /* appending more files, including an invalid url that was not remapped */
-        $this->appendFilesAndExecute('minify', 'foo', array_merge($files, $moreFiles));
-
-        /*
-         * getting mtime of the output files that were NOT supposed to be
-         * rewritten
-         */
-        $masterMtime2  = filemtime($path . "/all{$ext}");
-        $file2Mtime2   = filemtime($path .  "/{$this->folder}/file2.min{$ext}");
-
-        $this->assertEquals($masterMtime, $masterMtime2);
-        $this->assertEquals($file2Mtime, $file2Mtime2);
     }
 
     public function testThatNoLayoutViewWillNotOptimize()
