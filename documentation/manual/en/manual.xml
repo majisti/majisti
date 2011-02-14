@@ -28,6 +28,7 @@
     <!-- START: Chapters -->
 
     <xi:include href="majisti/introduction/introduction.xml"/>
+    <xi:include href="majisti/codeStandards/codeStandards.xml"/>
     <xi:include href="majisti/gettingStarted/gettingStarted.xml"/>
     <xi:include href="majisti/application/application.xml"/>
     <xi:include href="majisti/config/config.xml"/>
