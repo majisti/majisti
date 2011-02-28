@@ -2,6 +2,8 @@
 
 namespace Majisti\Application\Resource;
 
+use Majisti\Application\Extension\Manager;
+
 /**
  * @desc Addons resource that will load any dropped extensions
  * and modules under the supported addons path provided.
@@ -13,6 +15,8 @@ class Extensions extends \Zend_Application_Resource_ResourceAbstract
 {
     /**
      * @desc Inits the addons resource
+     *
+     * @return Manager
      */
     public function init()
     {
@@ -26,7 +30,7 @@ class Extensions extends \Zend_Application_Resource_ResourceAbstract
             }
         }
 
-        return $this->getExtensions();
+        return $this->getExtensionManager();
     }
 
     /**
@@ -51,15 +55,15 @@ class Extensions extends \Zend_Application_Resource_ResourceAbstract
     }
 
     /**
-     * @desc Loads the extensions and modules (addons) and
-     * returns the addons manager.
+     * @desc Loads the extensions and returns the extension manager.
      *
-     * @return \Majisti\Application\Addons\Manager The addons manager.
+     * @return Manager The extension manager.
+     * @throws Exception If there is a misconfiguration
      */
-    protected function getExtensions()
+    protected function getExtensionManager()
     {
         $app        = $this->getBootstrap()->getApplication();
-        $manager    = new \Majisti\Application\Extension\Manager($app);
+        $manager    = new Manager($app);
 
         $this->getDefaultOptions();
 
@@ -72,17 +76,47 @@ class Extensions extends \Zend_Application_Resource_ResourceAbstract
 
         unset($options['paths']);
 
-        /* load extensions */
+        /*
+         * support following extension syntax for loading:
+         *
+         * 1) resources.extension[] = Foo
+         *
+         * 2) resources.extension.Foo = 1
+         *
+         * 3) resources.extension.Foo.enabled = 1
+         *
+         * 4) resources.extension.Foo.anOption = aValue //implicitely enabled
+         *
+         * 5)
+         * resources.extension.Foo.enabled  = 0
+         * resources.extension.Foo.anOption = aValue
+         */
         foreach( $options as $key => $name ) {
+            $enabled = true;
+
             if( !is_int($key) ) {
-                continue;
+                if( is_array($name) ) {
+                    if( isset($name['enabled']) ) {
+                        $enabled = $name['enabled'];
+                    } else {
+                        $enabled = !empty($name);
+                    }
+                } else {
+                    $enabled = $name;
+                }
+
+                $name = $key;
             }
 
-            $extOptions = isset($options[$name])
-                ? $options[$name]
-                : array();
+            if( $enabled ) {
+                $extOptions = array();
+                if( isset($options[$name]) ) {
+                    $extOptions = $options[$name];
+                    unset($extOptions['enabled']);
+                }
 
-            $manager->loadExtension($name, $extOptions);
+                $manager->loadExtension($name, $extOptions);
+            }
         }
 
         return $manager;

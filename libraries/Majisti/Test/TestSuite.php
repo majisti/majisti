@@ -2,7 +2,9 @@
 
 namespace Majisti\Test;
 
-if( !defined('PHPUNIT_TESTCASE_RUNNING') ) {
+use \Majisti\Test\Util\ServerInfo;
+
+if( !ServerInfo::isTestCaseRunning() ) {
     define('PHPUNIT_TESTCASE_RUNNING', 1);
 }
 
@@ -23,11 +25,11 @@ class TestSuite extends \PHPUnit_Framework_TestSuite
      */
     static public function runAlone($force = false, $arguments = array())
     {
-        if( (bool)$force || (!defined('PHPUNIT_SUITE_RUNNING')
-            && PHP_SAPI !== 'cli') )
+        if( (bool)$force || !(ServerInfo::isTestSuiteRunning()
+            || ServerInfo::isPhpunitRunning()) )
         {
             /* define that we are actually running a suite */
-            if( !defined('PHPUNIT_SUITE_RUNNING') ) {
+            if( !ServerInfo::isTestSuiteRunning() ) {
                 define('PHPUNIT_SUITE_RUNNING', 1);
             }
             $suite = static::suite();

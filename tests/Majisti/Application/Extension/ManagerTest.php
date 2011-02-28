@@ -21,13 +21,14 @@ class ManagerTest extends \Majisti\Test\TestCase
     public function setUp()
     {
        $helper            = $this->getHelper();
-       $this->manager     = new Manager($helper->createApplicationInstance());
+       $bootstrap         = $helper->createBootstrapInstance();
+       $this->manager     = new Manager($bootstrap->bootstrap()->getApplication());
        $options           = $helper->getOptions();
        $maj               = $options['majisti'];
 
        $this->manager->setExtensionPaths(array(
            array(
-               'namespace' => $maj['app']['namespace'] . '\Extension',
+               'namespace' => $maj['app']['namespace'],
                'path'      => $maj['app']['path'] . '/library/extensions'
            )
        ));
@@ -43,52 +44,13 @@ class ManagerTest extends \Majisti\Test\TestCase
     }
 
     /**
-     * @desc Tests that the loadModule() function adds the controller
-     * fallback directory in the dispatcher.
-     */
-//    public function testThatLoadModuleAddsControllerFallbackDirectory()
-//    {
-//        $manager = $this->manager;
-//
-//        /** @var $dispatcher \Majisti\Controller\Dispatcher\Multiple **/
-//        $dispatcher = \Zend_Controller_Front::getInstance()->getDispatcher();
-//
-//        $manager->registerAddonsPath($this->testMajistiXPath, 'MajistiX');
-//        $this->assertTrue($manager->hasAddonsNamespace('MajistiX'));
-//
-//        $manager->loadModule('majistixModule1', 'MajistiX');
-//        $manager->loadModule('majistixModule2', 'MajistiX');
-//
-//        $this->assertTrue(array_key_exists('majistixModule1',
-//                          $dispatcher->getFallbackControllerDirectories()));
-//        $this->assertTrue(array_key_exists('majistixModule2',
-//                          $dispatcher->getFallbackControllerDirectories()));
-//    }
-
-    /**
-     * @desc Tests that attempting to load an invalid (not found) module throws
-     * an exception.
-     * @expectedException Exception
-     */
-//    public function testThatInvalidModuleNameThrowsException()
-//    {
-//        $manager = $this->manager;
-//
-//        $manager->registerAddonsPath($this->testMajistiXPath, 'MajistiX');
-//        $this->assertTrue($manager->hasAddonsNamespace('MajistiX'));
-//
-//        /* throws exception here */
-//        $manager->loadModule('invalidModule', 'MajistiX');
-//    }
-
-    /**
      * @desc Tests that loading an extension will call the bootstrap's laod
      * function.
      */
     public function testThatLoadingExtensionCallsLoadFunction()
     {
        $bootstrap = $this->manager->loadExtension('Foo');
-       $this->assertEquals('MajistiT\Extension\Foo\Bootstrap', get_class($bootstrap));
+       $this->assertEquals('MajistiT\Foo\Bootstrap', get_class($bootstrap));
        $this->assertTrue($bootstrap->run());
     }
 

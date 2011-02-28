@@ -106,6 +106,9 @@ class LocalesTest extends \Zend_Application_Resource_LocaleTest
         $this->assertFalse($locales->isEmpty());
         $this->assertEquals(1, $locales->count());
     }
+
+    public function testOptionsPassedToResourceAreUsedToSetLocaleState1()
+    {}
 }
 
 LocalesTest::runAlone();

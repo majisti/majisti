@@ -4,7 +4,7 @@ namespace Majisti\Application\Extension;
 
 /**
  * @desc Extensions manager that provides control for loading extensions.
- * Extensions are simply code addition to the librarythat may contain
+ * Extensions are simply code addition to the library that may contain
  * controller plugins, view helpers, models, controllers, etc.
  *
  * @author Majisti
@@ -145,7 +145,9 @@ class Manager
 
             $bootstrap->setOptions($options);
 
-            $this->_loadedExtensions[$name] = $pathInfo;
+            $this->_loadedExtensions[$name] = $pathInfo + array(
+                'bootstrap' => $bootstrap
+            );
 
             $this->addBasePath($name, $pathInfo);
 
@@ -212,12 +214,49 @@ class Manager
     }
 
     /**
-     * @desc Returns the loaded extensions.
+     * @desc Returns a loaded extension bootstrap.
+     *
+     * @param string $name The extension name
+     *
+     * @return AbstractBootstrap The bootstrap
+     */
+    public function getLoadedExtensionBootstrap($name)
+    {
+        $ext = $this->getLoadedExtension($name);
+
+        return $ext['bootstrap'];
+    }
+
+    /**
+     * @desc Returns all the loaded extensions infos.
      *
      * @return Array Loaded extensions
      */
     public function getLoadedExtensions()
     {
         return $this->_loadedExtensions;
+    }
+
+    /**
+     * @desc Returns a loaded extension information.
+     *
+     * @param string $name The extension name.
+     * @return array The extension infos
+     */
+    public function getLoadedExtension($name)
+    {
+        return $this->_loadedExtensions[$name];
+    }
+
+    /**
+     * @desc Returns whether an extension is loaded by that manager.
+     *
+     * @param string $name The extension's name
+     *
+     * @return bool True if the extension is loaded by that manager
+     */
+    public function isExtensionLoaded($name)
+    {
+        return \array_key_exists($name, $this->_loadedExtensions);
     }
 }

@@ -26,8 +26,8 @@ class Timer extends \PHPUnit_Util_Timer
                           - 60 * $hours : 0);
         $seconds = sprintf('%02d',
                           $time - 60 * 60 * $hours - 60 * $minutes);
-        $milliseconds = sprintf('%f',
-                               ($time - $seconds) * 1000);
+        $milliseconds = round(sprintf('%f',
+                               ($time - $seconds) * 1000));
         
         if ($hours == 0 && $minutes == 0) {
             $seconds = sprintf('%1d', $seconds);
