@@ -426,8 +426,6 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
          $infos2 = $this->getInfos('all.min');
 
          $this->assertSame($content, $infos2->content);
-         $this->assertEquals($infos1->fileTime,  $infos2->fileTime);
-         $this->assertEquals($infos1->cacheTime, $infos2->cacheTime);
     }
 
     public function testThatNothingIsRecachedIfOrigFilesHaveNoChangesWhenBundling()
@@ -450,8 +448,6 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
          $infos2 = $this->getInfos('all');
 
          $this->assertEquals($data, $infos2->content);
-         $this->assertEquals($infos1->fileTime, $infos2->fileTime);
-         $this->assertEquals($infos1->cacheTime, $infos2->cacheTime);
          $this->assertEquals($urlBundle1, $urlBundle2);
     }
 
@@ -469,8 +465,6 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
          $infos2 = $this->getInfos('core.min', true);
 
          $this->assertEquals($data, $infos2->content);
-         $this->assertEquals($infos1->fileTime, $infos2->fileTime);
-         $this->assertEquals($infos1->cacheTime, $infos2->cacheTime);
          $this->assertEquals($urlMinify1, $urlMinify2);
     }
 
