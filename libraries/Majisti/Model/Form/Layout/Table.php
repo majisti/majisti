@@ -32,6 +32,8 @@ class Table implements ILayout
             array(array('row' => 'HtmlTag'), array('tag' => 'tr', 'class' => 'row')),
         );
 
+        $fileDecorators = array('File') + $elementDecorators;
+
         $form->setDecorators(array(
             'FormElements',
             array('HtmlTag', array('tag' => 'table')),
@@ -52,6 +54,8 @@ class Table implements ILayout
         foreach( $form->getElements() as $element ) {
             if( 'Zend_Form_Element_Captcha' === $element->getType() ) {
                 $element->setDecorators($captchaDecorators);
+            } elseif( 'Zend_Form_Element_File' === $element->getType() ) {
+                $element->setDecorators($fileDecorators);
             } elseif( 'Zend_Form_Element_Submit' === $element->getType()
                 || 'Zend_Form_Element_Reset' === $element->getType()
                 || 'Zend_Form_Element_Hidden' === $element->getType() )
