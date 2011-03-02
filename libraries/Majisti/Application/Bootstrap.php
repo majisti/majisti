@@ -2,6 +2,8 @@
 
 namespace Majisti\Application;
 
+use \Zend_Controller_Action_HelperBroker as HelperBroker;
+
 /**
  * @desc Majisti's application boostrap.
  *
@@ -57,13 +59,23 @@ class Bootstrap extends \Zend_Application_Bootstrap_Bootstrap
     }
 
     /**
-     * @desc Inits the action helper broker
+     * @desc Inits the action helper broker with initial paths.
      * FIXME: this seems to load on every bootstrap class, even modules, should it?
      */
     protected function initActionHelper()
     {
-        \Zend_Controller_Action_HelperBroker::addPath(
+        HelperBroker::addPath(
             'Majisti/Controller/ActionHelper',
-            'Majisti\Controller\ActionHelper\\');
+            'Majisti\Controller\ActionHelper\\'
+        );
+
+        /* add application's library action helpers */
+        $r    = new \ReflectionClass($this);
+        $path = realpath(dirname($r->getFileName()) . '/../library/actionHelpers');
+
+        HelperBroker::addPath(
+            $path,
+            $this->getAppNamespace() . '\Controller\ActionHelper\\'
+        );
     }
 }
