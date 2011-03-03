@@ -11,17 +11,33 @@ $content = pq('<div />')
     ->addClass('language-bar')
 ;
 
+$separator = isset($this->separator)
+           ? $this->separator
+           : ' | ';
+
 /* @var $locale \Zend_Locale */
-foreach ($locales->getLocales() as $locale) {
+$counter = 0;
+foreach ($locales->getLocales() as $key => $locale) {
     if( $locale->equals($locales->getCurrentLocale()) ) {
         continue;
     }
 
-    $content->append(pq('<a />')
-        ->attr('href', $this->url(array('lang' => $locale->toString())))
-        ->html(ucfirst($locale->getTranslation($locale->getLanguage(), 'language',
-            $locale->getLanguage())))
+    $content->append(pq('<span />')
+        ->append(pq('<a />')
+            ->attr('href', $this->url(array('lang' => $locale->toString())))
+            ->html(ucfirst($locale->getTranslation($locale->getLanguage(), 'language',
+                $locale->getLanguage())))
+        )
     );
+    $counter++;
+
+    /* add separator */
+    if( $counter < count($locales->getLocales()) - 1) {
+        $content->append(pq('<span />')
+            ->addClass('separator')
+            ->html($separator)
+        );
+    }
 }
 
 $this->setRenderReturn($content);
