@@ -3,7 +3,9 @@
 namespace Majisti\Application\Resource;
 
 use Doctrine\ORM\EntityManager,
-    Doctrine\ORM\Configuration;
+    Doctrine\ORM\Configuration,
+    Doctrine\DBAL\Event\Listeners\MysqlSessionInit
+;
 
 /**
  * @desc Doctrine Resource. This resource will bootstrap a Doctrine EntityManager
@@ -91,12 +93,18 @@ class Doctrine extends \Zend_Application_Resource_ResourceAbstract
         $dbConfig['user'] = $dbConfig['username'];
         $dbConfig['driver'] = strtolower(substr(
             $adapterClass, 16, strlen($adapterClass)));
+        $dbConfig['driverOptions'] = array(
+            'charset' => 'UTF8'
+        );
 
         $evm = new \Doctrine\Common\EventManager();
 
-        $em = EntityManager::create($dbConfig, $config);
+        $evm->addEventSubscriber(new
+            MysqlSessionInit('utf8', 'utf8_unicode_ci'));
 
-        \Zend_Registry::set('Doctrine_EntityManager', $em, $evm);
+        $em = EntityManager::create($dbConfig, $config, $evm);
+
+        \Zend_Registry::set('Doctrine_EntityManager', $em);
 
         $this->_em = $em;
 
