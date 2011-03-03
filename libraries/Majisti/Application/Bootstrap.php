@@ -73,9 +73,11 @@ class Bootstrap extends \Zend_Application_Bootstrap_Bootstrap
         $r    = new \ReflectionClass($this);
         $path = realpath(dirname($r->getFileName()) . '/../library/actionHelpers');
 
-        HelperBroker::addPath(
-            $path,
-            $this->getAppNamespace() . '\Controller\ActionHelper\\'
-        );
+        if( $path ) {
+            HelperBroker::addPath(
+                $path,
+                $this->getAppNamespace() . '\Controller\ActionHelper\\'
+            );
+        }
     }
 }
