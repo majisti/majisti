@@ -1,23 +1,23 @@
 <?php
 
-namespace Symfony\Component\EventDispatcher;
-
 /*
  * This file is part of the Symfony package.
+ *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
+namespace Symfony\Component\EventDispatcher;
+
 /**
  * Event.
  *
  * @author Fabien Potencier <fabien.potencier@symfony-project.com>
  */
-class Event
+class Event implements EventInterface
 {
-    protected $value = null;
     protected $processed = false;
     protected $subject;
     protected $name;
@@ -58,37 +58,23 @@ class Event
     }
 
     /**
-     * Sets the return value for this event.
+     * Sets the processed flag to true.
      *
-     * @param mixed $value The return value
+     * This method must be called by listeners when
+     * it has processed the event (it is only meaningful
+     * when the event has been notified with the notifyUntil()
+     * dispatcher method.
      */
-    public function setReturnValue($value)
+    public function setProcessed()
     {
-        $this->value = $value;
-    }
-
-    /**
-     * Returns the return value.
-     *
-     * @return mixed The return value
-     */
-    public function getReturnValue()
-    {
-        return $this->value;
-    }
-
-    /**
-     * Sets the processed flag.
-     *
-     * @param Boolean $processed The processed flag value
-     */
-    public function setProcessed($processed)
-    {
-        $this->processed = (boolean) $processed;
+        $this->processed = true;
     }
 
     /**
      * Returns whether the event has been processed by a listener or not.
+     *
+     * This method is only meaningful for events notified
+     * with notifyUntil().
      *
      * @return Boolean true if the event has been processed, false otherwise
      */
@@ -102,7 +88,7 @@ class Event
      *
      * @return array The event parameters
      */
-    public function getParameters()
+    public function all()
     {
         return $this->parameters;
     }
@@ -114,7 +100,7 @@ class Event
      *
      * @return Boolean true if the parameter exists, false otherwise
      */
-    public function hasParameter($name)
+    public function has($name)
     {
         return array_key_exists($name, $this->parameters);
     }
@@ -128,7 +114,7 @@ class Event
      *
      * @throws \InvalidArgumentException When parameter doesn't exists for this event
      */
-    public function getParameter($name)
+    public function get($name)
     {
         if (!array_key_exists($name, $this->parameters)) {
             throw new \InvalidArgumentException(sprintf('The event "%s" has no "%s" parameter.', $this->name, $name));
@@ -143,7 +129,7 @@ class Event
      * @param string  $name   The parameter name
      * @param mixed   $value  The parameter value
      */
-    public function setParameter($name, $value)
+    public function set($name, $value)
     {
         $this->parameters[$name] = $value;
     }

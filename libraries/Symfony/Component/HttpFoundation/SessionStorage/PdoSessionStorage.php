@@ -1,15 +1,15 @@
 <?php
 
-namespace Symfony\Component\HttpFoundation\SessionStorage;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\HttpFoundation\SessionStorage;
 
 /**
  * PdoSessionStorage.
@@ -67,7 +67,7 @@ class PdoSessionStorage extends NativeSessionStorage
      * @param  string $path  (ignored)
      * @param  string $name  (ignored)
      *
-     * @return boolean true, if the session was opened, otherwise an exception is thrown
+     * @return Boolean true, if the session was opened, otherwise an exception is thrown
      */
     public function sessionOpen($path = null, $name = null)
     {
@@ -77,7 +77,7 @@ class PdoSessionStorage extends NativeSessionStorage
     /**
      * Closes a session.
      *
-     * @return boolean true, if the session was closed, otherwise false
+     * @return Boolean true, if the session was closed, otherwise false
      */
     public function sessionClose()
     {
@@ -90,18 +90,18 @@ class PdoSessionStorage extends NativeSessionStorage
      *
      * @param  string $id  A session ID
      *
-     * @return bool   true, if the session was destroyed, otherwise an exception is thrown
+     * @return Boolean   true, if the session was destroyed, otherwise an exception is thrown
      *
      * @throws \RuntimeException If the session cannot be destroyed
      */
     public function sessionDestroy($id)
     {
         // get table/column
-        $db_table  = $this->options['db_table'];
-        $db_id_col = $this->options['db_id_col'];
+        $dbTable  = $this->options['db_table'];
+        $dbIdCol = $this->options['db_id_col'];
 
         // delete the record associated with this id
-        $sql = 'DELETE FROM '.$db_table.' WHERE '.$db_id_col.'= ?';
+        $sql = 'DELETE FROM '.$dbTable.' WHERE '.$dbIdCol.'= ?';
 
         try {
             $stmt = $this->db->prepare($sql);
@@ -119,18 +119,18 @@ class PdoSessionStorage extends NativeSessionStorage
      *
      * @param  int $lifetime  The lifetime of a session
      *
-     * @return bool true, if old sessions have been cleaned, otherwise an exception is thrown
+     * @return Boolean true, if old sessions have been cleaned, otherwise an exception is thrown
      *
      * @throws \RuntimeException If any old sessions cannot be cleaned
      */
     public function sessionGC($lifetime)
     {
         // get table/column
-        $db_table    = $this->options['db_table'];
-        $db_time_col = $this->options['db_time_col'];
+        $dbTable    = $this->options['db_table'];
+        $dbTimeCol = $this->options['db_time_col'];
 
         // delete the record associated with this id
-        $sql = 'DELETE FROM '.$db_table.' WHERE '.$db_time_col.' < '.(time() - $lifetime);
+        $sql = 'DELETE FROM '.$dbTable.' WHERE '.$dbTimeCol.' < '.(time() - $lifetime);
 
         try {
             $this->db->query($sql);
@@ -153,13 +153,13 @@ class PdoSessionStorage extends NativeSessionStorage
     public function sessionRead($id)
     {
         // get table/columns
-        $db_table    = $this->options['db_table'];
-        $db_data_col = $this->options['db_data_col'];
-        $db_id_col   = $this->options['db_id_col'];
-        $db_time_col = $this->options['db_time_col'];
+        $dbTable    = $this->options['db_table'];
+        $dbDataCol = $this->options['db_data_col'];
+        $dbIdCol   = $this->options['db_id_col'];
+        $dbTimeCol = $this->options['db_time_col'];
 
         try {
-            $sql = 'SELECT '.$db_data_col.' FROM '.$db_table.' WHERE '.$db_id_col.'=?';
+            $sql = 'SELECT '.$dbDataCol.' FROM '.$dbTable.' WHERE '.$dbIdCol.'=?';
 
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(1, $id, \PDO::PARAM_STR, 255);
@@ -171,18 +171,18 @@ class PdoSessionStorage extends NativeSessionStorage
 
             if (count($sessionRows) == 1) {
                 return $sessionRows[0][0];
-            } else {
-                // session does not exist, create it
-                $sql = 'INSERT INTO '.$db_table.'('.$db_id_col.', '.$db_data_col.', '.$db_time_col.') VALUES (?, ?, ?)';
-
-                $stmt = $this->db->prepare($sql);
-                $stmt->bindParam(1, $id, \PDO::PARAM_STR);
-                $stmt->bindValue(2, '', \PDO::PARAM_STR);
-                $stmt->bindValue(3, time(), \PDO::PARAM_INT);
-                $stmt->execute();
-
-                return '';
             }
+
+            // session does not exist, create it
+            $sql = 'INSERT INTO '.$dbTable.'('.$dbIdCol.', '.$dbDataCol.', '.$dbTimeCol.') VALUES (?, ?, ?)';
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(1, $id, \PDO::PARAM_STR);
+            $stmt->bindValue(2, '', \PDO::PARAM_STR);
+            $stmt->bindValue(3, time(), \PDO::PARAM_INT);
+            $stmt->execute();
+
+            return '';
         } catch (\PDOException $e) {
             throw new \RuntimeException(sprintf('PDOException was thrown when trying to manipulate session data: %s', $e->getMessage()), 0, $e);
         }
@@ -194,19 +194,19 @@ class PdoSessionStorage extends NativeSessionStorage
      * @param  string $id    A session ID
      * @param  string $data  A serialized chunk of session data
      *
-     * @return bool true, if the session was written, otherwise an exception is thrown
+     * @return Boolean true, if the session was written, otherwise an exception is thrown
      *
      * @throws \RuntimeException If the session data cannot be written
      */
     public function sessionWrite($id, $data)
     {
         // get table/column
-        $db_table    = $this->options['db_table'];
-        $db_data_col = $this->options['db_data_col'];
-        $db_id_col   = $this->options['db_id_col'];
-        $db_time_col = $this->options['db_time_col'];
+        $dbTable    = $this->options['db_table'];
+        $dbDataCol = $this->options['db_data_col'];
+        $dbIdCol   = $this->options['db_id_col'];
+        $dbTimeCol = $this->options['db_time_col'];
 
-        $sql = 'UPDATE '.$db_table.' SET '.$db_data_col.' = ?, '.$db_time_col.' = '.time().' WHERE '.$db_id_col.'= ?';
+        $sql = 'UPDATE '.$dbTable.' SET '.$dbDataCol.' = ?, '.$dbTimeCol.' = '.time().' WHERE '.$dbIdCol.'= ?';
 
         try {
             $stmt = $this->db->prepare($sql);

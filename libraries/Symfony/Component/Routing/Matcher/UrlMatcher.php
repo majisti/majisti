@@ -1,18 +1,18 @@
 <?php
 
+/*
+ * This file is part of the Symfony package.
+ *
+ * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Symfony\Component\Routing\Matcher;
 
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
-
-/*
- * This file is part of the Symfony framework.
- *
- * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
- *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
 
 /**
  * UrlMatcher matches URL based on a set of routes.
@@ -40,6 +40,16 @@ class UrlMatcher implements UrlMatcherInterface
     }
 
     /**
+     * Sets the request context.
+     *
+     * @param array $context  The context
+     */
+    public function setContext(array $context = array())
+    {
+        $this->context = $context;
+    }
+
+    /**
      * Tries to match a URL with a set of routes.
      *
      * Returns false if no route matches the URL.
@@ -52,11 +62,12 @@ class UrlMatcher implements UrlMatcherInterface
     {
         $url = $this->normalizeUrl($url);
 
-        foreach ($this->routes->getRoutes() as $name => $route) {
+        foreach ($this->routes->all() as $name => $route) {
             $compiledRoute = $route->compile();
 
             // check HTTP method requirement
-            if (isset($this->context['method']) && (($req = $route->getRequirement('_method')) && !in_array(strtolower($this->context['method']), array_map('strtolower', (array) $req)))) {
+
+            if (isset($this->context['method']) && (($req = $route->getRequirement('_method')) && !preg_match(sprintf('#^(%s)$#xi', $req), $this->context['method']))) {
                 continue;
             }
 
@@ -80,7 +91,8 @@ class UrlMatcher implements UrlMatcherInterface
         $parameters = array_merge($this->defaults, $defaults);
         foreach ($params as $key => $value) {
             if (!is_int($key)) {
-                $parameters[$key] = urldecode($value);
+                // / are double-encoded as %2F is not valid in a URL (see UrlGenerator)
+                $parameters[$key] = str_replace('%2F', '/', urldecode($value));
             }
         }
 
@@ -89,11 +101,6 @@ class UrlMatcher implements UrlMatcherInterface
 
     protected function normalizeUrl($url)
     {
-        // ensure that the URL starts with a /
-        if ('/' !== substr($url, 0, 1)) {
-            $url = '/'.$url;
-        }
-
         // remove the query string
         if (false !== $pos = strpos($url, '?')) {
             $url = substr($url, 0, $pos);

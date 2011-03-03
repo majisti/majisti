@@ -1,15 +1,15 @@
 <?php
 
-namespace Symfony\Component\Validator\Constraints;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -31,7 +31,7 @@ class ChoiceValidator extends ConstraintValidator
             throw new ConstraintDefinitionException('Either "choices" or "callback" must be specified on constraint Choice');
         }
 
-        if ($value === null) {
+        if (null === $value) {
             return true;
         }
 

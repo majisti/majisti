@@ -72,7 +72,7 @@ class Loader
         ));
 
         /* data fixtures loading */
-        $cli->addCommand(new Doctrine\Commands\LoadDataFixtures($app));
+        $cli->add(new Doctrine\Commands\LoadDataFixtures($app));
 
         $this->_cli = $cli;
     }

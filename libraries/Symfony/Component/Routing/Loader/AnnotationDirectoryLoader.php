@@ -1,17 +1,18 @@
 <?php
 
-namespace Symfony\Component\Routing\Loader;
-
-use Symfony\Component\Routing\RouteCollection;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Routing\Loader;
+
+use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Config\Resource\FileResource;
 
 /**
  * AnnotationDirectoryLoader loads routing information from annotations set
@@ -24,18 +25,16 @@ class AnnotationDirectoryLoader extends AnnotationFileLoader
     /**
      * Loads from annotations from a directory.
      *
-     * @param  string $resource A directory prefixed with annotations:
+     * @param string $path A directory path
+     * @param string $type The resource type
      *
      * @return RouteCollection A RouteCollection instance
      *
-     * @throws \InvalidArgumentException When route can't be parsed
+     * @throws \InvalidArgumentException When the directory does not exist or its routes cannot be parsed
      */
-    public function load($resource)
+    public function load($path, $type = null)
     {
-        $dir = $this->getAbsolutePath(substr($resource, 12));
-        if (!file_exists($dir)) {
-            throw new \InvalidArgumentException(sprintf('The directory "%s" does not exist (in: %s).', $dir, implode(', ', $this->paths)));
-        }
+        $dir = $this->locator->locate($path);
 
         $collection = new RouteCollection();
         foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir), \RecursiveIteratorIterator::LEAVES_ONLY) as $file) {
@@ -44,7 +43,8 @@ class AnnotationDirectoryLoader extends AnnotationFileLoader
             }
 
             if ($class = $this->findClass($file)) {
-                $collection->addCollection($this->loader->load($class));
+                $collection->addResource(new FileResource($file));
+                $collection->addCollection($this->loader->load($class, $type));
             }
         }
 
@@ -54,12 +54,19 @@ class AnnotationDirectoryLoader extends AnnotationFileLoader
     /**
      * Returns true if this class supports the given resource.
      *
-     * @param  mixed $resource A resource
+     * @param mixed  $resource A resource
+     * @param string $type     The resource type
      *
-     * @return Boolean true if this class supports the given resource, false otherwise
+     * @return Boolean True if this class supports the given resource, false otherwise
      */
-    public function supports($resource)
+    public function supports($resource, $type = null)
     {
-        return is_string($resource) && 0 === strpos($resource, 'annotations:') && is_dir($this->getAbsolutePath(substr($resource, 12)));
+        try {
+            $path = $this->locator->locate($resource);
+        } catch (\Exception $e) {
+            return false;
+        }
+
+        return is_string($resource) && is_dir($path) && (!$type || 'annotation' === $type);
     }
 }

@@ -1,15 +1,15 @@
 <?php
 
-namespace Symfony\Component\Finder;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Finder;
 
 /**
  * Finder allows to build rules to find files and directories.
@@ -338,13 +338,16 @@ class Finder implements \IteratorAggregate
 
     protected function searchInDirectory($dir)
     {
-        $flags = \FilesystemIterator::SKIP_DOTS;
+        $flags = \RecursiveDirectoryIterator::SKIP_DOTS;
 
         if ($this->followLinks) {
-            $flags |= \FilesystemIterator::FOLLOW_SYMLINKS;
+            $flags |= \RecursiveDirectoryIterator::FOLLOW_SYMLINKS;
         }
 
-        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir, $flags), \RecursiveIteratorIterator::SELF_FIRST);
+        $iterator = new \RecursiveIteratorIterator(
+            new Iterator\RecursiveDirectoryIterator($dir, $flags),
+            \RecursiveIteratorIterator::SELF_FIRST
+        );
 
         if ($this->depths) {
             $iterator = new Iterator\DepthRangeFilterIterator($iterator, $this->depths);

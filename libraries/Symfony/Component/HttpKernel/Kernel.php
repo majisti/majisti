@@ -1,24 +1,5 @@
 <?php
 
-namespace Symfony\Component\HttpKernel;
-
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Dumper\PhpDumper;
-use Symfony\Component\DependencyInjection\Resource\FileResource;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
-use Symfony\Component\DependencyInjection\Loader\DelegatingLoader;
-use Symfony\Component\DependencyInjection\Loader\LoaderResolver;
-use Symfony\Component\DependencyInjection\Loader\LoaderInterface;
-use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-use Symfony\Component\DependencyInjection\Loader\IniFileLoader;
-use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
-use Symfony\Component\DependencyInjection\Loader\ClosureLoader;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpKernel\ClassCollectionLoader;
-
 /*
  * This file is part of the Symfony package.
  *
@@ -28,16 +9,36 @@ use Symfony\Component\HttpKernel\ClassCollectionLoader;
  * file that was distributed with this source code.
  */
 
+namespace Symfony\Component\HttpKernel;
+
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Dumper\PhpDumper;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\DependencyInjection\Loader\IniFileLoader;
+use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
+use Symfony\Component\DependencyInjection\Loader\ClosureLoader;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\Bundle\BundleInterface;
+use Symfony\Component\HttpKernel\Config\FileLocator;
+use Symfony\Component\Config\Loader\LoaderResolver;
+use Symfony\Component\Config\Loader\DelegatingLoader;
+use Symfony\Component\Config\ConfigCache;
+
 /**
- * The Kernel is the heart of the Symfony system. It manages an environment
- * that can host bundles.
+ * The Kernel is the heart of the Symfony system.
+ *
+ * It manages an environment made of bundles.
  *
  * @author Fabien Potencier <fabien.potencier@symfony-project.org>
  */
-abstract class Kernel implements HttpKernelInterface, \Serializable
+abstract class Kernel implements KernelInterface
 {
     protected $bundles;
-    protected $bundleDirs;
+    protected $bundleMap;
     protected $container;
     protected $rootDir;
     protected $environment;
@@ -45,7 +46,6 @@ abstract class Kernel implements HttpKernelInterface, \Serializable
     protected $booted;
     protected $name;
     protected $startTime;
-    protected $request;
 
     const VERSION = '2.0.0-DEV';
 
@@ -61,7 +61,7 @@ abstract class Kernel implements HttpKernelInterface, \Serializable
         $this->debug = (Boolean) $debug;
         $this->booted = false;
         $this->rootDir = realpath($this->registerRootDir());
-        $this->name = basename($this->rootDir);
+        $this->name = preg_replace('/[^a-zA-Z0-9_]+/', '', basename($this->rootDir));
 
         if ($this->debug) {
             ini_set('display_errors', 1);
@@ -81,59 +81,24 @@ abstract class Kernel implements HttpKernelInterface, \Serializable
 
         $this->booted = false;
         $this->container = null;
-        $this->request = null;
-    }
-
-    abstract public function registerRootDir();
-
-    abstract public function registerBundles();
-
-    abstract public function registerBundleDirs();
-
-    abstract public function registerContainerConfiguration(LoaderInterface $loader);
-
-    /**
-     * Checks whether the current kernel has been booted or not.
-     *
-     * @return boolean $booted
-     */
-    public function isBooted()
-    {
-        return $this->booted;
     }
 
     /**
      * Boots the current kernel.
-     *
-     * This method boots the bundles, which MUST set
-     * the DI container.
-     *
-     * @throws \LogicException When the Kernel is already booted
      */
     public function boot()
     {
         if (true === $this->booted) {
-            throw new \LogicException('The kernel is already booted.');
+            return;
         }
 
-        if (!$this->isDebug()) {
-            require_once __DIR__.'/bootstrap.php';
-        }
+        // init bundles
+        $this->initializeBundles();
 
-        $this->bundles = $this->registerBundles();
-        $this->bundleDirs = $this->registerBundleDirs();
-        $this->container = $this->initializeContainer();
+        // init container
+        $this->initializeContainer();
 
-        // load core classes
-        ClassCollectionLoader::load(
-            $this->container->getParameter('kernel.compiled_classes'),
-            $this->container->getParameter('kernel.cache_dir'),
-            'classes',
-            $this->container->getParameter('kernel.debug'),
-            true
-        );
-
-        foreach ($this->bundles as $bundle) {
+        foreach ($this->getBundles() as $bundle) {
             $bundle->setContainer($this->container);
             $bundle->boot();
         }
@@ -150,7 +115,7 @@ abstract class Kernel implements HttpKernelInterface, \Serializable
     {
         $this->booted = false;
 
-        foreach ($this->bundles as $bundle) {
+        foreach ($this->getBundles() as $bundle) {
             $bundle->shutdown();
             $bundle->setContainer(null);
         }
@@ -159,60 +124,31 @@ abstract class Kernel implements HttpKernelInterface, \Serializable
     }
 
     /**
-     * Reboots the kernel.
-     *
-     * This method is mainly useful when doing functional testing.
-     *
-     * It is a shortcut for the call to shutdown() and boot().
+     * {@inheritdoc}
      */
-    public function reboot()
-    {
-        $this->shutdown();
-        $this->boot();
-    }
-
-    /**
-     * Gets the Request instance associated with the master request.
-     *
-     * @return Request A Request instance
-     */
-    public function getRequest()
-    {
-        return $this->request;
-    }
-
-    /**
-     * Handles a request to convert it to a response by calling the HttpKernel service.
-     *
-     * @param  Request $request A Request instance
-     * @param  integer $type    The type of the request (one of HttpKernelInterface::MASTER_REQUEST or HttpKernelInterface::SUB_REQUEST)
-     * @param  Boolean $raw     Whether to catch exceptions or not
-     *
-     * @return Response $response A Response instance
-     */
-    public function handle(Request $request = null, $type = HttpKernelInterface::MASTER_REQUEST, $raw = false)
+    public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
     {
         if (false === $this->booted) {
             $this->boot();
         }
 
-        return $this->container->getHttpKernelService()->handle($request, $type, $raw);
+        return $this->getHttpKernel()->handle($request, $type, $catch);
     }
 
     /**
-     * Gets the directories where bundles can be stored.
+     * Gets a http kernel from the container
      *
-     * @return array An array of directories where bundles can be stored
+     * @return HttpKernel
      */
-    public function getBundleDirs()
+    protected function getHttpKernel()
     {
-        return $this->bundleDirs;
+        return $this->container->get('http_kernel');
     }
 
     /**
-     * Gets the registered bundle names.
+     * Gets the registered bundle instances.
      *
-     * @return array An array of registered bundle names
+     * @return array An array of registered bundle instances
      */
     public function getBundles()
     {
@@ -228,9 +164,8 @@ abstract class Kernel implements HttpKernelInterface, \Serializable
      */
     public function isClassInActiveBundle($class)
     {
-        foreach ($this->bundles as $bundle) {
-            $bundleClass = get_class($bundle);
-            if (0 === strpos($class, substr($bundleClass, 0, strrpos($bundleClass, '\\')))) {
+        foreach ($this->getBundles() as $bundle) {
+            if (0 === strpos($class, $bundle->getNamespace())) {
                 return true;
             }
         }
@@ -239,20 +174,92 @@ abstract class Kernel implements HttpKernelInterface, \Serializable
     }
 
     /**
-     * Returns the Bundle name for a given class.
+     * Returns a bundle and optionally its descendants by its name.
      *
-     * @param string $class A class name
+     * @param string  $name  Bundle name
+     * @param Boolean $first Whether to return the first bundle only or together with its descendants
      *
-     * @return string The Bundle name or null if the class does not belongs to a bundle
+     * @return BundleInterface|Array A BundleInterface instance or an array of BundleInterface instances if $first is false
+     *
+     * @throws \InvalidArgumentException when the bundle is not enabled
      */
-    public function getBundleForClass($class)
+    public function getBundle($name, $first = true)
     {
-        $namespace = substr($class, 0, strrpos($class, '\\'));
-        foreach (array_keys($this->getBundleDirs()) as $prefix) {
-            if (0 === $pos = strpos($namespace, $prefix)) {
-                return substr($namespace, strlen($prefix) + 1, strpos($class, 'Bundle\\') + 7);
+        if (!isset($this->bundleMap[$name])) {
+            throw new \InvalidArgumentException(sprintf('Bundle "%s" does not exist or it is not enabled. Maybe you forgot to add it in the registerBundles() function of your %s.php file?', $name, get_class($this)));
+        }
+
+        if (true === $first) {
+            return $this->bundleMap[$name][0];
+        } elseif (false === $first) {
+            return $this->bundleMap[$name];
+        }
+    }
+
+    /**
+     * Returns the file path for a given resource.
+     *
+     * A Resource can be a file or a directory.
+     *
+     * The resource name must follow the following pattern:
+     *
+     *     @BundleName/path/to/a/file.something
+     *
+     * where BundleName is the name of the bundle
+     * and the remaining part is the relative path in the bundle.
+     *
+     * If $dir is passed, and the first segment of the path is Resources,
+     * this method will look for a file named:
+     *
+     *     $dir/BundleName/path/without/Resources
+     *
+     * @param string  $name  A resource name to locate
+     * @param string  $dir   A directory where to look for the resource first
+     * @param Boolean $first Whether to return the first path or paths for all matching bundles
+     *
+     * @return string|array The absolute path of the resource or an array if $first is false
+     *
+     * @throws \InvalidArgumentException if the file cannot be found or the name is not valid
+     * @throws \RuntimeException         if the name contains invalid/unsafe characters
+     */
+    public function locateResource($name, $dir = null, $first = true)
+    {
+        if ('@' !== $name[0]) {
+            throw new \InvalidArgumentException(sprintf('A resource name must start with @ ("%s" given).', $name));
+        }
+
+        if (false !== strpos($name, '..')) {
+            throw new \RuntimeException(sprintf('File name "%s" contains invalid characters (..).', $name));
+        }
+
+        $name = substr($name, 1);
+        list($bundle, $path) = explode('/', $name, 2);
+
+        $isResource = 0 === strpos($path, 'Resources');
+
+        $files = array();
+        if (true === $isResource && null !== $dir && file_exists($file = $dir.'/'.$bundle.'/'.substr($path, 10))) {
+            if ($first) {
+                return $file;
+            }
+
+            $files[] = $file;
+        }
+
+        foreach ($this->getBundle($bundle, false) as $bundle) {
+            if (file_exists($file = $bundle->getPath().'/'.$path)) {
+                if ($first) {
+                    return $file;
+                }
+                $files[] = $file;
             }
         }
+
+        if ($files) {
+            return $files;
+        }
+
+        throw new \InvalidArgumentException(sprintf('Unable to find file "@%s".', $name));
     }
 
     public function getName()
@@ -260,83 +267,174 @@ abstract class Kernel implements HttpKernelInterface, \Serializable
         return $this->name;
     }
 
-    public function getSafeName()
-    {
-        return preg_replace('/[^a-zA-Z0-9_]+/', '', $this->name);
-    }
-
+    /**
+     * Gets the environment.
+     *
+     * @return string The current environment
+     */
     public function getEnvironment()
     {
         return $this->environment;
     }
 
+    /**
+     * Checks if debug mode is enabled.
+     *
+     * @return Boolean true if debug mode is enabled, false otherwise
+     */
     public function isDebug()
     {
         return $this->debug;
     }
 
+    /**
+     * Gets the application root dir.
+     *
+     * @return string The application root dir
+     */
     public function getRootDir()
     {
         return $this->rootDir;
     }
 
+    /**
+     * Gets the current container.
+     *
+     * @return ContainerInterface A ContainerInterface instance
+     */
     public function getContainer()
     {
         return $this->container;
     }
 
+    /**
+     * Gets the request start time (not available if debug is disabled).
+     *
+     * @return integer The request start timestamp
+     */
     public function getStartTime()
     {
         return $this->debug ? $this->startTime : -INF;
     }
 
+    /**
+     * Gets the cache directory.
+     *
+     * @return string The cache directory
+     */
     public function getCacheDir()
     {
         return $this->rootDir.'/cache/'.$this->environment;
     }
 
+    /**
+     * Gets the log directory.
+     *
+     * @return string The log directory
+     */
     public function getLogDir()
     {
         return $this->rootDir.'/logs';
     }
 
-    protected function initializeContainer()
+    /**
+     * Initialize the data structures related to the bundle management:
+     *  - the bundles property maps a bundle name to the bundle instance,
+     *  - the bundleMap property maps a bundle name to the bundle inheritance hierarchy (most derived bundle first).
+     *
+     * @throws \LogicException if two bundles share a common name
+     * @throws \LogicException if a bundle tries to extend a non-registered bundle
+     * @throws \LogicException if two bundles extend the same ancestor
+     *
+     */
+    protected function initializeBundles()
     {
-        $class = $this->getSafeName().ucfirst($this->environment).($this->debug ? 'Debug' : '').'ProjectContainer';
-        $location = $this->getCacheDir().'/'.$class;
-        $reload = $this->debug ? $this->needsReload($class, $location) : false;
+        // init bundles
+        $this->bundles = array();
+        $topMostBundles = array();
+        $directChildren = array();
 
-        if ($reload || !file_exists($location.'.php')) {
-            $this->buildContainer($class, $location.'.php');
+        foreach ($this->registerBundles() as $bundle) {
+            $name = $bundle->getName();
+            if (isset($this->bundles[$name])) {
+                throw new \LogicException(sprintf('Trying to register two bundles with the same name "%s"', $name));
+            }
+            $this->bundles[$name] = $bundle;
+
+            if ($parentName = $bundle->getParent()) {
+                if (isset($directChildren[$parentName])) {
+                    throw new \LogicException(sprintf('Bundle "%s" is directly extended by two bundles "%s" and "%s".', $parentName, $name, $directChildren[$parentName]));
+                }
+                $directChildren[$parentName] = $name;
+            } else {
+                $topMostBundles[$name] = $bundle;
+            }
         }
 
-        require_once $location.'.php';
+        // look for orphans
+        if (count($diff = array_values(array_diff(array_keys($directChildren), array_keys($this->bundles))))) {
+            throw new \LogicException(sprintf('Bundle "%s" extends bundle "%s", which is not registered.', $directChildren[$diff[0]], $diff[0]));
+        }
 
-        $container = new $class();
-        $container->set('kernel', $this);
+        // inheritance
+        $this->bundleMap = array();
+        foreach ($topMostBundles as $name => $bundle) {
+            $bundleMap = array($bundle);
+            $hierarchy = array($name);
 
-        return $container;
+            while (isset($directChildren[$name])) {
+                $name = $directChildren[$name];
+                array_unshift($bundleMap, $this->bundles[$name]);
+                $hierarchy[] = $name;
+            }
+
+            foreach ($hierarchy as $bundle) {
+                $this->bundleMap[$bundle] = $bundleMap;
+                array_pop($bundleMap);
+            }
+        }
+
     }
 
-    public function getKernelParameters()
+    protected function initializeContainer()
+    {
+        $class = $this->name.ucfirst($this->environment).($this->debug ? 'Debug' : '').'ProjectContainer';
+        $cache = new ConfigCache($this->getCacheDir(), $class, $this->debug);
+        $fresh = false;
+        if (!$cache->isFresh()) {
+            $container = $this->buildContainer();
+            $this->dumpContainer($cache, $container, $class);
+
+            $fresh = true;
+        }
+
+        require_once $cache;
+
+        $this->container = new $class();
+        $this->container->set('kernel', $this);
+
+        if ($fresh && 'cli' !== php_sapi_name()) {
+            $this->container->get('cache_warmer')->warmUp($this->container->getParameter('kernel.cache_dir'));
+        }
+    }
+
+    protected function getKernelParameters()
     {
         $bundles = array();
-        foreach ($this->bundles as $bundle) {
-            $bundles[] = get_class($bundle);
+        foreach ($this->bundles as $name => $bundle) {
+            $bundles[$name] = get_class($bundle);
         }
 
         return array_merge(
             array(
-                'kernel.root_dir'         => $this->rootDir,
-                'kernel.environment'      => $this->environment,
-                'kernel.debug'            => $this->debug,
-                'kernel.name'             => $this->name,
-                'kernel.cache_dir'        => $this->getCacheDir(),
-                'kernel.logs_dir'         => $this->getLogDir(),
-                'kernel.bundle_dirs'      => $this->bundleDirs,
-                'kernel.bundles'          => $bundles,
-                'kernel.charset'          => 'UTF-8',
-                'kernel.compiled_classes' => array(),
+                'kernel.root_dir'    => $this->rootDir,
+                'kernel.environment' => $this->environment,
+                'kernel.debug'       => $this->debug,
+                'kernel.name'        => $this->name,
+                'kernel.cache_dir'   => $this->getCacheDir(),
+                'kernel.logs_dir'    => $this->getLogDir(),
+                'kernel.bundles'     => $bundles,
+                'kernel.charset'     => 'UTF-8',
             ),
             $this->getEnvParameters()
         );
@@ -354,49 +452,38 @@ abstract class Kernel implements HttpKernelInterface, \Serializable
         return $parameters;
     }
 
-    protected function needsReload($class, $location)
-    {
-        if (!file_exists($location.'.meta') || !file_exists($location.'.php')) {
-            return true;
-        }
-
-        $meta = unserialize(file_get_contents($location.'.meta'));
-        $time = filemtime($location.'.php');
-        foreach ($meta as $resource) {
-            if (!$resource->isUptodate($time)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    protected function buildContainer($class, $file)
+    protected function buildContainer()
     {
         $parameterBag = new ParameterBag($this->getKernelParameters());
 
         $container = new ContainerBuilder($parameterBag);
         foreach ($this->bundles as $bundle) {
-            $bundle->registerExtensions($container);
+            $bundle->build($container);
 
             if ($this->debug) {
                 $container->addObjectResource($bundle);
             }
         }
+        $container->addObjectResource($this);
 
         if (null !== $cont = $this->registerContainerConfiguration($this->getContainerLoader($container))) {
             $container->merge($cont);
         }
-        $container->freeze();
+        $container->compile();
 
+        return $container;
+    }
+
+    protected function dumpContainer(ConfigCache $cache, ContainerBuilder $container, $class)
+    {
         foreach (array('cache', 'logs') as $name) {
             $dir = $container->getParameter(sprintf('kernel.%s_dir', $name));
             if (!is_dir($dir)) {
                 if (false === @mkdir($dir, 0777, true)) {
-                    die(sprintf('Unable to create the %s directory (%s)', $name, dirname($dir)));
+                    die(sprintf("Unable to create the %s directory (%s)\n", $name, dirname($dir)));
                 }
             } elseif (!is_writable($dir)) {
-                die(sprintf('Unable to write in the %s directory (%s)', $name, $dir));
+                die(sprintf("Unable to write in the %s directory (%s)\n", $name, $dir));
             }
         }
 
@@ -406,24 +493,18 @@ abstract class Kernel implements HttpKernelInterface, \Serializable
         if (!$this->debug) {
             $content = self::stripComments($content);
         }
-        $this->writeCacheFile($file, $content);
 
-        if ($this->debug) {
-            $container->addObjectResource($this);
-
-            // save the resources
-            $this->writeCacheFile($this->getCacheDir().'/'.$class.'.meta', serialize($container->getResources()));
-        }
+        $cache->write($content, $container->getResources());
     }
 
     protected function getContainerLoader(ContainerInterface $container)
     {
         $resolver = new LoaderResolver(array(
-            new XmlFileLoader($container, $this->getBundleDirs()),
-            new YamlFileLoader($container, $this->getBundleDirs()),
-            new IniFileLoader($container, $this->getBundleDirs()),
-            new PhpFileLoader($container, $this->getBundleDirs()),
-            new ClosureLoader($container),
+            new XmlFileLoader($container, new FileLocator($this)),
+            new YamlFileLoader($container, new FileLocator($this)),
+            new IniFileLoader($container, new FileLocator($this)),
+            new PhpFileLoader($container, new FileLocator($this)),
+            new ClosureLoader($container, new FileLocator($this)),
         ));
 
         return new DelegatingLoader($resolver);
@@ -457,22 +538,7 @@ abstract class Kernel implements HttpKernelInterface, \Serializable
         // replace multiple new lines with a single newline
         $output = preg_replace(array('/\s+$/Sm', '/\n+/S'), "\n", $output);
 
-        // reformat {} "a la python"
-        $output = preg_replace(array('/\n\s*\{/', '/\n\s*\}/'), array(' {', ' }'), $output);
-
         return $output;
-    }
-
-    protected function writeCacheFile($file, $content)
-    {
-        $tmpFile = tempnam(dirname($file), basename($file));
-        if (false !== @file_put_contents($tmpFile, $content) && @rename($tmpFile, $file)) {
-            chmod($file, 0644);
-
-            return;
-        }
-
-        throw new \RuntimeException(sprintf('Failed to write cache file "%s".', $file));
     }
 
     public function serialize()

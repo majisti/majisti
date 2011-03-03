@@ -1,23 +1,28 @@
 <?php
 
-namespace Symfony\Component\Validator\Mapping;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
+namespace Symfony\Component\Validator\Mapping;
+
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\Valid;
 use Symfony\Component\Validator\Exception\ValidatorException;
+use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 
 abstract class MemberMetadata extends ElementMetadata
 {
     public $class;
     public $name;
     public $property;
+    public $cascaded = false;
+    public $collectionCascaded = false;
     private $reflMember;
 
     /**
@@ -35,6 +40,28 @@ abstract class MemberMetadata extends ElementMetadata
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function addConstraint(Constraint $constraint)
+    {
+        if (!in_array(Constraint::PROPERTY_CONSTRAINT, (array)$constraint->targets())) {
+            throw new ConstraintDefinitionException(sprintf(
+                'The constraint %s cannot be put on properties or getters',
+                get_class($constraint)
+            ));
+        }
+
+        if ($constraint instanceof Valid) {
+            $this->cascaded = true;
+            $this->collectionCascaded = $constraint->traverse;
+        } else {
+            parent::addConstraint($constraint);
+        }
+
+        return $this;
+    }
+
+    /**
      * Returns the names of the properties that should be serialized
      *
      * @return array
@@ -44,7 +71,8 @@ abstract class MemberMetadata extends ElementMetadata
         return array_merge(parent::__sleep(), array(
             'class',
             'name',
-            'property'
+            'property',
+            'cascaded', // TESTME
         ));
     }
 
@@ -81,7 +109,7 @@ abstract class MemberMetadata extends ElementMetadata
     /**
      * Returns whether this member is public
      *
-     * @return boolean
+     * @return Boolean
      */
     public function isPublic()
     {
@@ -91,7 +119,7 @@ abstract class MemberMetadata extends ElementMetadata
     /**
      * Returns whether this member is protected
      *
-     * @return boolean
+     * @return Boolean
      */
     public function isProtected()
     {
@@ -101,11 +129,32 @@ abstract class MemberMetadata extends ElementMetadata
     /**
      * Returns whether this member is private
      *
-     * @return boolean
+     * @return Boolean
      */
     public function isPrivate()
     {
         return $this->getReflectionMember()->isPrivate();
+    }
+
+    /**
+     * Returns whether objects stored in this member should be validated
+     *
+     * @return Boolean
+     */
+    public function isCascaded()
+    {
+        return $this->cascaded;
+    }
+
+    /**
+     * Returns whether arrays or traversable objects stored in this member
+     * should be traversed and validated in each entry
+     *
+     * @return Boolean
+     */
+    public function isCollectionCascaded()
+    {
+        return $this->collectionCascaded;
     }
 
     /**

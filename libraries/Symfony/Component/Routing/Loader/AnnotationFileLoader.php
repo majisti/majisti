@@ -1,18 +1,20 @@
 <?php
 
-namespace Symfony\Component\Routing\Loader;
-
-use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\Resource\FileResource;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Routing\Loader;
+
+use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Config\Resource\FileResource;
+use Symfony\Component\Config\Loader\FileLoader;
+use Symfony\Component\Config\FileLocator;
 
 /**
  * AnnotationFileLoader loads routing information from annotations set
@@ -27,15 +29,16 @@ class AnnotationFileLoader extends FileLoader
     /**
      * Constructor.
      *
-     * @param string|array $paths A path or an array of paths where to look for resources
+     * @param AnnotationClassLoader $loader An AnnotationClassLoader instance
+     * @param string|array          $paths  A path or an array of paths where to look for resources
      */
-    public function __construct(AnnotationClassLoader $loader, $paths = array())
+    public function __construct(FileLocator $locator, AnnotationClassLoader $loader, $paths = array())
     {
         if (!function_exists('token_get_all')) {
-            throw new \RuntimeException('The Tokenizer extension is needed for the routing annotation loaders.');
+            throw new \RuntimeException('The Tokenizer extension is required for the routing annotation loaders.');
         }
 
-        parent::__construct($paths);
+        parent::__construct($locator, $paths);
 
         $this->loader = $loader;
     }
@@ -43,23 +46,21 @@ class AnnotationFileLoader extends FileLoader
     /**
      * Loads from annotations from a file.
      *
-     * @param  string $resource A directory prefixed with annotations:
+     * @param string $file A PHP file path
+     * @param string $type The resource type
      *
      * @return RouteCollection A RouteCollection instance
      *
-     * @throws \InvalidArgumentException When route can't be parsed
+     * @throws \InvalidArgumentException When the file does not exist or its routes cannot be parsed
      */
-    public function load($resource)
+    public function load($file, $type = null)
     {
-        $path = $this->getAbsolutePath(substr($resource, 12));
-        if (!file_exists($path)) {
-            throw new \InvalidArgumentException(sprintf('The file "%s" cannot be found (in: %s).', $resource, implode(', ', $this->paths)));
-        }
+        $path = $this->locator->locate($file);
 
         $collection = new RouteCollection();
         if ($class = $this->findClass($path)) {
             $collection->addResource(new FileResource($path));
-            $collection->addCollection($this->loader->load($class));
+            $collection->addCollection($this->loader->load($class, $type));
         }
 
         return $collection;
@@ -68,15 +69,23 @@ class AnnotationFileLoader extends FileLoader
     /**
      * Returns true if this class supports the given resource.
      *
-     * @param  mixed $resource A resource
+     * @param mixed  $resource A resource
+     * @param string $type     The resource type
      *
-     * @return Boolean true if this class supports the given resource, false otherwise
+     * @return Boolean True if this class supports the given resource, false otherwise
      */
-    public function supports($resource)
+    public function supports($resource, $type = null)
     {
-        return 0 === strpos($resource, 'annotations:') && is_file($this->getAbsolutePath(substr($resource, 12)));
+        return is_string($resource) && 'php' === pathinfo($resource, PATHINFO_EXTENSION) && (!$type || 'annotation' === $type);
     }
 
+    /**
+     * Returns the full class name for the first class in the file.
+     *
+     * @param string $file A PHP file path
+     *
+     * @return string|false Full class name if found, false otherwise 
+     */
     protected function findClass($file)
     {
         $class = false;

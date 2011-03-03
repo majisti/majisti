@@ -1,15 +1,15 @@
 <?php
 
-namespace Symfony\Component\Routing;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Routing;
 
 /**
  * RouteCompiler compiles Route instances to CompiledRoute instances.
@@ -131,7 +131,7 @@ class RouteCompiler implements RouteCompilerInterface
             if (false !== $this->tokenizeBufferBefore($buffer, $tokens, $afterASeparator, $currentSeparator)) {
                 // a custom token
                 $this->customToken = true;
-            } else if ($afterASeparator && preg_match('#^'.$this->options['variable_prefix_regex'].'('.$this->options['variable_regex'].')#', $buffer, $match)) {
+            } else if ($afterASeparator && preg_match('#^\{([\w\d_]+)\}#', $buffer, $match)) {
                 // a variable
                 $this->tokens[] = array('variable', $currentSeparator, $match[0], $match[1]);
 
@@ -227,7 +227,6 @@ class RouteCompiler implements RouteCompilerInterface
 
         // compute some regexes
         $quoter = function ($a) { return preg_quote($a, '#'); };
-        $options['variable_prefix_regex'] = '(?:'.implode('|', array_map($quoter, $options['variable_prefixes'])).')';
         $options['segment_separators_regex'] = '(?:'.implode('|', array_map($quoter, $options['segment_separators'])).')';
         $options['variable_content_regex'] = '[^'.implode('', array_map($quoter, $options['segment_separators'])).']+?';
 

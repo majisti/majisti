@@ -1,15 +1,15 @@
 <?php
 
-namespace Symfony\Component\Finder\Comparator;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Finder\Comparator;
 
 /**
  * DateCompare compiles date comparisons.
@@ -39,13 +39,11 @@ class DateComparator extends Comparator
         }
 
         $operator = isset($matches[1]) ? $matches[1] : '==';
-        if ('since' === $operator || 'after' === $operator)
-        {
+        if ('since' === $operator || 'after' === $operator) {
             $operator = '>';
         }
 
-        if ('until' === $operator || 'before' === $operator)
-        {
+        if ('until' === $operator || 'before' === $operator) {
             $operator = '<';
         }
 

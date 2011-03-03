@@ -1,18 +1,18 @@
 <?php
 
-namespace Symfony\Component\Translation\Loader;
-
-use Symfony\Component\Translation\MessageCatalogue;
-use Symfony\Component\Translation\Resource\FileResource;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Translation\Loader;
+
+use Symfony\Component\Translation\MessageCatalogue;
+use Symfony\Component\Config\Resource\FileResource;
 
 /**
  * XliffFileLoader loads translations from XLIFF files.
@@ -24,14 +24,14 @@ class XliffFileLoader implements LoaderInterface
     /**
      * {@inheritdoc}
      */
-    function load($resource, $locale, $domain = 'messages')
+    public function load($resource, $locale, $domain = 'messages')
     {
         $xml = $this->parseFile($resource);
         $xml->registerXPathNamespace('xliff', 'urn:oasis:names:tc:xliff:document:1.2');
 
         $catalogue = new MessageCatalogue($locale);
         foreach ($xml->xpath('//xliff:trans-unit') as $translation) {
-            $catalogue->setMessage((string) $translation->source, (string) $translation->target, $domain);
+            $catalogue->set((string) $translation->source, (string) $translation->target, $domain);
         }
         $catalogue->addResource(new FileResource($resource));
 

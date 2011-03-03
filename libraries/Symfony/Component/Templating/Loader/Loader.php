@@ -1,9 +1,5 @@
 <?php
 
-namespace Symfony\Component\Templating\Loader;
-
-use Symfony\Component\Templating\DebuggerInterface;
-
 /*
  * This file is part of the Symfony package.
  *
@@ -13,6 +9,10 @@ use Symfony\Component\Templating\DebuggerInterface;
  * file that was distributed with this source code.
  */
 
+namespace Symfony\Component\Templating\Loader;
+
+use Symfony\Component\Templating\DebuggerInterface;
+
 /**
  * Loader is the base class for all template loader classes.
  *
@@ -21,12 +21,6 @@ use Symfony\Component\Templating\DebuggerInterface;
 abstract class Loader implements LoaderInterface
 {
     protected $debugger;
-    protected $defaultOptions;
-
-    public function __construct()
-    {
-        $this->defaultOptions = array('renderer' => 'php');
-    }
 
     /**
      * Sets the debugger to use for this loader.
@@ -36,28 +30,5 @@ abstract class Loader implements LoaderInterface
     public function setDebugger(DebuggerInterface $debugger)
     {
         $this->debugger = $debugger;
-    }
-
-    /**
-     * Sets a default option.
-     *
-     * @param string $name  The option name
-     * @param mixed  $value The option value
-     */
-    public function setDefaultOption($name, $value)
-    {
-        $this->defaultOptions[$name] = $value;
-    }
-
-    /**
-     * Merges the default options with the given set of options.
-     *
-     * @param array $options An array of options
-     *
-     * @return array The merged set of options
-     */
-    protected function mergeDefaultOptions(array $options)
-    {
-        return array_merge($this->defaultOptions, $options);
     }
 }

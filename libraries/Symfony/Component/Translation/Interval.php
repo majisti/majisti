@@ -1,15 +1,15 @@
 <?php
 
-namespace Symfony\Component\Translation;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Translation;
 
 /**
  * Tests if a given number belongs to a given math interval.
@@ -59,8 +59,7 @@ class Interval
 
             return 
                 ('[' === $matches['left_delimiter'] ? $number >= $leftNumber : $number > $leftNumber)
-                &&
-                (']' === $matches['right_delimiter'] ? $number <= $rightNumber : $number < $rightNumber)
+                && (']' === $matches['right_delimiter'] ? $number <= $rightNumber : $number < $rightNumber)
             ;
         }
 
@@ -97,8 +96,8 @@ EOF;
             return log(0);
         } elseif ('+Inf' === $number || 'Inf' === $number) {
             return -log(0);
-        } else {
-            return (int) $number;
         }
+
+        return (int) $number;
     }
 }

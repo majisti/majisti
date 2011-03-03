@@ -1,17 +1,17 @@
 <?php
 
-namespace Symfony\Component\Form\ValueTransformer;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
-use \Symfony\Component\Form\ValueTransformer\ValueTransformerException;
+namespace Symfony\Component\Form\ValueTransformer;
+
+use Symfony\Component\Form\Exception\UnexpectedTypeException;
 
 /**
  * Transforms between a normalized format and a localized money string.
@@ -41,11 +41,15 @@ class MoneyToLocalizedStringTransformer extends NumberToLocalizedStringTransform
      */
     public function transform($value)
     {
-        if (!is_numeric($value)) {
-            throw new \InvalidArgumentException(sprintf('Numeric argument expected, %s given', gettype($value)));
+        if (null !== $value) {
+            if (!is_numeric($value)) {
+                throw new UnexpectedTypeException($value, 'numeric');
+            }
+
+            $value /= $this->getOption('divisor');
         }
 
-        return parent::transform($value / $this->getOption('divisor'));
+        return parent::transform($value);
     }
 
     /**
@@ -54,9 +58,15 @@ class MoneyToLocalizedStringTransformer extends NumberToLocalizedStringTransform
      * @param string $value Localized money string
      * @return number Normalized number
      */
-    public function reverseTransform($value, $originalValue)
+    public function reverseTransform($value)
     {
-        return parent::reverseTransform($value) * $this->getOption('divisor');
+        $value = parent::reverseTransform($value);
+
+        if (null !== $value) {
+            $value *= $this->getOption('divisor');
+        }
+
+        return $value;
     }
 
 }

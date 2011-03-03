@@ -1,17 +1,18 @@
 <?php
 
-namespace Symfony\Component\Form\ValueTransformer;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
-use \Symfony\Component\Form\ValueTransformer\ValueTransformerException;
+namespace Symfony\Component\Form\ValueTransformer;
+
+use Symfony\Component\Form\Configurable;
+use Symfony\Component\Form\Exception\UnexpectedTypeException;
 
 /**
  * Transforms between a normalized format (integer or float) and a percentage value.
@@ -19,7 +20,7 @@ use \Symfony\Component\Form\ValueTransformer\ValueTransformerException;
  * @author Bernhard Schussek <bernhard.schussek@symfony-project.com>
  * @author Florian Eckerstorfer <florian@eckerstorfer.org>
  */
-class PercentToLocalizedStringTransformer extends BaseValueTransformer
+class PercentToLocalizedStringTransformer extends Configurable implements ValueTransformerInterface
 {
     const FRACTIONAL = 'fractional';
     const INTEGER = 'integer';
@@ -52,12 +53,12 @@ class PercentToLocalizedStringTransformer extends BaseValueTransformer
      */
     public function transform($value)
     {
-        if ($value === null) {
+        if (null === $value) {
             return '';
         }
 
         if (!is_numeric($value)) {
-            throw new \InvalidArgumentException(sprintf('Numeric argument expected, %s given', gettype($value)));
+            throw new UnexpectedTypeException($value, 'numeric');
         }
 
         if (self::FRACTIONAL == $this->getOption('type')) {
@@ -81,13 +82,13 @@ class PercentToLocalizedStringTransformer extends BaseValueTransformer
      * @param  number $value  Percentage value.
      * @return number         Normalized value.
      */
-    public function reverseTransform($value, $originalValue)
+    public function reverseTransform($value)
     {
         if (!is_string($value)) {
-            throw new \InvalidArgumentException(sprintf('Expected argument of type string, %s given', gettype($value)));
+            throw new UnexpectedTypeException($value, 'string');
         }
 
-        if ($value === '') {
+        if ('' === $value) {
             return null;
         }
 
@@ -113,7 +114,7 @@ class PercentToLocalizedStringTransformer extends BaseValueTransformer
      */
     protected function getNumberFormatter()
     {
-        $formatter = new \NumberFormatter($this->locale, \NumberFormatter::DECIMAL);
+        $formatter = new \NumberFormatter(\Locale::getDefault(), \NumberFormatter::DECIMAL);
 
         $formatter->setAttribute(\NumberFormatter::FRACTION_DIGITS, $this->getOption('precision'));
 

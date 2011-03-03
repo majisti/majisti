@@ -1,17 +1,17 @@
 <?php
 
-namespace Symfony\Component\Finder\Iterator;
-
-use Symfony\Component\Finder\Glob;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Finder\Iterator;
+
+use Symfony\Component\Finder\Glob;
 
 /**
  * FilenameFilterIterator filters files by patterns (a regexp, a glob, or a string).
@@ -52,13 +52,11 @@ class FilenameFilterIterator extends \FilterIterator
      */
     public function accept()
     {
-        $fileinfo = $this->getInnerIterator()->current();
-
         // should at least match one rule
         if ($this->matchRegexps) {
             $match = false;
             foreach ($this->matchRegexps as $regex) {
-                if (preg_match($regex, $fileinfo->getFilename())) {
+                if (preg_match($regex, $this->getFilename())) {
                     $match = true;
                     break;
                 }
@@ -71,7 +69,7 @@ class FilenameFilterIterator extends \FilterIterator
         if ($this->noMatchRegexps) {
             $exclude = false;
             foreach ($this->noMatchRegexps as $regex) {
-                if (preg_match($regex, $fileinfo->getFilename())) {
+                if (preg_match($regex, $this->getFilename())) {
                     $exclude = true;
                     break;
                 }

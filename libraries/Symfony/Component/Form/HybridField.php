@@ -1,15 +1,15 @@
 <?php
 
-namespace Symfony\Component\Form;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Form;
 
 use Symfony\Component\Form\Exception\FormException;
 
@@ -17,16 +17,17 @@ use Symfony\Component\Form\Exception\FormException;
  * A field that can dynamically act like a field or like a field group
  *
  * You can use the method setFieldMode() to switch between the modes
- * HybridField::FIELD and HybridField::GROUP. This is useful when you want
+ * HybridField::FIELD and HybridField::FORM. This is useful when you want
  * to create a field that, depending on its configuration, can either be
- * a single field or a combination of different fields.
+ * a single field or a combination of different fields (e.g. a date field
+ * that might be a textbox or several select boxes).
  *
  * @author Bernhard Schussek <bernhard.schussek@symfony-project.com>
  */
-class HybridField extends FieldGroup
+class HybridField extends Form
 {
     const FIELD = 0;
-    const GROUP = 1;
+    const FORM = 1;
 
     protected $mode = self::FIELD;
 
@@ -37,7 +38,7 @@ class HybridField extends FieldGroup
      * this field.
      *
      * @param integer $mode  One of the constants HybridField::FIELD and
-     *                       HybridField::GROUP.
+     *                       HybridField::FORM.
      */
     public function setFieldMode($mode)
     {
@@ -48,16 +49,25 @@ class HybridField extends FieldGroup
         $this->mode = $mode;
     }
 
+    /**
+     * @return Boolean
+     */
     public function isField()
     {
         return self::FIELD === $this->mode;
     }
 
+    /**
+     * @return Boolean
+     */
     public function isGroup()
     {
-        return self::GROUP === $this->mode;
+        return self::FORM === $this->mode;
     }
 
+    /**
+     * @return integer
+     */
     public function getFieldMode()
     {
         return $this->mode;
@@ -69,7 +79,7 @@ class HybridField extends FieldGroup
      * @throws FormException  When the field is in mode HybridField::FIELD adding
      *                        subfields is not allowed
      */
-    public function add(FieldInterface $field)
+    public function add($field)
     {
         if ($this->mode === self::FIELD) {
             throw new FormException('You cannot add nested fields while in mode FIELD');
@@ -83,11 +93,11 @@ class HybridField extends FieldGroup
      */
     public function getDisplayedData()
     {
-        if ($this->mode === self::GROUP) {
+        if ($this->mode === self::FORM) {
             return parent::getDisplayedData();
-        } else {
-            return Field::getDisplayedData();
         }
+
+        return Field::getDisplayedData();
     }
 
     /**
@@ -95,7 +105,7 @@ class HybridField extends FieldGroup
      */
     public function setData($data)
     {
-        if ($this->mode === self::GROUP) {
+        if ($this->mode === self::FORM) {
             parent::setData($data);
         } else {
             Field::setData($data);
@@ -105,12 +115,24 @@ class HybridField extends FieldGroup
     /**
      * {@inheritDoc}
      */
-    public function bind($data)
+    public function submit($data)
     {
-        if ($this->mode === self::GROUP) {
-            parent::bind($data);
+        if ($this->mode === self::FORM) {
+            parent::submit($data);
         } else {
-            Field::bind($data);
+            Field::submit($data);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isEmpty()
+    {
+        if ($this->mode === self::FORM) {
+            return parent::isEmpty();
+        }
+
+        return Field::isEmpty();
     }
 }

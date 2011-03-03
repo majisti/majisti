@@ -1,7 +1,5 @@
 <?php
 
-namespace Symfony\Component\Process;
-
 /*
  * This file is part of the Symfony package.
  *
@@ -10,6 +8,8 @@ namespace Symfony\Component\Process;
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Process;
 
 /**
  * Process is a thin wrapper around proc_* functions to ease
@@ -60,7 +60,7 @@ class Process
     }
 
     /**
-     * run the process.
+     * Runs the process.
      *
      * The callback receives the type of output (out or err) and
      * some bytes from the output in real-time. It allows to have feedback
@@ -115,7 +115,7 @@ class Process
 
             $n = @stream_select($r, $w, $e, $this->timeout);
 
-            if ($n === false) {
+            if (false === $n) {
                 break;
             } elseif ($n === 0) {
                 proc_terminate($process);

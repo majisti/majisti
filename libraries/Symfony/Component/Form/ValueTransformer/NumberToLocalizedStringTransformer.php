@@ -1,17 +1,18 @@
 <?php
 
-namespace Symfony\Component\Form\ValueTransformer;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
-use \Symfony\Component\Form\ValueTransformer\ValueTransformerException;
+namespace Symfony\Component\Form\ValueTransformer;
+
+use Symfony\Component\Form\Configurable;
+use Symfony\Component\Form\Exception\UnexpectedTypeException;
 
 /**
  * Transforms between a number type and a localized number with grouping
@@ -20,7 +21,7 @@ use \Symfony\Component\Form\ValueTransformer\ValueTransformerException;
  * @author Bernhard Schussek <bernhard.schussek@symfony-project.com>
  * @author Florian Eckerstorfer <florian@eckerstorfer.org>
  */
-class NumberToLocalizedStringTransformer extends BaseValueTransformer
+class NumberToLocalizedStringTransformer extends Configurable implements ValueTransformerInterface
 {
     const ROUND_FLOOR    = \NumberFormatter::ROUND_FLOOR;
     const ROUND_DOWN     = \NumberFormatter::ROUND_DOWN;
@@ -50,12 +51,12 @@ class NumberToLocalizedStringTransformer extends BaseValueTransformer
      */
     public function transform($value)
     {
-        if ($value === null) {
+        if (null === $value) {
             return '';
         }
 
         if (!is_numeric($value)) {
-            throw new \InvalidArgumentException(sprintf('Numeric argument expected, %s given', gettype($value)));
+            throw new UnexpectedTypeException($value, 'numeric');
         }
 
         $formatter = $this->getNumberFormatter();
@@ -73,13 +74,13 @@ class NumberToLocalizedStringTransformer extends BaseValueTransformer
      *
      * @param string $value
      */
-    public function reverseTransform($value, $originalValue)
+    public function reverseTransform($value)
     {
         if (!is_string($value)) {
-            throw new \InvalidArgumentException(sprintf('Expected argument of type string, %s given', gettype($value)));
+            throw new UnexpectedTypeException($value, 'string');
         }
 
-        if ($value === '') {
+        if ('' === $value) {
             return null;
         }
 
@@ -100,7 +101,7 @@ class NumberToLocalizedStringTransformer extends BaseValueTransformer
      */
     protected function getNumberFormatter()
     {
-        $formatter = new \NumberFormatter($this->locale, \NumberFormatter::DECIMAL);
+        $formatter = new \NumberFormatter(\Locale::getDefault(), \NumberFormatter::DECIMAL);
 
         if ($this->getOption('precision') !== null) {
             $formatter->setAttribute(\NumberFormatter::FRACTION_DIGITS, $this->getOption('precision'));

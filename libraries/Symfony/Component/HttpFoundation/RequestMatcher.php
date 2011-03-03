@@ -1,7 +1,5 @@
 <?php
 
-namespace Symfony\Component\HttpFoundation;
-
 /*
  * This file is part of the Symfony package.
  *
@@ -10,6 +8,8 @@ namespace Symfony\Component\HttpFoundation;
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\HttpFoundation;
 
 /**
  * RequestMatcher compares a pre-defined set of checks against a Request instance.
@@ -22,7 +22,16 @@ class RequestMatcher implements RequestMatcherInterface
     protected $host;
     protected $methods;
     protected $ip;
-    protected $attributes = array();
+    protected $attributes;
+
+    public function __construct($path = null, $host = null, $methods = null, $ip = null, array $attributes = array())
+    {
+        $this->path = $path;
+        $this->host = $host;
+        $this->methods = $methods;
+        $this->ip = $ip;
+        $this->attributes = $attributes;
+    }
 
     /**
      * Adds a check for the URL host name.
@@ -61,7 +70,13 @@ class RequestMatcher implements RequestMatcherInterface
      */
     public function matchMethod($method)
     {
-        $this->methods = array_map(function ($m) { return strtolower($m); }, is_array($method) ? $method : array($method));
+        $this->methods = array_map(
+            function ($m)
+            {
+                return strtolower($m);
+            },
+            is_array($method) ? $method : array($method)
+        );
     }
 
     /**
@@ -98,7 +113,7 @@ class RequestMatcher implements RequestMatcherInterface
             return false;
         }
 
-        if (null !== $this->ip && !$this->checkIp($this->host, $request->getClientIp())) {
+        if (null !== $this->ip && !$this->checkIp($request->getClientIp())) {
             return false;
         }
 
@@ -108,14 +123,14 @@ class RequestMatcher implements RequestMatcherInterface
     protected function checkIp($ip)
     {
         if (false !== strpos($this->ip, '/')) {
-            list($address, $netmask) = $this->ip;
+            list($address, $netmask) = explode('/', $this->ip);
 
-            if ($netmask <= 0) {
+            if ($netmask < 1 || $netmask > 32) {
                 return false;
             }
         } else {
             $address = $this->ip;
-            $netmask = 1;
+            $netmask = 32;
         }
 
         return 0 === substr_compare(sprintf('%032b', ip2long($ip)), sprintf('%032b', ip2long($address)), 0, $netmask);

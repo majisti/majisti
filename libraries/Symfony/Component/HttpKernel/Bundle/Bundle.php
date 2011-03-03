@@ -1,34 +1,32 @@
 <?php
 
+/*
+ * This file is part of the Symfony package.
+ *
+ * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Symfony\Component\HttpKernel\Bundle;
 
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Finder\Finder;
 
-/*
- * This file is part of the Symfony framework.
- *
- * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
- *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
-
 /**
- * An implementation of the BundleInterface that follows a few conventions
- * for the DependencyInjection extensions and the Console commands. 
+ * An implementation of BundleInterface that adds a few conventions
+ * for DependencyInjection extensions and Console commands.
  *
  * @author Fabien Potencier <fabien.potencier@symfony-project.com>
  */
 abstract class Bundle extends ContainerAware implements BundleInterface
 {
     protected $name;
-    protected $namespacePrefix;
-    protected $path;
-    protected $reflection;
+    protected $reflected;
 
     /**
      * Boots the Bundle.
@@ -45,88 +43,89 @@ abstract class Bundle extends ContainerAware implements BundleInterface
     }
 
     /**
-     * Gets the Bundle name.
+     * Builds the bundle.
      *
-     * @return string The Bundle name
+     * It is only ever called once when the cache is empty.
+     *
+     * The default implementation automatically registers a DIC extension
+     * if its name is the same as the bundle name after replacing the
+     * Bundle suffix by Extension (DependencyInjection\SensioBlogExtension
+     * for a SensioBlogBundle for instance). In such a case, the alias
+     * is forced to be the underscore version of the bundle name
+     * (sensio_blog for a SensioBlogBundle for instance).
+     *
+     * This method can be overridden to register compilation passes,
+     * other extensions, ...
+     *
+     * @param ContainerBuilder $container A ContainerBuilder instance
      */
-    public function getName()
+    public function build(ContainerBuilder $container)
     {
-        if (null === $this->name) {
-            $this->initReflection();
-        }
+        $class = $this->getNamespace().'\\DependencyInjection\\'.str_replace('Bundle', 'Extension', $this->getName());
+        if (class_exists($class)) {
+            $extension = new $class();
+            $alias = Container::underscore(str_replace('Bundle', '', $this->getName()));
+            if ($alias !== $extension->getAlias()) {
+                throw new \LogicException(sprintf('The extension alias for the default extension of a bundle must be the underscored version of the bundle name ("%s" vs "%s")', $alias, $extension->getAlias()));
+            }
 
-        return $this->name;
+            $container->registerExtension($extension);
+        }
     }
 
     /**
-     * Gets the Bundle namespace prefix.
+     * Gets the Bundle namespace.
      *
-     * @return string The Bundle namespace prefix
+     * @return string The Bundle namespace
      */
-    public function getNamespacePrefix()
+    public function getNamespace()
     {
-        if (null === $this->name) {
-            $this->initReflection();
+        if (null === $this->reflected) {
+            $this->reflected = new \ReflectionObject($this);
         }
 
-        return $this->namespacePrefix;
+        return $this->reflected->getNamespaceName();
     }
 
     /**
-     * Gets the Bundle absolute path.
+     * Gets the Bundle directory path.
      *
      * @return string The Bundle absolute path
      */
     public function getPath()
     {
-        if (null === $this->name) {
-            $this->initReflection();
+        if (null === $this->reflected) {
+            $this->reflected = new \ReflectionObject($this);
         }
 
-        return $this->path;
+        return strtr(dirname($this->reflected->getFileName()), '\\', '/');
     }
 
     /**
-     * Gets the Bundle Reflection instance.
+     * Returns the bundle parent name.
      *
-     * @return \ReflectionObject A \ReflectionObject instance for the Bundle
+     * @return string The Bundle parent name it overrides or null if no parent
      */
-    public function getReflection()
+    public function getParent()
     {
-        if (null === $this->name) {
-            $this->initReflection();
-        }
-
-        return $this->reflection;
+        return null;
     }
 
     /**
-     * Finds and registers Dependency Injection Container extensions.
+     * Returns the bundle name (the class short name).
      *
-     * Override this method if your DIC extensions do not follow the conventions:
-     *
-     * * Extensions are in the 'DependencyInjection/' sub-directory
-     * * Extension class names ends with 'Extension'
-     *
-     * @param ContainerBuilder $container A ContainerBuilder instance
+     * @return string The Bundle name
      */
-    public function registerExtensions(ContainerBuilder $container)
+    final public function getName()
     {
-        if (!$dir = realpath($this->getPath().'/DependencyInjection')) {
-            return array();
+        if (null !== $this->name) {
+            return $this->name;
         }
 
-        $finder = new Finder();
-        $finder->files()->name('*Extension.php')->in($dir);
+        $name = get_class($this);
+        $pos = strrpos($name, '\\');
 
-        $prefix = $this->namespacePrefix.'\\'.$this->name.'\\DependencyInjection';
-        foreach ($finder as $file) {
-            $class = $prefix.strtr($file->getPath(), array($dir => '', '/' => '\\')).'\\'.basename($file, '.php');
-
-            if ('Extension' === substr($class, -9)) {
-                $container->registerExtension(new $class());
-            }
-        }
+        return $this->name = false === $pos ? $name :  substr($name, $pos + 1);
     }
 
     /**
@@ -148,25 +147,16 @@ abstract class Bundle extends ContainerAware implements BundleInterface
         $finder = new Finder();
         $finder->files()->name('*Command.php')->in($dir);
 
-        $prefix = $this->namespacePrefix.'\\'.$this->name.'\\Command';
+        $prefix = $this->getNamespace().'\\Command';
         foreach ($finder as $file) {
-            $r = new \ReflectionClass($prefix.strtr($file->getPath(), array($dir => '', '/' => '\\')).'\\'.basename($file, '.php'));
+            $ns = $prefix;
+            if ($relativePath = $file->getRelativePath()) {
+                $ns .= '\\'.strtr($relativePath, '/', '\\');
+            }
+            $r = new \ReflectionClass($ns.'\\'.$file->getBasename('.php'));
             if ($r->isSubclassOf('Symfony\\Component\\Console\\Command\\Command') && !$r->isAbstract()) {
-                $application->addCommand($r->newInstance());
+                $application->add($r->newInstance());
             }
         }
-    }
-
-    /**
-     * Initializes the properties on this object that require a reflection
-     * object to have been created.
-     */
-    protected function initReflection()
-    {
-        $tmp = dirname(str_replace('\\', '/', get_class($this)));
-        $this->namespacePrefix = str_replace('/', '\\', dirname($tmp));
-        $this->name = basename($tmp);
-        $this->reflection = new \ReflectionObject($this);
-        $this->path = dirname($this->reflection->getFilename());
     }
 }

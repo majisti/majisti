@@ -1,19 +1,20 @@
 <?php
 
+/*
+ * This file is part of the Symfony package.
+ *
+ * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Symfony\Component\Routing\Loader;
 
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
-use Symfony\Component\Routing\Resource\FileResource;
-
-/*
- * This file is part of the Symfony framework.
- *
- * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
- *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
+use Symfony\Component\Config\Resource\FileResource;
+use Symfony\Component\Config\Loader\FileLoader;
 
 /**
  * XmlFileLoader loads XML routing files.
@@ -25,15 +26,16 @@ class XmlFileLoader extends FileLoader
     /**
      * Loads an XML file.
      *
-     * @param  string $file A XML file path
+     * @param string $file An XML file path
+     * @param string $type The resource type
      *
      * @return RouteCollection A RouteCollection instance
      *
      * @throws \InvalidArgumentException When a tag can't be parsed
      */
-    public function load($file)
+    public function load($file, $type = null)
     {
-        $path = $this->findFile($file);
+        $path = $this->locator->locate($file);
 
         $xml = $this->loadFile($path);
 
@@ -52,9 +54,10 @@ class XmlFileLoader extends FileLoader
                     break;
                 case 'import':
                     $resource = (string) $node->getAttribute('resource');
+                    $type = (string) $node->getAttribute('type');
                     $prefix = (string) $node->getAttribute('prefix');
                     $this->currentDir = dirname($path);
-                    $collection->addCollection($this->import($resource), $prefix);
+                    $collection->addCollection($this->import($resource, ('' !== $type ? $type : null)), $prefix);
                     break;
                 default:
                     throw new \InvalidArgumentException(sprintf('Unable to parse tag "%s"', $node->tagName));
@@ -67,16 +70,26 @@ class XmlFileLoader extends FileLoader
     /**
      * Returns true if this class supports the given resource.
      *
-     * @param  mixed $resource A resource
+     * @param mixed  $resource A resource
+     * @param string $type     The resource type
      *
-     * @return Boolean true if this class supports the given resource, false otherwise
+     * @return Boolean True if this class supports the given resource, false otherwise
      */
-    public function supports($resource)
+    public function supports($resource, $type = null)
     {
-        return is_string($resource) && 'xml' === pathinfo($resource, PATHINFO_EXTENSION);
+        return is_string($resource) && 'xml' === pathinfo($resource, PATHINFO_EXTENSION) && (!$type || 'xml' === $type);
     }
 
-    protected function parseRoute(RouteCollection $collection, $definition, $file)
+    /**
+     * Parses a route and adds it to the RouteCollection.
+     *
+     * @param RouteCollection $collection A RouteCollection instance
+     * @param \DOMElement     $definition Route definition
+     * @param string          $file       An XML file path
+     *
+     * @throws \InvalidArgumentException When the definition cannot be parsed
+     */
+    protected function parseRoute(RouteCollection $collection, \DOMElement $definition, $file)
     {
         $defaults = array();
         $requirements = array();
@@ -90,7 +103,7 @@ class XmlFileLoader extends FileLoader
             switch ($node->tagName) {
                 case 'default':
                     $defaults[(string) $node->getAttribute('key')] = trim((string) $node->nodeValue);
-                 break;
+                    break;
                 case 'option':
                     $options[(string) $node->getAttribute('key')] = trim((string) $node->nodeValue);
                     break;
@@ -104,35 +117,45 @@ class XmlFileLoader extends FileLoader
 
         $route = new Route((string) $definition->getAttribute('pattern'), $defaults, $requirements, $options);
 
-        $collection->addRoute((string) $definition->getAttribute('id'), $route);
+        $collection->add((string) $definition->getAttribute('id'), $route);
     }
 
     /**
+     * Loads an XML file.
+     *
+     * @param string $file An XML file path
+     *
+     * @return \DOMDocument
+     *
      * @throws \InvalidArgumentException When loading of XML file returns error
      */
-    protected function loadFile($path)
+    protected function loadFile($file)
     {
         $dom = new \DOMDocument();
         libxml_use_internal_errors(true);
-        if (!$dom->load($path, LIBXML_COMPACT)) {
+        if (!$dom->load($file, LIBXML_COMPACT)) {
             throw new \InvalidArgumentException(implode("\n", $this->getXmlErrors()));
         }
         $dom->validateOnParse = true;
         $dom->normalizeDocument();
         libxml_use_internal_errors(false);
-        $this->validate($dom, $path);
+        $this->validate($dom);
 
         return $dom;
     }
 
     /**
-     * @throws \InvalidArgumentException When xml doesn't validate its xsd schema
+     * Validates a loaded XML file.
+     *
+     * @param \DOMDocument $dom A loaded XML file
+     *
+     * @throws \InvalidArgumentException When XML doesn't validate its XSD schema
      */
-    protected function validate(\DOMDocument $dom, $file)
+    protected function validate(\DOMDocument $dom)
     {
         $parts = explode('/', str_replace('\\', '/', __DIR__.'/schema/routing/routing-1.0.xsd'));
         $drive = '\\' === DIRECTORY_SEPARATOR ? array_shift($parts).'/' : '';
-        $location = 'file:///'.$drive.implode('/', array_map('rawurlencode', $parts));
+        $location = 'file:///'.$drive.implode('/', $parts);
 
         $current = libxml_use_internal_errors(true);
         if (!$dom->schemaValidate($location)) {
@@ -141,6 +164,11 @@ class XmlFileLoader extends FileLoader
         libxml_use_internal_errors($current);
     }
 
+    /**
+     * Retrieves libxml errors and clears them.
+     *
+     * @return array An array of libxml error strings
+     */
     protected function getXmlErrors()
     {
         $errors = array();

@@ -1,15 +1,15 @@
 <?php
 
-namespace Symfony\Component\Validator\Constraints;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -21,7 +21,7 @@ class EmailValidator extends ConstraintValidator
 
     public function isValid($value, Constraint $constraint)
     {
-        if ($value === null) {
+        if (null === $value || '' === $value) {
             return true;
         }
 
@@ -51,39 +51,18 @@ class EmailValidator extends ConstraintValidator
     }
 
     /**
-     * Check DNA Records for MX type (from Doctrine EmailValidator).
+     * Check DNS Records for MX type.
      *
      * @param string $host Host name
      *
-     * @return boolean
-     *
-     * @licence This software consists of voluntary contributions made by many individuals
-     * and is licensed under the LGPL. For more information, see
-     * <http://www.phpdoctrine.org>.
+     * @return Boolean
      */
     private function checkMX($host)
     {
-        // We have different behavior here depending of OS and PHP version
-        if (strtolower(substr(PHP_OS, 0, 3)) === 'win' && version_compare(PHP_VERSION, '5.3.0', '<'))  {
-            $output = array();
-
-            @exec('nslookup -type=MX '.escapeshellcmd($host) . ' 2>&1', $output);
-
-            if (empty($output)) {
-                throw new ValidatorError('Unable to execute DNS lookup. Are you sure PHP can call exec()?');
-            }
-
-            foreach ($output as $line) {
-                if (preg_match('/^'.$host.'/', $line)) {
-                    return true;
-                }
-            }
-
-            return false;
-        } else if (function_exists('checkdnsrr')) {
+        if (function_exists('checkdnsrr')) {
             return checkdnsrr($host, 'MX');
         }
 
-        throw new ValidatorError('Could not retrieve DNS record information. Remove check_mx = true to prevent this warning');
+        throw new \LogicException('Could not retrieve DNS record information. Remove check_mx = true to prevent this warning');
     }
 }

@@ -1,7 +1,5 @@
 <?php
 
-namespace Symfony\Component\HttpKernel\Exception;
-
 /*
  * This file is part of the Symfony package.
  *
@@ -11,19 +9,17 @@ namespace Symfony\Component\HttpKernel\Exception;
  * file that was distributed with this source code.
  */
 
+namespace Symfony\Component\HttpKernel\Exception;
+
 /**
  * NotFoundHttpException.
  *
  * @author Fabien Potencier <fabien.potencier@symfony-project.com>
  */
-class NotFoundHttpException extends HttpException
+class NotFoundHttpException extends \RuntimeException
 {
-    public function __construct($message = '', $code = 0, \Exception $previous = null)
+    public function __construct($message = 'Not Found', \Exception $previous = null)
     {
-        if (!$message) {
-            $message = 'Not Found';
-        }
-
         parent::__construct($message, 404, $previous);
     }
 }

@@ -1,18 +1,18 @@
 <?php
 
+/*
+ * This file is part of the Symfony package.
+ *
+ * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Symfony\Component\Routing\Generator;
 
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
-
-/*
- * This file is part of the Symfony framework.
- *
- * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
- *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
 
 /**
  * UrlGenerator generates URL based on a set of routes.
@@ -42,6 +42,16 @@ class UrlGenerator implements UrlGeneratorInterface
     }
 
     /**
+     * Sets the request context.
+     *
+     * @param array $context  The context
+     */
+    public function setContext(array $context = array())
+    {
+        $this->context = $context;
+    }
+
+    /**
      * Generates a URL from the given parameters.
      *
      * @param  string  $name       The name of the route
@@ -54,7 +64,7 @@ class UrlGenerator implements UrlGeneratorInterface
      */
     public function generate($name, array $parameters, $absolute = false)
     {
-        if (null === $route = $this->routes->getRoute($name)) {
+        if (null === $route = $this->routes->get($name)) {
             throw new \InvalidArgumentException(sprintf('Route "%s" does not exist.', $name));
         }
 
@@ -88,7 +98,8 @@ class UrlGenerator implements UrlGeneratorInterface
                         throw new \InvalidArgumentException(sprintf('Parameter "%s" for route "%s" must match "%s" ("%s" given).', $token[3], $name, $requirements[$token[3]], $tparams[$token[3]]));
                     }
 
-                    $url = $token[1].urlencode($tparams[$token[3]]).$url;
+                    // %2F is not valid in a URL, so we double encode it
+                    $url = $token[1].str_replace('%2F', '%252F', urlencode($tparams[$token[3]])).$url;
                     $optional = false;
                 }
             } elseif ('text' === $token[0]) {
@@ -115,7 +126,13 @@ class UrlGenerator implements UrlGeneratorInterface
         $url = (isset($this->context['base_url']) ? $this->context['base_url'] : '').$url;
 
         if ($absolute && isset($this->context['host'])) {
-            $url = 'http'.(isset($this->context['is_secure']) && $this->context['is_secure'] ? 's' : '').'://'.$this->context['host'].$url;
+            $isSecure = (isset($this->context['is_secure']) && $this->context['is_secure']);
+            $port = isset($this->context['port']) ? $this->context['port'] : 80;
+            $urlBeginning = 'http'.($isSecure ? 's' : '').'://'.$this->context['host'];
+            if (($isSecure && $port != 443) || (!$isSecure && $port != 80)) {
+                $urlBeginning .= ':'.$port;
+            }
+            $url = $urlBeginning.$url;
         }
 
         return $url;

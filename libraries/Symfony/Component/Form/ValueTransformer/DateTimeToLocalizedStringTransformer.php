@@ -1,17 +1,17 @@
 <?php
 
-namespace Symfony\Component\Form\ValueTransformer;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
-use \Symfony\Component\Form\ValueTransformer\ValueTransformerException;
+namespace Symfony\Component\Form\ValueTransformer;
+
+use Symfony\Component\Form\Exception\UnexpectedTypeException;
 
 /**
  * Transforms between a normalized time and a localized time string
@@ -21,7 +21,6 @@ use \Symfony\Component\Form\ValueTransformer\ValueTransformerException;
  *  * "input": The type of the normalized format ("time" or "timestamp"). Default: "datetime"
  *  * "output": The type of the transformed format ("string" or "array"). Default: "string"
  *  * "format": The format of the time string ("short", "medium", "long" or "full"). Default: "short"
- *  * "locale": The locale of the localized string. Default: Result of Locale::getDefault()
  *
  * @author Bernhard Schussek <bernhard.schussek@symfony-project.com>
  * @author Florian Eckerstorfer <florian@eckerstorfer.org>
@@ -33,8 +32,6 @@ class DateTimeToLocalizedStringTransformer extends BaseDateTimeTransformer
      */
     protected function configure()
     {
-        parent::configure();
-
         $this->addOption('date_format', self::MEDIUM);
         $this->addOption('time_format', self::SHORT);
         $this->addOption('input_timezone', 'UTC');
@@ -47,6 +44,8 @@ class DateTimeToLocalizedStringTransformer extends BaseDateTimeTransformer
         if (!in_array($this->getOption('time_format'), self::$formats, true)) {
             throw new \InvalidArgumentException(sprintf('The option "time_format" is expected to be one of "%s". Is "%s"', implode('", "', self::$formats), $this->getOption('time_format')));
         }
+
+        parent::configure();
     }
 
     /**
@@ -57,18 +56,18 @@ class DateTimeToLocalizedStringTransformer extends BaseDateTimeTransformer
      */
     public function transform($dateTime)
     {
-        if ($dateTime === null) {
+        if (null === $dateTime) {
             return '';
         }
 
         if (!$dateTime instanceof \DateTime) {
-            throw new \InvalidArgumentException('Expected value of type \DateTime');
+            throw new UnexpectedTypeException($dateTime, '\DateTime');
         }
 
         $inputTimezone = $this->getOption('input_timezone');
 
         // convert time to UTC before passing it to the formatter
-        if ($inputTimezone != 'UTC') {
+        if ('UTC' != $inputTimezone) {
             $dateTime->setTimezone(new \DateTimeZone('UTC'));
         }
 
@@ -87,15 +86,15 @@ class DateTimeToLocalizedStringTransformer extends BaseDateTimeTransformer
      * @param  string|array $value Localized date string/array
      * @return DateTime Normalized date
      */
-    public function reverseTransform($value, $originalValue)
+    public function reverseTransform($value)
     {
         $inputTimezone = $this->getOption('input_timezone');
 
         if (!is_string($value)) {
-            throw new \InvalidArgumentException(sprintf('Expected argument of type string, %s given', gettype($value)));
+            throw new UnexpectedTypeException($value, 'string');
         }
 
-        if ($value === '') {
+        if ('' === $value) {
             return null;
         }
 
@@ -108,7 +107,7 @@ class DateTimeToLocalizedStringTransformer extends BaseDateTimeTransformer
         // read timestamp into DateTime object - the formatter delivers in UTC
         $dateTime = new \DateTime(sprintf('@%s UTC', $timestamp));
 
-        if ($inputTimezone != 'UTC') {
+        if ('UTC' != $inputTimezone) {
             $dateTime->setTimezone(new \DateTimeZone($inputTimezone));
         }
 
@@ -126,6 +125,6 @@ class DateTimeToLocalizedStringTransformer extends BaseDateTimeTransformer
         $timeFormat = $this->getIntlFormatConstant($this->getOption('time_format'));
         $timezone = $this->getOption('output_timezone');
 
-        return new \IntlDateFormatter($this->locale, $dateFormat, $timeFormat, $timezone);
+        return new \IntlDateFormatter(\Locale::getDefault(), $dateFormat, $timeFormat, $timezone);
     }
 }

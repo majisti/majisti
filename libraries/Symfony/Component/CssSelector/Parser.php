@@ -1,7 +1,5 @@
 <?php
 
-namespace Symfony\Component\CssSelector;
-
 /*
  * This file is part of the Symfony package.
  *
@@ -10,6 +8,8 @@ namespace Symfony\Component\CssSelector;
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\CssSelector;
 
 /**
  * Parser is the main entry point of the component and can convert CSS
@@ -25,7 +25,16 @@ namespace Symfony\Component\CssSelector;
 class Parser
 {
     /**
+     * Translates a CSS expression to its XPath equivalent.
+     * Optionally, a prefix can be added to the resulting XPath
+     * expression with the $prefix parameter.
+     *
      * @throws SyntaxError When got None for xpath expression
+     *
+     * @param  mixed  $cssExpr The CSS expression.
+     * @param  string $prefix  An optional prefix for the XPath expression.
+     *
+     * @return string
      */
     static public function cssToXpath($cssExpr, $prefix = 'descendant-or-self::')
     {
@@ -62,7 +71,14 @@ class Parser
     }
 
     /**
+     * Parses an expression and returns the Node object that represents
+     * the parsed expression.
+     *
      * @throws \Exception When tokenizer throws it while parsing
+     *
+     * @param  string $string The expression to parse
+     *
+     * @return Node\NodeInterface
      */
     public function parse($string)
     {
@@ -79,10 +95,18 @@ class Parser
         }
     }
 
+    /**
+     * Parses a selector group contained in $stream and returns
+     * the Node object that represents the expression.
+     *
+     * @param  TokenStream $stream The stream to parse.
+     *
+     * @return Node\NodeInterface
+     */
     protected function parseSelectorGroup($stream)
     {
         $result = array();
-        while (1) {
+        while (true) {
             $result[] = $this->parseSelector($stream);
             if ($stream->peek() == ',') {
                 $stream->next();
@@ -99,15 +123,22 @@ class Parser
     }
 
     /**
+     * Parses a selector contained in $stream and returns the Node
+     * object that represents it.
+     *
      * @throws SyntaxError When expected selector but got something else
+     *
+     * @param  TokenStrem $stream The stream containing the selector.
+     *
+     * @return Node\NodeInterface
      */
     protected function parseSelector($stream)
     {
         $result = $this->parseSimpleSelector($stream);
 
-        while (1) {
+        while (true) {
             $peek = $stream->peek();
-            if ($peek == ',' || $peek === null) {
+            if (',' == $peek || null === $peek) {
                 return $result;
             } elseif (in_array($peek, array('+', '>', '~'))) {
                 // A combinator
@@ -116,28 +147,35 @@ class Parser
                 $combinator = ' ';
             }
             $consumed = count($stream->getUsed());
-            $next_selector = $this->parseSimpleSelector($stream);
+            $nextSelector = $this->parseSimpleSelector($stream);
             if ($consumed == count($stream->getUsed())) {
                 throw new SyntaxError(sprintf("Expected selector, got '%s'", $stream->peek()));
             }
 
-            $result = new Node\CombinedSelectorNode($result, $combinator, $next_selector);
+            $result = new Node\CombinedSelectorNode($result, $combinator, $nextSelector);
         }
 
         return $result;
     }
 
     /**
+     * Parses a simple selector (the current token) from $stream and returns
+     * the resulting Node object.
+     *
      * @throws SyntaxError When expected symbol but got something else
+     *
+     * @param  TokenStream The stream containing the selector.
+     *
+     * @return Node\NodeInterface
      */
     protected function parseSimpleSelector($stream)
     {
         $peek = $stream->peek();
-        if ($peek != '*' && !$peek->isType('Symbol')) {
+        if ('*' != $peek && !$peek->isType('Symbol')) {
             $element = $namespace = '*';
         } else {
             $next = $stream->next();
-            if ($next != '*' && !$next->isType('Symbol')) {
+            if ('*' != $next && !$next->isType('Symbol')) {
                 throw new SyntaxError(sprintf("Expected symbol, got '%s'", $next));
             }
 
@@ -145,7 +183,7 @@ class Parser
                 $namespace = $next;
                 $stream->next();
                 $element = $stream->next();
-                if ($element != '*' && !$next->isType('Symbol')) {
+                if ('*' != $element && !$next->isType('Symbol')) {
                     throw new SyntaxError(sprintf("Expected symbol, got '%s'", $next));
                 }
             } else {
@@ -155,11 +193,11 @@ class Parser
         }
 
         $result = new Node\ElementNode($namespace, $element);
-        $has_hash = false;
-        while (1) {
+        $hasHash = false;
+        while (true) {
             $peek = $stream->peek();
-            if ($peek == '#') {
-                if ($has_hash) {
+            if ('#' == $peek) {
+                if ($hasHash) {
                     /* You can't have two hashes
                         (FIXME: is there some more general rule I'm missing?) */
                     // @codeCoverageIgnoreStart
@@ -168,24 +206,24 @@ class Parser
                 }
                 $stream->next();
                 $result = new Node\HashNode($result, $stream->next());
-                $has_hash = true;
+                $hasHash = true;
 
                 continue;
-            } elseif ($peek == '.') {
+            } elseif ('.' == $peek) {
                 $stream->next();
                 $result = new Node\ClassNode($result, $stream->next());
 
                 continue;
-            } elseif ($peek == '[') {
+            } elseif ('[' == $peek) {
                 $stream->next();
                 $result = $this->parseAttrib($result, $stream);
                 $next = $stream->next();
-                if ($next != ']') {
+                if (']' != $next) {
                     throw new SyntaxError(sprintf("] expected, got '%s'", $next));
                 }
 
                 continue;
-            } elseif ($peek == ':' || $peek == '::') {
+            } elseif (':' == $peek || '::' == $peek) {
                 $type = $stream->next();
                 $ident = $stream->next();
                 if (!$ident || !$ident->isType('Symbol')) {
@@ -204,7 +242,7 @@ class Parser
                         $selector = $this->parseSimpleSelector($stream);
                     }
                     $next = $stream->next();
-                    if ($next != ')') {
+                    if (')' != $next) {
                         throw new SyntaxError(sprintf("Expected ')', got '%s' and '%s'", $next, $selector));
                     }
 
@@ -215,7 +253,7 @@ class Parser
 
                 continue;
             } else {
-                if ($peek == ' ') {
+                if (' ' == $peek) {
                     $stream->next();
                 }
 
@@ -228,7 +266,16 @@ class Parser
     }
 
     /**
+     * Parses an attribute from a selector contained in $stream and returns
+     * the resulting AttribNode object.
+     *
      * @throws SyntaxError When encountered unexpected selector
+     *
+     * @param  Node\NodeInterface $selector The selector object whose attribute
+     *                                      is to be parsed.
+     * @param  TokenStream        $stream    The container token stream.
+     *
+     * @return Node\AttribNode
      */
     protected function parseAttrib($selector, $stream)
     {

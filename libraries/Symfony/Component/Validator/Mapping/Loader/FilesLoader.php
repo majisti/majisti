@@ -1,15 +1,15 @@
 <?php
 
-namespace Symfony\Component\Validator\Mapping\Loader;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Validator\Mapping\Loader;
 
 /**
  * Creates mapping loaders for array of files.
@@ -43,7 +43,7 @@ abstract class FilesLoader extends LoaderChain
     protected function getFileLoaders($paths)
     {
         $loaders = array();
-        foreach ($paths as $path)  {
+        foreach ($paths as $path) {
             $loaders[] = $this->getFileLoaderInstance($path);
         }
         return $loaders;

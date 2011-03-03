@@ -1,51 +1,56 @@
 <?php
 
-namespace Symfony\Component\HttpKernel;
-
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\EventDispatcher\Event;
-use Symfony\Component\HttpFoundation\Response;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\HttpKernel;
+
+use Symfony\Component\EventDispatcher\EventInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * ResponseListener fixes the Response Content-Type.
+ *
+ * The filter method must be connected to the core.response event.
  *
  * @author Fabien Potencier <fabien.potencier@symfony-project.com>
  */
 class ResponseListener
 {
-    /**
-     * Registers a core.response listener to change the Content-Type header based on the Request format.
-     *
-     * @param EventDispatcher $dispatcher An EventDispatcher instance
-     * @param integer         $priority   The priority
-     */
-    public function register(EventDispatcher $dispatcher, $priority = 0)
+    protected $charset;
+
+    public function __construct($charset)
     {
-        $dispatcher->connect('core.response', array($this, 'filter'), $priority);
+        $this->charset = $charset;
     }
 
     /**
      * Filters the Response.
      *
-     * @param Event    $event    An Event instance
-     * @param Response $response A Response instance
+     * @param EventInterface $event    An EventInterface instance
+     * @param Response       $response A Response instance
      */
-    public function filter(Event $event, Response $response)
+    public function filter(EventInterface $event, Response $response)
     {
-        if (HttpKernelInterface::MASTER_REQUEST !== $event->getParameter('request_type') || $response->headers->has('Content-Type')) {
+        if (HttpKernelInterface::MASTER_REQUEST !== $event->get('request_type')) {
             return $response;
         }
 
-        $request = $event->getParameter('request');
+        if (null === $response->getCharset()) {
+            $response->setCharset($this->charset);
+        }
+
+        if ($response->headers->has('Content-Type')) {
+            return $response;
+        }
+
+        $request = $event->get('request');
         $format = $request->getRequestFormat();
         if ((null !== $format) && $mimeType = $request->getMimeType($format)) {
             $response->headers->set('Content-Type', $mimeType);

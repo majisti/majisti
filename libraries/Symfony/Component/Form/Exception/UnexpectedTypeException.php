@@ -1,16 +1,20 @@
 <?php
 
-namespace Symfony\Component\Form\Exception;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Form\Exception;
 
 class UnexpectedTypeException extends FormException
 {
+    public function __construct($value, $expectedType)
+    {
+        parent::__construct(sprintf('Expected argument of type %s, %s given', $expectedType, is_object($value) ? get_class($value) : gettype($value)));
+    }
 }

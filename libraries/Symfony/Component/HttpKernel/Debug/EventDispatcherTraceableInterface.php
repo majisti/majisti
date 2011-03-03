@@ -1,7 +1,5 @@
 <?php
 
-namespace Symfony\Component\HttpKernel\Debug;
-
 /*
  * This file is part of the Symfony package.
  *
@@ -11,12 +9,24 @@ namespace Symfony\Component\HttpKernel\Debug;
  * file that was distributed with this source code.
  */
 
+namespace Symfony\Component\HttpKernel\Debug;
+
 /**
  * @author Fabien Potencier <fabien.potencier@symfony-project.com>
  */
 interface EventDispatcherTraceableInterface
 {
-    function getCalledEvents();
+    /**
+     * Gets the called listeners.
+     *
+     * @return array An array of called listeners
+     */
+    function getCalledListeners();
 
-    function getNotCalledEvents();
+    /**
+     * Gets the not called listeners.
+     *
+     * @return array An array of not called listeners
+     */
+    function getNotCalledListeners();
 }

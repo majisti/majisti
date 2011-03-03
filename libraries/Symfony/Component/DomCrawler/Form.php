@@ -1,9 +1,5 @@
 <?php
 
-namespace Symfony\Component\DomCrawler;
-
-use Symfony\Component\DomCrawler\FormField;
-
 /*
  * This file is part of the Symfony package.
  *
@@ -12,6 +8,10 @@ use Symfony\Component\DomCrawler\FormField;
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\DomCrawler;
+
+use Symfony\Component\DomCrawler\Field\FormField;
 
 /**
  * Form represents an HTML form.
@@ -27,6 +27,7 @@ class Form implements \ArrayAccess
     protected $method;
     protected $host;
     protected $path;
+    protected $base;
 
     /**
      * Constructor.
@@ -35,10 +36,11 @@ class Form implements \ArrayAccess
      * @param string   $method The method to use for the link (if null, it defaults to the method defined by the form)
      * @param string   $host   The base URI to use for absolute links (like http://localhost)
      * @param string   $path   The base path for relative links (/ by default)
+     * @param string   $base   An optional base href for generating the submit uri
      *
      * @throws \LogicException if the node is not a button inside a form tag
      */
-    public function __construct(\DOMNode $node, $method = null, $host = null, $path = '/')
+    public function __construct(\DOMNode $node, $method = null, $host = null, $path = '/', $base = null)
     {
         $this->button = $node;
         if ('button' == $node->nodeName || ('input' == $node->nodeName && in_array($node->getAttribute('type'), array('submit', 'button', 'image')))) {
@@ -55,6 +57,7 @@ class Form implements \ArrayAccess
         $this->method = $method;
         $this->host = $host;
         $this->path = empty($path) ? '/' : $path;
+        $this->base = $base;
 
         $this->initialize();
     }
@@ -171,6 +174,10 @@ class Form implements \ArrayAccess
         $uri = $this->node->getAttribute('action');
         $urlHaveScheme = 'http' === substr($uri, 0, 4);
 
+        if (!$uri || '#' === $uri) {
+            $uri = $this->path;
+        }
+
         if (!in_array($this->getMethod(), array('post', 'put', 'delete')) && $queryString = http_build_query($this->getValues(), null, '&')) {
             $sep = false === strpos($uri, '?') ? '?' : '&';
             $uri .= $sep.$queryString;
@@ -181,11 +188,13 @@ class Form implements \ArrayAccess
             $path = substr($path, 0, strrpos($path, '/') + 1);
         }
 
-        if ($uri && '/' !== $uri[0] && !$urlHaveScheme) {
+        if (!$this->base && $uri && '/' !== $uri[0] && !$urlHaveScheme) {
             $uri = $path.$uri;
+        } elseif ($this->base) {
+            $uri = $this->base.$uri;
         }
 
-        if ($absolute && null !== $this->host && !$urlHaveScheme) {
+        if (!$this->base && $absolute && null !== $this->host && !$urlHaveScheme) {
             return $this->host.$uri;
         }
 
@@ -215,7 +224,7 @@ class Form implements \ArrayAccess
      *
      * @return Boolean true if the field exists, false otherwise
      */
-    public function hasField($name)
+    public function has($name)
     {
         return isset($this->fields[$name]);
     }
@@ -229,9 +238,9 @@ class Form implements \ArrayAccess
      *
      * @throws \InvalidArgumentException When field is not present in this form
      */
-    public function getField($name)
+    public function get($name)
     {
-        if (!$this->hasField($name)) {
+        if (!$this->has($name)) {
             throw new \InvalidArgumentException(sprintf('The form has no "%s" field', $name));
         }
 
@@ -245,7 +254,7 @@ class Form implements \ArrayAccess
      *
      * @return FormField The field instance
      */
-    public function setField(Field\FormField $field)
+    public function set(Field\FormField $field)
     {
         $this->fields[$field->getName()] = $field;
     }
@@ -255,7 +264,7 @@ class Form implements \ArrayAccess
      *
      * @return array An array of fields
      */
-    public function getFields()
+    public function all()
     {
         return $this->fields;
     }
@@ -280,21 +289,21 @@ class Form implements \ArrayAccess
             $nodeName = $node->nodeName;
 
             if ($node === $button) {
-                $this->setField(new Field\InputFormField($node));
+                $this->set(new Field\InputFormField($node));
             } elseif ('select' == $nodeName || 'input' == $nodeName && 'checkbox' == $node->getAttribute('type')) {
-                $this->setField(new Field\ChoiceFormField($node));
+                $this->set(new Field\ChoiceFormField($node));
             } elseif ('input' == $nodeName && 'radio' == $node->getAttribute('type')) {
-                if ($this->hasField($node->getAttribute('name'))) {
-                    $this->getField($node->getAttribute('name'))->addChoice($node);
+                if ($this->has($node->getAttribute('name'))) {
+                    $this->get($node->getAttribute('name'))->addChoice($node);
                 } else {
-                    $this->setField(new Field\ChoiceFormField($node));
+                    $this->set(new Field\ChoiceFormField($node));
                 }
             } elseif ('input' == $nodeName && 'file' == $node->getAttribute('type')) {
-                $this->setField(new Field\FileFormField($node));
+                $this->set(new Field\FileFormField($node));
             } elseif ('input' == $nodeName && !in_array($node->getAttribute('type'), array('submit', 'button', 'image'))) {
-                $this->setField(new Field\InputFormField($node));
+                $this->set(new Field\InputFormField($node));
             } elseif ('textarea' == $nodeName) {
-                $this->setField(new Field\TextareaFormField($node));
+                $this->set(new Field\TextareaFormField($node));
             }
         }
     }
@@ -308,7 +317,7 @@ class Form implements \ArrayAccess
      */
     public function offsetExists($name)
     {
-        return $this->hasField($name);
+        return $this->has($name);
     }
 
     /**
@@ -322,7 +331,7 @@ class Form implements \ArrayAccess
      */
     public function offsetGet($name)
     {
-        if (!$this->hasField($name)) {
+        if (!$this->has($name)) {
             throw new \InvalidArgumentException(sprintf('The form field "%s" does not exist', $name));
         }
 
@@ -339,7 +348,7 @@ class Form implements \ArrayAccess
      */
     public function offsetSet($name, $value)
     {
-        if (!$this->hasField($name)) {
+        if (!$this->has($name)) {
             throw new \InvalidArgumentException(sprintf('The form field "%s" does not exist', $name));
         }
 

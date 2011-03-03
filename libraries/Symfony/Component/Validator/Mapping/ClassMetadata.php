@@ -1,23 +1,31 @@
 <?php
 
-namespace Symfony\Component\Validator\Mapping;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
-use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Exception\ValidatorException;
+namespace Symfony\Component\Validator\Mapping;
 
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\Valid;
+use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
+use Symfony\Component\Validator\Exception\GroupDefinitionException;
+
+/**
+ * Represents all the configured constraints on a given class.
+ *
+ * @author Bernhard Schussek <bernhard.schussek@symfony-project.com>
+ * @author Fabien Potencier <fabien.potencier@symfony-project.com>
+ */
 class ClassMetadata extends ElementMetadata
 {
     public $name;
-    public $shortName;
+    public $defaultGroup;
     public $members = array();
     public $properties = array();
     public $getters = array();
@@ -32,7 +40,8 @@ class ClassMetadata extends ElementMetadata
     public function __construct($class)
     {
         $this->name = $class;
-        $this->shortName = substr($class, strrpos($class, '\\') + 1);
+        // class name without namespace
+        $this->defaultGroup = substr($class, strrpos($class, '\\') + 1);
     }
 
     /**
@@ -48,7 +57,7 @@ class ClassMetadata extends ElementMetadata
             'members',
             'name',
             'properties',
-            'shortName'
+            'defaultGroup'
         ));
     }
 
@@ -63,13 +72,23 @@ class ClassMetadata extends ElementMetadata
     }
 
     /**
-     * Returns the class name without namespace
+     * Returns the name of the default group for this class
      *
-     * @return string  The local class name in the namespace
+     * For each class, the group "Default" is an alias for the group
+     * "<ClassName>", where <ClassName> is the non-namespaced name of the
+     * class. All constraints implicitly or explicitly assigned to group
+     * "Default" belong to both of these groups, unless the class defines
+     * a group sequence.
+     *
+     * If a class defines a group sequence, validating the class in "Default"
+     * will validate the group sequence. The constraints assigned to "Default"
+     * can still be validated by validating the class in "<ClassName>".
+     *
+     * @return string  The name of the default group
      */
-    public function getShortClassName()
+    public function getDefaultGroup()
     {
-        return $this->shortName;
+        return $this->defaultGroup;
     }
 
     /**
@@ -77,7 +96,14 @@ class ClassMetadata extends ElementMetadata
      */
     public function addConstraint(Constraint $constraint)
     {
-        $constraint->addImplicitGroupName($this->getShortClassName());
+        if (!in_array(Constraint::CLASS_CONSTRAINT, (array)$constraint->targets())) {
+            throw new ConstraintDefinitionException(sprintf(
+                'The constraint %s cannot be put on classes',
+                get_class($constraint)
+            ));
+        }
+
+        $constraint->addImplicitGroupName($this->getDefaultGroup());
 
         parent::addConstraint($constraint);
     }
@@ -98,7 +124,7 @@ class ClassMetadata extends ElementMetadata
             $this->addMemberMetadata($this->properties[$property]);
         }
 
-        $constraint->addImplicitGroupName($this->getShortClassName());
+        $constraint->addImplicitGroupName($this->getDefaultGroup());
 
         $this->properties[$property]->addConstraint($constraint);
 
@@ -124,7 +150,7 @@ class ClassMetadata extends ElementMetadata
             $this->addMemberMetadata($this->getters[$property]);
         }
 
-        $constraint->addImplicitGroupName($this->getShortClassName());
+        $constraint->addImplicitGroupName($this->getDefaultGroup());
 
         $this->getters[$property]->addConstraint($constraint);
 
@@ -147,7 +173,7 @@ class ClassMetadata extends ElementMetadata
                 $member = clone $member;
 
                 foreach ($member->getConstraints() as $constraint) {
-                    $constraint->addImplicitGroupName($this->getShortClassName());
+                    $constraint->addImplicitGroupName($this->getDefaultGroup());
                 }
 
                 $this->addMemberMetadata($member);
@@ -182,9 +208,22 @@ class ClassMetadata extends ElementMetadata
     }
 
     /**
+     * Returns true if metadatas of members is present for the given property.
+     *
+     * @param string $property The name of the property
+     *
+     * @return Boolean
+     */
+    public function hasMemberMetadatas($property)
+    {
+        return array_key_exists($property, $this->members);
+    }
+
+    /**
      * Returns all metadatas of members describing the given property
      *
      * @param string $property The name of the property
+     * @array of MemberMetadata
      */
     public function getMemberMetadatas($property)
     {
@@ -208,6 +247,14 @@ class ClassMetadata extends ElementMetadata
      */
     public function setGroupSequence(array $groups)
     {
+        if (in_array(Constraint::DEFAULT_GROUP, $groups, true)) {
+            throw new GroupDefinitionException(sprintf('The group "%s" is not allowed in group sequences', Constraint::DEFAULT_GROUP));
+        }
+
+        if (!in_array($this->getDefaultGroup(), $groups, true)) {
+            throw new GroupDefinitionException(sprintf('The group "%s" is missing in the group sequence', $this->getDefaultGroup()));
+        }
+
         $this->groupSequence = $groups;
 
         return $this;
@@ -216,7 +263,7 @@ class ClassMetadata extends ElementMetadata
     /**
      * Returns whether this class has an overridden default group sequence.
      *
-     * @return boolean
+     * @return Boolean
      */
     public function hasGroupSequence()
     {

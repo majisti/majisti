@@ -1,15 +1,15 @@
 <?php
 
-namespace Symfony\Component\Form;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Form;
 
 use Symfony\Component\Form\ValueTransformer\ReversedTransformer;
 use Symfony\Component\Form\ValueTransformer\DateTimeToStringTransformer;
@@ -18,6 +18,30 @@ use Symfony\Component\Form\ValueTransformer\ValueTransformerChain;
 use Symfony\Component\Form\ValueTransformer\DateTimeToLocalizedStringTransformer;
 use Symfony\Component\Form\ValueTransformer\DateTimeToArrayTransformer;
 
+/**
+ * Represents a date field.
+ *
+ * Available options:
+ *
+ *  * widget:         How to render the field ("input" or "choice"). Default: "choice".
+ *  * type:           The type of the date stored on the object. Default: "datetime":
+ *                    * datetime:   A DateTime object;
+ *                    * string:     A raw string (e.g. 2011-05-01, Y-m-d);
+ *                    * timestamp:  A unix timestamp (e.g. 1304208000);
+ *                    * raw:        A year, month, day array.
+ *  * pattern:        The pattern for the select boxes when "widget" is "choice".
+ *                    You can use the placeholders "{{ year }}", "{{ month }}" and "{{ day }}".
+ *                    Default: locale dependent.
+ *
+ *  * years:          An array of years for the year select tag.
+ *  * months:         An array of months for the month select tag.
+ *  * days:           An array of days for the day select tag.
+ *
+ *  * format:         The date format type to use for displaying the data. Default: medium.
+ *  * data_timezone:  The timezone of the data. Default: server timezone.
+ *  * user_timezone:  The timezone of the user entering a new value. Default: server timezone.
+ *
+ */
 class DateField extends HybridField
 {
     const FULL = 'full';
@@ -66,38 +90,37 @@ class DateField extends HybridField
     protected $formatter;
 
     /**
-     * Configures the text field.
-     *
-     * Available options:
-     *
-     *  * widget:         How to render the field ("input" or "select"). Default: "input"
-     *  * years:          An array of years for the year select tag (optional)
-     *  * months:         An array of months for the month select tag (optional)
-     *  * days:           An array of days for the day select tag (optional)
-     *  * format:         See DateValueTransformer. Default: medium
-     *  * type:           The type of the date ("date", "datetime" or "timestamp"). Default: "date"
-     *  * data_timezone:  The timezone of the data
-     *  * user_timezone:  The timezone of the user entering a new value
-     *  * pattern:        The pattern for the select boxes when "widget" is "select".
-     *                    You can use the placeholders "{{ year }}", "{{ month }}" and "{{ day }}".
-     *                    Default: locale dependent
-     *
-     * @param array $options Options for this field
-     * @throws \InvalidArgumentException  Thrown if you want to show a timestamp with the select widget.
+     * {@inheritDoc}
      */
+    public function __construct($key, array $options = array())
+    {
+        // Override parent option
+        // \DateTime objects are never edited by reference, because
+        // we treat them like value objects
+        $this->addOption('by_reference', false);
+
+        parent::__construct($key, $options);
+    }
+
     protected function configure()
     {
+        $this->addOption('widget', self::CHOICE, self::$widgets);
+        $this->addOption('type', self::DATETIME, self::$types);
+        $this->addOption('pattern');
+
         $this->addOption('years', range(date('Y') - 5, date('Y') + 5));
         $this->addOption('months', range(1, 12));
         $this->addOption('days', range(1, 31));
-        $this->addOption('format', self::MEDIUM, self::$formats);
-        $this->addOption('type', self::DATETIME, self::$types);
-        $this->addOption('data_timezone', 'UTC');
-        $this->addOption('user_timezone', 'UTC');
-        $this->addOption('widget', self::CHOICE, self::$widgets);
-        $this->addOption('pattern');
 
-        $this->initFormatter();
+        $this->addOption('format', self::MEDIUM, self::$formats);
+        $this->addOption('data_timezone', date_default_timezone_get());
+        $this->addOption('user_timezone', date_default_timezone_get());
+
+        $this->formatter = new \IntlDateFormatter(
+            \Locale::getDefault(),
+            self::$intlFormats[$this->getOption('format')],
+            \IntlDateFormatter::NONE
+        );
 
         if ($this->getOption('type') === self::STRING) {
             $this->setNormalizationTransformer(new ReversedTransformer(
@@ -139,27 +162,10 @@ class DateField extends HybridField
                 'output_timezone' => $this->getOption('user_timezone'),
             )));
 
-            $this->setFieldMode(self::GROUP);
+            $this->setFieldMode(self::FORM);
 
             $this->addChoiceFields();
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getAttributes()
-    {
-        if ($this->isField()) {
-            return array_merge(parent::getAttributes(), array(
-                'id'    => $this->getId(),
-                'name'  => $this->getName(),
-                'value' => $this->getDisplayedData(),
-                'type'  => 'text',
-            ));
-        }
-
-        return parent::getAttributes();
     }
 
     /**
@@ -229,34 +235,6 @@ class DateField extends HybridField
     }
 
     /**
-     * Sets the locale of this field.
-     *
-     * @see Localizable
-     */
-    public function setLocale($locale)
-    {
-        parent::setLocale($locale);
-
-        $this->initFormatter();
-
-        if ($this->getOption('widget') === self::CHOICE) {
-            $this->addChoiceFields();
-        }
-    }
-
-    /**
-     * Initializes (or reinitializes) the formatter
-     */
-    protected function initFormatter()
-    {
-        $this->formatter = new \IntlDateFormatter(
-            $this->locale,
-            self::$intlFormats[$this->getOption('format')],
-            \IntlDateFormatter::NONE
-        );
-    }
-
-    /**
      * Adds (or replaces if already added) the fields used when widget=CHOICE
      */
     protected function addChoiceFields()
@@ -273,47 +251,74 @@ class DateField extends HybridField
     }
 
     /**
-     * Returns whether the year of the field's data is validd
+     * Returns whether the year of the field's data is valid
      *
      * The year is valid if it is contained in the list passed to the field's
      * option "years".
      *
-     * @return boolean
+     * @return Boolean
      */
     public function isYearWithinRange()
     {
         $date = $this->getNormalizedData();
 
-        return $date === null || in_array($date->format('Y'), $this->getOption('years'));
+        return $this->isEmpty() || ($this->isGroup() && $this->get('year')->isEmpty())
+                || in_array($date->format('Y'), $this->getOption('years'));
     }
 
     /**
-     * Returns whether the month of the field's data is validd
+     * Returns whether the month of the field's data is valid
      *
      * The month is valid if it is contained in the list passed to the field's
      * option "months".
      *
-     * @return boolean
+     * @return Boolean
      */
     public function isMonthWithinRange()
     {
         $date = $this->getNormalizedData();
 
-        return $date === null || in_array($date->format('m'), $this->getOption('months'));
+        return $this->isEmpty() || ($this->isGroup() && $this->get('month')->isEmpty())
+                || in_array($date->format('m'), $this->getOption('months'));
     }
 
     /**
-     * Returns whether the day of the field's data is validd
+     * Returns whether the day of the field's data is valid
      *
      * The day is valid if it is contained in the list passed to the field's
      * option "days".
      *
-     * @return boolean
+     * @return Boolean
      */
     public function isDayWithinRange()
     {
         $date = $this->getNormalizedData();
 
-        return $date === null || in_array($date->format('d'), $this->getOption('days'));
+        return $this->isEmpty() || ($this->isGroup() && $this->get('day')->isEmpty())
+                || in_array($date->format('d'), $this->getOption('days'));
+    }
+
+    /**
+     * Returns whether the field is neither completely filled (a selected
+     * value in each dropdown) nor completely empty
+     *
+     * @return Boolean
+     */
+    public function isPartiallyFilled()
+    {
+        if ($this->isField()) {
+            return false;
+        }
+
+        if ($this->isEmpty()) {
+            return false;
+        }
+
+        if ($this->get('year')->isEmpty() || $this->get('month')->isEmpty()
+                || $this->get('day')->isEmpty()) {
+            return true;
+        }
+
+        return false;
     }
 }

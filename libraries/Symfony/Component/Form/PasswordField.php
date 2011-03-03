@@ -1,19 +1,24 @@
 <?php
 
-namespace Symfony\Component\Form;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Form;
 
 /**
  * A field for entering a password.
  *
+ * Available options:
+ *
+ *  * always_empty      If true, the field will always render empty. Default: true.
+ *
+ * @see Symfony\Component\Form\TextField
  * @author Bernhard Schussek <bernhard.schussek@symfony-project.com>
  */
 class PasswordField extends TextField
@@ -23,20 +28,18 @@ class PasswordField extends TextField
      */
     protected function configure()
     {
-        parent::configure();
-
         $this->addOption('always_empty', true);
+
+        parent::configure();
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getAttributes()
+    public function getDisplayedData()
     {
-        return array_merge(parent::getAttributes(), array(
-            // override getDisplayedData() instead?
-            'value'       => $this->getOption('always_empty') && !$this->isBound() ? '' : $this->getDisplayedData(),
-            'type'        => 'password',
-        ));
+        return $this->getOption('always_empty') || !$this->isSubmitted()
+                ? ''
+                : parent::getDisplayedData();
     }
 }

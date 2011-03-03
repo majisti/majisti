@@ -1,15 +1,15 @@
 <?php
 
-namespace Symfony\Component\Routing;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Routing;
 
 /**
  * A Route describes a route and its parameters.
@@ -31,10 +31,8 @@ class Route
      *
      * Available options:
      *
-     *  * variable_prefixes:  An array of characters that starts a variable name (: by default)
      *  * segment_separators: An array of allowed characters for segment separators (/ by default)
-     *  * variable_regex:     A regex that match a valid variable name ([\w\d_]+ by default)
-     *  * text_regex:         A regex that match a valid text  name (.+? by default)
+     *  * text_regex:         A regex that match a valid text name (.+? by default)
      *  * compiler_class:     A class name able to compile this route instance (RouteCompiler by default)
      *
      * @param string $pattern       The pattern to match
@@ -103,9 +101,7 @@ class Route
     public function setOptions(array $options)
     {
         $this->options = array_merge(array(
-            'variable_prefixes'  => array(':'),
             'segment_separators' => array('/', '.'),
-            'variable_regex'     => '[\w\d_]+',
             'text_regex'         => '.+?',
             'compiler_class'     => 'Symfony\\Component\\Routing\\RouteCompiler',
         ), $options);
@@ -197,17 +193,7 @@ class Route
     {
         $this->requirements = array();
         foreach ($requirements as $key => $regex) {
-            if (!is_array($regex)) {
-                if ('^' == $regex[0]) {
-                    $regex = substr($regex, 1);
-                }
-
-                if ('$' == substr($regex, -1)) {
-                    $regex = substr($regex, 0, -1);
-                }
-            }
-
-            $this->requirements[$key] = $regex;
+            $this->requirements[$key] = $this->sanitizeRequirement($key, $regex);
         }
 
         return $this;
@@ -221,6 +207,17 @@ class Route
     public function getRequirement($key)
     {
         return isset($this->requirements[$key]) ? $this->requirements[$key] : null;
+    }
+
+    /**
+     * Sets a requirement for the given key.
+     *
+     * @param string The key
+     * @param string The regex
+     */
+    public function setRequirement($key, $regex)
+    {
+        return $this->requirements[$key] = $this->sanitizeRequirement($key, $regex);
     }
 
     /**
@@ -241,5 +238,22 @@ class Route
         }
 
         return $this->compiled = static::$compilers[$class]->compile($this);
+    }
+
+    protected function sanitizeRequirement($key, $regex)
+    {
+        if (is_array($regex)) {
+            throw new \InvalidArgumentException(sprintf('Routing requirements must be a string, array given for "%s"', $key));
+        }
+
+        if ('^' == $regex[0]) {
+            $regex = substr($regex, 1);
+        }
+
+        if ('$' == substr($regex, -1)) {
+            $regex = substr($regex, 0, -1);
+        }
+
+        return $regex;
     }
 }

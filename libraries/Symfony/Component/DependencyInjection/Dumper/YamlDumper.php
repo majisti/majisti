@@ -1,20 +1,20 @@
 <?php
 
+/*
+ * This file is part of the Symfony package.
+ *
+ * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Symfony\Component\DependencyInjection\Dumper;
 
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Parameter;
 use Symfony\Component\DependencyInjection\Reference;
-
-/*
- * This file is part of the Symfony framework.
- *
- * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
- *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
 
 /**
  * YamlDumper dumps a service container as a YAML string.
@@ -32,9 +32,38 @@ class YamlDumper extends Dumper
      */
     public function dump(array $options = array())
     {
-        return $this->addParameters()."\n".$this->addServices();
+        return $this->addParameters().$this->addInterfaceInjectors()."\n".$this->addServices();
     }
 
+    /**
+     * Adds interface injectors
+     *
+     * @return string
+     */
+    protected function addInterfaceInjectors()
+    {
+        if (!$this->container->getInterfaceInjectors()) {
+            return '';
+        }
+
+        $code = "\ninterfaces:\n";
+        foreach ($this->container->getInterfaceInjectors() as $injector) {
+            $code .= sprintf("    %s:\n", $injector->getClass());
+            if ($injector->getMethodCalls()) {
+                $code .= sprintf("        calls:\n          %s\n", str_replace("\n", "\n          ", Yaml::dump($this->dumpValue($injector->getMethodCalls()), 1)));
+            }
+        }
+
+        return $code;
+    }
+
+    /**
+     * Adds a service
+     *
+     * @param string $id 
+     * @param Definition $definition 
+     * @return string
+     */
     protected function addService($id, $definition)
     {
         $code = "  $id:\n";
@@ -78,8 +107,8 @@ class YamlDumper extends Dumper
             $code .= sprintf("    calls:\n      %s\n", str_replace("\n", "\n      ", Yaml::dump($this->dumpValue($definition->getMethodCalls()), 1)));
         }
 
-        if (!$definition->isShared()) {
-            $code .= "    shared: false\n";
+        if (ContainerInterface::SCOPE_CONTAINER !== $scope = $definition->getScope()) {
+            $code .= sprintf("    scope: %s\n", $scope);
         }
 
         if ($callable = $definition->getConfigurator()) {
@@ -97,11 +126,27 @@ class YamlDumper extends Dumper
         return $code;
     }
 
+    /**
+     * Adds a service alias
+     *
+     * @param string $alias 
+     * @param string $id 
+     * @return void
+     */
     protected function addServiceAlias($alias, $id)
     {
-        return sprintf("  %s: @%s\n", $alias, $id);
+        if ($id->isPublic()) {
+            return sprintf("  %s: @%s\n", $alias, $id);
+        } else {
+            return sprintf("  %s:\n    alias: %s\n    public: false", $alias, $id);
+        }
     }
 
+    /**
+     * Adds services
+     *
+     * @return string
+     */
     protected function addServices()
     {
         if (!$this->container->getDefinitions()) {
@@ -120,6 +165,11 @@ class YamlDumper extends Dumper
         return $code;
     }
 
+    /**
+     * Adds parameters
+     *
+     * @return string
+     */
     protected function addParameters()
     {
         if (!$this->container->getParameterBag()->all()) {
@@ -136,6 +186,9 @@ class YamlDumper extends Dumper
     }
 
     /**
+     * Dumps the value to YAML format
+     *
+     * @param mixed $value
      * @throws \RuntimeException When trying to dump object or resource
      */
     protected function dumpValue($value)
@@ -153,25 +206,44 @@ class YamlDumper extends Dumper
             return $this->getParameterCall((string) $value);
         } elseif (is_object($value) || is_resource($value)) {
             throw new \RuntimeException('Unable to dump a service container if a parameter is an object or a resource.');
-        } else {
-            return $value;
         }
+
+        return $value;
     }
 
+    /**
+     * Gets the service call.
+     *
+     * @param string $id 
+     * @param Reference $reference 
+     * @return string
+     */
     protected function getServiceCall($id, Reference $reference = null)
     {
         if (null !== $reference && ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE !== $reference->getInvalidBehavior()) {
-            return sprintf('@@%s', $id);
-        } else {
-            return sprintf('@%s', $id);
+            return sprintf('@?%s', $id);
         }
+
+        return sprintf('@%s', $id);
     }
 
+    /**
+     * Gets parameter call.
+     *
+     * @param string $id 
+     * @return string
+     */
     protected function getParameterCall($id)
     {
         return sprintf('%%%s%%', $id);
     }
 
+    /**
+     * Prepares parameters
+     *
+     * @param string $parameters 
+     * @return array 
+     */
     protected function prepareParameters($parameters)
     {
         $filtered = array();
@@ -188,6 +260,12 @@ class YamlDumper extends Dumper
         return $this->escape($filtered);
     }
 
+    /**
+     * Escapes arguments
+     *
+     * @param array $arguments 
+     * @return array
+     */
     protected function escape($arguments)
     {
         $args = array();

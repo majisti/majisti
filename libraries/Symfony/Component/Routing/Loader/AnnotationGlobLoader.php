@@ -1,17 +1,17 @@
 <?php
 
-namespace Symfony\Component\Routing\Loader;
-
-use Symfony\Component\Routing\RouteCollection;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Routing\Loader;
+
+use Symfony\Component\Routing\RouteCollection;
 
 /**
  * AnnotationGlobLoader loads routing information from annotations set
@@ -22,19 +22,20 @@ use Symfony\Component\Routing\RouteCollection;
 class AnnotationGlobLoader extends AnnotationDirectoryLoader
 {
     /**
-     * Loads from annotations from an array of directories.
+     * Loads from annotations from a directory glob pattern.
      *
-     * @param  array $resource An array of directories prefixed with annotations:
+     * @param string $glob A directory glob pattern containing "*"
+     * @param string $type The resource type
      *
      * @return RouteCollection A RouteCollection instance
      *
      * @throws \InvalidArgumentException When route can't be parsed
      */
-    public function load($resource)
+    public function load($glob, $type = null)
     {
         $collection = new RouteCollection();
-        foreach ($this->getAbsolutePaths(substr($resource, 12)) as $resource) {
-            $collection->addCollection(parent::load('annotations:'.$resource));
+        foreach ($this->getAbsolutePaths($glob) as $path) {
+            $collection->addCollection(parent::load($path, $type));
         }
 
         return $collection;
@@ -43,20 +44,29 @@ class AnnotationGlobLoader extends AnnotationDirectoryLoader
     /**
      * Returns true if this class supports the given resource.
      *
-     * @param  mixed $resource A resource
+     * @param mixed  $resource A resource
+     * @param string $type     The resource type
      *
-     * @return Boolean true if this class supports the given resource, false otherwise
+     * @return Boolean True if this class supports the given resource, false otherwise
      */
-    public function supports($resource)
+    public function supports($resource, $type = null)
     {
-        return is_string($resource) && 0 === strpos($resource, 'annotations:') && false !== strpos($resource, '*');
+        return is_string($resource) && false !== strpos($resource, '*') && (!$type || 'annotation' === $type);
     }
 
+    /**
+     * Gets all absolute paths matched by expanding the glob pattern within all
+     * resource search paths.
+     *
+     * @param string $glob
+     *
+     * @return array An array of paths matching the glob pattern
+     */
     protected function getAbsolutePaths($glob)
     {
         $dirs = array();
         foreach ($this->paths as $path) {
-            if (false !== $d = glob($path.DIRECTORY_SEPARATOR.$glob, GLOB_ONLYDIR | GLOB_BRACE)) {
+            if (false !== ($d = glob($path.DIRECTORY_SEPARATOR.$glob, GLOB_ONLYDIR | GLOB_BRACE))) {
                 $dirs = array_merge($dirs, $d);
             }
         }

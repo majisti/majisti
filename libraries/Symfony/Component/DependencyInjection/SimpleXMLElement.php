@@ -1,15 +1,15 @@
 <?php
 
-namespace Symfony\Component\DependencyInjection;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\DependencyInjection;
 
 /**
  * SimpleXMLElement class.
@@ -18,11 +18,23 @@ namespace Symfony\Component\DependencyInjection;
  */
 class SimpleXMLElement extends \SimpleXMLElement
 {
+    /**
+     * Converts an attribute as a php type.
+     *
+     * @param string $name 
+     * @return mixed
+     */
     public function getAttributeAsPhp($name)
     {
         return self::phpize($this[$name]);
     }
 
+    /**
+     * Returns arguments as valid php types.
+     *
+     * @param string $name 
+     * @return mixed
+     */
     public function getArgumentsAsPhp($name)
     {
         $arguments = array();
@@ -34,6 +46,12 @@ class SimpleXMLElement extends \SimpleXMLElement
                 $key = strtolower($key);
             }
 
+            // this is used by DefinitionDecorator to overwrite a specific
+            // argument of the parent definition
+            if (isset($arg['index'])) {
+                $key = 'index_'.$arg['index'];
+            }
+
             switch ($arg['type']) {
                 case 'service':
                     $invalidBehavior = ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE;
@@ -42,7 +60,14 @@ class SimpleXMLElement extends \SimpleXMLElement
                     } elseif (isset($arg['on-invalid']) && 'null' == $arg['on-invalid']) {
                         $invalidBehavior = ContainerInterface::NULL_ON_INVALID_REFERENCE;
                     }
-                    $arguments[$key] = new Reference((string) $arg['id'], $invalidBehavior);
+
+                    if (isset($arg['strict'])) {
+                        $strict = self::phpize($arg['strict']);
+                    } else {
+                        $strict = true;
+                    }
+
+                    $arguments[$key] = new Reference((string) $arg['id'], $invalidBehavior, $strict);
                     break;
                 case 'collection':
                     $arguments[$key] = $arg->getArgumentsAsPhp($name);
@@ -61,6 +86,12 @@ class SimpleXMLElement extends \SimpleXMLElement
         return $arguments;
     }
 
+    /**
+     * Converts an xml value to a php type.
+     *
+     * @param mixed $value 
+     * @return mixed
+     */
     static public function phpize($value)
     {
         $value = (string) $value;

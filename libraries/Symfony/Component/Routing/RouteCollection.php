@@ -1,17 +1,17 @@
 <?php
 
-namespace Symfony\Component\Routing;
-
-use Symfony\Component\Routing\Resource\ResourceInterface;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Routing;
+
+use Symfony\Component\Config\Resource\ResourceInterface;
 
 /**
  * A RouteCollection represents a set of Route instances.
@@ -40,9 +40,9 @@ class RouteCollection
      *
      * @throws \InvalidArgumentException When route name contains non valid characters
      */
-    public function addRoute($name, Route $route)
+    public function add($name, Route $route)
     {
-        if (!preg_match('/^[a-z0-9A-Z_]+$/', $name)) {
+        if (!preg_match('/^[a-z0-9A-Z_.]+$/', $name)) {
             throw new \InvalidArgumentException(sprintf('Name "%s" contains non valid characters for a route name.', $name));
         }
 
@@ -54,7 +54,7 @@ class RouteCollection
      *
      * @return array An array of routes
      */
-    public function getRoutes()
+    public function all()
     {
         return $this->routes;
     }
@@ -66,7 +66,7 @@ class RouteCollection
      *
      * @return Route  $route A Route instance
      */
-    public function getRoute($name)
+    public function get($name)
     {
         return isset($this->routes[$name]) ? $this->routes[$name] : null;
     }
@@ -85,7 +85,7 @@ class RouteCollection
             $this->addResource($resource);
         }
 
-        $this->routes = array_merge($this->routes, $collection->getRoutes());
+        $this->routes = array_merge($this->routes, $collection->all());
     }
 
     /**
@@ -99,7 +99,7 @@ class RouteCollection
             return;
         }
 
-        foreach ($this->getRoutes() as $route) {
+        foreach ($this->all() as $route) {
             $route->setPattern($prefix.$route->getPattern());
         }
     }

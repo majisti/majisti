@@ -1,15 +1,15 @@
 <?php
 
-namespace Symfony\Component\HttpFoundation\SessionStorage;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\HttpFoundation\SessionStorage;
 
 /**
  * NativeSessionStorage.
@@ -26,34 +26,32 @@ class NativeSessionStorage implements SessionStorageInterface
     /**
      * Available options:
      *
-     *  * session_name:            The cookie name (symfony by default)
-     *  * session_id:              The session id (null by default)
-     *  * session_cookie_lifetime: Cookie lifetime
-     *  * session_cookie_path:     Cookie path
-     *  * session_cookie_domain:   Cookie domain
-     *  * session_cookie_secure:   Cookie secure
-     *  * session_cookie_httponly: Cookie http only
+     *  * name:     The cookie name (_SESS by default)
+     *  * id:       The session id (null by default)
+     *  * lifetime: Cookie lifetime
+     *  * path:     Cookie path
+     *  * domain:   Cookie domain
+     *  * secure:   Cookie secure
+     *  * httponly: Cookie http only
      *
-     * The default values for all 'session_cookie_*' options are those returned by the session_get_cookie_params() function
+     * The default values for most options are those returned by the session_get_cookie_params() function
      *
      * @param array $options  An associative array of options
-     *
      */
     public function __construct(array $options = array())
     {
         $cookieDefaults = session_get_cookie_params();
 
         $this->options = array_merge(array(
-            'session_name'            => 'SYMFONY_SESSION',
-            'session_cookie_lifetime' => $cookieDefaults['lifetime'],
-            'session_cookie_path'     => $cookieDefaults['path'],
-            'session_cookie_domain'   => $cookieDefaults['domain'],
-            'session_cookie_secure'   => $cookieDefaults['secure'],
-            'session_cookie_httponly' => isset($cookieDefaults['httponly']) ? $cookieDefaults['httponly'] : false,
-            'session_cache_limiter'   => 'none',
+            'name'          => '_SESS',
+            'lifetime'      => $cookieDefaults['lifetime'],
+            'path'          => $cookieDefaults['path'],
+            'domain'        => $cookieDefaults['domain'],
+            'secure'        => $cookieDefaults['secure'],
+            'httponly'      => isset($cookieDefaults['httponly']) ? $cookieDefaults['httponly'] : false,
         ), $options);
 
-        session_name($this->options['session_name']);
+        session_name($this->options['name']);
     }
 
     /**
@@ -66,24 +64,35 @@ class NativeSessionStorage implements SessionStorageInterface
         }
 
         session_set_cookie_params(
-            $this->options['session_cookie_lifetime'],
-            $this->options['session_cookie_path'],
-            $this->options['session_cookie_domain'],
-            $this->options['session_cookie_secure'],
-            $this->options['session_cookie_httponly']
+            $this->options['lifetime'],
+            $this->options['path'],
+            $this->options['domain'],
+            $this->options['secure'],
+            $this->options['httponly']
         );
 
-        if (null !== $this->options['session_cache_limiter']) {
-            session_cache_limiter($this->options['session_cache_limiter']);
-        }
+        // disable native cache limiter as this is managed by HeaderBag directly
+        session_cache_limiter(false);
 
-        if (!ini_get('session.use_cookies') && $this->options['session_id'] && $this->options['session_id'] != session_id()) {
-            session_id($this->options['session_id']);
+        if (!ini_get('session.use_cookies') && $this->options['id'] && $this->options['id'] != session_id()) {
+            session_id($this->options['id']);
         }
 
         session_start();
 
         self::$sessionStarted = true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getId()
+    {
+        if (!self::$sessionStarted) {
+            throw new \RuntimeException('The session must be started before reading its ID');
+        }
+
+        return session_id();
     }
 
     /**
@@ -138,9 +147,9 @@ class NativeSessionStorage implements SessionStorageInterface
     /**
      * Regenerates id that represents this storage.
      *
-     * @param  boolean $destroy Destroy session when regenerating?
+     * @param  Boolean $destroy Destroy session when regenerating?
      *
-     * @return boolean True if session regenerated, false if error
+     * @return Boolean True if session regenerated, false if error
      *
      */
     public function regenerate($destroy = false)

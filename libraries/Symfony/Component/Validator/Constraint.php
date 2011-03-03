@@ -1,15 +1,15 @@
 <?php
 
-namespace Symfony\Component\Validator;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Validator;
 
 use Symfony\Component\Validator\Exception\InvalidOptionsException;
 use Symfony\Component\Validator\Exception\MissingOptionsException;
@@ -26,11 +26,30 @@ use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
  *
  * @author Bernhard Schussek <bernhard.schussek@symfony-project.com>
  */
-class Constraint
+abstract class Constraint
 {
+    /**
+     * The name of the group given to all constraints with no explicit group
+     * @var string
+     */
     const DEFAULT_GROUP = 'Default';
 
-    public $groups = self::DEFAULT_GROUP;
+    /**
+     * Marks a constraint that can be put onto classes
+     * @var string
+     */
+    const CLASS_CONSTRAINT = 'class';
+
+    /**
+     * Marks a constraint that can be put onto properties
+     * @var string
+     */
+    const PROPERTY_CONSTRAINT = 'property';
+
+    /**
+     * @var array
+     */
+    public $groups = array(self::DEFAULT_GROUP);
 
     /**
      * Initializes the constraint with options.
@@ -77,7 +96,7 @@ class Constraint
                     $invalidOptions[] = $option;
                 }
             }
-        } else if ($options !== null && ! (is_array($options) && count($options) === 0)) {
+        } else if (null !== $options && ! (is_array($options) && count($options) === 0)) {
             $option = $this->defaultOption();
 
             if (null === $option) {
@@ -170,4 +189,15 @@ class Constraint
     {
         return get_class($this) . 'Validator';
     }
+
+    /**
+     * Returns whether the constraint can be put onto classes, properties or
+     * both
+     *
+     * This method should return one or more of the constants
+     * Constraint::CLASS_CONSTRAINT and Constraint::PROPERTY_CONSTRAINT.
+     *
+     * @return string|array  One or more constant values
+     */
+    abstract public function targets();
 }

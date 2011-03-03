@@ -1,17 +1,17 @@
 <?php
 
-namespace Symfony\Component\Routing\Generator\Dumper;
-
-use Symfony\Component\Routing\Route;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Routing\Generator\Dumper;
+
+use Symfony\Component\Routing\Route;
 
 /**
  * PhpGeneratorDumper creates a PHP class able to generate URLs for a given set of routes.
@@ -50,8 +50,7 @@ class PhpGeneratorDumper extends GeneratorDumper
     protected function addGenerator()
     {
         $methods = array();
-
-        foreach ($this->routes->getRoutes() as $name => $route) {
+        foreach ($this->routes->all() as $name => $route) {
             $compiledRoute = $route->compile();
 
             $variables = str_replace("\n", '', var_export($compiledRoute->getVariables(), true));
@@ -59,8 +58,10 @@ class PhpGeneratorDumper extends GeneratorDumper
             $requirements = str_replace("\n", '', var_export($compiledRoute->getRequirements(), true));
             $tokens = str_replace("\n", '', var_export($compiledRoute->getTokens(), true));
 
+            $escapedName = str_replace('.', '__', $name);
+
             $methods[] = <<<EOF
-    protected function get{$name}RouteInfo()
+    protected function get{$escapedName}RouteInfo()
     {
         return array($variables, array_merge(\$this->defaults, $defaults), $requirements, $tokens);
     }
@@ -75,11 +76,13 @@ EOF
 
     public function generate(\$name, array \$parameters, \$absolute = false)
     {
-        if (!method_exists(\$this, \$method = 'get'.\$name.'RouteInfo')) {
+        if (!isset(self::\$declaredRouteNames[\$name])) {
             throw new \InvalidArgumentException(sprintf('Route "%s" does not exist.', \$name));
         }
 
-        list(\$variables, \$defaults, \$requirements, \$tokens) = \$this->\$method();
+        \$escapedName = str_replace('.', '__', \$name);
+
+        list(\$variables, \$defaults, \$requirements, \$tokens) = \$this->{'get'.\$escapedName.'RouteInfo'}();
 
         return \$this->doGenerate(\$variables, \$defaults, \$requirements, \$tokens, \$parameters, \$name, \$absolute);
     }
@@ -90,6 +93,12 @@ EOF;
 
     protected function startClass($class, $baseClass)
     {
+        $routes = array();
+        foreach ($this->routes->all() as $name => $route) {
+            $routes[] = "       '$name' => true,";
+        }
+        $routes  = implode("\n", $routes);
+
         return <<<EOF
 <?php
 
@@ -101,6 +110,10 @@ EOF;
  */
 class $class extends $baseClass
 {
+    static protected \$declaredRouteNames = array(
+$routes
+    );
+
 
 EOF;
     }

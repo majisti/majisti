@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the Symfony package.
+ *
+ * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Symfony\Component\HttpKernel\Profiler;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -7,15 +16,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Profiler\ProfilerStorageInterface;
 use Symfony\Component\HttpKernel\DataCollector\DataCollectorInterface;
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
-
-/*
- * This file is part of the Symfony framework.
- *
- * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
- *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
 
 /**
  * Profiler.
@@ -29,6 +29,7 @@ class Profiler
     protected $logger;
     protected $enabled;
     protected $token;
+    protected $parent;
     protected $data;
     protected $ip;
     protected $url;
@@ -104,9 +105,9 @@ class Profiler
      */
     public function export()
     {
-        $unpack = unpack('H*', serialize(array($this->token, $this->collectors, $this->ip, $this->url, $this->time)));
+        $data = base64_encode(serialize(array($this->token, $this->parent, $this->collectors, $this->ip, $this->url, $this->time)));
 
-        return $unpack[1];
+        return $data;
     }
 
     /**
@@ -118,15 +119,15 @@ class Profiler
      */
     public function import($data)
     {
-        list($token, $collectors, $ip, $url, $time) = unserialize(pack('H*', $data));
+        list($token, $parent, $collectors, $ip, $url, $time) = unserialize(base64_decode($data));
 
         if (false !== $this->storage->read($token)) {
             return false;
         }
 
-        $unpack = unpack('H*', serialize($this->collectors));
+        $data = base64_encode(serialize($collectors));
 
-        $this->storage->write($token, $unpack[1], $ip, $url, $time);
+        $this->storage->write($token, $parent, $data, $ip, $url, $time);
 
         return $token;
     }
@@ -142,7 +143,7 @@ class Profiler
 
         if (false !== $items = $this->storage->read($token)) {
             list($data, $this->ip, $this->url, $this->time) = $items;
-            $this->set(unserialize(pack('H*', $data)));
+            $this->set(unserialize(base64_decode($data)));
 
             $this->empty = false;
         } else {
@@ -172,6 +173,16 @@ class Profiler
     public function isEmpty()
     {
         return $this->empty;
+    }
+
+    /**
+     * Returns the parent token.
+     *
+     * @return string The parent token
+     */
+    public function getParent()
+    {
+        return $this->parent;
     }
 
     /**
@@ -231,24 +242,26 @@ class Profiler
             return;
         }
 
-        $response = $response;
         $response->headers->set('X-Debug-Token', $this->getToken());
 
         foreach ($this->collectors as $collector) {
             $collector->collect($request, $response, $exception);
         }
 
-        $this->ip   = $request->server->get('REMOTE_ADDR');
-        $this->url  = $request->getUri();
-        $this->time = time();
+        $this->parent = '';
+        $this->ip     = $request->server->get('REMOTE_ADDR');
+        $this->url    = $request->getUri();
+        $this->time   = time();
 
-        $unpack = unpack('H*', serialize($this->collectors));
-        try {
-            $this->storage->write($this->token, $unpack[1], $this->ip, $this->url, $this->time);
+        $data = base64_encode(serialize($this->collectors));
+
+        if (true === $this->storage->write($this->token, $this->parent, $data, $this->ip, $this->url, $this->time)) {
             $this->empty = false;
-        } catch (\Exception $e) {
-            if (null !== $this->logger) {
-                $this->logger->err(sprintf('Unable to store the profiler information (%s).', $e->getMessage()));
+        } elseif (null !== $this->logger) {
+            if (null !== $exception) {
+                $this->logger->err(sprintf('Unable to store the profiler information (%s).', $exception->getMessage()));
+            } else {
+                $this->logger->err('Unable to store the profiler information (%s).');
             }
         }
     }
@@ -271,7 +284,7 @@ class Profiler
     public function set(array $collectors = array())
     {
         $this->collectors = array();
-        foreach ($collectors as $name => $collector) {
+        foreach ($collectors as $collector) {
             $this->add($collector);
         }
     }

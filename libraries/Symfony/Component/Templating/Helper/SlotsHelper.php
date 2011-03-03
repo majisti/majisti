@@ -1,7 +1,5 @@
 <?php
 
-namespace Symfony\Component\Templating\Helper;
-
 /*
  * This file is part of the Symfony package.
  *
@@ -10,6 +8,8 @@ namespace Symfony\Component\Templating\Helper;
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Templating\Helper;
 
 /**
  * SlotsHelper manages template slots.
@@ -51,15 +51,13 @@ class SlotsHelper extends Helper
      */
     public function stop()
     {
-        $content = ob_get_clean();
-
         if (!$this->openSlots) {
             throw new \LogicException('No slot started.');
         }
 
         $name = array_pop($this->openSlots);
 
-        $this->slots[$name] = $content;
+        $this->slots[$name] = ob_get_clean();
     }
 
     /**

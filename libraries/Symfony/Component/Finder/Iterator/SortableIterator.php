@@ -1,15 +1,15 @@
 <?php
 
-namespace Symfony\Component\Finder\Iterator;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Finder\Iterator;
 
 /**
  * SortableIterator applies a sort on a given Iterator.
@@ -29,12 +29,12 @@ class SortableIterator extends \ArrayIterator
      */
     public function __construct(\Iterator $iterator, $sort)
     {
-        if (!$sort instanceof \Closure && self::SORT_BY_NAME == $sort) {
+        if (self::SORT_BY_NAME === $sort) {
             $sort = function ($a, $b)
             {
                 return strcmp($a->getRealpath(), $b->getRealpath());
             };
-        } elseif (!$sort instanceof \Closure && self::SORT_BY_TYPE == $sort) {
+        } elseif (self::SORT_BY_TYPE === $sort) {
             $sort = function ($a, $b)
             {
                 if ($a->isDir() && $b->isFile()) {

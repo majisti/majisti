@@ -1,10 +1,5 @@
 <?php
 
-namespace Symfony\Component\CssSelector\Node;
-
-use Symfony\Component\CssSelector\SyntaxError;
-use Symfony\Component\CssSelector\XPathExpr;
-
 /*
  * This file is part of the Symfony package.
  *
@@ -13,6 +8,11 @@ use Symfony\Component\CssSelector\XPathExpr;
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\CssSelector\Node;
+
+use Symfony\Component\CssSelector\SyntaxError;
+use Symfony\Component\CssSelector\XPathExpr;
 
 /**
  * FunctionNode represents a "selector:name(expr)" node.
@@ -31,6 +31,14 @@ class FunctionNode implements NodeInterface
     protected $name;
     protected $expr;
 
+    /**
+     * Constructor.
+     *
+     * @param NodeInterface $selector The XPath expression
+     * @param string $type
+     * @param string $name
+     * @param XPathExpr $expr 
+     */
     public function __construct($selector, $type, $name, $expr)
     {
         $this->selector = $selector;
@@ -39,17 +47,21 @@ class FunctionNode implements NodeInterface
         $this->expr = $expr;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function __toString()
     {
         return sprintf('%s[%s%s%s(%s)]', __CLASS__, $this->selector, $this->type, $this->name, $this->expr);
     }
 
     /**
+     * {@inheritDoc}
      * @throws SyntaxError When unsupported or unknown pseudo-class is found
      */
     public function toXpath()
     {
-        $sel_path = $this->selector->toXpath();
+        $selPath = $this->selector->toXpath();
         if (in_array($this->name, self::$unsupported)) {
             throw new SyntaxError(sprintf('The pseudo-class %s is not supported', $this->name));
         }
@@ -58,9 +70,18 @@ class FunctionNode implements NodeInterface
             throw new SyntaxError(sprintf('The pseudo-class %s is unknown', $this->name));
         }
 
-        return $this->$method($sel_path, $this->expr);
+        return $this->$method($selPath, $this->expr);
     }
 
+    /**
+     * undocumented function
+     *
+     * @param XPathExpr $xpath 
+     * @param mixed $expr 
+     * @param string $last 
+     * @param string $addNameTest 
+     * @return XPathExpr
+     */
     protected function _xpath_nth_child($xpath, $expr, $last = false, $addNameTest = true)
     {
         list($a, $b) = $this->parseSeries($expr);
@@ -92,13 +113,13 @@ class FunctionNode implements NodeInterface
         }
 
         if ($b > 0) {
-            $b_neg = -$b;
+            $bNeg = -$b;
         } else {
-            $b_neg = sprintf('+%s', -$b);
+            $bNeg = sprintf('+%s', -$b);
         }
 
         if ($a != 1) {
-            $expr = array(sprintf('(position() %s) mod %s = 0', $b_neg, $a));
+            $expr = array(sprintf('(position() %s) mod %s = 0', $bNeg, $a));
         } else {
             $expr = array();
         }
@@ -124,11 +145,25 @@ class FunctionNode implements NodeInterface
              -1n+6 means elements 6 and previous */
     }
 
+    /**
+     * undocumented function
+     *
+     * @param XPathExpr $xpath 
+     * @param XPathExpr $expr 
+     * @return XPathExpr
+     */
     protected function _xpath_nth_last_child($xpath, $expr)
     {
         return $this->_xpath_nth_child($xpath, $expr, true);
     }
 
+    /**
+     * undocumented function
+     *
+     * @param XPathExpr $xpath 
+     * @param XPathExpr $expr 
+     * @return XPathExpr
+     */
     protected function _xpath_nth_of_type($xpath, $expr)
     {
         if ($xpath->getElement() == '*') {
@@ -138,11 +173,25 @@ class FunctionNode implements NodeInterface
         return $this->_xpath_nth_child($xpath, $expr, false, false);
     }
 
+    /**
+     * undocumented function
+     *
+     * @param XPathExpr $xpath 
+     * @param XPathExpr $expr 
+     * @return XPathExpr
+     */
     protected function _xpath_nth_last_of_type($xpath, $expr)
     {
         return $this->_xpath_nth_child($xpath, $expr, true, false);
     }
 
+    /**
+     * undocumented function
+     *
+     * @param XPathExpr $xpath 
+     * @param XPathExpr $expr 
+     * @return XPathExpr
+     */
     protected function _xpath_contains($xpath, $expr)
     {
         // text content, minus tags, must contain expr
@@ -159,6 +208,13 @@ class FunctionNode implements NodeInterface
         return $xpath;
     }
 
+    /**
+     * undocumented function
+     *
+     * @param XPathExpr $xpath 
+     * @param XPathExpr $expr 
+     * @return XPathExpr
+     */
     protected function _xpath_not($xpath, $expr)
     {
         // everything for which not expr applies
@@ -170,14 +226,19 @@ class FunctionNode implements NodeInterface
         return $xpath;
     }
 
-    // Parses things like '1n+2', or 'an+b' generally, returning (a, b)
+    /**
+     * Parses things like '1n+2', or 'an+b' generally, returning (a, b)
+     *
+     * @param mixed $s 
+     * @return array
+     */
     protected function parseSeries($s)
     {
         if ($s instanceof ElementNode) {
             $s = $s->formatElement();
         }
 
-        if (!$s || $s == '*') {
+        if (!$s || '*' == $s) {
             // Happens when there's nothing, which the CSS parser thinks of as *
             return array(0, 0);
         }
@@ -187,15 +248,15 @@ class FunctionNode implements NodeInterface
             return array(0, $s);
         }
 
-        if ($s == 'odd') {
+        if ('odd' == $s) {
             return array(2, 1);
         }
 
-        if ($s == 'even') {
+        if ('even' == $s) {
             return array(2, 0);
         }
 
-        if ($s == 'n') {
+        if ('n' == $s) {
             return array(1, 0);
         }
 
@@ -208,7 +269,7 @@ class FunctionNode implements NodeInterface
         list($a, $b) = explode('n', $s);
         if (!$a) {
             $a = 1;
-        } elseif ($a == '-' || $a == '+') {
+        } elseif ('-' == $a || '+' == $a) {
             $a = intval($a.'1');
         } else {
             $a = intval($a);
@@ -216,7 +277,7 @@ class FunctionNode implements NodeInterface
 
         if (!$b) {
             $b = 0;
-        } elseif ($b == '-' || $b == '+') {
+        } elseif ('-' == $b || '+' == $b) {
             $b = intval($b.'1');
         } else {
             $b = intval($b);

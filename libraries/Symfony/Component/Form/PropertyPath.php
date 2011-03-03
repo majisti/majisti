@@ -1,15 +1,15 @@
 <?php
 
-namespace Symfony\Component\Form;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Form;
 
 use Symfony\Component\Form\Exception\InvalidPropertyPathException;
 use Symfony\Component\Form\Exception\InvalidPropertyException;
@@ -35,7 +35,7 @@ class PropertyPath implements \IteratorAggregate
     protected $length;
 
     /**
-     * Contains a boolean for each property in $elements denoting whether this
+     * Contains a Boolean for each property in $elements denoting whether this
      * element is an index. It is a property otherwise.
      * @var array
      */
@@ -54,7 +54,7 @@ class PropertyPath implements \IteratorAggregate
      */
     public function __construct($propertyPath)
     {
-        if ($propertyPath === '' || $propertyPath === null) {
+        if ('' === $propertyPath || null === $propertyPath) {
             throw new InvalidPropertyPathException('The property path must not be empty');
         }
 
@@ -63,7 +63,7 @@ class PropertyPath implements \IteratorAggregate
         $remaining = $propertyPath;
 
         // first element is evaluated differently - no leading dot for properties
-        $pattern = '/^((\w+)|\[(\w+)\])(.*)/';
+        $pattern = '/^((\w+)|\[([^\]]+)\])(.*)/';
 
         while (preg_match($pattern, $remaining, $matches)) {
             if ($matches[2] !== '') {
@@ -76,7 +76,7 @@ class PropertyPath implements \IteratorAggregate
 
             $position += strlen($matches[1]);
             $remaining = $matches[4];
-            $pattern = '/^(\.(\w+)|\[(\w+)\])(.*)/';
+            $pattern = '/^(\.(\w+)|\[([^\]]+)\])(.*)/';
         }
 
         if (!empty($remaining)) {
@@ -135,7 +135,7 @@ class PropertyPath implements \IteratorAggregate
      * Returns whether the element at the given index is a property
      *
      * @param  integer $index  The index in the property path
-     * @return boolean         Whether the element at this index is a property
+     * @return Boolean         Whether the element at this index is a property
      */
     public function isProperty($index)
     {
@@ -146,7 +146,7 @@ class PropertyPath implements \IteratorAggregate
      * Returns whether the element at the given index is an array index
      *
      * @param  integer $index  The index in the property path
-     * @return boolean         Whether the element at this index is an array index
+     * @return Boolean         Whether the element at this index is an array index
      */
     public function isIndex($index)
     {
@@ -216,7 +216,7 @@ class PropertyPath implements \IteratorAggregate
      */
     public function setValue(&$objectOrArray, $value)
     {
-        $this->updatePropertyPath($objectOrArray, 0, $value);
+        $this->writePropertyPath($objectOrArray, 0, $value);
     }
 
     /**
@@ -232,10 +232,9 @@ class PropertyPath implements \IteratorAggregate
 
         if (is_object($objectOrArray)) {
             $value = $this->readProperty($objectOrArray, $currentIndex);
-        }
         // arrays need to be treated separately (due to PHP bug?)
         // http://bugs.php.net/bug.php?id=52133
-        else {
+        } else {
             if (!array_key_exists($property, $objectOrArray)) {
                 $objectOrArray[$property] = $currentIndex + 1 < $this->length ? array() : null;
             }
@@ -247,9 +246,9 @@ class PropertyPath implements \IteratorAggregate
 
         if ($currentIndex < $this->length) {
             return $this->readPropertyPath($value, $currentIndex);
-        } else {
-            return $value;
         }
+
+        return $value;
     }
 
     /**
@@ -260,17 +259,16 @@ class PropertyPath implements \IteratorAggregate
      * @param mixed $value                 The value to set at the end of the
      *                                     property path
      */
-    protected function updatePropertyPath(&$objectOrArray, $currentIndex, $value)
+    protected function writePropertyPath(&$objectOrArray, $currentIndex, $value)
     {
         $property = $this->elements[$currentIndex];
 
         if ($currentIndex + 1 < $this->length) {
             if (is_object($objectOrArray)) {
                 $nestedObject = $this->readProperty($objectOrArray, $currentIndex);
-            }
             // arrays need to be treated separately (due to PHP bug?)
             // http://bugs.php.net/bug.php?id=52133
-            else {
+            } else {
                 if (!array_key_exists($property, $objectOrArray)) {
                     $objectOrArray[$property] = array();
                 }
@@ -278,9 +276,9 @@ class PropertyPath implements \IteratorAggregate
                 $nestedObject =& $objectOrArray[$property];
             }
 
-            $this->updatePropertyPath($nestedObject, $currentIndex + 1, $value);
+            $this->writePropertyPath($nestedObject, $currentIndex + 1, $value);
         } else {
-            $this->updateProperty($objectOrArray, $currentIndex, $value);
+            $this->writeProperty($objectOrArray, $currentIndex, $value);
         }
     }
 
@@ -318,6 +316,9 @@ class PropertyPath implements \IteratorAggregate
                 }
 
                 return $object->$isser();
+            } else if ($reflClass->hasMethod('__get')) {
+                // needed to support magic method __get
+                return $object->$property;
             } else if ($reflClass->hasProperty($property)) {
                 if (!$reflClass->getProperty($property)->isPublic()) {
                     throw new PropertyAccessDeniedException(sprintf('Property "%s" is not public in class "%s". Maybe you should create the method "get%s()" or "is%s()"?', $property, $reflClass->getName(), ucfirst($property), ucfirst($property)));
@@ -341,7 +342,7 @@ class PropertyPath implements \IteratorAggregate
      *                               path
      * @param mixed $value           The value to set
      */
-    protected function updateProperty(&$objectOrArray, $currentIndex, $value)
+    protected function writeProperty(&$objectOrArray, $currentIndex, $value)
     {
         $property = $this->elements[$currentIndex];
 
@@ -361,6 +362,9 @@ class PropertyPath implements \IteratorAggregate
                 }
 
                 $objectOrArray->$setter($value);
+            } else if ($reflClass->hasMethod('__set')) {
+                // needed to support magic method __set
+                $objectOrArray->$property = $value;
             } else if ($reflClass->hasProperty($property)) {
                 if (!$reflClass->getProperty($property)->isPublic()) {
                     throw new PropertyAccessDeniedException(sprintf('Property "%s" is not public in class "%s". Maybe you should create the method "set%s()"?', $property, $reflClass->getName(), ucfirst($property)));
@@ -380,6 +384,6 @@ class PropertyPath implements \IteratorAggregate
 
     protected function camelize($property)
     {
-       return preg_replace(array('/(^|_)+(.)/e', '/\.(.)/e'), array("strtoupper('\\2')", "'_'.strtoupper('\\1')"), $property);
+        return preg_replace(array('/(^|_)+(.)/e', '/\.(.)/e'), array("strtoupper('\\2')", "'_'.strtoupper('\\1')"), $property);
     }
 }

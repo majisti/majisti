@@ -1,7 +1,5 @@
 <?php
 
-namespace Symfony\Component\HttpFoundation;
-
 /*
  * This file is part of the Symfony package.
  *
@@ -11,6 +9,8 @@ namespace Symfony\Component\HttpFoundation;
  * file that was distributed with this source code.
  */
 
+namespace Symfony\Component\HttpFoundation;
+
 /**
  * HeaderBag is a container for HTTP headers.
  *
@@ -19,23 +19,22 @@ namespace Symfony\Component\HttpFoundation;
 class HeaderBag
 {
     protected $headers;
+    protected $cookies;
     protected $cacheControl;
-    protected $type;
 
     /**
      * Constructor.
      *
-     * @param array  $headers An array of HTTP headers
-     * @param string $type       The type (null, request, or response)
+     * @param array $headers An array of HTTP headers
      */
-    public function __construct(array $headers = array(), $type = null)
+    public function __construct(array $headers = array())
     {
-        $this->replace($headers);
-
-        if (null !== $type && !in_array($type, array('request', 'response'))) {
-            throw new \InvalidArgumentException(sprintf('The "%s" type is not supported by the HeaderBag constructor.', $type));
+        $this->cacheControl = array();
+        $this->cookies = array();
+        $this->headers = array();
+        foreach ($headers as $key => $values) {
+            $this->set($key, $values);
         }
-        $this->type = $type;
     }
 
     /**
@@ -65,8 +64,17 @@ class HeaderBag
      */
     public function replace(array $headers = array())
     {
-        $this->cacheControl = null;
         $this->headers = array();
+        $this->add($headers);
+    }
+
+    /**
+     * Adds new headers the current HTTP headers set.
+     *
+     * @param array  $headers An array of HTTP headers
+     */
+    public function add(array $headers)
+    {
         foreach ($headers as $key => $values) {
             $this->set($key, $values);
         }
@@ -75,24 +83,29 @@ class HeaderBag
     /**
      * Returns a header value by name.
      *
-     * @param string  $key   The header name
-     * @param Boolean $first Whether to return the first value or all header values
+     * @param string  $key     The header name
+     * @param mixed   $default The default value
+     * @param Boolean $first   Whether to return the first value or all header values
      *
      * @return string|array The first header value if $first is true, an array of values otherwise
      */
-    public function get($key, $first = true)
+    public function get($key, $default = null, $first = true)
     {
         $key = strtr(strtolower($key), '_', '-');
 
         if (!array_key_exists($key, $this->headers)) {
-            return $first ? null : array();
+            if (null === $default) {
+                return $first ? null : array();
+            }
+
+            return $first ? $default : array($default);
         }
 
         if ($first) {
-            return count($this->headers[$key]) ? $this->headers[$key][0] : '';
-        } else {
-            return $this->headers[$key];
+            return count($this->headers[$key]) ? $this->headers[$key][0] : $default;
         }
+
+        return $this->headers[$key];
     }
 
     /**
@@ -114,6 +127,10 @@ class HeaderBag
             $this->headers[$key] = $values;
         } else {
             $this->headers[$key] = array_merge($this->headers[$key], $values);
+        }
+
+        if ('cache-control' === $key) {
+            $this->cacheControl = $this->parseCacheControl($values[0]);
         }
     }
 
@@ -139,99 +156,84 @@ class HeaderBag
      */
     public function contains($key, $value)
     {
-        return in_array($value, $this->get($key, false));
+        return in_array($value, $this->get($key, null, false));
     }
 
     /**
-     * Deletes a header.
+     * Removes a header.
      *
      * @param string $key The HTTP header name
      */
-    public function delete($key)
+    public function remove($key)
     {
-        unset($this->headers[strtr(strtolower($key), '_', '-')]);
-    }
+        $key = strtr(strtolower($key), '_', '-');
 
-    /**
-     * Returns an instance able to manage the Cache-Control header.
-     *
-     * @return CacheControl A CacheControl instance
-     */
-    public function getCacheControl()
-    {
-        if (null === $this->cacheControl) {
-            $this->cacheControl = new CacheControl($this, $this->get('Cache-Control'), $this->type);
+        unset($this->headers[$key]);
+
+        if ('cache-control' === $key) {
+            $this->cacheControl = array();
         }
-
-        return $this->cacheControl;
     }
 
     /**
      * Sets a cookie.
      *
-     * @param  string $name     The cookie name
-     * @param  string $value    The value of the cookie
-     * @param  string $domain   The domain that the cookie is available
-     * @param  string $expire   The time the cookie expires
-     * @param  string $path     The path on the server in which the cookie will be available on
-     * @param  bool   $secure   Indicates that the cookie should only be transmitted over a secure HTTPS connection from the client
-     * @param  bool   $httponly When TRUE the cookie will not be made accessible to JavaScript, preventing XSS attacks from stealing cookies
-     *
-     * @throws \InvalidArgumentException When the cookie expire parameter is not valid
+     * @param Cookie $cookie
+     * @return void
      */
-    public function setCookie($name, $value, $domain = null, $expires = null, $path = '/', $secure = false, $httponly = true)
+    public function setCookie(Cookie $cookie)
     {
-        // from PHP source code
-        if (preg_match("/[=,; \t\r\n\013\014]/", $name)) {
-            throw new \InvalidArgumentException(sprintf('The cookie name "%s" contains invalid characters.', $name));
+        $this->cookies[$cookie->getName()] = $cookie;
+    }
+
+    /**
+     * Removes a cookie from the array, but does not unset it in the browser
+     *
+     * @param string $name
+     * @return void
+     */
+    public function removeCookie($name)
+    {
+        unset($this->cookies[$name]);
+    }
+
+    /**
+     * Whether the array contains any cookie with this name
+     *
+     * @param string $name
+     * @return Boolean
+     */
+    public function hasCookie($name)
+    {
+        return isset($this->cookies[$name]);
+    }
+
+    /**
+     * Returns a cookie
+     *
+     * @param string $name
+     *
+     * @throws \InvalidArgumentException When the cookie does not exist
+     *
+     * @return Cookie
+     */
+    public function getCookie($name)
+    {
+        if (!$this->hasCookie($name)) {
+            throw new \InvalidArgumentException(sprintf('There is no cookie with name "%s".', $name));
         }
 
-        if (preg_match("/[,; \t\r\n\013\014]/", $value)) {
-            throw new \InvalidArgumentException(sprintf('The cookie value "%s" contains invalid characters.', $name));
-        }
+        return $this->cookies[$name];
+    }
 
-        if (!$name) {
-            throw new \InvalidArgumentException('The cookie name cannot be empty');
-        }
-
-        $cookie = sprintf('%s=%s', $name, urlencode($value));
-
-        if ('request' === $this->type) {
-            return $this->set('Cookie', $cookie);
-        }
-
-        if (null !== $expires) {
-            if (is_numeric($expires)) {
-                $expires = (int) $expires;
-            } elseif ($expires instanceof \DateTime) {
-                $expires = $expires->getTimestamp();
-            } else {
-                $expires = strtotime($expires);
-                if (false === $expires || -1 == $expires) {
-                    throw new \InvalidArgumentException(sprintf('The "expires" cookie parameter is not valid.', $expires));
-                }
-            }
-
-            $cookie .= '; expires='.substr(\DateTime::createFromFormat('U', $expires, new \DateTimeZone('UTC'))->format('D, d-M-Y H:i:s T'), 0, -5);
-        }
-
-        if ($domain) {
-            $cookie .= '; domain='.$domain;
-        }
-
-        if ('/' !== $path) {
-            $cookie .= '; path='.$path;
-        }
-
-        if ($secure) {
-            $cookie .= '; secure';
-        }
-
-        if ($httponly) {
-            $cookie .= '; httponly';
-        }
-
-        $this->set('Set-Cookie', $cookie, false);
+    /**
+     * Returns an array with all cookies
+     *
+     * @return array
+     */
+    public function getCookies()
+    {
+        return $this->cookies;
     }
 
     /**
@@ -255,15 +257,64 @@ class HeaderBag
         return $date;
     }
 
-    /**
-     * Normalizes a HTTP header name.
-     *
-     * @param  string $key The HTTP header name
-     *
-     * @return string The normalized HTTP header name
-     */
-    static public function normalizeHeaderName($key)
+    public function addCacheControlDirective($key, $value = true)
     {
-        return strtr(strtolower($key), '_', '-');
+        $this->cacheControl[$key] = $value;
+
+        $this->set('Cache-Control', $this->getCacheControlHeader());
+    }
+
+    public function hasCacheControlDirective($key)
+    {
+        return array_key_exists($key, $this->cacheControl);
+    }
+
+    public function getCacheControlDirective($key)
+    {
+        return array_key_exists($key, $this->cacheControl) ? $this->cacheControl[$key] : null;
+    }
+
+    public function removeCacheControlDirective($key)
+    {
+        unset($this->cacheControl[$key]);
+
+        $this->set('Cache-Control', $this->getCacheControlHeader());
+    }
+
+    protected function getCacheControlHeader()
+    {
+        $parts = array();
+        ksort($this->cacheControl);
+        foreach ($this->cacheControl as $key => $value) {
+            if (true === $value) {
+                $parts[] = $key;
+            } else {
+                if (preg_match('#[^a-zA-Z0-9._-]#', $value)) {
+                    $value = '"'.$value.'"';
+                }
+
+                $parts[] = "$key=$value";
+            }
+        }
+
+        return implode(', ', $parts);
+    }
+
+    /**
+     * Parses a Cache-Control HTTP header.
+     *
+     * @param string $header The value of the Cache-Control HTTP header
+     *
+     * @return array An array representing the attribute values
+     */
+    protected function parseCacheControl($header)
+    {
+        $cacheControl = array();
+        preg_match_all('#([a-zA-Z][a-zA-Z_-]*)\s*(?:=(?:"([^"]*)"|([^ \t",;]*)))?#', $header, $matches, PREG_SET_ORDER);
+        foreach ($matches as $match) {
+            $cacheControl[strtolower($match[1])] = isset($match[2]) && $match[2] ? $match[2] : (isset($match[3]) ? $match[3] : true);
+        }
+
+        return $cacheControl;
     }
 }

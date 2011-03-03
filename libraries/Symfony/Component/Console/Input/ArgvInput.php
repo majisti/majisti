@@ -1,15 +1,15 @@
 <?php
 
-namespace Symfony\Component\Console\Input;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Console\Input;
 
 /**
  * ArgvInput represents an input coming from the CLI arguments.
@@ -88,7 +88,7 @@ class ArgvInput extends Input
         $name = substr($token, 1);
 
         if (strlen($name) > 1) {
-            if ($this->definition->hasShortcut($name[0]) && $this->definition->getOptionForShortcut($name[0])->acceptParameter()) {
+            if ($this->definition->hasShortcut($name[0]) && $this->definition->getOptionForShortcut($name[0])->acceptValue()) {
                 // an option with a value (with no space)
                 $this->addShortOption($name[0], substr($name, 1));
             } else {
@@ -115,7 +115,7 @@ class ArgvInput extends Input
             }
 
             $option = $this->definition->getOptionForShortcut($name[$i]);
-            if ($option->acceptParameter()) {
+            if ($option->acceptValue()) {
                 $this->addLongOption($option->getName(), $i === $len - 1 ? null : substr($name, $i + 1));
 
                 break;
@@ -150,11 +150,22 @@ class ArgvInput extends Input
      */
     protected function parseArgument($token)
     {
-        if (!$this->definition->hasArgument(count($this->arguments))) {
+        $c = count($this->arguments);
+
+        // if input is expecting another argument, add it
+        if ($this->definition->hasArgument($c)) {
+            $arg = $this->definition->getArgument($c);
+            $this->arguments[$arg->getName()] = $arg->isArray()? array($token) : $token;
+
+        // if last argument isArray(), append token to last argument
+        } elseif ($this->definition->hasArgument($c - 1) && $this->definition->getArgument($c - 1)->isArray()) {
+            $arg = $this->definition->getArgument($c - 1);
+            $this->arguments[$arg->getName()][] = $token;
+
+        // unexpected argument
+        } else {
             throw new \RuntimeException('Too many arguments.');
         }
-
-        $this->arguments[$this->definition->getArgument(count($this->arguments))->getName()] = $token;
     }
 
     /**
@@ -190,7 +201,7 @@ class ArgvInput extends Input
 
         $option = $this->definition->getOption($name);
 
-        if (null === $value && $option->acceptParameter()) {
+        if (null === $value && $option->acceptValue()) {
             // if option accepts an optional or mandatory argument
             // let's see if there is one provided
             $next = array_shift($this->parsed);
@@ -202,11 +213,11 @@ class ArgvInput extends Input
         }
 
         if (null === $value) {
-            if ($option->isParameterRequired()) {
+            if ($option->isValueRequired()) {
                 throw new \RuntimeException(sprintf('The "--%s" option requires a value.', $name));
             }
 
-            $value = $option->isParameterOptional() ? $option->getDefault() : true;
+            $value = $option->isValueOptional() ? $option->getDefault() : true;
         }
 
         $this->options[$name] = $value;
@@ -251,5 +262,37 @@ class ArgvInput extends Input
         }
 
         return false;
+    }
+
+    /**
+     * Returns the value of a raw option (not parsed).
+     *
+     * This method is to be used to introspect the input parameters
+     * before it has been validated. It must be used carefully.
+     *
+     * @param string|array $values The value(s) to look for in the raw parameters (can be an array)
+     * @param mixed $default The default value to return if no result is found
+     * @return mixed The option value
+     */
+    public function getParameterOption($values, $default = false)
+    {
+        if (!is_array($values)) {
+            $values = array($values);
+        }
+
+        $tokens = $this->tokens;
+        while ($token = array_shift($tokens)) {
+            foreach ($values as $value) {
+                if (0 === strpos($token, $value)) {
+                    if (false !== $pos = strpos($token, '=')) {
+                        return substr($token, $pos + 1);
+                    }
+
+                    return array_shift($tokens);
+                }
+            }
+        }
+
+        return $default;
     }
 }

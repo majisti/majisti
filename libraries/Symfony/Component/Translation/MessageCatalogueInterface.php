@@ -1,17 +1,17 @@
 <?php
 
-namespace Symfony\Component\Translation;
-
-use Symfony\Component\Translation\Resource\ResourceInterface;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Translation;
+
+use Symfony\Component\Config\Resource\ResourceInterface;
 
 /**
  * MessageCatalogueInterface.
@@ -43,7 +43,7 @@ interface MessageCatalogueInterface
      *
      * @return array An array of messages
      */
-    function getMessages($domain = null);
+    function all($domain = null);
 
     /**
      * Sets a message translation.
@@ -52,7 +52,7 @@ interface MessageCatalogueInterface
      * @param string $translation The messages translation
      * @param string $domain      The domain name
      */
-    function setMessage($id, $translation, $domain = 'messages');
+    function set($id, $translation, $domain = 'messages');
 
     /**
      * Checks if a message has a translation.
@@ -62,7 +62,7 @@ interface MessageCatalogueInterface
      *
      * @return Boolean true if the message has a translation, false otherwise
      */
-    function hasMessage($id, $domain = 'messages');
+    function has($id, $domain = 'messages');
 
     /**
      * Gets a message translation.
@@ -72,7 +72,7 @@ interface MessageCatalogueInterface
      *
      * @return string The message translation
      */
-    function getMessage($id, $domain = 'messages');
+    function get($id, $domain = 'messages');
 
     /**
      * Sets translations for a given domain.
@@ -80,7 +80,7 @@ interface MessageCatalogueInterface
      * @param string $messages An array of translations
      * @param string $domain   The domain name
      */
-    function setMessages($messages, $domain = 'messages');
+    function replace($messages, $domain = 'messages');
 
     /**
      * Adds translations for a given domain.
@@ -88,14 +88,26 @@ interface MessageCatalogueInterface
      * @param string $messages An array of translations
      * @param string $domain   The domain name
      */
-    function addMessages($messages, $domain = 'messages');
+    function add($messages, $domain = 'messages');
 
     /**
      * Merges translations from the given Catalogue into the current one.
      *
+     * The two catalogues must have the same locale.
+     *
      * @param MessageCatalogueInterface $catalogue A MessageCatalogueInterface instance
      */
     function addCatalogue(MessageCatalogueInterface $catalogue);
+
+    /**
+     * Merges translations from the given Catalogue into the current one
+     * only when the translation does not exist.
+     *
+     * This is used to provide default translations when they do not exist for the current locale.
+     *
+     * @param MessageCatalogueInterface $catalogue A MessageCatalogueInterface instance
+     */
+    function addFallbackCatalogue(MessageCatalogueInterface $catalogue);
 
     /**
      * Returns an array of resources loaded to build this collection.

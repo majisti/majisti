@@ -1,15 +1,15 @@
 <?php
 
-namespace Symfony\Component\Finder;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Finder;
 
 /**
  * Glob matches globbing patterns against text.
@@ -52,36 +52,36 @@ class Glob
         for ($i = 0; $i < $sizeGlob; $i++) {
             $car = $glob[$i];
             if ($firstByte) {
-                if ($strictLeadingDot && $car !== '.') {
+                if ($strictLeadingDot && '.' !== $car) {
                     $regex .= '(?=[^\.])';
                 }
 
                 $firstByte = false;
             }
 
-            if ($car === '/') {
+            if ('/' === $car) {
                 $firstByte = true;
             }
 
-            if ($car === '.' || $car === '(' || $car === ')' || $car === '|' || $car === '+' || $car === '^' || $car === '$') {
+            if ('.' === $car || '(' === $car || ')' === $car || '|' === $car || '+' === $car || '^' === $car || '$' === $car) {
                 $regex .= "\\$car";
-            } elseif ($car === '*') {
+            } elseif ('*' === $car) {
                 $regex .= $escaping ? '\\*' : ($strictWildcardSlash ? '[^/]*' : '.*');
-            } elseif ($car === '?') {
+            } elseif ('?' === $car) {
                 $regex .= $escaping ? '\\?' : ($strictWildcardSlash ? '[^/]' : '.');
-            } elseif ($car === '{') {
+            } elseif ('{' === $car) {
                 $regex .= $escaping ? '\\{' : '(';
                 if (!$escaping) {
                     ++$inCurlies;
                 }
-            } elseif ($car === '}' && $inCurlies) {
+            } elseif ('}' === $car && $inCurlies) {
                 $regex .= $escaping ? '}' : ')';
                 if (!$escaping) {
                     --$inCurlies;
                 }
-            } elseif ($car === ',' && $inCurlies) {
+            } elseif (',' === $car && $inCurlies) {
                 $regex .= $escaping ? ',' : '|';
-            } elseif ($car === '\\') {
+            } elseif ('\\' === $car) {
                 if ($escaping) {
                     $regex .= '\\\\';
                     $escaping = false;

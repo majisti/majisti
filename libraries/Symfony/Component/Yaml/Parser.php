@@ -1,7 +1,5 @@
 <?php
 
-namespace Symfony\Component\Yaml;
-
 /*
  * This file is part of the Symfony package.
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
@@ -9,6 +7,8 @@ namespace Symfony\Component\Yaml;
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Yaml;
 
 /**
  * Parser parses YAML strings to convert them to PHP arrays.
@@ -80,7 +80,7 @@ class Parser
                 } else {
                     if (isset($values['leadspaces'])
                         && ' ' == $values['leadspaces']
-                        && preg_match('#^(?P<key>'.Inline::REGEX_QUOTED_STRING.'|[^ \'"\{].*?) *\:(\s+(?P<value>.+?))?\s*$#u', $values['value'], $matches)
+                        && preg_match('#^(?P<key>'.Inline::REGEX_QUOTED_STRING.'|[^ \'"\{\[].*?) *\:(\s+(?P<value>.+?))?\s*$#u', $values['value'], $matches)
                     ) {
                         // this is a compact notation element, add to next block and parse
                         $c = $this->getRealCurrentLineNb();
@@ -97,7 +97,7 @@ class Parser
                         $data[] = $this->parseValue($values['value']);
                     }
                 }
-            } else if (preg_match('#^(?P<key>'.Inline::REGEX_QUOTED_STRING.'|[^ \'"].*?) *\:(\s+(?P<value>.+?))?\s*$#u', $this->currentLine, $values)) {
+            } else if (preg_match('#^(?P<key>'.Inline::REGEX_QUOTED_STRING.'|[^ \'"\[\{].*?) *\:(\s+(?P<value>.+?))?\s*$#u', $this->currentLine, $values)) {
                 $key = Inline::parseScalar($values['key']);
 
                 if ('<<' === $key) {
@@ -130,7 +130,7 @@ class Parser
                             }
                         } else {
                             // Associative array, merge
-                            $merged = array_merge($merge, $parsed);
+                            $merged = array_merge($merged, $parsed);
                         }
 
                         $isProcessed = $merged;
@@ -143,9 +143,8 @@ class Parser
                 if ($isProcessed) {
                     // Merge keys
                     $data = $isProcessed;
-                }
                 // hash
-                else if (!isset($values['value']) || '' == trim($values['value'], ' ') || 0 === strpos(ltrim($values['value'], ' '), '#')) {
+                } else if (!isset($values['value']) || '' == trim($values['value'], ' ') || 0 === strpos(ltrim($values['value'], ' '), '#')) {
                     // if next line is less indented or equal, then it means that the current value is null
                     if ($this->isNextLineIndented()) {
                         $data[$key] = null;
@@ -168,7 +167,7 @@ class Parser
                     $value = Inline::load($this->lines[0]);
                     if (is_array($value)) {
                         $first = reset($value);
-                        if ('*' === substr($first, 0, 1)) {
+                        if (is_string($first) && '*' === substr($first, 0, 1)) {
                             $data = array();
                             foreach ($value as $alias) {
                                 $data[] = $this->refs[substr($alias, 1)];
@@ -294,6 +293,8 @@ class Parser
 
     /**
      * Moves the parser to the next line.
+     *
+     * @return Boolean
      */
     protected function moveToNextLine()
     {
@@ -321,7 +322,7 @@ class Parser
      *
      * @return mixed  A PHP value
      *
-     * @throws ParserException When reference doesn't not exist
+     * @throws ParserException When reference does not exist
      */
     protected function parseValue($value)
     {
@@ -342,9 +343,9 @@ class Parser
             $modifiers = isset($matches['modifiers']) ? $matches['modifiers'] : '';
 
             return $this->parseFoldedScalar($matches['separator'], preg_replace('#\d+#', '', $modifiers), intval(abs($modifiers)));
-        } else {
-            return Inline::load($value);
         }
+
+        return Inline::load($value);
     }
 
     /**

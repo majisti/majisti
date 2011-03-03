@@ -42,7 +42,7 @@ class AnnotationReader
      * @var string
      * @static
      */
-    private static $CACHE_SALT = '@<Annot>';
+    private static $CACHE_SALT = '@[Annot]';
     
     /**
      * Annotations Parser
@@ -68,16 +68,6 @@ class AnnotationReader
     {
         $this->parser = $parser ?: new Parser;
         $this->cache = $cache ?: new \Doctrine\Common\Cache\ArrayCache;
-    }
-
-    /**
-     * Set whether or not to try and autoload annotation classes.
-     *
-     * @param boolean $bool
-     */
-    public function setAutoloadAnnotationClasses($bool)
-    {
-        $this->parser->setAutoloadAnnotationClasses($bool);
     }
 
     /**

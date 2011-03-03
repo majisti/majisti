@@ -1,21 +1,23 @@
 <?php
 
-namespace Symfony\Component\Routing\Loader;
-
-use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\Route;
-use Doctrine\Common\Annotations\AnnotationReader;
-use Symfony\Component\Routing\Annotation\Route as RouteAnnotation;
-use Symfony\Component\Routing\Loader\LoaderResolver;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Routing\Loader;
+
+use Doctrine\Common\Annotations\AnnotationReader;
+use Symfony\Component\Routing\Annotation\Route as RouteAnnotation;
+use Symfony\Component\Config\Resource\FileResource;
+use Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\Config\Loader\LoaderResolver;
 
 /**
  * AnnotationClassLoader loads routing information from a PHP class and its methods.
@@ -44,7 +46,7 @@ use Symfony\Component\Routing\Loader\LoaderResolver;
  *         }
  *
  *         /**
- *          * @Route("/:id", name="blog_post", requirements = {"id" = "\d+"})
+ *          * @Route("/{id}", name="blog_post", requirements = {"id" = "\d+"})
  *          * /
  *         public function show()
  *         {
@@ -56,9 +58,12 @@ use Symfony\Component\Routing\Loader\LoaderResolver;
 abstract class AnnotationClassLoader implements LoaderInterface
 {
     protected $reader;
+    protected $annotationClass = 'Symfony\\Component\\Routing\\Annotation\\Route';
 
     /**
      * Constructor.
+     *
+     * @param AnnotationReader $reader
      */
     public function __construct(AnnotationReader $reader)
     {
@@ -66,22 +71,30 @@ abstract class AnnotationClassLoader implements LoaderInterface
     }
 
     /**
+     * Sets the annotation class to read route properties from.
+     *
+     * @param string $annotationClass A fully-qualified class name
+     */
+    public function setAnnotationClass($annotationClass)
+    {
+        $this->annotationClass = $annotationClass;
+    }
+
+    /**
      * Loads from annotations from a class.
      *
-     * @param  string $class A class name
+     * @param string $class A class name
+     * @param string $type  The resource type
      *
      * @return RouteCollection A RouteCollection instance
      *
      * @throws \InvalidArgumentException When route can't be parsed
      */
-    public function load($class)
+    public function load($class, $type = null)
     {
         if (!class_exists($class)) {
             throw new \InvalidArgumentException(sprintf('Class "%s" does not exist.', $class));
         }
-
-        $class = new \ReflectionClass($class);
-        $annotClass = 'Symfony\\Component\\Routing\\Annotation\\Route';
 
         $globals = array(
             'pattern'      => '',
@@ -90,7 +103,8 @@ abstract class AnnotationClassLoader implements LoaderInterface
             'defaults'     => array(),
         );
 
-        if ($annot = $this->reader->getClassAnnotation($class, $annotClass)) {
+        $class = new \ReflectionClass($class);
+        if ($annot = $this->reader->getClassAnnotation($class, $this->annotationClass)) {
             if (null !== $annot->getPattern()) {
                 $globals['pattern'] = $annot->getPattern();
             }
@@ -108,41 +122,40 @@ abstract class AnnotationClassLoader implements LoaderInterface
             }
         }
 
-        $this->reader->setDefaultAnnotationNamespace('Symfony\\Component\\Routing\\Annotation\\');
         $collection = new RouteCollection();
+        $collection->addResource(new FileResource($class->getFileName()));
         foreach ($class->getMethods() as $method) {
-            if ($annot = $this->reader->getMethodAnnotation($method, $annotClass)) {
+            if ($annot = $this->reader->getMethodAnnotation($method, $this->annotationClass)) {
                 if (null === $annot->getName()) {
                     $annot->setName($this->getDefaultRouteName($class, $method));
                 }
 
-                $defaults = array_merge($globals['defaults'], $annot->getDefaults(), $this->getRouteDefaults($class, $method, $annot));
+                $defaults = array_merge($globals['defaults'], $annot->getDefaults());
                 $requirements = array_merge($globals['requirements'], $annot->getRequirements());
                 $options = array_merge($globals['options'], $annot->getOptions());
 
                 $route = new Route($globals['pattern'].$annot->getPattern(), $defaults, $requirements, $options);
-                $collection->addRoute($annot->getName(), $route);
+
+                $this->configureRoute($route, $class, $method);
+
+                $collection->add($annot->getName(), $route);
             }
         }
 
         return $collection;
     }
 
-    protected function getDefaultRouteName(\ReflectionClass $class, \ReflectionMethod $method)
-    {
-        return strtolower(str_replace('\\', '_', $class->getName()).'_'.$method->getName());
-    }
-
     /**
      * Returns true if this class supports the given resource.
      *
-     * @param  mixed $resource A resource
+     * @param mixed  $resource A resource
+     * @param string $type     The resource type
      *
-     * @return Boolean true if this class supports the given resource, false otherwise
+     * @return Boolean True if this class supports the given resource, false otherwise
      */
-    public function supports($resource)
+    public function supports($resource, $type = null)
     {
-        return is_string($resource) && class_exists($resource);
+        return is_string($resource) && preg_match('/^(?:\\\\?[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)+$/', $resource) && (!$type || 'annotation' === $type);
     }
 
     /**
@@ -163,5 +176,18 @@ abstract class AnnotationClassLoader implements LoaderInterface
     {
     }
 
-    abstract protected function getRouteDefaults(\ReflectionClass $class, \ReflectionMethod $method, RouteAnnotation $annot);
+    /**
+     * Gets the default route name for a class method.
+     *
+     * @param \ReflectionClass $class
+     * @param \ReflectionMethod $method
+     *
+     * @return string
+     */
+    protected function getDefaultRouteName(\ReflectionClass $class, \ReflectionMethod $method)
+    {
+        return strtolower(str_replace('\\', '_', $class->getName()).'_'.$method->getName());
+    }
+
+    abstract protected function configureRoute(Route $route, \ReflectionClass $class, \ReflectionMethod $method);
 }

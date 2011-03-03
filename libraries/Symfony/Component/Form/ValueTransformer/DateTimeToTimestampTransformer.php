@@ -1,17 +1,18 @@
 <?php
 
-namespace Symfony\Component\Form\ValueTransformer;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
-use \Symfony\Component\Form\ValueTransformer\ValueTransformerException;
+namespace Symfony\Component\Form\ValueTransformer;
+
+use Symfony\Component\Form\Configurable;
+use Symfony\Component\Form\Exception\UnexpectedTypeException;
 
 /**
  * Transforms between a timestamp and a DateTime object
@@ -19,15 +20,17 @@ use \Symfony\Component\Form\ValueTransformer\ValueTransformerException;
  * @author Bernhard Schussek <bernhard.schussek@symfony-project.com>
  * @author Florian Eckerstorfer <florian@eckerstorfer.org>
  */
-class DateTimeToTimestampTransformer extends BaseValueTransformer
+class DateTimeToTimestampTransformer extends Configurable implements ValueTransformerInterface
 {
     /**
      * {@inheritDoc}
      */
     protected function configure()
     {
-        $this->addOption('input_timezone', 'UTC');
-        $this->addOption('output_timezone', 'UTC');
+        $this->addOption('input_timezone', date_default_timezone_get());
+        $this->addOption('output_timezone', date_default_timezone_get());
+
+        parent::configure();
     }
 
     /**
@@ -38,12 +41,12 @@ class DateTimeToTimestampTransformer extends BaseValueTransformer
      */
     public function transform($value)
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 
         if (!$value instanceof \DateTime) {
-            throw new \InvalidArgumentException('Expected value of type \DateTime');
+            throw new UnexpectedTypeException($value, '\DateTime');
         }
 
         $value->setTimezone(new \DateTimeZone($this->getOption('output_timezone')));
@@ -57,10 +60,14 @@ class DateTimeToTimestampTransformer extends BaseValueTransformer
      * @param  string $value  A value as produced by PHP's date() function
      * @return DateTime       A DateTime object
      */
-    public function reverseTransform($value, $originalValue)
+    public function reverseTransform($value)
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
+        }
+
+        if (!is_numeric($value)) {
+            throw new UnexpectedTypeException($value, 'numeric');
         }
 
         $outputTimezone = $this->getOption('output_timezone');

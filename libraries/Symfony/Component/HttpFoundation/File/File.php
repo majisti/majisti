@@ -1,18 +1,19 @@
 <?php
 
-namespace Symfony\Component\HttpFoundation\File;
-
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
-use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser;
-
 /*
- * This file is part of the symfony package.
+ * This file is part of the Symfony package.
+ * 
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\HttpFoundation\File;
+
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
+use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser;
 
 /**
  * A file in the file system
@@ -84,7 +85,7 @@ class File
         'application/vnd.curl' => 'curl',
         'application/vnd.data-vision.rdz' => 'rdz',
         'application/vnd.dreamfactory' => 'dfac',
-        'application/vnd.fsc.weblauch' => 'fsc',
+        'application/vnd.fsc.weblaunch' => 'fsc',
         'application/vnd.genomatix.tuxedo' => 'txd',
         'application/vnd.hbci' => 'hbci',
         'application/vnd.hhe.lesson-player' => 'les',
@@ -439,10 +440,40 @@ class File
     );
 
     /**
+     * Stores the absolute path to the document root directory
+     * @var string
+     */
+    static protected $documentRoot;
+
+    /**
      * The absolute path to the file without dots
      * @var string
      */
     protected $path;
+
+    /**
+     * Sets the path t the document root directory
+     *
+     * @param string $documentRoot
+     */
+    static public function setDocumentRoot($documentRoot)
+    {
+        if (!is_dir($documentRoot)) {
+            throw new \LogicException($documentRoot . ' is no directory');
+        }
+
+        self::$documentRoot = realpath($documentRoot);
+    }
+
+    /**
+     * Returns the path to the document root directory
+     *
+     * @return string
+     */
+    static public function getDocumentRoot()
+    {
+        return self::$documentRoot;
+    }
 
     /**
      * Constructs a new file from the given path.
@@ -486,13 +517,11 @@ class File
      */
     public function getExtension()
     {
-        $name = $this->getName();
-
-        if (false !== ($pos = strrpos($name, '.'))) {
-            return substr($name, $pos);
-        } else {
-            return '';
+        if ($ext = pathinfo($this->getName(), \PATHINFO_EXTENSION)) {
+            return '.' . $ext;
         }
+
+        return '';
     }
 
     /**
@@ -508,9 +537,9 @@ class File
 
         if (isset(self::$defaultExtensions[$type])) {
             return '.' . self::$defaultExtensions[$type];
-        } else {
-            return $this->getExtension();
         }
+
+        return $this->getExtension();
     }
 
     /**
@@ -531,6 +560,26 @@ class File
     public function getPath()
     {
         return $this->path;
+    }
+
+    /**
+     * Returns the path relative to the document root
+     *
+     * You can set the document root using the static method setDocumentRoot().
+     * If the file is outside of the document root, this method returns an
+     * empty string.
+     *
+     * @return string  The relative file path
+     */
+    public function getWebPath()
+    {
+        $root = self::$documentRoot;
+
+        if (strpos($this->path, $root) === false) {
+            return '';
+        }
+
+        return str_replace(array($root, DIRECTORY_SEPARATOR), array('', '/'), $this->path);
     }
 
     /**
@@ -556,7 +605,7 @@ class File
      */
     public function size()
     {
-        if (false === ($size = filesize($this->getPath()))) {
+        if (false === ($size = @filesize($this->getPath()))) {
             throw new FileException(sprintf('Could not read file size of %s', $this->getPath()));
         }
 
@@ -564,16 +613,45 @@ class File
     }
 
     /**
-     * Moves the file to a new location.
+     * Moves the file to a new directory and gives it a new filename
      *
-     * @param string $newPath
+     * @param  string $directory   The new directory
+     * @param  string $filename    The new file name
+     * @throws FileException       When the file could not be moved
      */
-    public function move($newPath)
+    protected function doMove($directory, $filename)
     {
-        if (!rename($this->getPath(), $newPath)) {
+        $newPath = $directory . DIRECTORY_SEPARATOR . $filename;
+
+        if (!@rename($this->getPath(), $newPath)) {
             throw new FileException(sprintf('Could not move file %s to %s', $this->getPath(), $newPath));
         }
 
         $this->path = realpath($newPath);
+    }
+
+    /**
+     * Moves the file to a new location.
+     *
+     * @param string $directory   The destination folder
+     * @param string $name        The new file name
+     */
+    public function move($directory, $name = null)
+    {
+        $this->doMove($directory, $this->getName());
+
+        if (null !== $name) {
+            $this->rename($name);
+        }
+    }
+
+    /**
+     * Renames the file
+     *
+     * @param string $name  The new file name
+     */
+    public function rename($name)
+    {
+        $this->doMove($this->getDirectory(), $name);
     }
 }

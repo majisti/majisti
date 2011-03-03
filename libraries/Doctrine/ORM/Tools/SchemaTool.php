@@ -93,6 +93,22 @@ class SchemaTool
     }
 
     /**
+     * Some instances of ClassMetadata don't need to be processed in the SchemaTool context. This method detects them.
+     * 
+     * @param ClassMetadata $class
+     * @param array $processedClasses
+     * @return bool
+     */
+    private function processingNotRequired($class, array $processedClasses)
+    {
+        return (
+            isset($processedClasses[$class->name]) ||
+            $class->isMappedSuperclass ||
+            ($class->isInheritanceTypeSingleTable() && $class->name != $class->rootEntityName)
+        );
+    }
+
+    /**
      * From a given set of metadata classes this method creates a Schema instance.
      *
      * @param array $classes
@@ -110,18 +126,11 @@ class SchemaTool
         $evm = $this->_em->getEventManager();
 
         foreach ($classes as $class) {
-            if (isset($processedClasses[$class->name]) || $class->isMappedSuperclass) {
+            if ($this->processingNotRequired($class, $processedClasses)) {
                 continue;
             }
 
             $table = $schema->createTable($class->getQuotedTableName($this->_platform));
-
-            // TODO: Remove
-            /**if ($class->isIdGeneratorIdentity()) {
-                $table->setIdGeneratorType(\Doctrine\DBAL\Schema\Table::ID_IDENTITY);
-            } else if ($class->isIdGeneratorSequence()) {
-                $table->setIdGeneratorType(\Doctrine\DBAL\Schema\Table::ID_SEQUENCE);
-            }*/
 
             $columns = array(); // table columns
 
@@ -169,16 +178,14 @@ class SchemaTool
                     $idMapping = $class->fieldMappings[$class->identifier[0]];
                     $this->_gatherColumn($class, $idMapping, $table);
                     $columnName = $class->getQuotedColumnName($class->identifier[0], $this->_platform);
+                    // TODO: This seems rather hackish, can we optimize it?
+                    $table->getColumn($columnName)->setAutoincrement(false);
 
                     $pkColumns[] = $columnName;
-                    // TODO: REMOVE
-                    /*if ($table->isIdGeneratorIdentity()) {
-                       $table->setIdGeneratorType(\Doctrine\DBAL\Schema\Table::ID_NONE);
-                    }*/
 
                     // Add a FK constraint on the ID column
                     $table->addUnnamedForeignKeyConstraint(
-                        $this->_em->getClassMetadata($class->rootEntityName)->getQuotedTableName($this->_platform),
+                        $this->_em->getClassMetadata($class->rootEntityName)->getTableName(),
                         array($columnName), array($columnName), array('onDelete' => 'CASCADE')
                     );
                 }
@@ -190,6 +197,22 @@ class SchemaTool
             } else {
                 $this->_gatherColumns($class, $table);
                 $this->_gatherRelationsSql($class, $table, $schema);
+            }
+
+            $pkColumns = array();
+            foreach ($class->identifier AS $identifierField) {
+                if (isset($class->fieldMappings[$identifierField])) {
+                    $pkColumns[] = $class->getQuotedColumnName($identifierField, $this->_platform);
+                } else if (isset($class->associationMappings[$identifierField])) {
+                    /* @var $assoc \Doctrine\ORM\Mapping\OneToOne */
+                    $assoc = $class->associationMappings[$identifierField];
+                    foreach ($assoc['joinColumns'] AS $joinColumn) {
+                        $pkColumns[] = $joinColumn['name'];
+                    }
+                }
+            }
+            if (!$table->hasIndex('primary')) {
+                $table->setPrimaryKey($pkColumns);
             }
 
             if (isset($class->table['indexes'])) {
@@ -268,16 +291,21 @@ class SchemaTool
         $pkColumns = array();
 
         foreach ($class->fieldMappings as $fieldName => $mapping) {
+            if ($class->isInheritanceTypeSingleTable() && isset($mapping['inherited'])) {
+                continue;
+            }
+
             $column = $this->_gatherColumn($class, $mapping, $table);
 
             if ($class->isIdentifier($mapping['fieldName'])) {
                 $pkColumns[] = $class->getQuotedColumnName($mapping['fieldName'], $this->_platform);
             }
         }
+
         // For now, this is a hack required for single table inheritence, since this method is called
         // twice by single table inheritence relations
         if(!$table->hasIndex('primary')) {
-            $table->setPrimaryKey($pkColumns);
+            //$table->setPrimaryKey($pkColumns);
         }
 
         return $columns;
@@ -328,6 +356,9 @@ class SchemaTool
 
         if ($class->isIdGeneratorIdentity() && $class->getIdentifierFieldNames() == array($mapping['fieldName'])) {
             $options['autoincrement'] = true;
+        }
+        if ($class->isInheritanceTypeJoined() && $class->name != $class->rootEntityName) {
+            $options['autoincrement'] = false;
         }
 
         if ($table->hasColumn($columnName)) {
@@ -396,12 +427,46 @@ class SchemaTool
     }
 
     /**
+     * Get the class metadata that is responsible for the definition of the referenced column name.
+     *
+     * Previously this was a simple task, but with DDC-117 this problem is actually recursive. If its
+     * not a simple field, go through all identifier field names that are associations recursivly and
+     * find that referenced column name.
+     *
+     * TODO: Is there any way to make this code more pleasing?
+     *
+     * @param ClassMetadata $class
+     * @param string $referencedColumnName
+     * @return array(ClassMetadata, referencedFieldName)
+     */
+    private function getDefiningClass($class, $referencedColumnName)
+    {
+        $referencedFieldName = $class->getFieldName($referencedColumnName);
+
+        if ($class->hasField($referencedFieldName)) {
+            return array($class, $referencedFieldName);
+        } else if (in_array($referencedColumnName, $class->getIdentifierColumnNames())) {
+            // it seems to be an entity as foreign key
+            foreach ($class->getIdentifierFieldNames() AS $fieldName) {
+                if ($class->hasAssociation($fieldName) && $class->getSingleAssociationJoinColumnName($fieldName) == $referencedColumnName) {
+                    return $this->getDefiningClass(
+                        $this->_em->getClassMetadata($class->associationMappings[$fieldName]['targetEntity']),
+                        $class->getSingleAssociationReferencedJoinColumnName($fieldName)
+                    );
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Gather columns and fk constraints that are required for one part of relationship.
      *
      * @param array $joinColumns
      * @param \Doctrine\DBAL\Schema\Table $theJoinTable
      * @param ClassMetadata $class
-     * @param \Doctrine\ORM\Mapping\AssociationMapping $mapping
+     * @param array $mapping
      * @param array $primaryKeyColumns
      * @param array $uniqueConstraints
      */
@@ -410,12 +475,13 @@ class SchemaTool
         $localColumns = array();
         $foreignColumns = array();
         $fkOptions = array();
+        $foreignTableName = $class->getTableName();
 
         foreach ($joinColumns as $joinColumn) {
             $columnName = $joinColumn['name'];
-            $referencedFieldName = $class->getFieldName($joinColumn['referencedColumnName']);
+            list($definingClass, $referencedFieldName) = $this->getDefiningClass($class, $joinColumn['referencedColumnName']);
 
-            if ( ! $class->hasField($referencedFieldName)) {
+            if (!$definingClass) {
                 throw new \Doctrine\ORM\ORMException(
                     "Column name `".$joinColumn['referencedColumnName']."` referenced for relation from ".
                     $mapping['sourceEntity'] . " towards ". $mapping['targetEntity'] . " does not exist."
@@ -431,7 +497,7 @@ class SchemaTool
                 // It might exist already if the foreign key is mapped into a regular
                 // property as well.
 
-                $fieldMapping = $class->getFieldMapping($referencedFieldName);
+                $fieldMapping = $definingClass->getFieldMapping($referencedFieldName);
 
                 $columnDef = null;
                 if (isset($joinColumn['columnDefinition'])) {
@@ -443,16 +509,14 @@ class SchemaTool
                 if (isset($joinColumn['nullable'])) {
                     $columnOptions['notnull'] = !$joinColumn['nullable'];
                 }
-                if ($fieldMapping['type'] == "string") {
+                if ($fieldMapping['type'] == "string" && isset($fieldMapping['length'])) {
                     $columnOptions['length'] = $fieldMapping['length'];
                 } else if ($fieldMapping['type'] == "decimal") {
                     $columnOptions['scale'] = $fieldMapping['scale'];
                     $columnOptions['precision'] = $fieldMapping['precision'];
                 }
 
-                $theJoinTable->addColumn(
-                    $columnName, $class->getTypeOfColumn($joinColumn['referencedColumnName']), $columnOptions
-                );
+                $theJoinTable->addColumn($columnName, $fieldMapping['type'], $columnOptions);
             }
 
             if (isset($joinColumn['unique']) && $joinColumn['unique'] == true) {
@@ -469,7 +533,7 @@ class SchemaTool
         }
 
         $theJoinTable->addUnnamedForeignKeyConstraint(
-            $class->getQuotedTableName($this->_platform), $localColumns, $foreignColumns, $fkOptions
+            $foreignTableName, $localColumns, $foreignColumns, $fkOptions
         );
     }
 
@@ -484,7 +548,26 @@ class SchemaTool
      */
     public function dropSchema(array $classes)
     {
-        $dropSchemaSql = $this->getDropSchemaSql($classes);
+        $dropSchemaSql = $this->getDropSchemaSQL($classes);
+        $conn = $this->_em->getConnection();
+
+        foreach ($dropSchemaSql as $sql) {
+            try {
+                $conn->executeQuery($sql);
+            } catch(\Exception $e) {
+                
+            }
+        }
+    }
+
+    /**
+     * Drops all elements in the database of the current connection.
+     *
+     * @return void
+     */
+    public function dropDatabase()
+    {
+        $dropSchemaSql = $this->getDropDatabaseSQL();
         $conn = $this->_em->getConnection();
 
         foreach ($dropSchemaSql as $sql) {
@@ -493,12 +576,11 @@ class SchemaTool
     }
 
     /**
-     * Gets the SQL needed to drop the database schema for the given classes.
+     * Gets the SQL needed to drop the database schema for the connections database.
      *
-     * @param array $classes
      * @return array
      */
-    public function getDropSchemaSql(array $classes)
+    public function getDropDatabaseSQL()
     {
         $sm = $this->_em->getConnection()->getSchemaManager();
         $schema = $sm->createSchema();
@@ -510,39 +592,31 @@ class SchemaTool
     }
 
     /**
-     * Drop all tables of the database connection.
      *
+     * @param array $classes
      * @return array
      */
-    private function _getDropSchemaTablesDatabaseMode($classes)
+    public function getDropSchemaSQL(array $classes)
     {
-        $conn = $this->_em->getConnection();
+        $sm = $this->_em->getConnection()->getSchemaManager();
+        
+        $sql = array();
+        $orderedTables = array();
 
-        $sm = $conn->getSchemaManager();
-        /* @var $sm \Doctrine\DBAL\Schema\AbstractSchemaManager */
-
-        $allTables = $sm->listTables();
-
-        $orderedTables = $this->_getDropSchemaTablesMetadataMode($classes);
-        foreach($allTables AS $tableName) {
-            if(!in_array($tableName, $orderedTables)) {
-                $orderedTables[] = $tableName;
+        foreach ($classes AS $class) {
+            if ($class->isIdGeneratorSequence() && !$class->isMappedSuperclass && $class->name == $class->rootEntityName && $this->_platform->supportsSequences()) {
+                $sql[] = $this->_platform->getDropSequenceSQL($class->sequenceGeneratorDefinition['sequenceName']);
             }
         }
-
-        return $orderedTables;
-    }
-
-    private function _getDropSchemaTablesMetadataMode(array $classes)
-    {
-        $orderedTables = array();
 
         $commitOrder = $this->_getCommitOrder($classes);
         $associationTables = $this->_getAssociationTables($commitOrder);
 
         // Drop association tables first
         foreach ($associationTables as $associationTable) {
-            $orderedTables[] = $associationTable;
+            if (!in_array($associationTable, $orderedTables)) {
+                $orderedTables[] = $associationTable;
+            }
         }
 
         // Drop tables in reverse commit order
@@ -554,17 +628,27 @@ class SchemaTool
                 continue;
             }
 
-            $orderedTables[] = $class->getTableName();
+            if (!in_array($class->getTableName(), $orderedTables)) {
+                $orderedTables[] = $class->getTableName();
+            }
         }
 
-        //TODO: Drop other schema elements, like sequences etc.
+        $dropTablesSql = array();
+        foreach ($orderedTables AS $tableName) {
+            /* @var $sm \Doctrine\DBAL\Schema\AbstractSchemaManager */
+            $foreignKeys = $sm->listTableForeignKeys($tableName);
+            foreach ($foreignKeys AS $foreignKey) {
+                $sql[] = $this->_platform->getDropForeignKeySQL($foreignKey, $tableName);
+            }
+            $dropTablesSql[] = $this->_platform->getDropTableSQL($tableName);
+        }
 
-        return $orderedTables;
+        return array_merge($sql, $dropTablesSql);
     }
 
     /**
      * Updates the database schema of the given classes by comparing the ClassMetadata
-     * instances to the current database schema that is inspected.
+     * ins$tableNametances to the current database schema that is inspected.
      *
      * @param array $classes
      * @return void
@@ -612,7 +696,7 @@ class SchemaTool
             $calc->addClass($class);
 
             foreach ($class->associationMappings as $assoc) {
-                if ($assoc->isOwningSide) {
+                if ($assoc['isOwningSide']) {
                     $targetClass = $this->_em->getClassMetadata($assoc['targetEntity']);
 
                     if ( ! $calc->hasClass($targetClass->name)) {
@@ -634,8 +718,8 @@ class SchemaTool
 
         foreach ($classes as $class) {
             foreach ($class->associationMappings as $assoc) {
-                if ($assoc->isOwningSide && $assoc['type'] == ClassMetadata::MANY_TO_MANY) {
-                    $associationTables[] = $assoc->joinTable['name'];
+                if ($assoc['isOwningSide'] && $assoc['type'] == ClassMetadata::MANY_TO_MANY) {
+                    $associationTables[] = $assoc['joinTable']['name'];
                 }
             }
         }

@@ -1,20 +1,20 @@
 <?php
 
-namespace Symfony\Component\HttpKernel\DataCollector;
-
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Debug\EventDispatcherTraceableInterface;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\HttpKernel\DataCollector;
+
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Debug\EventDispatcherTraceableInterface;
 
 /**
  * EventDataCollector.
@@ -25,7 +25,7 @@ class EventDataCollector extends DataCollector
 {
     protected $dispatcher;
 
-    public function setEventDispatcher(EventDispatcher $dispatcher)
+    public function setEventDispatcher(EventDispatcherInterface $dispatcher)
     {
         if ($dispatcher instanceof EventDispatcherTraceableInterface) {
             $this->dispatcher = $dispatcher;
@@ -38,33 +38,33 @@ class EventDataCollector extends DataCollector
     public function collect(Request $request, Response $response, \Exception $exception = null)
     {
         $this->data = array(
-            'called_events'     => null !== $this->dispatcher ? $this->dispatcher->getCalledEvents() : array(),
-            'not_called_events' => null !== $this->dispatcher ? $this->dispatcher->getNotCalledEvents() : array(),
+            'called_listeners'     => null !== $this->dispatcher ? $this->dispatcher->getCalledListeners() : array(),
+            'not_called_listeners' => null !== $this->dispatcher ? $this->dispatcher->getNotCalledListeners() : array(),
         );
     }
 
     /**
-     * Gets the called events.
+     * Gets the called listeners.
      *
-     * @return array An array of called events
+     * @return array An array of called listeners
      *
      * @see EventDispatcherTraceableInterface
      */
-    public function getCalledEvents()
+    public function getCalledListeners()
     {
-        return $this->data['called_events'];
+        return $this->data['called_listeners'];
     }
 
     /**
-     * Gets the not called events.
+     * Gets the not called listeners.
      *
-     * @return array An array of not called events
+     * @return array An array of not called listeners
      *
      * @see EventDispatcherTraceableInterface
      */
-    public function getNotCalledEvents()
+    public function getNotCalledListeners()
     {
-        return $this->data['not_called_events'];
+        return $this->data['not_called_listeners'];
     }
 
     /**

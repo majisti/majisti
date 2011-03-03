@@ -1,18 +1,15 @@
 <?php
 
-namespace Symfony\Component\HttpKernel\Exception;
-
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\HttpKernel\Exception;
 
 /**
  * FlattenException wraps a PHP Exception to be able to serialize it.
@@ -28,7 +25,6 @@ class FlattenException
     protected $previous;
     protected $trace;
     protected $class;
-    protected $status;
 
     static public function create(\Exception $exception)
     {
@@ -40,24 +36,22 @@ class FlattenException
         if ($exception->getPrevious()) {
             $e->setPrevious(static::create($exception->getPrevious()));
         }
-        $e->setStatusCode($exception instanceof HttpException ? $exception->getCode() : 500);
 
         return $e;
     }
 
-    public function getStatusCode()
+    public function toArray()
     {
-        return $this->status;
-    }
+        $exceptions = array();
+        foreach (array_merge(array($this), $this->getPreviouses()) as $exception) {
+            $exceptions[] = array(
+                'message'  => $exception->getMessage(),
+                'class'    => $exception->getClass(),
+                'trace'    => $exception->getTrace(),
+            );
+        }
 
-    public function setStatusCode($status)
-    {
-        $this->status = $status;
-    }
-
-    public function getStatusText()
-    {
-        return Response::$statusTexts[$this->getStatusCode()];
+        return $exceptions;
     }
 
     public function getClass()

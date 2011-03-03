@@ -59,7 +59,7 @@ final class PersistentCollection implements Collection
      * The association mapping the collection belongs to.
      * This is currently either a OneToManyMapping or a ManyToManyMapping.
      *
-     * @var Doctrine\ORM\Mapping\AssociationMapping
+     * @var array
      */
     private $association;
 
@@ -196,7 +196,7 @@ final class PersistentCollection implements Collection
      * Initializes the collection by loading its contents from the database
      * if the collection is not yet initialized.
      */
-    private function initialize()
+    public function initialize()
     {
         if ( ! $this->initialized && $this->association) {
             if ($this->isDirty) {
@@ -404,22 +404,12 @@ final class PersistentCollection implements Collection
      */
     public function contains($element)
     {
-        /* DRAFT
-        if ($this->initialized) {
-            return $this->coll->contains($element);
-        } else {
-            if ($element is MANAGED) {
-                if ($this->coll->contains($element)) {
-                    return true;
-                }
-                $exists = check db for existence;
-                if ($exists) {
-                    $this->coll->add($element);
-                }
-                return $exists;
-            }
-            return false;
-        }*/
+        if (!$this->initialized && $this->association['fetch'] == Mapping\ClassMetadataInfo::FETCH_EXTRA_LAZY) {
+            return $this->coll->contains($element) ||
+                   $this->em->getUnitOfWork()
+                            ->getCollectionPersister($this->association)
+                            ->contains($this, $element);
+        }
         
         $this->initialize();
         return $this->coll->contains($element);
@@ -475,6 +465,12 @@ final class PersistentCollection implements Collection
      */
     public function count()
     {
+        if (!$this->initialized && $this->association['fetch'] == Mapping\ClassMetadataInfo::FETCH_EXTRA_LAZY) {
+            return $this->em->getUnitOfWork()
+                        ->getCollectionPersister($this->association)
+                        ->count($this) + $this->coll->count();
+        }
+
         $this->initialize();
         return $this->coll->count();
     }
@@ -675,6 +671,12 @@ final class PersistentCollection implements Collection
      */
     public function slice($offset, $length = null)
     {
+        if (!$this->initialized && $this->association['fetch'] == Mapping\ClassMetadataInfo::FETCH_EXTRA_LAZY) {
+            return $this->em->getUnitOfWork()
+                            ->getCollectionPersister($this->association)
+                            ->slice($this, $offset, $length);
+        }
+
         $this->initialize();
         return $this->coll->slice($offset, $length);
     }

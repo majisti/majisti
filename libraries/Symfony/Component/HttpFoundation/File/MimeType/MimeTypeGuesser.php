@@ -1,17 +1,18 @@
 <?php
 
-namespace Symfony\Component\HttpFoundation\File\MimeType;
-
-use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
-use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
-
 /*
- * This file is part of the symfony package.
+ * This file is part of the Symfony package.
+ * 
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\HttpFoundation\File\MimeType;
+
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
+use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 
 /**
  * A singleton mime type guesser.
@@ -50,7 +51,7 @@ class MimeTypeGuesser implements MimeTypeGuesserInterface
      */
     static public function getInstance()
     {
-        if (is_null(self::$instance)) {
+        if (null === self::$instance) {
             self::$instance = new self();
         }
 
@@ -112,7 +113,7 @@ class MimeTypeGuesser implements MimeTypeGuesserInterface
         foreach ($this->guessers as $guesser) {
             $mimeType = $guesser->guess($path);
 
-            if (!is_null($mimeType)) {
+            if (null !== $mimeType) {
                 break;
             }
         }
