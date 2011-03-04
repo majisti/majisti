@@ -1,0 +1,42 @@
+From 18bd0c3e15514e88b180fa9d7bf9d338e5562fea Mon Sep 17 00:00:00 2001
+From: Steven Rosato <steven.rosato@majisti.com>
+Date: Thu, 3 Mar 2011 21:27:07 -0500
+Subject: [PATCH] DDC-1056 PHPStaticDriver was missing two instance variables.
+
+---
+ .../ORM/Mapping/Driver/StaticPHPDriver.php         |   14 +++++++++++++-
+ 1 files changed, 13 insertions(+), 1 deletions(-)
+
+diff --git a/lib/Doctrine/ORM/Mapping/Driver/StaticPHPDriver.php b/lib/Doctrine/ORM/Mapping/Driver/StaticPHPDriver.php
+index d89b1ed..e7fee13 100644
+--- a/lib/Doctrine/ORM/Mapping/Driver/StaticPHPDriver.php
++++ b/lib/Doctrine/ORM/Mapping/Driver/StaticPHPDriver.php
+@@ -41,6 +41,18 @@ class StaticPHPDriver implements Driver
+ {
+     private $_paths = array();
+ 
++    /**
++     * The file extension of mapping documents.
++     *
++     * @var string
++     */
++    protected $_fileExtension = '.php';
++
++    /**
++     * @param array
++     */
++    protected $_classNames;
++
+     public function __construct($paths)
+     {
+         $this->addPaths((array) $paths);
+@@ -119,4 +131,4 @@ class StaticPHPDriver implements Driver
+     {
+         return method_exists($className, 'loadMetadata') ? false : true;
+     }
+-}
+\ No newline at end of file
++}
+-- 
+1.7.2.3
+
