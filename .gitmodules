@@ -31,3 +31,6 @@
 [submodule "libraries/vendor/doctrine2-extensions-gedmo"]
 	path = libraries/vendor/doctrine2-extensions-gedmo
 	url = git://github.com/l3pp4rd/DoctrineExtensions.git
+[submodule "libraries/vendor/zend"]
+	path = libraries/vendor/zend
+	url = git://github.com/mridgway/Zend-Framework-1.x-Mirror.git
