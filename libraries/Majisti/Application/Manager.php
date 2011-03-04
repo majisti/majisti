@@ -2,7 +2,12 @@
 
 namespace Majisti\Application;
 
-use \Majisti\Config\Selector;
+use \Majisti\Config\Selector,
+    \Doctrine\Common\ClassLoader
+;
+
+require_once dirname(dirname(__DIR__)) .
+    '/vendor/doctrine2-common/lib/Doctrine/Common/ClassLoader.php';
 
 /**
  * @desc Majisti's Application Manager is the facade to rich applications where
@@ -33,6 +38,8 @@ class Manager
 
         $this->initOptions($options->majisti);
 
+        $this->initClassLoaders($options->majisti);
+
         /* setup config and call parent */
         $config = $this->getConfiguration($options);
 
@@ -54,6 +61,59 @@ class Manager
         $bootstrap->bootstrap('Locales');
 
         $this->_application = $application;
+    }
+
+    /**
+     * @desc Inits the class autoloaders for this application
+     *
+     * @param \Zend_Config $majisti
+     */
+    protected function initClassLoaders(\Zend_Config $majisti)
+    {
+        $loaders = array();
+
+        /*
+         * Doctrine
+         */
+
+        /* special cases */
+        $loaders[] = new ClassLoader('Doctrine\DBAL\Migrations',
+            "{$majisti->path}/libraries/vendor/doctrine2-migrations/lib");
+        $loaders[] = new ClassLoader('Doctrine\Common\DataFixtures',
+            "{$majisti->path}/libraries/vendor/doctrine2-data-fixtures/lib");
+
+        /* generic cases */
+        $loaders[] = new ClassLoader('Doctrine\ORM',
+            "{$majisti->path}/libraries/vendor/doctrine2-orm/lib");
+        $loaders[] = new ClassLoader('Doctrine\DBAL',
+            "{$majisti->path}/libraries/vendor/doctrine2-dbal/lib");
+        $loaders[] = new ClassLoader('Doctrine\Common', 
+            "{$majisti->path}/libraries/vendor/doctrine2-common/lib");
+        $loaders[] = new ClassLoader('Doctrine\Common',
+            "{$majisti->path}/libraries/vendor/doctrine2-data-fixtures/lib");
+
+        $loaders[] = new ClassLoader('DoctrineExtensions',
+            "{$majisti->path}/libraries/vendor/doctrine2-extensions/lib");
+
+        /* symfony */
+        $loaders[] = new ClassLoader('Symfony\Component',
+            "{$majisti->path}/libraries/vendor/symfony2/src");
+
+        foreach( $loaders as $loader ) {
+            $loader->register();
+        }
+
+        /* phpunit */
+        $loader = new ClassLoader('PHPUnit',
+            "{$majisti->path}/libraries/vendor/phpunit");
+        $loader->setNamespaceSeparator('_');
+        $loader->register();
+
+        /* zendx */
+        $loader = new ClassLoader('ZendX',
+            "{$majisti->path}/libraries/vendor/zend/extras/library");
+        $loader->setNamespaceSeparator('_');
+        $loader->register();
     }
 
     /**

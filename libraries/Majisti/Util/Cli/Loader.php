@@ -62,14 +62,14 @@ class Loader
         ConsoleRunner::addCommands($cli);
 
         /* add migrations commands */
-        $cli->addCommands(array(
-            new MigrationCommand\DiffCommand(),
-            new MigrationCommand\ExecuteCommand(),
-            new MigrationCommand\GenerateCommand(),
-            new MigrationCommand\MigrateCommand(),
-            new MigrationCommand\StatusCommand(),
-            new MigrationCommand\VersionCommand()
-        ));
+//        $cli->addCommands(array(
+//            new MigrationCommand\DiffCommand(),
+//            new MigrationCommand\ExecuteCommand(),
+//            new MigrationCommand\GenerateCommand(),
+//            new MigrationCommand\MigrateCommand(),
+//            new MigrationCommand\StatusCommand(),
+//            new MigrationCommand\VersionCommand()
+//        ));
 
         /* data fixtures loading */
         $cli->add(new Doctrine\Commands\LoadDataFixtures($app));
