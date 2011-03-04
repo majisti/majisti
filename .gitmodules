@@ -22,9 +22,6 @@
 [submodule "libraries/vendor/doctrine2-common"]
 	path = libraries/vendor/doctrine2-common
 	url = git://github.com/doctrine/common.git
-[submodule "libraries/vendor/doctrine2-extensions-beberlei"]
-	path = libraries/vendor/doctrine2-extensions-beberlei
-	url = git://github.com/beberlei/DoctrineExtensions.git
 [submodule "libraries/vendor/doctrine2-migrations"]
 	path = libraries/vendor/doctrine2-migrations
 	url = git://github.com/doctrine/migrations.git
