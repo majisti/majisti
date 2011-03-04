@@ -1,0 +1,66 @@
+From c6fa951469bcba7198b76895378df87c9605a6b4 Mon Sep 17 00:00:00 2001
+From: Steven Rosato <steven.rosato@majisti.com>
+Date: Fri, 4 Mar 2011 00:32:38 -0500
+Subject: [PATCH] Fix for ZF-8529 Namespace Package_Subpackage not supported by module Resource Loader.
+ Subnamespaces are now possible.
+
+---
+ library/Zend/Loader/Autoloader.php          |   14 +++++++++-----
+ library/Zend/Loader/Autoloader/Resource.php |    6 ++++--
+ 2 files changed, 13 insertions(+), 7 deletions(-)
+
+diff --git a/library/Zend/Loader/Autoloader.php b/library/Zend/Loader/Autoloader.php
+index 189af9c..0dc17cf 100644
+--- a/library/Zend/Loader/Autoloader.php
++++ b/library/Zend/Loader/Autoloader.php
+@@ -335,12 +335,16 @@ class Zend_Loader_Autoloader
+                 continue;
+             }
+             if (0 === strpos($class, $ns)) {
+-                $namespace   = $ns;
+-                $autoloaders = $autoloaders + $this->getNamespaceAutoloaders($ns);
+-                break;
++                // ZF-8529: now looping the entire array in case of subpackages
++                $namespace = $ns;
+             }
+         }
+ 
++        // ZF_8529
++        if ( $namespace ) {
++            $autoloaders = $autoloaders + $this->getNamespaceAutoloaders($namespace);
++        }
++
+         // Add internal namespaced autoloader
+         foreach ($this->getRegisteredNamespaces() as $ns) {
+             if (0 === strpos($class, $ns)) {
+@@ -350,8 +354,8 @@ class Zend_Loader_Autoloader
+             }
+         }
+ 
+-        // Add non-namespaced autoloaders
+-        $autoloaders = $autoloaders + $this->getNamespaceAutoloaders('');
++        // Add non-namespaced autoloaders, ZF-8529: fixed merge
++        $autoloaders = array_merge($autoloaders, $this->getNamespaceAutoloaders(''));
+ 
+         // Add fallback autoloader
+         if (!$namespace && $this->isFallbackAutoloader()) {
+diff --git a/library/Zend/Loader/Autoloader/Resource.php b/library/Zend/Loader/Autoloader/Resource.php
+index f2ba9d3..e286377 100644
+--- a/library/Zend/Loader/Autoloader/Resource.php
++++ b/library/Zend/Loader/Autoloader/Resource.php
+@@ -146,8 +146,10 @@ class Zend_Loader_Autoloader_Resource implements Zend_Loader_Autoloader_Interfac
+ 
+         if (!empty($namespaceTopLevel)) {
+             $namespace = array_shift($segments);
+-            if ($namespace != $namespaceTopLevel) {
+-                // wrong prefix? we're done
++
++            /* support for subpackages namespaces ZF-8529 */
++            if ( strpos($class, $namespaceTopLevel) !== 0 ) {
++                // wrong namespace? we're done
+                 return false;
+             }
+         }
+-- 
+1.7.0.4
+
