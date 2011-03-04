@@ -12,8 +12,6 @@ class AllTests extends \Majisti\Test\TestSuite
     {
         $suite = new self('MajistiX - All tests');
 
-        $it = new \DirectoryIterator(__DIR__);
-
         foreach ( new \DirectoryIterator(__DIR__) as $fileInfo ) {
             if( $fileInfo->isDot() || !$fileInfo->isDir() ) {
                 continue;
