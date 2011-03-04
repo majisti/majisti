@@ -81,6 +81,8 @@ class Manager
             "{$majisti->path}/libraries/vendor/doctrine2-migrations/lib");
         $loaders[] = new ClassLoader('Doctrine\Common\DataFixtures',
             "{$majisti->path}/libraries/vendor/doctrine2-data-fixtures/lib");
+        $loaders[] = new ClassLoader('Gedmo',
+            "{$majisti->path}/libraries/vendor/doctrine2-extensions-gedmo/lib");
 
         /* generic cases */
         $loaders[] = new ClassLoader('Doctrine\ORM',

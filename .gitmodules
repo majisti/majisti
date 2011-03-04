@@ -28,3 +28,6 @@
 [submodule "libraries/vendor/doctrine2-extensions"]
 	path = libraries/vendor/doctrine2-extensions
 	url = git://github.com/beberlei/DoctrineExtensions.git
+[submodule "libraries/vendor/doctrine-extensions-gedmo"]
+	path = libraries/vendor/doctrine-extensions-gedmo
+	url = git://github.com/l3pp4rd/DoctrineExtensions.git
