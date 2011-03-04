@@ -1,0 +1,15 @@
+[submodule "libraries/vendor/doctrine2"]
+	path = libraries/vendor/doctrine2
+	url = git://github.com/doctrine/doctrine2.git
+[submodule "libraries/vendor/symfony2"]
+	path = libraries/vendor/symfony2
+	url = git://github.com/symfony/symfony.git
+[submodule "libraries/vendor/zend"]
+	path = libraries/vendor/zend
+	url = git://github.com/mridgway/Zend-Framework-1.x-Mirror.git
+[submodule "libraries/vendor/phpunit"]
+	path = libraries/vendor/phpunit
+	url = git://github.com/sebastianbergmann/phpunit.git
+[submodule "libraries/vendor/yuicompressor"]
+	path = libraries/vendor/yuicompressor
+	url = git://github.com/yui/yuicompressor.git
