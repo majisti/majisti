@@ -340,6 +340,7 @@ class Helper
             $options['majisti']['app']['path'] . '/tests',
             $this->getMajistiPath() . '/tests',
             $this->getMajistiPath() . '/libraries',
+            $this->getMajistiPath() . '/libraries/vendor/zend/tests'
         ));
 
         set_include_path(implode(PATH_SEPARATOR, $includePaths));

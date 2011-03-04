@@ -22,18 +22,6 @@ class TestCase extends \Zend_Test_PHPUnit_ControllerTestCase
      */
     static protected $_class;
 
-    /**
-     * @desc Enables Mvc boostraping for this TestCase
-     */
-    protected function enableMvc()
-    {
-        /* won't instanciate on multiple call but will instanciate on each test */
-        if( null === $this->bootstrap ) {
-            $manager = new Application\Manager($this->getHelper()->getOptions());
-            $this->bootstrap = $manager->getApplication();
-        }
-    }
-
     /*
      * (non-phpDoc)
      * @see Inherited documentation.
