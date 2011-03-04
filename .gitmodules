@@ -13,3 +13,12 @@
 [submodule "libraries/vendor/yuicompressor"]
 	path = libraries/vendor/yuicompressor
 	url = git://github.com/yui/yuicompressor.git
+[submodule "libraries/vendor/doctrine2-data-fixtures"]
+	path = libraries/vendor/doctrine2-data-fixtures
+	url = git://github.com/doctrine/data-fixtures.git
+[submodule "libraries/vendor/doctrine2-dbal"]
+	path = libraries/vendor/doctrine2-dbal
+	url = git://github.com/doctrine/dbal.git
+[submodule "libraries/vendor/doctrine2-common"]
+	path = libraries/vendor/doctrine2-common
+	url = git://github.com/doctrine/common.git
