@@ -466,9 +466,9 @@ class Helper
         if( ServerInfo::isCliRunning() ) {
             /* exclude those directories */
             $dirs = array(
-                'lib/Doctrine',
                 'lib/Zend',
                 'lib/ZendX',
+                'lib/vendor',
                 'resources',
                 'tests',
             );
@@ -485,16 +485,16 @@ class Helper
                 'inc',
             );
 
-            foreach ( $suffixes as $suffix) {
-                \PHPUnit_Util_Filter::addDirectoryToFilter($majistiPath .
-                        '/tests', ".$suffix");
-            }
+            $testDirs = array(
+                'tests',
+                'lib/vendor/zend/tests'
+            );
 
-            /* exclude specific files */
-            $files = array();
-
-            foreach( $files as $file ) {
-                \PHPUnit_Util_Filter::addFileToFilter($file);
+            foreach( $testDirs as $dir ) {
+                foreach ( $suffixes as $suffix ) {
+                    \PHPUnit_Util_Filter::addDirectoryToFilter($majistiPath .
+                            '/' . $dir, $suffix);
+                }
             }
         }
     }
