@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../libraries/Majisti/Test/Helper.php';
+require_once __DIR__ . '/../lib/Majisti/Test/Helper.php';
 
 $helper = \Majisti\Test\Helper::getInstance();
 

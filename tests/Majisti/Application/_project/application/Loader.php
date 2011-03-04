@@ -41,7 +41,7 @@ final class Loader
             'ext' => array(),
             'lib' => array(
                'app'        => dirname(__DIR__) . '/library',
-               'majisti'    => 'majisti/libraries',
+               'majisti'    => 'majisti/lib',
             ),
             'autoFindLibraries' => true,
         ));
@@ -141,7 +141,7 @@ final class Loader
     }
 
     /**
-     * @desc Returns every libraries specified in the options, autofinding them
+     * @desc Returns every lib specified in the options, autofinding them
      * if required.
      * @return string The libraries paths
      */

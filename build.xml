@@ -43,7 +43,7 @@
 <project name="Majisti" default="all" basedir=".">
     <property name="dir.build"     value="${basedir}/build" />
     <property name="dir.tests"     value="${basedir}/tests" />
-    <property name="dir.manual"    value="${basedir}/documentation/manual" />
+    <property name="dir.manual"    value="${basedir}/doc/manual" />
     
     <property name="dir.build.logs"     value="${dir.build}/logs" />
     <property name="dir.build.manual"   value="${dir.build}/manual" />
