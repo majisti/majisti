@@ -1,6 +1,8 @@
 <?php
 
-namespace MajistiX\Editing;
+namespace MajistiX;
+
+use \Doctrine\Common\ClassLoader;
 
 require_once __DIR__ . '/TestHelper.php';
 
@@ -8,12 +10,21 @@ class AllTests extends \Majisti\Test\TestSuite
 {
     public static function suite()
     {
-        $suite = new self('MajistiX - Editing - All tests');
+        $suite = new self('MajistiX - All tests');
 
-        $suite->addTestCase(__NAMESPACE__ . '\BootstrapTest');
+        $it = new \DirectoryIterator(__DIR__);
 
-        $suite->addTestSuite(Model\AllTests::suite());
-        $suite->addTestSuite(Plugin\AllTests::suite());
+        foreach ( new \DirectoryIterator(__DIR__) as $fileInfo ) {
+            if( $fileInfo->isDot() || !$fileInfo->isDir() ) {
+                continue;
+            }
+
+            $class = __NAMESPACE__ . "\\{$fileInfo}\AllTests";
+
+            if( class_exists($class) ) {
+                $suite->addTestSuite($class::suite());
+            }
+        }
         
         return $suite;
     }

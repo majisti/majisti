@@ -93,7 +93,6 @@ class Manager
             "{$majisti->path}/libraries/vendor/doctrine2-common/lib");
         $loaders[] = new ClassLoader('Doctrine\Common',
             "{$majisti->path}/libraries/vendor/doctrine2-data-fixtures/lib");
-
         $loaders[] = new ClassLoader('DoctrineExtensions',
             "{$majisti->path}/libraries/vendor/doctrine2-extensions/lib");
 
@@ -155,6 +154,7 @@ class Manager
             $options->url = $options->app->baseUrl . '/majisti';
         }
 
+        //@deprecated all constants will be completely removed in 0.5
         @define('MA',             $options->path);
         @define('MA_URL',         $options->url);
         @define('MA_APP',         $options->app->path);

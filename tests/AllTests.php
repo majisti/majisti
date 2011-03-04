@@ -20,7 +20,6 @@ class AllTests extends \Majisti\Test\TestSuite
         $suite = new self('Majisti - All tests');
 
         $suite->addTestSuite(\Majisti\AllTests::suite());
-        $suite->addTestSuite(\MajistiX\AllTests::suite());
         
         return $suite;
     }
