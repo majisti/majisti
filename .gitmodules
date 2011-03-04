@@ -4,9 +4,6 @@
 [submodule "libraries/vendor/symfony2"]
 	path = libraries/vendor/symfony2
 	url = git://github.com/symfony/symfony.git
-[submodule "libraries/vendor/zend"]
-	path = libraries/vendor/zend
-	url = git://github.com/mridgway/Zend-Framework-1.x-Mirror.git
 [submodule "libraries/vendor/phpunit"]
 	path = libraries/vendor/phpunit
 	url = git://github.com/sebastianbergmann/phpunit.git
@@ -34,3 +31,6 @@
 [submodule "libraries/vendor/doctrine2-extensions-gedmo"]
 	path = libraries/vendor/doctrine2-extensions-gedmo
 	url = git://github.com/l3pp4rd/DoctrineExtensions.git
+[submodule "libraries/vendor/zend"]
+	path = libraries/vendor/zend
+	url = https://majisti@github.com/majisti/Zend-Framework-1.x-Mirror.git
