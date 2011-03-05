@@ -33,4 +33,4 @@
 	url = git://github.com/mridgway/Zend-Framework-1.x-Mirror.git
 [submodule "lib/vendor/majisti-extensions/srosato"]
 	path = lib/vendor/majisti-extensions/srosato
-	url = git://github.com/srosato/majisti-extensions.git
+	url = git://github.com/srosato/majisti-extensions-srosato.git

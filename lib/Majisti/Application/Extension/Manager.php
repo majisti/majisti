@@ -169,10 +169,10 @@ class Manager
 
             if( !file_exists($symlink) ) {
                 @unlink($symlink);
-                symlink($target, $symlink);
+                @symlink($target, $symlink);
             } elseif( @readlink($symlinkName) !== $target ) {
                 @unlink($symlink);
-                symlink($target, $symlink);
+                @symlink($target, $symlink);
             }
 
             $bootstrap->bootstrap();
