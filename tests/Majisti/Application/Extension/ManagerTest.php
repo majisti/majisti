@@ -49,7 +49,7 @@ class ManagerTest extends \Majisti\Test\TestCase
      */
     public function testThatLoadingExtensionCallsLoadFunction()
     {
-       $bootstrap = $this->manager->loadExtension('Foo');
+       $bootstrap = $this->manager->loadExtension('srosato', 'Foo');
        $this->assertEquals('MajistiT\Foo\Bootstrap', get_class($bootstrap));
        $this->assertTrue($bootstrap->run());
     }

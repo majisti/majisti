@@ -2,6 +2,8 @@
 
 namespace Majisti\Application\Extension;
 
+use \Doctrine\Common\ClassLoader;
+
 /**
  * @desc Extensions manager that provides control for loading extensions.
  * Extensions are simply code addition to the library that may contain
@@ -89,6 +91,7 @@ class Manager
     /**
      * @desc Loads an extension, calling its respective bootstrap.
      *
+     * @param string $vendor The vendor name
      * @param string $name The extension name
      *
      * @return \Zend_Application_Module_Bootstrap The extension's bootstrap
@@ -96,10 +99,11 @@ class Manager
      * @throws Exception If the bootstrap file is not readable, non existant,
      * has a wrong namespace class name or is not extending AbstractBootstrap
      */
-    public function loadExtension($name, array $options = array())
+    public function loadExtension($vendor, $name, array $options = array())
     {
         $paths      = $this->getExtensionPaths();
         $triedPaths = array();
+        $config     = $this->getApplication()->getBootstrap()->getOption('majisti');
 
         if( empty($paths) ) {
             throw new Exception("No paths provided.");
@@ -107,13 +111,18 @@ class Manager
 
         foreach( $paths as $pathInfo ) {
             $triedPaths[]   = $pathInfo['path'];
-            $extensionPath  = "{$pathInfo['path']}/{$name}";
+            $extensionPath  = "{$pathInfo['path']}/{$vendor}/{$name}/lib";
 
             /* extension dir existance */
             if( !file_exists($extensionPath) ) {
                 continue;
             }
 
+            $loader = new ClassLoader($pathInfo['namespace'] . '\\' . $name,
+                $extensionPath);
+            $loader->register();
+
+            $extensionPath = "{$extensionPath}/{$pathInfo['namespace']}/{$name}";
             $bootstrapFile = "{$extensionPath}/Bootstrap.php";
 
             /* bootstrap file existance */
@@ -145,18 +154,33 @@ class Manager
 
             $bootstrap->setOptions($options);
 
+            $pathInfo['path'] = $extensionPath;
+
             $this->_loadedExtensions[$name] = $pathInfo + array(
                 'bootstrap' => $bootstrap
             );
 
             $this->addBasePath($name, $pathInfo);
 
+
+            $symlinkName = strtolower("{$pathInfo['namespace']}-{$vendor}-{$name}");
+            $symlink = "{$config['app']['path']}/public/" . $symlinkName;
+            $target = $pathInfo['path'] . '/public';
+
+            if( !file_exists($symlink) ) {
+                @unlink($symlink);
+                symlink($target, $symlink);
+            } elseif( @readlink($symlinkName) !== $target ) {
+                @unlink($symlink);
+                symlink($target, $symlink);
+            }
+
             $bootstrap->bootstrap();
 
             return $bootstrap;
         }
 
-        throw new Exception("Extension {$name} not found using the provided
+        throw new Exception("Extension {$vendor}.{$name} not found using the provided
          paths " . implode(':', $triedPaths));
     }
 
@@ -179,7 +203,7 @@ class Manager
 
         /* extension's base path */
         $view->addBasePath(
-            $pathInfo['path'] . '/' . $name . '/views',
+            $pathInfo['path'] . '/views',
             "{$pathInfo['namespace']}\\{$name}\View\\"
         );
 

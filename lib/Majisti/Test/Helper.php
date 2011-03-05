@@ -2,7 +2,11 @@
 
 namespace Majisti\Test;
 
-use \Majisti\Test\Util\ServerInfo;
+use Majisti\Test\Util\ServerInfo,
+    \Doctrine\Common\ClassLoader
+;
+
+require_once dirname(__DIR__) . '/../vendor/doctrine2-common/lib/Doctrine/Common/ClassLoader.php';
 
 /**
  * @desc This test helper is the singleton helper for every test case.
@@ -97,6 +101,7 @@ class Helper
         }
 
         foreach( $basePath as $path) {
+
             new \Majisti\Application\ModuleAutoloader(array(
                 'namespace' => $namespace,
                 'basePath'  => $path,
@@ -108,42 +113,54 @@ class Helper
 
     /**
      * @desc Adds an extension by adding required module autoloaders
-     * for the extension namespace and test directory.
-     * @param string $namespace The full extension namespace, such as
-     * MajistiX\ExtensionName
-     * @param string $directory The extension's test root directory
+     * for the extension test namespace and test directory.
+     *
+     * @param string $vendor The vendor name
+     * @param string $testsNs The full extension tests namespace, such as
+     * MajistiX\Tests\ExtensionName
+     * @param string $testsDir The extension's test root directory
      *
      * @return Helper
      */
-    public function addExtension($namespace, $directory)
+    public function addExtension($vendor, $testsNs, $testsDir)
     {
-        /*
-         * path resides in include path, therefore the path is relative
-         * (such as MajistiX/ExtensionName)
-         */
-        $this->addTestModuleDirectory(
-            $namespace,
-           array($directory, str_replace('\\', '/', $namespace))
-        );
+        $ns     = str_replace('\Tests', '', $testsNs);
+        $srcDir = realpath($testsDir . '/../lib');
 
-        /* last part of namespace */
-        $this->addApplicationExtension(substr(strrchr($namespace, '\\'), 1));
+        $nsToDir = function($ns) {
+            return '/' . str_replace('\\', '/', $ns);
+        };
+
+        $this->addTestModuleDirectory($ns, $srcDir . $nsToDir($ns));
+        $this->addTestModuleDirectory($testsNs, $testsDir . $nsToDir($testsNs));
+
+        $loader = new ClassLoader($ns, $srcDir);
+        $loader->register();
+
+        $loader = new ClassLoader($testsNs, $testsDir);
+        $loader->register();
+
+        /* last part of namespace (extension name) */
+        $this->addApplicationExtension($vendor, 
+            substr(strrchr($testsNs, '\\'), 1));
 
         return $this;
     }
 
     /**
      * @desc Adds an extension to bootstrap.
+     *
+     * @param string $vendor The vendor name
      * @param string $extension The extension name
      *
      * @return Helper
      */
-    public function addApplicationExtension($extension)
+    public function addApplicationExtension($vendor, $extension)
     {
         $newOptions = array_merge_recursive(
             $this->getOptions(),
             array('resources' => array(
-                'extensions' => array($extension)
+                'extensions' => array($vendor => array($extension))
             )
         ));
 

@@ -1,7 +1,6 @@
 <?php
 
 namespace Majisti\Application\Resource;
-
 use Majisti\Application\Extension\Manager;
 
 /**
@@ -45,11 +44,11 @@ class Extensions extends \Zend_Application_Resource_ResourceAbstract
 
         return array(
             'paths' => array(array(
-                'namespace' => $maj['app']['namespace'],
+                'namespace' => 'MajistiX',
                 'path'      => $maj['app']['path'] . '/library/extensions',
             ), array(
                 'namespace' => 'MajistiX',
-                'path'      => $maj['path'] . '/lib/MajistiX'
+                'path'      => $maj['path'] . '/lib/vendor/majisti-extensions'
             )),
         );
     }
@@ -81,41 +80,43 @@ class Extensions extends \Zend_Application_Resource_ResourceAbstract
          *
          * 1) resources.extension[] = Foo
          *
-         * 2) resources.extension.Foo = 1
+         * 2) resources.extension.vendorName.Foo = 1
          *
-         * 3) resources.extension.Foo.enabled = 1
+         * 3) resources.extension.vendorName.enabled = 1
          *
-         * 4) resources.extension.Foo.anOption = aValue //implicitely enabled
+         * 4) resources.extension.vendorName.anOption = aValue //implicitely enabled
          *
          * 5)
-         * resources.extension.Foo.enabled  = 0
-         * resources.extension.Foo.anOption = aValue
+         * resources.extension.vendorName.Foo.enabled  = 0
+         * resources.extension.vendorName.Foo.anOption = aValue
          */
-        foreach( $options as $key => $name ) {
-            $enabled = true;
+        foreach( $options as $vendor => $extensions) {
+            foreach( $extensions as $key => $name ) {
+                $enabled = true;
 
-            if( !is_int($key) ) {
-                if( is_array($name) ) {
-                    if( isset($name['enabled']) ) {
-                        $enabled = $name['enabled'];
+                if( !is_int($key) ) {
+                    if( is_array($name) ) {
+                        if( isset($name['enabled']) ) {
+                            $enabled = $name['enabled'];
+                        } else {
+                            $enabled = !empty($name);
+                        }
                     } else {
-                        $enabled = !empty($name);
+                        $enabled = $name;
                     }
-                } else {
-                    $enabled = $name;
+
+                    $name = $key;
                 }
 
-                $name = $key;
-            }
+                if( $enabled ) {
+                    $extOptions = array();
+                    if( isset($options[$vendor][$name]) ) {
+                        $extOptions = $options[$vendor][$name];
+                        unset($extOptions['enabled']);
+                    }
 
-            if( $enabled ) {
-                $extOptions = array();
-                if( isset($options[$name]) ) {
-                    $extOptions = $options[$name];
-                    unset($extOptions['enabled']);
+                    $manager->loadExtension($vendor, $name, $extOptions);
                 }
-
-                $manager->loadExtension($name, $extOptions);
             }
         }
 
