@@ -162,8 +162,7 @@ class Manager
 
             $this->addBasePath($name, $pathInfo);
 
-
-            $symlinkName = strtolower("{$pathInfo['namespace']}-{$vendor}-{$name}");
+            $symlinkName = strtolower("{$vendor}-{$name}");
             $symlink = "{$config['app']['path']}/public/" . $symlinkName;
             $target = $pathInfo['path'] . '/public';
 

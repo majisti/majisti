@@ -43,13 +43,16 @@ class Extensions extends \Zend_Application_Resource_ResourceAbstract
         $maj = $app->getOption('majisti');
 
         return array(
-            'paths' => array(array(
-                'namespace' => 'MajistiX',
-                'path'      => $maj['app']['path'] . '/library/extensions',
-            ), array(
-                'namespace' => 'MajistiX',
-                'path'      => $maj['path'] . '/lib/vendor/majisti-extensions'
-            )),
+            'paths' => array(
+                array(
+                    'namespace' => 'MajistiX',
+                    'path'      => $maj['path'] . '/lib/vendor/majisti-extensions'
+                ),
+                array(
+                    'namespace' => 'MajistiX',
+                    'path'      => $maj['app']['path'] . '/library/extensions',
+                ),
+            ),
         );
     }
 
@@ -70,6 +73,8 @@ class Extensions extends \Zend_Application_Resource_ResourceAbstract
             $this->getDefaultOptions(),
             $this->getOptions()
         );
+
+        $options['paths'] = array_reverse($options['paths']);
 
         $manager->setExtensionPaths($options['paths']);
 

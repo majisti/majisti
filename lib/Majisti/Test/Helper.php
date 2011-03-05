@@ -101,7 +101,6 @@ class Helper
         }
 
         foreach( $basePath as $path) {
-
             new \Majisti\Application\ModuleAutoloader(array(
                 'namespace' => $namespace,
                 'basePath'  => $path,
