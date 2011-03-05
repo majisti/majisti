@@ -11,7 +11,7 @@ foreach ( new \DirectoryIterator(__DIR__) as $dir ) {
         continue;
     }
 
-    $vendor = realpath(__DIR__ . "/../libraries/vendor/{$dir}");
+    $vendor = realpath(__DIR__ . "/../lib/vendor/{$dir}");
 
     if( $vendor ) {
         chdir($vendor);
