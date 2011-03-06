@@ -63,7 +63,7 @@ class Doctrine extends \Zend_Application_Resource_ResourceAbstract
         $driverImpl = $config->newDefaultAnnotationDriver();
         $chain->addDriver($driverImpl, $maj['app']['namespace'] . '\Model');
         $driverImpl->addPaths(array(
-            $maj['app']['path'] . '/library/models',
+            $maj['app']['path'] . '/lib/models',
         ));
 
         /* add more annotation drivers based on modules */

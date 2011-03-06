@@ -210,7 +210,7 @@ class Manager
 
         /* remove the application's library base path */
         $i = array_search(
-            $maj['app']['path'] . '/library/views/scripts/',
+            $maj['app']['path'] . '/lib/views/scripts/',
             $paths['script']
         );
 

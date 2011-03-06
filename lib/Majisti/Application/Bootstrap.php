@@ -35,7 +35,7 @@ class Bootstrap extends \Zend_Application_Bootstrap_Bootstrap
 
         $this->getPluginLoader()->addPrefixPath(
             $app['namespace'] . '\Application\Resource\\',
-            $app['path']      . '/library/resources/'
+            $app['path']      . '/lib/resources/'
         );
     }
 
@@ -52,7 +52,7 @@ class Bootstrap extends \Zend_Application_Bootstrap_Bootstrap
             $path = $r->getFileName();
             $this->setResourceLoader(new ModuleAutoloader(array(
                 'namespace' => $namespace,
-                'basePath'  => realpath(dirname($path) . '/../library'),
+                'basePath'  => realpath(dirname($path) . '/../lib'),
             )));
         }
         return $this->_resourceLoader;
@@ -71,7 +71,7 @@ class Bootstrap extends \Zend_Application_Bootstrap_Bootstrap
 
         /* add application's library action helpers */
         $r    = new \ReflectionClass($this);
-        $path = realpath(dirname($r->getFileName()) . '/../library/actionHelpers');
+        $path = realpath(dirname($r->getFileName()) . '/../lib/actionHelpers');
 
         if( $path ) {
             HelperBroker::addPath(

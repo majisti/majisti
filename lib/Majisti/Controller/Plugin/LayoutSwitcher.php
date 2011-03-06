@@ -5,7 +5,7 @@ namespace Majisti\Controller\Plugin;
 /**
  * @desc The layout switcher provides the functionnality to modules
  * to have their own set of layouts, contained in a specific directory,
- * apart from the application library's layouts.
+ * apart from the application lib's layouts.
  *
  * @author Majisti
  * @license

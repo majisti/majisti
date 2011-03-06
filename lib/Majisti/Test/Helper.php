@@ -398,7 +398,7 @@ class Helper
         $maj = $this->getOption('majisti');
 
         /* library autoloader */
-        if( file_exists($libPath = $maj->app->path . '/tests/library') ) {
+        if( file_exists($libPath = $maj->app->path . '/tests/lib') ) {
             new \Majisti\Application\ModuleAutoloader(
                 array(
                     'namespace' => $maj->app->namespace,

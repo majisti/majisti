@@ -50,7 +50,7 @@ class Extensions extends \Zend_Application_Resource_ResourceAbstract
                 ),
                 array(
                     'namespace' => 'MajistiX',
-                    'path'      => $maj['app']['path'] . '/library/extensions',
+                    'path'      => $maj['app']['path'] . '/lib/extensions',
                 ),
             ),
         );

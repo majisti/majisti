@@ -34,7 +34,7 @@ class Translate extends \Zend_Application_Resource_Translate
         $options = $options->majisti;
 
         $currentLocale = $locales->getCurrentLocale();
-        $moPath = $options->app->path . "/library/models/i18n/{$currentLocale}.mo";
+        $moPath = $options->app->path . "/lib/models/i18n/{$currentLocale}.mo";
 
         if( !file_exists($moPath) ) {
             return $this->getNullTranslate();

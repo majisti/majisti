@@ -39,7 +39,7 @@ class ViewTest extends \Majisti\Test\TestCase
         foreach( $keys as $key ) {
             $this->expectedPaths[$key][0] =
                 $options['majisti']['app']['path'] .
-                    '/library' . $this->expectedPaths[$key][0];
+                    '/lib' . $this->expectedPaths[$key][0];
         }
     }
 

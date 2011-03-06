@@ -54,7 +54,7 @@ class View extends \Zend_Application_Resource_View
         $view->addFilterPath('Majisti/View/Filter/', 'Majisti\View\Filter\\');
 
         /* add application's library base path */
-        $view->addBasePath($settings->app->path . '/library/views',
+        $view->addBasePath($settings->app->path . '/lib/views',
             $settings->app->namespace . '\View\\');
 
         if( isset($options['doctype']) ) {

@@ -34,13 +34,13 @@ final class Loader
     {
         $conf = array('majisti' => array(
             'app' => array(
-                'namespace' => 'MyApplication',
+                'namespace' => 'Cochimbeclication',
                 'path'      => dirname(__DIR__),
                 'env' => 'development',
             ),
             'ext' => array(),
             'lib' => array(
-               'app'        => dirname(__DIR__) . '/library',
+               'app'        => dirname(__DIR__) . '/lib/vendor',
                'majisti'    => 'majisti/lib',
             ),
             'autoFindLibraries' => true,
@@ -89,13 +89,15 @@ final class Loader
 
         $this->updateSymlinks($libraries['majisti']);
 
-        require_once 'Zend/Loader/Autoloader.php';
-        $autoloader = \Zend_Loader_Autoloader::getInstance();
+        require_once 'vendor/doctrine2-common/lib/Doctrine/Common/ClassLoader.php';
+        $loader = new \Doctrine\Common\ClassLoader('Zend',
+            $libraries['majisti'] . "/vendor/zend/library");
+        $loader->setNamespaceSeparator('_');
+        $loader->register();
 
-        $autoloader->setFallbackAutoloader(true);
-
-        require_once 'Majisti/Loader/Autoloader.php';
-        $autoloader->pushAutoloader(new \Majisti\Loader\Autoloader());
+        $loader = new \Doctrine\Common\ClassLoader('Majisti',
+            $libraries['majisti']);
+        $loader->register();
     }
 
     /**
@@ -141,7 +143,7 @@ final class Loader
     }
 
     /**
-     * @desc Returns every lib specified in the options, autofinding them
+     * @desc Returns every libraries specified in the options, autofinding them
      * if required.
      * @return string The libraries paths
      */

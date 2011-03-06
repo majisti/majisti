@@ -29,7 +29,7 @@ class ManagerTest extends \Majisti\Test\TestCase
        $this->manager->setExtensionPaths(array(
            array(
                'namespace' => $maj['app']['namespace'],
-               'path'      => $maj['app']['path'] . '/library/extensions'
+               'path'      => $maj['app']['path'] . '/lib/extensions'
            )
        ));
     }
