@@ -1,0 +1,24 @@
+From 1670cfb085480d24c536bf5037944b23686644e8 Mon Sep 17 00:00:00 2001
+From: Steven Rosato <steven.rosato@majisti.com>
+Date: Sun, 6 Mar 2011 20:56:48 -0500
+Subject: [PATCH] DCOM-40 Fixed an issue where shared fixtures where not being treated as MANAGED entities across fixtures.
+
+---
+ .../DataFixtures/Executor/AbstractExecutor.php     |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
+
+diff --git a/lib/Doctrine/Common/DataFixtures/Executor/AbstractExecutor.php b/lib/Doctrine/Common/DataFixtures/Executor/AbstractExecutor.php
+index c9bc320..296613c 100644
+--- a/lib/Doctrine/Common/DataFixtures/Executor/AbstractExecutor.php
++++ b/lib/Doctrine/Common/DataFixtures/Executor/AbstractExecutor.php
+@@ -92,7 +92,6 @@ abstract class AbstractExecutor
+             $fixture->setReferenceRepository($this->referenceRepository);
+         }
+         $fixture->load($manager);
+-        $manager->clear();
+     }
+ 
+     /**
+-- 
+1.7.0.4
+
