@@ -17,6 +17,8 @@ use \Majisti\Application as Application,
  */
 class TestCase extends \Zend_Test_PHPUnit_ControllerTestCase
 {
+    protected $_mvcEnabled = false;
+
     /**
      * @var string The resolved class for standalone running
      */
@@ -28,11 +30,34 @@ class TestCase extends \Zend_Test_PHPUnit_ControllerTestCase
      */
     public function run(\PHPUnit_Framework_TestResult $result = NULL)
     {
-        if( $this->getHelper()->getOption('mvc') ) {
-            $this->enableMvc();
-        }
+        $result = parent::run($result);
 
-        return parent::run($result);
+        /*
+         * exceptions should be thrown whether its an integration test or not
+         * this makes life for extreme programmers easier (those who write test
+         * before code so testing broken code in controllers will properly
+         * throw exceptions)
+         */
+        if( $this->_mvcEnabled ) {
+            if( $this->getResponse()->isException() ) {
+                $stack = $this->getResponse()->getException();
+                $result->addError($this, $stack[0], microtime());
+            }
+        }
+    }
+
+    /**
+     * @desc Enables Mvc boostraping for this TestCase
+     */
+    protected function enableMvc()
+    {
+        /* won't instanciate on multiple call but will instanciate on each test */
+        if ( null === $this->bootstrap ) {
+            $manager = new Application\Manager($this->getHelper()->getOptions());
+            $this->bootstrap = $manager->getApplication();
+            $this->bootstrap->bootstrap();
+            $this->_mvcEnabled = true;
+        }
     }
 
     /**
