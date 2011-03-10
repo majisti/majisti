@@ -34,11 +34,22 @@ class Table implements ILayout
 
         $fileDecorators = array('File') + $elementDecorators;
 
-        $form->setDecorators(array(
+        $formDecorators = array(
             'FormElements',
             array('HtmlTag', array('tag' => 'table')),
             'Form',
-        ));
+        );
+
+        if( $form instanceof \Zend_Form_SubForm ) {
+            array_pop($formDecorators);
+            $formDecorators[] = 'Fieldset';
+            $formDecorators[] = array(array('data' => 'HtmlTag'),
+                array('tag' => 'td', 'class' => 'element', 'colspan' => 2));
+            $formDecorators[] = array(array('row' => 'HtmlTag'),
+                array('tag' => 'tr', 'class' => 'row'));
+        }
+
+        $form->setDecorators($formDecorators);
 
         $form->setElementDecorators($elementDecorators);
 
