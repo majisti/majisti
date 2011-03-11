@@ -33,12 +33,16 @@ class Manager
      */
     public function __construct(array $options)
     {
+        $this->initDependentIncludePaths();
+        $this->initClassLoaders();
+
         $options = new \Zend_Config($options,
             array('allowModifications' => true));
 
         $this->initOptions($options->majisti);
 
-        $this->initClassLoaders($options->majisti);
+        set_include_path($options->majisti->app->path . PATH_SEPARATOR
+            . $options->majisti->path . '/lib' . PATH_SEPARATOR . get_include_path());
 
         /* setup config and call parent */
         $config = $this->getConfiguration($options);
@@ -50,7 +54,7 @@ class Manager
 
         /* further config handling using the ConfigHandler resource */
         $bootstrap = $application->getBootstrap();
-        $bootstrap->bootstrap('Confighandler');
+        $bootstrap->bootstrap('configHandler');
 
         /* set options */
         $config = new \Zend_Config($bootstrap->getOptions());
@@ -68,8 +72,9 @@ class Manager
      *
      * @param \Zend_Config $majisti
      */
-    protected function initClassLoaders(\Zend_Config $majisti)
+    protected function initClassLoaders()
     {
+        $libRoot = dirname(dirname(__DIR__));
         $loaders = array();
 
         /*
@@ -78,27 +83,27 @@ class Manager
 
         /* special cases */
         $loaders[] = new ClassLoader('Doctrine\DBAL\Migrations',
-            "{$majisti->path}/lib/vendor/doctrine2-migrations/lib");
+            "{$libRoot}/vendor/doctrine2-migrations/lib");
         $loaders[] = new ClassLoader('Doctrine\Common\DataFixtures',
-            "{$majisti->path}/lib/vendor/doctrine2-data-fixtures/lib");
+            "{$libRoot}/vendor/doctrine2-data-fixtures/lib");
         $loaders[] = new ClassLoader('Gedmo',
-            "{$majisti->path}/lib/vendor/doctrine2-extensions-gedmo/lib");
+            "{$libRoot}/vendor/doctrine2-extensions-gedmo/lib");
 
         /* generic cases */
         $loaders[] = new ClassLoader('Doctrine\ORM',
-            "{$majisti->path}/lib/vendor/doctrine2-orm/lib");
+            "{$libRoot}/vendor/doctrine2-orm/lib");
         $loaders[] = new ClassLoader('Doctrine\DBAL',
-            "{$majisti->path}/lib/vendor/doctrine2-dbal/lib");
+            "{$libRoot}/vendor/doctrine2-dbal/lib");
         $loaders[] = new ClassLoader('Doctrine\Common', 
-            "{$majisti->path}/lib/vendor/doctrine2-common/lib");
+            "{$libRoot}/vendor/doctrine2-common/lib");
         $loaders[] = new ClassLoader('Doctrine\Common',
-            "{$majisti->path}/lib/vendor/doctrine2-data-fixtures/lib");
+            "{$libRoot}/vendor/doctrine2-data-fixtures/lib");
         $loaders[] = new ClassLoader('DoctrineExtensions',
-            "{$majisti->path}/lib/vendor/doctrine2-extensions/lib");
+            "{$libRoot}/vendor/doctrine2-extensions/lib");
 
         /* symfony */
         $loaders[] = new ClassLoader('Symfony\Component',
-            "{$majisti->path}/lib/vendor/symfony2/src");
+            "{$libRoot}/vendor/symfony2/src");
 
         foreach( $loaders as $loader ) {
             $loader->register();
@@ -106,15 +111,38 @@ class Manager
 
         /* phpunit */
         $loader = new ClassLoader('PHPUnit',
-            "{$majisti->path}/lib/vendor/phpunit");
+            "{$libRoot}/vendor/phpunit");
+        $loader->setNamespaceSeparator('_');
+        $loader->register();
+
+        /* zend */
+        $loader = new ClassLoader('Zend',
+            "{$libRoot}/vendor/zend/library");
         $loader->setNamespaceSeparator('_');
         $loader->register();
 
         /* zendx */
         $loader = new ClassLoader('ZendX',
-            "{$majisti->path}/lib/vendor/zend/extras/library");
+            "{$libRoot}/vendor/zend/extras/library");
         $loader->setNamespaceSeparator('_');
         $loader->register();
+    }
+
+    /**
+     * @desc Inits the dependent include paths.
+     */
+    protected function initDependentIncludePaths()
+    {
+        $libRoot = dirname(dirname(__DIR__));
+
+        $paths = array(
+            "{$libRoot}/vendor/zend/library",
+            "{$libRoot}/vendor/zend/extras/library",
+            "{$libRoot}/vendor/phpunit",
+        );
+
+        set_include_path(implode(PATH_SEPARATOR,
+                $paths) . get_include_path());
     }
 
     /**

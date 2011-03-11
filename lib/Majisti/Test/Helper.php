@@ -352,11 +352,13 @@ class Helper
         $options = $this->getOptions();
 
         $includePaths = array_unique(array(
-            get_include_path(),
             $options['majisti']['app']['path'] . '/tests',
             $this->getMajistiPath() . '/tests',
             $this->getMajistiPath() . '/lib',
-            $this->getMajistiPath() . '/lib/vendor/zend/tests'
+            $this->getMajistiPath() . '/lib/vendor/zend/extras/library',
+            $this->getMajistiPath() . '/lib/vendor/zend/library',
+            $this->getMajistiPath() . '/lib/vendor/zend/tests',
+            get_include_path(),
         ));
 
         set_include_path(implode(PATH_SEPARATOR, $includePaths));
@@ -381,19 +383,15 @@ class Helper
     /**
      * @desc Init autoloaders
      */
-    public function initAutoloaders()
+    public function initLoaders()
     {
-        /* Zend */
-        require_once 'Zend/Loader/Autoloader.php';
-        \Zend_Loader_Autoloader::resetInstance();
-        $loader = \Zend_Loader_Autoloader::getInstance();
+        require_once 'vendor/zend/library/Zend/Loader/Autoloader.php';
+        $autoloader = \Zend_Loader_Autoloader::getInstance();
+        $autoloader->setFallbackAutoloader(true);
+        $autoloader->suppressNotFoundWarnings(true);
 
-        $loader->setFallbackAutoloader(true);
-        $loader->suppressNotFoundWarnings(true);
-
-        /* Majisti */
         require_once 'Majisti/Loader/Autoloader.php';
-        $loader->pushAutoloader(new \Majisti\Loader\Autoloader());
+        $autoloader->pushAutoloader(new \Majisti\Loader\Autoloader());
 
         $maj = $this->getOption('majisti');
 
@@ -482,8 +480,6 @@ class Helper
         if( ServerInfo::isCliRunning() ) {
             /* exclude those directories */
             $dirs = array(
-                'lib/Zend',
-                'lib/ZendX',
                 'lib/vendor',
                 'resources',
                 'tests',
