@@ -15,50 +15,9 @@ use \Majisti\Application as Application,
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-class TestCase extends \Zend_Test_PHPUnit_ControllerTestCase
+class TestCase extends \PHPUnit_Framework_TestCase implements Test
 {
-    protected $_mvcEnabled = false;
-
-    /**
-     * @var string The resolved class for standalone running
-     */
     static protected $_class;
-
-    /*
-     * (non-phpDoc)
-     * @see Inherited documentation.
-     */
-    public function run(\PHPUnit_Framework_TestResult $result = NULL)
-    {
-        $result = parent::run($result);
-
-        /*
-         * exceptions should be thrown whether its an integration test or not
-         * this makes life for extreme programmers easier (those who write test
-         * before code so testing broken code in controllers will properly
-         * throw exceptions)
-         */
-        if( $this->_mvcEnabled ) {
-            if( $this->getResponse()->isException() ) {
-                $stack = $this->getResponse()->getException();
-                $result->addError($this, $stack[0], microtime());
-            }
-        }
-    }
-
-    /**
-     * @desc Enables Mvc boostraping for this TestCase
-     */
-    protected function enableMvc()
-    {
-        /* won't instanciate on multiple call but will instanciate on each test */
-        if ( null === $this->bootstrap ) {
-            $manager = new Application\Manager($this->getHelper()->getOptions());
-            $this->bootstrap = $manager->getApplication();
-            $this->bootstrap->bootstrap();
-            $this->_mvcEnabled = true;
-        }
-    }
 
     /**
      * @desc Retrieves the extending class via late static binding.
@@ -87,28 +46,16 @@ class TestCase extends \Zend_Test_PHPUnit_ControllerTestCase
     /**
      * @desc Runs a test alone.
      *
-     * @param bool $force [opt; def=false] Force the test to run
-     * even if its running as part of a TestSuite.
      * @param array $arguments [opt; def=Runner's default] The Runner's arguments
      */
-    static public function runAlone($force = false, $arguments = array())
+    static public function runAlone($arguments = array())
     {
-        if( (bool)$force || !(ServerInfo::isTestCaseRunning()
-                || ServerInfo::isPhpunitRunning()) )
-        {
-            if( !count($arguments) ) {
-                $arguments = \Majisti\Test\Runner::getDefaultArguments();
-            }
-
-            \Majisti\Test\Runner::run(
-                new TestSuite(static::getClass()), $arguments);
-        }
+        Standalone::runAlone(static::getClass(), $arguments);
     }
 
-    /**
-     * @desc Returns the helper instance
-     *
-     * @return Helper
+    /*
+     * (non-phpDoc)
+     * @see Inherited documentation.
      */
     public function getHelper()
     {

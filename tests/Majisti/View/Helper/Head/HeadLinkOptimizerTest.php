@@ -85,7 +85,7 @@ class HeadLinkOptimizerTest extends AbstractHeadOptimizerTest
         return '<link href="' . $this->filesUrl .
                 "/{$filename}{$this->extension}?v=" . filemtime($this->filesPath .
                 "/{$filename}{$this->extension}")   .
-                '" media="screen" rel="stylesheet" type="text/css" >';
+                '" media="screen" rel="stylesheet" type="text/css" />';
     }
 
     protected function appendInvalidFiles($headObj)

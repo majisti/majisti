@@ -28,7 +28,7 @@ foreach ( new \DirectoryIterator(__DIR__) as $dir ) {
                 continue;
             }
 
-            exec("git apply {$patchDir}/{$patch}");
+            exec("git apply {$patchDir}/{$patch} 2> /dev/null");
         }
     }
 }

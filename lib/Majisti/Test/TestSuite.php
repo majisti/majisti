@@ -19,13 +19,11 @@ class TestSuite extends \PHPUnit_Framework_TestSuite
      * @desc Runs the test suites alone, without being part of another
      * suite.
      *
-     * @param bool $force Force the test to run even if it is part of another
-     * suite.
      * @param array $arguments The runner's arguments
      */
-    static public function runAlone($force = false, $arguments = array())
+    static public function runAlone($arguments = array())
     {
-        if( (bool)$force || !(ServerInfo::isTestSuiteRunning()
+        if( !(ServerInfo::isTestSuiteRunning()
             || ServerInfo::isPhpunitRunning()) )
         {
             /* define that we are actually running a suite */

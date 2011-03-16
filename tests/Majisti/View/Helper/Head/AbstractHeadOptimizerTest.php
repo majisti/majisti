@@ -224,9 +224,6 @@ abstract class AbstractHeadOptimizerTest extends \Majisti\Test\TestCase
 
        $files = $this->getFilesObjects(array("file1{$ext}", "file2{$ext}"));
 
-//       $optimizer->uriRemap("{$url}/{$folder}/file1{$ext}",
-//           "{$path}/{$folder}/file1{$ext}");
-
        $this->appendFilesAndExecute('bundle', 'files', $files);
        $this->assertBundled('files');
     }

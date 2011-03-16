@@ -358,6 +358,7 @@ class Helper
             $this->getMajistiPath() . '/lib/vendor/zend/extras/library',
             $this->getMajistiPath() . '/lib/vendor/zend/library',
             $this->getMajistiPath() . '/lib/vendor/zend/tests',
+            $this->getMajistiPath() . '/lib/vendor/phpunit',
             get_include_path(),
         ));
 
@@ -394,6 +395,10 @@ class Helper
         $autoloader->pushAutoloader(new \Majisti\Loader\Autoloader());
 
         $maj = $this->getOption('majisti');
+
+        $loader = new ClassLoader('PHPUnit', 'vendor/phpunit/');
+        $loader->setNamespaceSeparator('_');
+        $loader->register();
 
         /* library autoloader */
         if( file_exists($libPath = $maj->app->path . '/tests/lib') ) {
