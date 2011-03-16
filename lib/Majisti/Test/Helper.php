@@ -351,18 +351,22 @@ class Helper
     {
         $options = $this->getOptions();
 
-        $includePaths = array_unique(array(
+        $includePaths = array(
             $options['majisti']['app']['path'] . '/tests',
             $this->getMajistiPath() . '/tests',
             $this->getMajistiPath() . '/lib',
             $this->getMajistiPath() . '/lib/vendor/zend/extras/library',
             $this->getMajistiPath() . '/lib/vendor/zend/library',
             $this->getMajistiPath() . '/lib/vendor/zend/tests',
-            $this->getMajistiPath() . '/lib/vendor/phpunit',
-            get_include_path(),
-        ));
+        );
 
-        set_include_path(implode(PATH_SEPARATOR, $includePaths));
+        if( !Util\ServerInfo::isCliRunning() ) {
+            $includePaths[] = $this->getMajistiPath() . '/lib/vendor/phpunit';
+        }
+
+        $includePaths[] = get_include_path();
+
+        set_include_path(implode(PATH_SEPARATOR, array_unique($includePaths)));
     }
 
     /**
