@@ -19,7 +19,7 @@ class Table implements ILayout
         $elementDecorators = array(
                 'ViewHelper',
                 'Errors',
-                array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')),
+                array(array('element' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')),
                 array('Label', array('tag' => 'td', 'class' => 'label')),
                 array('Description', array('tag' => 'td')),
                 array(array('row' => 'HtmlTag'), array('tag' => 'tr', 'class' => 'row')),
@@ -27,9 +27,9 @@ class Table implements ILayout
 
         $buttonDecorators = array(
             'ViewHelper',
-            array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element button')),
+            array(array('data'  => 'HtmlTag'), array('tag' => 'td', 'class' => 'element button')),
             array(array('label' => 'HtmlTag'), array('tag' => 'td', 'placement' => 'prepend', 'class' => 'label')),
-            array(array('row' => 'HtmlTag'), array('tag' => 'tr', 'class' => 'row')),
+            array(array('row'   => 'HtmlTag'), array('tag' => 'tr', 'class' => 'row')),
         );
 
         $fileDecorators = array('File') + $elementDecorators;
@@ -43,7 +43,7 @@ class Table implements ILayout
         if( $form instanceof \Zend_Form_SubForm ) {
             array_pop($formDecorators);
             $formDecorators[] = 'Fieldset';
-            $formDecorators[] = array(array('data' => 'HtmlTag'),
+            $formDecorators[] = array(array('element' => 'HtmlTag'),
                 array('tag' => 'td', 'class' => 'element', 'colspan' => 2));
             $formDecorators[] = array(array('row' => 'HtmlTag'),
                 array('tag' => 'tr', 'class' => 'row'));
@@ -56,10 +56,10 @@ class Table implements ILayout
         /* @var $element \Zend_Form_Element */
         $captchaDecorators = array(
                 'Errors',
-                array(array('td' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element captcha')),
+                array(array('element' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element captcha')),
                 array('Label', array('tag' => 'td', 'class' => 'label')),
                 array('Description', array('tag' => 'td')),
-                array(array('tr' => 'HtmlTag'), array('tag' => 'tr')),
+                array(array('row' => 'HtmlTag'), array('tag' => 'tr')),
         );
 
         foreach( $form->getElements() as $element ) {
@@ -77,12 +77,10 @@ class Table implements ILayout
 
         foreach( $form->getDisplayGroups() as $dg ) {
             $dg->setDecorators(array(
-//                array(array('row' => 'HtmlTag'), array('tag' => 'tr', 'class' => 'row')),
                 'FormElements',
                 array(array('group' => 'HtmlTag'), array('tag' => 'table', 'class' => 'group')),
                 'Fieldset',
                 array(array('column' => 'HtmlTag'), array('tag' => 'td', 'class' => 'column', 'colspan' => 2)),
-//                array(array('label' => 'HtmlTag'), array('tag' => 'td', 'placement' => 'prepend', 'class' => 'label')),
                 array(array('row' => 'HtmlTag'), array('tag' => 'tr', 'class' => 'row')),
             ));
         }
