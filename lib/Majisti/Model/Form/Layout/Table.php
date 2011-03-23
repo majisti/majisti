@@ -79,11 +79,11 @@ class Table implements ILayout
             $dg->setDecorators(array(
 //                array(array('row' => 'HtmlTag'), array('tag' => 'tr', 'class' => 'row')),
                 'FormElements',
-                array('HtmlTag', array('tag' => 'table', 'class' => 'group')),
-                array(array('td' => 'HtmlTag'), array('tag' => 'td', 'class' => 'group')),
-                array(array('label' => 'HtmlTag'), array('tag' => 'td', 'placement' => 'prepend', 'class' => 'label')),
-                array(array('row' => 'HtmlTag'), array('tag' => 'tr', 'class' => 'row group')),
-//                'Fieldset',
+                array(array('group' => 'HtmlTag'), array('tag' => 'table', 'class' => 'group')),
+                'Fieldset',
+                array(array('column' => 'HtmlTag'), array('tag' => 'td', 'class' => 'column', 'colspan' => 2)),
+//                array(array('label' => 'HtmlTag'), array('tag' => 'td', 'placement' => 'prepend', 'class' => 'label')),
+                array(array('row' => 'HtmlTag'), array('tag' => 'tr', 'class' => 'row')),
             ));
         }
 
