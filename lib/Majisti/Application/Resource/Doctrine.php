@@ -99,8 +99,10 @@ class Doctrine extends \Zend_Application_Resource_ResourceAbstract
 
         $evm = new \Doctrine\Common\EventManager();
 
-        $evm->addEventSubscriber(new
-            MysqlSessionInit('utf8', 'utf8_unicode_ci'));
+        if( 'pdo_mysql' === $dbConfig['driver'] ) {
+            $evm->addEventSubscriber(new
+                MysqlSessionInit('utf8', 'utf8_unicode_ci'));
+        }
 
         $em = EntityManager::create($dbConfig, $config, $evm);
 
