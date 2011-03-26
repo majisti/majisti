@@ -213,6 +213,7 @@ class Manager
             $maj['app']['path'] . '/lib/views/scripts/',
             $paths['script']
         );
+        $libScriptPath = $paths['script'][$i];
 
         unset($paths['script'][$i]);
         unset($paths['helper'][$maj['app']['namespace'] . '\View\Helper\\']);
@@ -226,6 +227,7 @@ class Manager
         foreach( $paths['script'] as $path ) {
             $view->addScriptPath($path);
         }
+        $view->addScriptPath($libScriptPath);
 
         foreach( $paths['helper'] as $prefix => $path ) {
             $view->addHelperPath($path, $prefix);
