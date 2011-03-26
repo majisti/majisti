@@ -213,7 +213,10 @@ class Manager
             $maj['app']['path'] . '/lib/views/scripts/',
             $paths['script']
         );
+
         $libScriptPath = $paths['script'][$i];
+        $libHelperPath = $paths['helper'][$maj['app']['namespace'] . '\View\Helper\\'];
+        $libFilterPath = $paths['filter'][$maj['app']['namespace'] . '\View\Filter\\'];
 
         unset($paths['script'][$i]);
         unset($paths['helper'][$maj['app']['namespace'] . '\View\Helper\\']);
@@ -232,10 +235,12 @@ class Manager
         foreach( $paths['helper'] as $prefix => $path ) {
             $view->addHelperPath($path, $prefix);
         }
+        $view->addHelperPath($libHelperPath, $maj['app']['namespace'] . '\View\Helper\\');
 
         foreach( $paths['filter'] as $prefix => $path) {
             $view->addFilterPath($path, $prefix);
         }
+        $view->addFilterPath($libFilterPath, $maj['app']['namespace'] . '\View\Filter\\');
     }
 
     /**
