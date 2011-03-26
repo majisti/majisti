@@ -21,8 +21,8 @@ class Headers extends AbstractHelper
 
         $maj = $this->getConfig()->majisti;
 
-        $view->headLink()->offsetSetStylesheet('theme', $maj->app->baseUrl .
-            '/styles/main/main.css');
+        $view->headLink()->offsetSetStylesheet('core', $maj->app->baseUrl .
+            '/styles/core.css');
 
         $view->headMeta()->appendHttpEquiv(
             'Content-Type', 'text/html; charset=UTF-8');
