@@ -2,6 +2,8 @@
 
 namespace Majisti\Test\Database;
 
+use Doctrine\ORM\EntityManager;
+
 /**
  * @desc Doctrine Database Helper implementation.
  *
@@ -137,6 +139,21 @@ class DoctrineHelper implements Helper
     {
         return $this->getBootstrap()->getPluginResource('Doctrine')
                     ->getEntityManager();
+    }
+
+    /**
+     * @desc Returns a new Doctrine's entity manager
+     * @return \Doctrine\ORM\EntityManager The new entity manager
+     */
+    public function createEntityManager()
+    {
+        $em = $this->getEntityManager();
+
+        return EntityManager::create(
+            $em->getConnection(), 
+            $em->getConfiguration(),
+            $em->getEventManager()
+        );
     }
 
     /**
