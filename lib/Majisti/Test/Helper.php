@@ -6,6 +6,7 @@ use Majisti\Test\Util\ServerInfo,
     \Doctrine\Common\ClassLoader
 ;
 
+require_once 'Util/ServerInfo.php';
 require_once dirname(__DIR__) . '/../vendor/doctrine2-common/lib/Doctrine/Common/ClassLoader.php';
 
 /**
