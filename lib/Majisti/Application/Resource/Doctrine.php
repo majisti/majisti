@@ -82,11 +82,14 @@ class Doctrine extends \Zend_Application_Resource_ResourceAbstract
             }
         }
 
+        $env = $maj['app']['env'];
+
         $config->setMetadataDriverImpl($chain);
         $config->setQueryCacheImpl($cache);
         $config->setProxyDir($maj['app']['path'] . '/application/doctrine/proxies');
         $config->setProxyNamespace($maj['app']['namespace'] . '\Doctrine\Proxies');
-        $config->setAutoGenerateProxyClasses(true);
+        $config->setAutoGenerateProxyClasses('production' === $env
+            || 'staging' === $env);
 
         $adapterClass = get_class($db);
         $dbConfig = $db->getConfig();
