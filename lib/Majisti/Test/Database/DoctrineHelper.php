@@ -2,7 +2,10 @@
 
 namespace Majisti\Test\Database;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManager,
+    Doctrine\Common\DataFixtures,
+    Doctrine\ORM\Tools\SchemaTool
+;
 
 /**
  * @desc Doctrine Database Helper implementation.
@@ -12,14 +15,9 @@ use Doctrine\ORM\EntityManager;
 class DoctrineHelper implements Helper
 {
     /**
-     * @var \Majisti\Test\Helper
+     * @var EntityManager
      */
-    protected $_helper;
-
-    /**
-     * @var \Zend_Application_Bootstrap_BootstrapAbstract
-     */
-    protected $_bootstrap;
+    protected $_em;
 
     /**
      * @var \Doctrine\ORM\Tools\SchemaTool
@@ -27,9 +25,13 @@ class DoctrineHelper implements Helper
     protected $_schemaTool;
 
     /**
-     * @desc Constructs the database helper with the provided Majisti Test
-     * Helper
-     *
+     * @var \Majisti\Test\Helper 
+     */
+    protected $_helper;
+
+    /**
+     * Constructs the database helper
+     * 
      * @param \Majisti\Test\Helper $helper The test helper
      */
     public function __construct(\Majisti\Test\Helper $helper)
@@ -37,13 +39,25 @@ class DoctrineHelper implements Helper
         $this->_helper = $helper;
     }
 
-    /*
-     * (non-phpDoc)
-     * @see Inherited documentation.
+    /**
+     * Returns the test helper.
+     * 
+     * @return \Majisti\Test\Helper 
      */
     public function getHelper()
     {
         return $this->_helper;
+    }
+
+    /*
+     * (non-phpDoc) 
+     * @see Inherited documentation.
+     */
+    public function setEntityManager(EntityManager $em)
+    {
+        $this->_em = $em;
+
+        return $this;
     }
 
     /**
@@ -109,6 +123,18 @@ class DoctrineHelper implements Helper
     }
 
     /*
+     * (non-phpDoc) 
+     * @see Inherited documentation.
+     */
+    public function recreateSchema()
+    {
+        $this->dropSchema();
+        $this->createSchema();
+
+        return $this;
+    }
+
+    /*
      * (non-phpDoc)
      * @see Inherited documentation.
      */
@@ -132,42 +158,68 @@ class DoctrineHelper implements Helper
     }
 
     /**
-     * @desc Returns Doctrine's entity manager
+     * @desc Returns Doctrine's entity manager.
+     * 
      * @return \Doctrine\ORM\EntityManager The entity manager
      */
     public function getEntityManager()
     {
-        return $this->getBootstrap()->getPluginResource('Doctrine')
-                    ->getEntityManager();
-    }
-
-    /**
-     * @desc Returns a new Doctrine's entity manager
-     * @return \Doctrine\ORM\EntityManager The new entity manager
-     */
-    public function createEntityManager()
-    {
-        $em = $this->getEntityManager();
-
-        return EntityManager::create(
-            $em->getConnection(), 
-            $em->getConfiguration(),
-            $em->getEventManager()
-        );
-    }
-
-    /**
-     * @desc Returns a bootstrapped bootstrap from the test helper.
-     *
-     * @return \Zend_Application_Bootstrap_BootstrapAbstract
-     */
-    protected function getBootstrap()
-    {
-        if( null === $this->_bootstrap ) {
-            $this->_bootstrap = $this->getHelper()->createBootstrapInstance()
-                ->bootstrap();
+        if( null === $this->_em ) {
+            $this->_em = $this->getApplication()
+                ->getBootstrap()
+                ->bootstrap('Doctrine')
+                ->getResource('Doctrine');
         }
 
-        return $this->_bootstrap;
+        return $this->_em;
+    }
+
+    /*
+     * (non-phpDoc) 
+     * @see Inherited documentation.
+     */
+    public function getApplication()
+    {
+        return $this->getHelper()->getApplication();
+    }
+
+    /*
+     * (non-phpDoc) 
+     * @see Inherited documentation.
+     */
+    public function reloadFixtures()
+    {
+        $em = $this->getEntityManager();
+        $conf = $em->getConfiguration();
+        $classes = $em->getMetadataFactory()->getAllMetadata();
+
+        $em->clear();
+        $caches = array(
+            $conf->getResultCacheImpl(),
+            $conf->getQueryCacheImpl(),
+            $conf->getMetadataCacheImpl(),
+        );
+
+        foreach( $caches as $cache ) {
+            if( null !== $cache ) {
+                $cache->deleteAll();
+            }
+        }
+
+        $loader = new DataFixtures\Loader();
+        $purger = new DataFixtures\Purger\ORMPurger($em);
+
+        $app = $this->getApplication();
+        $maj  = $app->getOption('majisti');
+        $path = $maj['app']['path'] . '/lib/models/doctrine/fixtures';
+
+        if( file_exists($path) ) {
+            $loader->loadFromDirectory($path);
+        }
+
+        $executor = new DataFixtures\Executor\ORMExecutor($em, $purger);
+        $executor->execute($loader->getFixtures());
+
+        return $this;
     }
 }

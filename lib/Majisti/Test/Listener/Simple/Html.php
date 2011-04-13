@@ -47,7 +47,7 @@ class Html extends \Majisti\Test\Listener\DefaultListener
     protected function printDefectTrace(\PHPUnit_Framework_TestFailure $defect)
     {
         $fileCallback = function($file) {
-            return "<a href=\"#\">{$file}</a>";
+            return "<a href=\"file://{$file}\">{$file}</a>";
         };
         
         $lineCallback = function($line) {

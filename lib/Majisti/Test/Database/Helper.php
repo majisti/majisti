@@ -2,8 +2,10 @@
 
 namespace Majisti\Test\Database;
 
+use \Doctrine\ORM\EntityManager;
+
 /**
- * @desc Interface for database helpers.
+ * @desc Interface for database helpers. Provides fluent interface.
  *
  * @author Steven Rosato
  */
@@ -11,16 +13,32 @@ interface Helper
 {
     /**
      * @desc Creates the database shema.
+     * 
+     * @return Helper this
      */
     public function createSchema();
 
     /**
      * @desc Updates the database shema.
+     * 
+     * @return Helper this
      */
     public function updateSchema();
 
     /**
+     * @desc Recreates the schema by droping
+     * and recreating the schema
+     * 
+     * Proxies to dropSchema() followed by createSchema()
+     * 
+     * @return Helper this
+     */
+    public function recreateSchema();
+
+    /**
      * @desc Drops the database shema.
+     * 
+     * @return Helper this
      */
     public function dropSchema();
 
@@ -35,9 +53,16 @@ interface Helper
     public function truncateTables(array $tables);
 
     /**
-     * @desc Returns Majisti's Test helper
-     *
-     * @returns \Majisti\Test\Helper The helper
+     * @desc Reloads the data fixtures.
+     * 
+     * @return Helper this
      */
-    public function getHelper();
+    public function reloadFixtures();
+
+    /**
+     * Returns the application
+     * 
+     * @return \Zend_Application The application
+     */
+    public function getApplication();
 }

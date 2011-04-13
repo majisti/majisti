@@ -2,36 +2,74 @@
 
 namespace Majisti\Test;
 
-use \Majisti\Application as Application,
-    \Majisti\Test\Util\ServerInfo;
+use Majisti\Application as Application,
+    Majisti\Test\Util\ServerInfo,
+    Doctrine\ORM\EntityManager
+;
 
 /**
  * @desc The test case serves as a simplified manner to extend PHPUnit TestCases.
  * It provides support for single running a test or running it as a part
- * of a TestSuite. Moreover, it easily enables Mvc testing with
- * the mvc option set through the helper singleton on by calling enableMvc()
- * in the setUp function.
- *
+ * of a TestSuite.
+ * 
  * @author Majisti
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 class FunctionalTestCase extends \Zend_Test_PHPUnit_ControllerTestCase
                          implements Test
 {
+    /**
+     * @var \Zend_Application 
+     */
+    public $bootstrap;
+
     /*
      * (non-phpDoc)
      * @see Inherited documentation.
      */
     public function setUp()
     {
-        parent::setUp();
+        $this->reset();
 
-        /* won't instanciate on multiple call but will instanciate on each test */
-        if ( null === $this->bootstrap ) {
-            $manager = new Application\Manager($this->getHelper()->getOptions());
-            $this->bootstrap = $manager->getApplication();
-            $this->bootstrap->bootstrap();
+        /* Zend's bootstrap takes a Zend_Application */
+        $this->bootstrap = $this->getHelper()->createApplicationInstance();
+
+        $this->bootstrap->bootstrap();
+        $this->_frontController = $this->bootstrap->getBootstrap()
+             ->getResource('frontController');
+
+        $this->frontController
+             ->setRequest($this->getRequest())
+             ->setResponse($this->getResponse());
+
+        /* 
+         * notifies observers that the entity manager changed
+         */
+        if( $this->getDatabaseHelper() instanceof Database\DoctrineHelper ) {
+            $em = $this->getDatabaseHelper()->getEntityManager();
+
+            //FIXME: use observer pattern instead..
+            \Zend_Registry::set('Doctrine_EntityManager', $em);
+            $this->bootstrap
+                ->getBootstrap()
+                ->getContainer()
+                ->doctrine = $em;
+
+            \Zend_Registry::get('Symfony_DependencyInjection_Container')
+                ->set('doctrine.em', $em);
         }
+
+        $this->getHelper()->setApplication($this->bootstrap);
+    }
+
+    /**
+     * Returns the database helper for this helper.
+     * 
+     * @return Database\Helper 
+     */
+    public function getDatabaseHelper()
+    {
+        return $this->getHelper()->getDatabaseHelper();
     }
 
     /*

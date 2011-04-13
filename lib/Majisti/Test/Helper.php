@@ -63,6 +63,11 @@ class Helper
     protected $_dbHelper;
 
     /**
+     * @var \Zend_Application 
+     */
+    protected $_application;
+
+    /**
      * @desc Constructs the helper.
      *
      * @param array $options The options
@@ -176,14 +181,43 @@ class Helper
      */
     public function createApplicationInstance($options = array())
     {
-        $options = array_merge_recursive($this->getOptions(), $options);
-        $manager = new \Majisti\Application\Manager($options);
+        $mergedOptions = new \Zend_Config($this->getOptions(), 
+            array('allowModifications' => true));
+        $mergedOptions->merge(new \Zend_Config($options));
+
+        $manager = new \Majisti\Application\Manager($mergedOptions->toArray());
 
         return $manager->getApplication();
     }
 
     /**
-     * @desc Factory method to create a Majisti bootstrap instance.
+     * Returns the current application for this helper. If no application
+     * is available, it will create a new one and subsequentally return
+     * the same instance (lazy instanciation).
+     * 
+     * @return \Zend_Application the application 
+     */
+    public function getApplication()
+    {
+        if( null === $this->_application ) {
+            $this->_application = $this->createApplicationInstance();
+        }
+
+        return $this->_application;
+    }
+
+    /**
+     * Sets the application.
+     * 
+     * @param \Zend_Application $app The application
+     */
+    public function setApplication(\Zend_Application $app)
+    {
+        $this->_application = $app;
+    }
+
+    /**
+     * @desc Factory method to create a Majisti application instance.
      *
      * @return \Majisti\Application\Bootstrap The bootstrap instance
      */
