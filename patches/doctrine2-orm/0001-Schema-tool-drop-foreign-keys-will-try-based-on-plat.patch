@@ -1,0 +1,30 @@
+From 1e3d47d09dc5a7cfc375ba77c909124a6682a2c4 Mon Sep 17 00:00:00 2001
+From: Steven Rosato <steven.rosato@majisti.com>
+Date: Wed, 13 Apr 2011 02:18:07 -0400
+Subject: [PATCH] Schema tool drop foreign keys will 'try' based on platform instead of failing.
+
+---
+ lib/Doctrine/ORM/Tools/SchemaTool.php |    7 ++++---
+ 1 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/lib/Doctrine/ORM/Tools/SchemaTool.php b/lib/Doctrine/ORM/Tools/SchemaTool.php
+index f325ca5..0fc448f 100644
+--- a/lib/Doctrine/ORM/Tools/SchemaTool.php
++++ b/lib/Doctrine/ORM/Tools/SchemaTool.php
+@@ -586,9 +586,10 @@ class SchemaTool
+         $dropTablesSql = array();
+         foreach ($orderedTables AS $tableName) {
+             /* @var $sm \Doctrine\DBAL\Schema\AbstractSchemaManager */
+-            $foreignKeys = $sm->listTableForeignKeys($tableName);
+-            foreach ($foreignKeys AS $foreignKey) {
+-                $sql[] = $this->_platform->getDropForeignKeySQL($foreignKey, $tableName);
++            if( $foreignKeys = $sm->tryMethod('listTableForeignKeys', $tableName) ) {
++                foreach ($foreignKeys AS $foreignKey) {
++                    $sql[] = $this->_platform->getDropForeignKeySQL($foreignKey, $tableName);
++                }
+             }
+             $dropTablesSql[] = $this->_platform->getDropTableSQL($tableName);
+         }
+-- 
+1.7.0.4
+
