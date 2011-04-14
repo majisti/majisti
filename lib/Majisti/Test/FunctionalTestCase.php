@@ -23,6 +23,11 @@ class FunctionalTestCase extends \Zend_Test_PHPUnit_ControllerTestCase
      */
     public $bootstrap;
 
+    /**
+     * @var boolean 
+     */
+    static protected $_databaseCreated = false;
+
     /*
      * (non-phpDoc)
      * @see Inherited documentation.
@@ -42,24 +47,47 @@ class FunctionalTestCase extends \Zend_Test_PHPUnit_ControllerTestCase
              ->setRequest($this->getRequest())
              ->setResponse($this->getResponse());
 
-        /* 
-         * notifies observers that the entity manager changed
-         */
-        if( $this->getDatabaseHelper() instanceof Database\DoctrineHelper ) {
-            $em = $this->getDatabaseHelper()->getEntityManager();
+        if( $this instanceof DatabaseTest ) {
+            if( !static::$_databaseCreated ) {
+                $this->getDatabaseHelper()->recreateSchema();
+                $this->getDatabaseHelper()->reloadFixtures();
 
-            //FIXME: use observer pattern instead..
-            \Zend_Registry::set('Doctrine_EntityManager', $em);
-            $this->bootstrap
-                ->getBootstrap()
-                ->getContainer()
-                ->doctrine = $em;
+                static::$_databaseCreated = true;
+            }
 
-            \Zend_Registry::get('Symfony_DependencyInjection_Container')
-                ->set('doctrine.em', $em);
+            /* 
+             * notifies observers that the entity manager changed
+             */
+            if( $this->getDatabaseHelper() instanceof Database\DoctrineHelper ) {
+                $em = $this->getDatabaseHelper()->getEntityManager();
+
+                //FIXME: use observer pattern (event manager) instead..
+                \Zend_Registry::set('Doctrine_EntityManager', $em);
+                $this->bootstrap
+                    ->getBootstrap()
+                    ->getContainer()
+                    ->doctrine = $em;
+
+                //FIXME: ad-hoc implementation!
+                if( \Zend_Registry::isRegistered('Symfony_DependencyInjection_Container') ) {
+                    \Zend_Registry::get('Symfony_DependencyInjection_Container')
+                        ->set('doctrine.em', $em);
+                }
+            }
         }
 
         $this->getHelper()->setApplication($this->bootstrap);
+    }
+
+    /*
+     * (non-phpDoc) 
+     * @see Inherited documentation.
+     */
+    public function tearDown()
+    {
+        if( $this instanceof DatabaseTest ) {
+            $this->getDatabaseHelper()->reloadFixtures();
+        }
     }
 
     /**
