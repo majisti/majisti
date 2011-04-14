@@ -101,7 +101,15 @@ class DoctrineHelper implements Helper
      */
     public function createSchema()
     {
-        return $this->doSchemaOperation('create');
+        $this->doSchemaOperation('create');
+
+        $em = $this->getEntityManager();
+        $em->getProxyFactory()->generateProxyClasses(
+            $em->getMetadataFactory()->getAllMetadata(),
+            $em->getConfiguration()->getProxyDir()
+        );
+
+        return $this;
     }
 
     /*
