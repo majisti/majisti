@@ -28,6 +28,29 @@ class FunctionalTestCase extends \Zend_Test_PHPUnit_ControllerTestCase
      */
     static protected $_databaseCreated = false;
 
+    /**
+     * @var boolean
+     */
+    static protected $_useDatabase = false;
+
+    /*
+     * (non-phpDoc)
+     * @see Inherited documentation.
+     */
+    static public function setUpBeforeClass()
+    {
+        if( static::$_useDatabase && !static::$_databaseCreated ) {
+            $helper = \Majisti\Test\Helper::getInstance();
+
+            if( !static::$_databaseCreated ) {
+                $helper->getDatabaseHelper()->recreateSchema();
+                static::$_databaseCreated = true;
+            }
+
+            $helper->getDatabaseHelper()->reloadFixtures();
+        }
+    }
+
     /*
      * (non-phpDoc)
      * @see Inherited documentation.
@@ -47,32 +70,25 @@ class FunctionalTestCase extends \Zend_Test_PHPUnit_ControllerTestCase
              ->setRequest($this->getRequest())
              ->setResponse($this->getResponse());
 
-        if( $this instanceof DatabaseTest ) {
-            if( !static::$_databaseCreated ) {
-                $this->getDatabaseHelper()->recreateSchema();
-                $this->getDatabaseHelper()->reloadFixtures();
+        /*
+         * notifies observers that the entity manager changed
+         */
+        if( static::$_useDatabase &&
+            $this->getDatabaseHelper() instanceof Database\DoctrineHelper )
+        {
+            $em = $this->getDatabaseHelper()->getEntityManager();
 
-                static::$_databaseCreated = true;
-            }
+            //FIXME: use observer pattern (event manager) instead..
+            \Zend_Registry::set('Doctrine_EntityManager', $em);
+            $this->bootstrap
+                 ->getBootstrap()
+                 ->getContainer()
+                 ->doctrine = $em;
 
-            /* 
-             * notifies observers that the entity manager changed
-             */
-            if( $this->getDatabaseHelper() instanceof Database\DoctrineHelper ) {
-                $em = $this->getDatabaseHelper()->getEntityManager();
-
-                //FIXME: use observer pattern (event manager) instead..
-                \Zend_Registry::set('Doctrine_EntityManager', $em);
-                $this->bootstrap
-                    ->getBootstrap()
-                    ->getContainer()
-                    ->doctrine = $em;
-
-                //FIXME: ad-hoc implementation!
-                if( \Zend_Registry::isRegistered('Symfony_DependencyInjection_Container') ) {
-                    \Zend_Registry::get('Symfony_DependencyInjection_Container')
-                        ->set('doctrine.em', $em);
-                }
+            //FIXME: ad-hoc implementation!
+            if( \Zend_Registry::isRegistered('Symfony_DependencyInjection_Container') ) {
+                \Zend_Registry::get('Symfony_DependencyInjection_Container')
+                    ->set('doctrine.em', $em);
             }
         }
 
@@ -80,13 +96,14 @@ class FunctionalTestCase extends \Zend_Test_PHPUnit_ControllerTestCase
     }
 
     /*
-     * (non-phpDoc) 
+     * (non-phpDoc)
      * @see Inherited documentation.
      */
-    public function tearDown()
+    static public function tearDownAfterClass()
     {
-        if( $this instanceof DatabaseTest ) {
-            $this->getDatabaseHelper()->reloadFixtures();
+        if( static::$_useDatabase && static::$_databaseCreated ) {
+            \Majisti\Test\Helper::getInstance()
+                ->getDatabaseHelper()->reloadFixtures();
         }
     }
 
