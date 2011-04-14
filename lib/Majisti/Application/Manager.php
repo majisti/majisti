@@ -56,8 +56,14 @@ class Manager
         $bootstrap = $application->getBootstrap();
         $bootstrap->bootstrap('configHandler');
 
-        /* set options */
-        $config = new \Zend_Config($bootstrap->getOptions());
+        /* set options and options passed as args overrides all */
+        $config = new \Zend_Config($bootstrap->getOptions(), array(
+            'allowModifications' => true,
+        ));
+        $config = $config->merge($options);
+        $config->setReadOnly();
+        $bootstrap->setOptions($config->toArray());
+
         \Zend_Registry::set('Majisti_Config', $config);
         \Zend_Registry::set('Majisti_Config_Selector', new Selector($config));
 
@@ -211,11 +217,11 @@ class Manager
                 dirname($concreteConfigPath) . "/ is mandatory!");
         }
 
-        return $defaultConfig->merge($options)
-            ->merge(new \Zend_Config_Ini(
-                $concreteConfigPath,
-                $app->env, true
-            ))
-        ;
+        $concreteConfig = new \Zend_Config_Ini(
+            $concreteConfigPath,
+            $app->env, true
+        );
+
+        return $defaultConfig->merge($concreteConfig)->merge($options);
     }
 }
