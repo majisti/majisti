@@ -1,0 +1,91 @@
+From d5d1d006df136c886dd690e6b7bcfaafff2478c7 Mon Sep 17 00:00:00 2001
+From: Steven Rosato <steven.rosato@majisti.com>
+Date: Thu, 14 Apr 2011 18:06:46 -0400
+Subject: [PATCH] Removing association entities is now also based on object class.
+
+---
+ .../Translatable/Mapping/Event/Adapter/ODM.php     |    3 ++-
+ .../Translatable/Mapping/Event/Adapter/ORM.php     |    5 +++--
+ .../Mapping/Event/TranslatableAdapter.php          |    2 +-
+ lib/Gedmo/Translatable/TranslationListener.php     |    5 +++--
+ 4 files changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/lib/Gedmo/Translatable/Mapping/Event/Adapter/ODM.php b/lib/Gedmo/Translatable/Mapping/Event/Adapter/ODM.php
+index 3370947..0abd5d3 100644
+--- a/lib/Gedmo/Translatable/Mapping/Event/Adapter/ODM.php
++++ b/lib/Gedmo/Translatable/Mapping/Event/Adapter/ODM.php
+@@ -76,12 +76,13 @@ final class ODM extends BaseAdapterODM implements TranslatableAdapter
+     /**
+      * {@inheritDoc}
+      */
+-    public function removeAssociatedTranslations($objectId, $transClass)
++    public function removeAssociatedTranslations($objectId, $objectClass, $transClass)
+     {
+         $dm = $this->getObjectManager();
+         $qb = $dm->createQueryBuilder($transClass);
+         $q = $qb->remove()
+             ->field('foreignKey')->equals($objectId)
++            ->field('objectClass')->equals($objectClass)
+             ->getQuery();
+         return $q->execute();
+     }
+diff --git a/lib/Gedmo/Translatable/Mapping/Event/Adapter/ORM.php b/lib/Gedmo/Translatable/Mapping/Event/Adapter/ORM.php
+index 9d2c530..6dd8796 100644
+--- a/lib/Gedmo/Translatable/Mapping/Event/Adapter/ORM.php
++++ b/lib/Gedmo/Translatable/Mapping/Event/Adapter/ORM.php
+@@ -78,14 +78,15 @@ final class ORM extends BaseAdapterORM implements TranslatableAdapter
+     /**
+      * {@inheritDoc}
+      */
+-    public function removeAssociatedTranslations($objectId, $transClass)
++    public function removeAssociatedTranslations($objectId, $objectClass, $transClass)
+     {
+         $em = $this->getObjectManager();
+         $dql = 'DELETE ' . $transClass . ' trans';
+         $dql .= ' WHERE trans.foreignKey = :objectId';
++        $dql .= ' AND trans.objectClass = :objectClass';
+ 
+         $q = $em->createQuery($dql);
+-        $q->setParameters(compact('objectId'));
++        $q->setParameters(compact('objectId', 'objectClass'));
+         return $q->getSingleScalarResult();
+     }
+ 
+diff --git a/lib/Gedmo/Translatable/Mapping/Event/TranslatableAdapter.php b/lib/Gedmo/Translatable/Mapping/Event/TranslatableAdapter.php
+index 410eb8c..4aadb1d 100644
+--- a/lib/Gedmo/Translatable/Mapping/Event/TranslatableAdapter.php
++++ b/lib/Gedmo/Translatable/Mapping/Event/TranslatableAdapter.php
+@@ -52,7 +52,7 @@ interface TranslatableAdapter extends AdapterInterface
+      * @param string $transClass
+      * @return void
+      */
+-    function removeAssociatedTranslations($objectId, $transClass);
++    function removeAssociatedTranslations($objectId, $objectClass, $transClass);
+ 
+     /**
+      * Inserts the translation record
+diff --git a/lib/Gedmo/Translatable/TranslationListener.php b/lib/Gedmo/Translatable/TranslationListener.php
+index 3bba6ac..c9d1561 100644
+--- a/lib/Gedmo/Translatable/TranslationListener.php
++++ b/lib/Gedmo/Translatable/TranslationListener.php
+@@ -197,14 +197,15 @@ class TranslationListener extends MappedEventSubscriber
+         }
+         // check scheduled deletions for Translatable entities
+         foreach ($ea->getScheduledObjectDeletions($uow) as $object) {
+-            $meta = $om->getClassMetadata(get_class($object));
++            $objectClass = get_class($object);
++            $meta = $om->getClassMetadata($objectClass);
+             $config = $this->getConfiguration($om, $meta->name);
+             if (isset($config['fields'])) {
+                 $identifierField = $ea->getSingleIdentifierFieldName($meta);
+                 $objectId = $meta->getReflectionProperty($identifierField)->getValue($object);
+ 
+                 $transClass = $this->getTranslationClass($ea, $meta->name);
+-                $ea->removeAssociatedTranslations($objectId, $transClass);
++                $ea->removeAssociatedTranslations($objectId, $objectClass, $transClass);
+             }
+         }
+     }
+-- 
+1.7.2.3
+
