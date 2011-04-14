@@ -337,7 +337,12 @@ class Helper
                 'majisti' => array(
                     'path' => realpath(__DIR__ . '/../../..'),
                 ),
-                'mvc' => false,
+                'xdebug' => array(
+                    'collect_params'           => 300,
+                    'var_display_max_data'     => 2000,
+                    'var_display_max_children' => 300,
+                    'var_display_max_depth'    => 8,
+                ),
             );
         }
 
@@ -496,18 +501,13 @@ class Helper
         /* configure xdebug for performance, if the module is enabled */
         $request = $this->getRequest();
         if( extension_loaded('xdebug') ) {
-            if( !$request->has('d') ) {
+            if( !$request->has('debug') ) {
                 xdebug_disable();
             } else {
-                $params = array(
-                    'xdebug.collect_params'             => 300,
-                    'xdebug.var_display_max_data'       => 300,
-                    'xdebug.var_display_max_children'   => 300,
-                    'xdebug.var_display_max_depth'      => 3,
-                );
+                $options = $this->getOptions();
 
-                foreach ($params as $key => $value) {
-                   ini_set($key, $value);
+                foreach( $options['xdebug'] as $key => $value ) {
+                   ini_set('xdebug.' . $key, $value);
                 }
             }
         }
@@ -581,7 +581,7 @@ class Helper
         $_SERVER['REQUEST_URI'] = $baseUrl;
 
         /* be a little bit more verbose according to request param */
-        if( $request->has('v') ) {
+        if( $request->has('verbose') ) {
             \Majisti\Test\Runner::setDefaultArguments(array(
                 'printer' => new \Majisti\Test\Listener\Simple\Html(null, true)
             ));
