@@ -55,7 +55,9 @@ class Doctrine extends \Zend_Application_Resource_ResourceAbstract
 
         $config = new Configuration();
 
-        /* FIXME: which cache to use? */
+        $env = $maj['app']['env'];
+
+        /* FIXME: switch cache according to env */
         $cache = new \Doctrine\Common\Cache\ArrayCache();
         $config->setMetadataCacheImpl($cache);
 
@@ -81,8 +83,6 @@ class Doctrine extends \Zend_Application_Resource_ResourceAbstract
                 );
             }
         }
-
-        $env = $maj['app']['env'];
 
         $config->setMetadataDriverImpl($chain);
         $config->setQueryCacheImpl($cache);
