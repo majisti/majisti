@@ -72,7 +72,7 @@ class Doctrine extends \Zend_Application_Resource_ResourceAbstract
         $cont = $bootstrap->getResource('frontController');
         foreach( $cont->getControllerDirectory() as $module => $dir ) {
             $driver = $config->newDefaultAnnotationDriver();
-            if( $path = realpath($dir . '/../models/doctrine/fixtures') ) {
+            if( $path = realpath($dir . '/../models') ) {
                 $driver->addPaths(array($path));
             }
 

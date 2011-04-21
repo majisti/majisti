@@ -44,7 +44,12 @@ EOT
         $purger = new DataFixtures\Purger\ORMPurger($em);
 
         $maj = $app->getOption('majisti');
-        $path = $maj['app']['path'] .  '/lib/models/doctrine/fixtures';
+        $env = $maj['app']['env'];
+        $dataDir = 'development' === $env || 'integration' === $env
+            ? '/testing'
+            : '/initial';
+
+        $path = $maj['app']['path'] .  '/lib/models/doctrine/fixtures' . $dataDir;
 
         if( file_exists($path) ) {
             $loader->loadFromDirectory($path);
@@ -54,7 +59,7 @@ EOT
         /* load modules fixtures */
         $modules = $cont->getControllerDirectory();
         foreach( $modules as $module ) {
-            if( $path = realpath($module . '/../models/doctrine/fixtures') ) {
+            if( $path = realpath($module . '/../models/doctrine/fixtures' . $dataDir) ) {
                 $loader->loadFromDirectory($path);
             }
         }

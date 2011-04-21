@@ -219,10 +219,19 @@ class DoctrineHelper implements Helper
 
         $app = $this->getApplication();
         $maj  = $app->getOption('majisti');
-        $path = $maj['app']['path'] . '/lib/models/doctrine/fixtures';
+        $path = $maj['app']['path'] . '/lib/models/doctrine/fixtures/testing';
 
         if( file_exists($path) ) {
             $loader->loadFromDirectory($path);
+        }
+
+        /* load modules fixtures */
+        $cont = $app->getBootstrap()->getResource('frontController');
+        $modules = $cont->getControllerDirectory();
+        foreach( $modules as $module ) {
+            if( $path = realpath($module . '/../models/doctrine/fixtures/testing') ) {
+                $loader->loadFromDirectory($path);
+            }
         }
 
         $executor = new DataFixtures\Executor\ORMExecutor($em, $purger);
