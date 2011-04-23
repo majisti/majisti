@@ -102,8 +102,10 @@ class FunctionalTestCase extends \Zend_Test_PHPUnit_ControllerTestCase
     static public function tearDownAfterClass()
     {
         if( static::$_useDatabase && static::$_databaseCreated ) {
-            \Majisti\Test\Helper::getInstance()
-                ->getDatabaseHelper()->reloadFixtures();
+            if( !ServerInfo::isDebug() || ServerInfo::isTestSuiteRunning() ) {
+                \Majisti\Test\Helper::getInstance()
+                    ->getDatabaseHelper()->reloadFixtures();
+            }
         }
     }
 

@@ -494,6 +494,18 @@ class Helper
     }
 
     /**
+     * Inits debugging
+     */
+    public function initDebug()
+    {
+        $request = $this->getRequest();
+
+        if( $request->has('debug') ) {
+            ServerInfo::setDebug(true);
+        }
+    }
+
+    /**
      * @desc Inits xdebug.
      */
     public function initXdebug()

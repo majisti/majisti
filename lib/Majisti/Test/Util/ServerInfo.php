@@ -10,6 +10,8 @@ namespace Majisti\Test\Util;
  */
 class ServerInfo
 {
+    static protected $_debug = false;
+
     /**
      * @desc Returns whether the cli was used or not.
      *
@@ -66,4 +68,23 @@ class ServerInfo
         return defined('PHPUNIT_TESTCASE_RUNNING');
     }
 
+    /**
+     * Marks the test as being run in debug mode.
+     *
+     * @param boolean $bool True to set debug mode
+     */
+    static public function setDebug($bool)
+    {
+        static::$_debug = true;
+    }
+
+    /**
+     * Returns whether the test is running in debug or not.
+     *
+     * @return boolean True if the test is running in debug mode
+     */
+    static public function isDebug()
+    {
+        return static::$_debug;
+    }
 }
